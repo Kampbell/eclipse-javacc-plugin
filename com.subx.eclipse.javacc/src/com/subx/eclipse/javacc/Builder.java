@@ -32,11 +32,10 @@ import org.javacc.parser.Main;
 
 /**
  * @author Peter M. Murray
- *
+ * 
  * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * Window>Preferences>Java>Templates. To enable and disable the creation of type
+ * comments go to Window>Preferences>Java>Code Generation.
  */
 public class Builder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor
 {
@@ -62,7 +61,9 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 
 	private void fullBuild(IProgressMonitor montior) throws CoreException
 	{
-		//TODO: This should really only traverse the 'src' components of the classpath
+		// All components of the project will be traversed. But he actual visit
+		// will check that the resource is a component on the classpath.
+		//
 		getProject().accept(this);
 	}
 
@@ -83,8 +84,12 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		IPath path = resource.getFullPath();
 
 		if (!path.toString().startsWith(buildRoot) && "jj".equals(path.getFileExtension()))
-			buildJJFile(resource);
-
+		{
+			// Only build if the resource is included as a source.
+			//
+			if (JavaCore.create(getProject()).isOnClasspath(resource))
+				buildJJFile(resource);
+		}
 		return true;
 	}
 
@@ -115,29 +120,64 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 
 	private IContainer findOrCreateGeneratedSourceDirectory(IResource resource) throws CoreException
 	{
+		IProject project = this.getProject();
+		IJavaProject javaProject = JavaCore.create(project);
+		IClasspathEntry[] classpath = javaProject.getRawClasspath();
+		int ncp = classpath.length;
+
 		IPath resourcePath = resource.getParent().getFullPath();
-		IPath generatedSrcPath = getProject().getFullPath().append("_generated");
-		IPath destinationPath = generatedSrcPath.removeFirstSegments(1).append(resourcePath.removeFirstSegments(2)).makeRelative();
-		IContainer destination = (IContainer) (getProject().findMember(destinationPath));
+		IPath destinationPath = null;
+		for (int ct = 0; ct < ncp; ct++)
+		{
+			IClasspathEntry cpe = classpath[ct];
+
+			if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE)
+			{
+				IPath path = cpe.getPath();
+				if (path.isPrefixOf(resourcePath))
+				{
+					// Make the destination path relative to the class path
+					// (i.e. preserve
+					// package structure but strip everything before that).
+					//
+					destinationPath = resourcePath.removeFirstSegments(path.segmentCount());
+					break;
+				}
+			}
+		}
+
+		if (destinationPath == null)
+			//
+			// The resourcePath was not a child to any of the classpaths. This
+			// should
+			// not really happen now.
+			//
+			destinationPath = resourcePath.removeFirstSegments(2);
+
+		IPath generatedSrcPath = project.getFullPath().append("_generated");
+		IPath projRelative = generatedSrcPath.removeFirstSegments(1); // Strip
+																	  // project
+		destinationPath = projRelative.append(destinationPath).makeRelative();
+
+		IContainer destination = (IContainer) project.findMember(destinationPath);
 		if (destination == null)
 		{
-			File destinationDirectory = new File(getProject().getLocation().toString() + "/" + destinationPath);
+			File destinationDirectory = new File(project.getLocation().toString() + "/" + destinationPath);
 			destinationDirectory.mkdirs();
 
 			try
 			{
-				IJavaProject javaProject = JavaCore.create(getProject());
-				IClasspathEntry[] classpath = javaProject.getRawClasspath();
 				boolean exists = false;
-				for (int ct = 0; ct < classpath.length && !exists; ct++)
+				for (int ct = 0; ct < ncp && !exists; ct++)
 				{
-					exists = (classpath[ct].getEntryKind() == IClasspathEntry.CPE_SOURCE && classpath[ct].getPath().equals(generatedSrcPath));
+					IClasspathEntry cpe = classpath[ct];
+					exists = (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE && cpe.getPath().equals(generatedSrcPath));
 				}
 				if (!exists)
 				{
-					IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length + 1];
-					System.arraycopy(classpath, 0, newClasspath, 0, classpath.length);
-					newClasspath[classpath.length] = JavaCore.newSourceEntry(generatedSrcPath);
+					IClasspathEntry[] newClasspath = new IClasspathEntry[ncp + 1];
+					System.arraycopy(classpath, 0, newClasspath, 0, ncp);
+					newClasspath[ncp] = JavaCore.newSourceEntry(generatedSrcPath);
 					javaProject.setRawClasspath(newClasspath, null);
 				}
 			}
@@ -146,9 +186,9 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 				e.printStackTrace();
 			}
 
-			getProject().refreshLocal(IContainer.DEPTH_INFINITE, null);
-			destination = (IContainer) (getProject().findMember(destinationPath));
-			getProject().findMember("_generated").accept(kDerivedTagger);
+			project.refreshLocal(IContainer.DEPTH_INFINITE, null);
+			destination = (IContainer) project.findMember(destinationPath);
+			project.findMember("_generated").accept(kDerivedTagger);
 		}
 
 		return destination;
