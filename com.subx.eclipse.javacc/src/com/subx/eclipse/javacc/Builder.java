@@ -43,8 +43,12 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 {
 	private static final QualifiedName kPreviousRunFiles = new QualifiedName("com.subx.eclipse.javacc", "Builder.PreviousFiles");
 
+	String buildRoot;
+	
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
 	{
+    	buildRoot = JavaCore.create(getProject()).getOutputLocation().toString();
+    	
 		if (kind == IncrementalProjectBuilder.FULL_BUILD)
 		{
 			fullBuild(monitor);
@@ -77,7 +81,9 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 
 	public boolean visit(IResource resource) throws CoreException
 	{
-		if ("jj".equals(resource.getFullPath().getFileExtension()))
+		IPath path = resource.getFullPath();
+		
+		if (!path.toString().startsWith(buildRoot) && "jj".equals(path.getFileExtension()))
 			buildJJFile(resource);
 
 		return true;
@@ -90,7 +96,6 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		FileWriter writer;
 		HashSet before;
 		
-
 		try
 		{
 			destination = findOrCreateGeneratedSourceDirectory(resource);
@@ -224,11 +229,15 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			{
 				System.out.println(line);
 				int comma = line.indexOf(',');
-				int lineNumber = Integer.parseInt(line.substring(12, comma));
+				int space = line.lastIndexOf(' ', comma) + 1;
+				int lineNumber = Integer.parseInt(line.substring(space, comma));
 				String message = line.substring(line.indexOf(':', comma) + 2);
 				IMarker marker = resource.createMarker(IMarker.PROBLEM);
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				if(line.startsWith("Warning"))
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+				else
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 				marker.setAttribute(IMarker.MESSAGE, message);
 			}
 			reader.close();
