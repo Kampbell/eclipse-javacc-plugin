@@ -3,7 +3,7 @@
 <plugin
    id="sf.eclipse.javacc"
    name="Sourceforge JavaCC Plug-in"
-   version="1.1.0"
+   version="1.0.0"
    provider-name="Remi Koutcherawy"
    class="sf.eclipse.javacc.JavaccPlugin">
 
