@@ -59,13 +59,12 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 
 	private void fullBuild(IProgressMonitor montior) throws CoreException
 	{
-		System.out.println("JAVACC: Full Build");
+		//TODO: This should really only traverse the 'src' components of the classpath
 		getProject().accept(this);
 	}
 
 	private void incrementalBuild(IProgressMonitor monitor) throws CoreException
 	{
-		System.out.println("JAVACC: Incremental Build");
 		getDelta(getProject()).accept(this);
 	}
 
@@ -168,7 +167,6 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		if (previousFileList != null)
 		{
 			String base = destination.getLocation().toString();
-			System.out.println("JAVACC: Deleting : " + previousFileList);
 			StringTokenizer names = new StringTokenizer(previousFileList, ",");
 			while (names.hasMoreElements())
 			{
@@ -255,7 +253,6 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 				list.append(",");
 			list.append(file.getName());
 		}
-		System.out.println("JAVACC: Recording Build: " + list.toString());
 		resource.setPersistentProperty(kPreviousRunFiles, list.toString());
 	}
 

@@ -1,0 +1,68 @@
+----------
+1. WARNING in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 28)
+	import org.eclipse.jdt.core.IClasspathEntry;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.eclipse.jdt.core.IClasspathEntry cannot be resolved
+----------
+----------
+2. WARNING in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 29)
+	import org.eclipse.jdt.core.JavaCore;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.eclipse.jdt.core.JavaCore cannot be resolved
+----------
+----------
+3. WARNING in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 30)
+	import org.eclipse.jdt.core.IJavaProject;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.eclipse.jdt.core.IJavaProject cannot be resolved
+----------
+----------
+4. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 123)
+	IJavaProject javaProject = JavaCore.create(getProject());
+	^^^^^^^^^^^^
+IJavaProject cannot be resolved or is not a type
+----------
+5. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 123)
+	IJavaProject javaProject = JavaCore.create(getProject());
+	                           ^^^^^^^^
+JavaCore cannot be resolved
+----------
+6. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 124)
+	IClasspathEntry[] classpath = javaProject.getRawClasspath();
+	^^^^^^^^^^^^^^^^^
+IClasspathEntry[] cannot be resolved or is not a type
+----------
+7. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 128)
+	exists = (classpath[ct].getEntryKind() == IClasspathEntry.CPE_SOURCE &&
+	                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+IClasspathEntry cannot be resolved
+----------
+8. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 133)
+	IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length+1];
+	^^^^^^^^^^^^^^^^^
+IClasspathEntry[] cannot be resolved or is not a type
+----------
+9. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 133)
+	IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length+1];
+	                                     ^^^^^^^^^^^^^^^
+IClasspathEntry cannot be resolved or is not a type
+----------
+10. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\Builder.java (at line 135)
+	newClasspath[classpath.length] = JavaCore.newSourceEntry(generatedSrcPath);
+	                                 ^^^^^^^^
+JavaCore cannot be resolved
+----------
+----------
+11. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\JavaccPlugin.java (at line 11)
+	public class JavaccPlugin extends AbstractUIPlugin {
+	                                  ^^^^^^^^^^^^^^^^
+AbstractUIPlugin cannot be resolved or is not a valid superclass
+----------
+12. ERROR in C:\EclipseWorkspace\com.subx.eclipse.javacc\src\com\subx\eclipse\javacc\JavaccPlugin.java (at line 21)
+	super(descriptor);
+	^^^^^^^^^^^^^^^^^
+The constructor java.lang.Object(org.eclipse.core.runtime.IPluginDescriptor) is undefined
+----------
+Compiled 338 lines in 470 ms (719.1 lines/s)
+12 problems (9 errors, 3 warnings)
+3 .class files generated
