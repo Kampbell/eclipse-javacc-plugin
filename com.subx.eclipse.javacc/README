@@ -8,6 +8,11 @@ LICENSE:  This software is distributed under the
 Lesser/Library GNU Public License.  The contents of the javacc.jar
 are subject to the JavaCC license.  Please see the file JavaCCLicense.txt
 
+New in this version:
+
+1) Modified to build with Eclipse 3.0
+2) Modified to use JavaCC 3.2
+3) Now includes the javacc.jar (subject to terms outlined in JavaCCLicense.txt)
 
 TO INSTALL:
 
