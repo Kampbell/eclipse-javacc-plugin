@@ -44,11 +44,11 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	private static final QualifiedName kPreviousRunFiles = new QualifiedName("com.subx.eclipse.javacc", "Builder.PreviousFiles");
 
 	String buildRoot;
-	
+
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
 	{
-    	buildRoot = JavaCore.create(getProject()).getOutputLocation().toString();
-    	
+		buildRoot = JavaCore.create(getProject()).getOutputLocation().toString();
+
 		if (kind == IncrementalProjectBuilder.FULL_BUILD)
 		{
 			fullBuild(monitor);
@@ -70,7 +70,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	private void incrementalBuild(IProgressMonitor monitor) throws CoreException
 	{
 		IResourceDelta delta = getDelta(getProject());
-		if(delta != null)
+		if (delta != null)
 			delta.accept(this);
 	}
 
@@ -82,7 +82,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	public boolean visit(IResource resource) throws CoreException
 	{
 		IPath path = resource.getFullPath();
-		
+
 		if (!path.toString().startsWith(buildRoot) && "jj".equals(path.getFileExtension()))
 			buildJJFile(resource);
 
@@ -95,7 +95,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		File directory;
 		FileWriter writer;
 		HashSet before;
-		
+
 		try
 		{
 			destination = findOrCreateGeneratedSourceDirectory(resource);
@@ -117,10 +117,10 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	private IContainer findOrCreateGeneratedSourceDirectory(IResource resource) throws CoreException
 	{
 		IPath resourcePath = resource.getParent().getFullPath();
-		IPath generatedSrcPath = getProject().getFullPath().append("_generated"); 
+		IPath generatedSrcPath = getProject().getFullPath().append("_generated");
 		IPath destinationPath = generatedSrcPath.removeFirstSegments(1).append(resourcePath.removeFirstSegments(2)).makeRelative();
-		IContainer destination = (IContainer)(getProject().findMember(destinationPath));
-		if(destination == null)
+		IContainer destination = (IContainer) (getProject().findMember(destinationPath));
+		if (destination == null)
 		{
 			File destinationDirectory = new File(getProject().getLocation().toString() + "/" + destinationPath);
 			destinationDirectory.mkdirs();
@@ -130,15 +130,14 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 				IJavaProject javaProject = JavaCore.create(getProject());
 				IClasspathEntry[] classpath = javaProject.getRawClasspath();
 				boolean exists = false;
-				for(int ct = 0; ct < classpath.length && !exists; ct++)
+				for (int ct = 0; ct < classpath.length && !exists; ct++)
 				{
-					exists = (classpath[ct].getEntryKind() == IClasspathEntry.CPE_SOURCE &&
-							  classpath[ct].getPath().equals(generatedSrcPath));
+					exists = (classpath[ct].getEntryKind() == IClasspathEntry.CPE_SOURCE && classpath[ct].getPath().equals(generatedSrcPath));
 				}
-				if(!exists)
+				if (!exists)
 				{
-					IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length+1];
-					System.arraycopy(classpath,0,newClasspath,0,classpath.length);
+					IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length + 1];
+					System.arraycopy(classpath, 0, newClasspath, 0, classpath.length);
 					newClasspath[classpath.length] = JavaCore.newSourceEntry(generatedSrcPath);
 					javaProject.setRawClasspath(newClasspath, null);
 				}
@@ -149,15 +148,15 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			}
 
 			getProject().refreshLocal(IContainer.DEPTH_INFINITE, null);
-			destination = (IContainer)(getProject().findMember(destinationPath));
+			destination = (IContainer) (getProject().findMember(destinationPath));
 			getProject().findMember("_generated").accept(kDerivedTagger);
 		}
-		
+
 		return destination;
 	}
-	
+
 	private static final DerivedResourceTagger kDerivedTagger = new DerivedResourceTagger();
-	
+
 	private static class DerivedResourceTagger implements IResourceVisitor
 	{
 		public boolean visit(IResource resource) throws CoreException
@@ -166,7 +165,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			return true;
 		}
 	}
-	
+
 	private void cleanupPreviousBuild(IResource resource, IContainer destination) throws IOException, CoreException
 	{
 		String previousFileList = resource.getPersistentProperty(kPreviousRunFiles);
@@ -198,7 +197,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	private void doBuild(IResource resource, IContainer destination) throws IOException
 	{
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		PrintStream errorStream, oldErrorStream = System.err;
+		PrintStream errorStream, oldErrorStream = System.err, oldOutputStream = System.out;
 		String[] args = new String[2];
 		args[0] = "-OUTPUT_DIRECTORY=" + destination.getLocation();
 		args[1] = resource.getLocation().toString();
@@ -206,6 +205,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		{
 			errorStream = new PrintStream(outputStream);
 			System.setErr(errorStream);
+			System.setOut(errorStream);
 			Main.mainProgram(args);
 			errorStream.close();
 		}
@@ -216,6 +216,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		finally
 		{
 			System.setErr(oldErrorStream);
+			System.setOut(oldOutputStream);
 		}
 
 		try
@@ -223,22 +224,35 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			String line;
-			
+
 			resource.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
 			while ((line = reader.readLine()) != null)
 			{
-				System.out.println(line);
-				int comma = line.indexOf(',');
-				int space = line.lastIndexOf(' ', comma) + 1;
-				int lineNumber = Integer.parseInt(line.substring(space, comma));
-				String message = line.substring(line.indexOf(':', comma) + 2);
-				IMarker marker = resource.createMarker(IMarker.PROBLEM);
-				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				if(line.startsWith("Warning"))
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-				else
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-				marker.setAttribute(IMarker.MESSAGE, message);
+				//System.out.println("LINE:" + line);
+				if (line.startsWith("Error:") || line.startsWith("COM.sun.labs.javacc.ParseException") || line.startsWith("Warning:"))
+				{
+					if (line.startsWith("Warning:"))
+					{
+						line += " " + reader.readLine().trim();
+						line += " " + reader.readLine().trim();
+						line += " " + reader.readLine().trim();
+					}
+					int comma = 0;
+
+					while ((comma = line.indexOf(',', comma + 1)) > 0)
+					{
+						int space = line.lastIndexOf(' ', comma) + 1;
+						int lineNumber = Integer.parseInt(line.substring(space, comma));
+						IMarker marker = resource.createMarker(IMarker.PROBLEM);
+						marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+						if (line.startsWith("Warning"))
+							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+						else
+							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+						marker.setAttribute(IMarker.MESSAGE, line);
+						marker.setAttribute(IMarker.LOCATION, line);
+					}
+				}
 			}
 			reader.close();
 			inputStream.close();
@@ -255,7 +269,6 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		StringBuffer list = new StringBuffer();
 		HashSet generated = getDirectoryFiles(resource, destination);
 		generated.removeAll(before);
-
 		iterator = generated.iterator();
 		while (iterator.hasNext())
 		{
@@ -270,7 +283,6 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	private void setResourceFlags(IResource resource, IContainer destination) throws CoreException
 	{
 		String previousFileList = resource.getPersistentProperty(kPreviousRunFiles);
-
 		if (previousFileList != null)
 		{
 			StringTokenizer names = new StringTokenizer(previousFileList, ",");

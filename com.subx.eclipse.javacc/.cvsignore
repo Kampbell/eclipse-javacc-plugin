@@ -2,3 +2,4 @@ bin
 com.subx.eclipse.javacc_1.0.0
 com.subx.eclipse.javacc*.zip
 JavaCC.zip
+*.java
