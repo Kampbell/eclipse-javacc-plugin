@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -18,8 +19,9 @@ public class JavaccPlugin extends AbstractUIPlugin
 	/**
 	 * The constructor.
 	 */
-	public JavaccPlugin()
+	public JavaccPlugin(IPluginDescriptor descriptor)
 	{
+		super(descriptor);
 		plugin = this;
 		try
 		{
