@@ -1,11 +1,11 @@
 package com.subx.eclipse.javacc;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashSet;
@@ -14,15 +14,20 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.IJavaProject;
 
 import COM.sun.labs.javacc.Main;
 
@@ -34,7 +39,7 @@ import COM.sun.labs.javacc.Main;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Builder extends IncrementalProjectBuilder implements IResourceDeltaVisitor
+public class Builder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor
 {
 	private static final QualifiedName kPreviousRunFiles = new QualifiedName("com.subx.eclipse.javacc", "Builder.PreviousFiles");
 
@@ -55,6 +60,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 	private void fullBuild(IProgressMonitor montior) throws CoreException
 	{
 		System.out.println("JAVACC: Full Build");
+		getProject().accept(this);
 	}
 
 	private void incrementalBuild(IProgressMonitor monitor) throws CoreException
@@ -65,46 +71,103 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 
 	public boolean visit(IResourceDelta delta) throws CoreException
 	{
-		IResource resource = delta.getResource();
+		return visit(delta.getResource());
+	}
 
+	public boolean visit(IResource resource) throws CoreException
+	{
 		if ("jj".equals(resource.getFullPath().getFileExtension()))
 			buildJJFile(resource);
 
 		return true;
 	}
 
-	int count = 0;
-
 	private boolean buildJJFile(IResource resource)
 	{
-		IContainer parent = resource.getParent();
+		IContainer destination;
 		File directory;
 		FileWriter writer;
 		HashSet before;
+		
 
 		try
 		{
-			cleanupPreviousBuild(resource);
-			before = getDirectoryFiles(resource);
-			doBuild(resource);
-			recordBuildChanges(resource, before);
-			resource.getParent().refreshLocal(IResource.DEPTH_ONE, null);
-			setResourceFlags(resource);
+			destination = findOrCreateGeneratedSourceDirectory(resource);
+			cleanupPreviousBuild(resource, destination);
+			before = getDirectoryFiles(resource, destination);
+			doBuild(resource, destination);
+			recordBuildChanges(resource, destination, before);
+			destination.refreshLocal(IResource.DEPTH_ONE, null);
+			setResourceFlags(resource, destination);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+
 		return true;
 	}
 
-	private void cleanupPreviousBuild(IResource resource) throws IOException, CoreException
+	private IContainer findOrCreateGeneratedSourceDirectory(IResource resource) throws CoreException
+	{
+		IPath resourcePath = resource.getParent().getFullPath();
+		IPath generatedSrcPath = getProject().getFullPath().append("_generated"); 
+		IPath destinationPath = generatedSrcPath.removeFirstSegments(1).append(resourcePath.removeFirstSegments(2)).makeRelative();
+		IContainer destination = (IContainer)(getProject().findMember(destinationPath));
+		if(destination == null)
+		{
+			File destinationDirectory = new File(getProject().getLocation().toString() + "/" + destinationPath);
+			destinationDirectory.mkdirs();
+
+			try
+			{
+				IJavaProject javaProject = JavaCore.create(getProject());
+				IClasspathEntry[] classpath = javaProject.getRawClasspath();
+				boolean exists = false;
+				for(int ct = 0; ct < classpath.length && !exists; ct++)
+				{
+					exists = (classpath[ct].getEntryKind() == IClasspathEntry.CPE_SOURCE &&
+							  classpath[ct].getPath().equals(generatedSrcPath));
+				}
+				if(!exists)
+				{
+					IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length+1];
+					System.arraycopy(classpath,0,newClasspath,0,classpath.length);
+					newClasspath[classpath.length] = JavaCore.newSourceEntry(generatedSrcPath);
+					javaProject.setRawClasspath(newClasspath, null);
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			getProject().refreshLocal(IContainer.DEPTH_INFINITE, null);
+			destination = (IContainer)(getProject().findMember(destinationPath));
+			getProject().findMember("_generated").accept(kDerivedTagger);
+		}
+		
+		return destination;
+	}
+	
+	private static final DerivedResourceTagger kDerivedTagger = new DerivedResourceTagger();
+	
+	private static class DerivedResourceTagger implements IResourceVisitor
+	{
+		public boolean visit(IResource resource) throws CoreException
+		{
+			resource.setDerived(true);
+			return true;
+		}
+	}
+	
+	private void cleanupPreviousBuild(IResource resource, IContainer destination) throws IOException, CoreException
 	{
 		String previousFileList = resource.getPersistentProperty(kPreviousRunFiles);
 
 		if (previousFileList != null)
 		{
-			String base = resource.getParent().getLocation().toString();
+			String base = destination.getLocation().toString();
 			System.out.println("JAVACC: Deleting : " + previousFileList);
 			StringTokenizer names = new StringTokenizer(previousFileList, ",");
 			while (names.hasMoreElements())
@@ -116,9 +179,9 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		}
 	}
 
-	private HashSet getDirectoryFiles(IResource resource) throws IOException
+	private HashSet getDirectoryFiles(IResource resource, IContainer destination) throws IOException
 	{
-		File[] files = new File(resource.getParent().getLocation().toString()).listFiles();
+		File[] files = new File(destination.getLocation().toString()).listFiles();
 		HashSet set = new HashSet();
 
 		for (int ct = 0; ct < files.length; ct++)
@@ -127,12 +190,12 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		return set;
 	}
 
-	private void doBuild(IResource resource) throws IOException
+	private void doBuild(IResource resource, IContainer destination) throws IOException
 	{
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintStream errorStream, oldErrorStream = System.err;
 		String[] args = new String[2];
-		args[0] = "-OUTPUT_DIRECTORY=" + resource.getParent().getLocation();
+		args[0] = "-OUTPUT_DIRECTORY=" + destination.getLocation();
 		args[1] = resource.getLocation().toString();
 		try
 		{
@@ -159,6 +222,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			resource.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
 			while ((line = reader.readLine()) != null)
 			{
+				System.out.println(line);
 				int comma = line.indexOf(',');
 				int lineNumber = Integer.parseInt(line.substring(12, comma));
 				String message = line.substring(line.indexOf(':', comma) + 2);
@@ -176,11 +240,11 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		}
 	}
 
-	private void recordBuildChanges(IResource resource, HashSet before) throws IOException, CoreException
+	private void recordBuildChanges(IResource resource, IContainer destination, HashSet before) throws IOException, CoreException
 	{
 		Iterator iterator;
 		StringBuffer list = new StringBuffer();
-		HashSet generated = getDirectoryFiles(resource);
+		HashSet generated = getDirectoryFiles(resource, destination);
 		generated.removeAll(before);
 
 		iterator = generated.iterator();
@@ -195,9 +259,8 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 		resource.setPersistentProperty(kPreviousRunFiles, list.toString());
 	}
 
-	private void setResourceFlags(IResource resource) throws CoreException
+	private void setResourceFlags(IResource resource, IContainer destination) throws CoreException
 	{
-		IContainer parent = resource.getParent();
 		String previousFileList = resource.getPersistentProperty(kPreviousRunFiles);
 
 		if (previousFileList != null)
@@ -205,7 +268,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			StringTokenizer names = new StringTokenizer(previousFileList, ",");
 			while (names.hasMoreElements())
 			{
-				IResource derivedResource = parent.findMember(names.nextElement().toString());
+				IResource derivedResource = destination.findMember(names.nextElement().toString());
 				derivedResource.setReadOnly(true);
 				derivedResource.setDerived(true);
 			}
