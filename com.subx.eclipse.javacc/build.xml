@@ -63,6 +63,7 @@
 
   <target name="prepare.dist" depends="jar.binary,jar.src">
     <copy todir="${dist.folder}" file="plugin.xml"/>
+    <copy todir="${dist.folder}" file="README"/>
   </target>
 
   <target name="dist" depends="prepare.dist">

@@ -1,0 +1,63 @@
+
+README for the javacc eclipse plugin v0.8.0
+
+NOTE: THIS IS A VERY EARLY RELEASE.  IT ISN'T FEATURE COMPLETE
+AND HAS KNOWN ISSUES.  USE IT AT YOUR OWN RISK.
+
+LICENSE:  This software is distributed under the 
+Lesser/Library GNU Public License.  
+
+
+TO INSTALL:
+
+1) Unzip the plugin distribution zip file into your 
+   Eclipse installation's plugin directory.  You should
+   end up with a plugin directory called 
+   com.subx.eclipse.javacc_<version>.
+
+2) Due to licensing restrictions, you will need to download 
+   the JavaCC library yourself and manually put it into the
+   plugin directory as follows:
+
+	a) Goto http://www.webgain.com/products/java_cc/
+	b) Follow instructions to download and unpack the JavaCC tool.
+	c) Copy the JavaCC.zip file from the JavaCC install directory:
+		<javacc_install>/bin/lib into the unpacked plugin directory.
+		
+3) At this stage of development, you will manually need to edit the 
+   project files of projects you wish to use the javacc-plugin with.
+   	
+   	a) quit Eclipse
+   	b) open the .project file that lives in your project's directory
+   	c) insert the following XML at the beginning of the <buildSpec> tag
+   	   children;
+   	   
+   	   <buildSpec>
+   			<buildCommand>
+			    <name>com.subx.eclipse.javacc.Builder</name>
+			    <arguments>
+			    </arguments>
+		    </buildCommand>
+		    
+		    <!-- other buildCommand entries here -->
+		    
+	   </buildSpec>
+	   
+4) Create .jj files in your project's source tree.  In general, 
+   I create and maintain the jj files in the package in which the 
+   resulting parser is generated.  The plugin will, once the .jj file
+   is discovered (at save time), create a new source folder called 
+   _generated.  Files in this folder will be the results of the generation
+   of the parser.  You should not maintain the _gnerated folder in your
+   source control system as it is entirely generated from the .jj file. 
+   Every time you change and save the .jj file, the parser will be regenerated
+   and recompiled.
+   
+NOTES:
+	a) This version does not support jjtree and all of the AST stuff - only
+	   straight .jj grammars
+	b) The error reporting is not always wired up properly.  Some errors get 
+	   'dropped' and don't show up as errors in the task list, etc.
+	c) Sometimes things get wildly out of sync and you need to either restart
+	   Eclipse, Refresh the project and/or Rebuild the project. 
+
