@@ -1,11 +1,12 @@
 
-README for the javacc eclipse plugin v0.8.0
+README for the javacc eclipse plugin v0.9.5
 
 NOTE: THIS IS A VERY EARLY RELEASE.  IT ISN'T FEATURE COMPLETE
 AND HAS KNOWN ISSUES.  USE IT AT YOUR OWN RISK.
 
 LICENSE:  This software is distributed under the 
-Lesser/Library GNU Public License.  
+Lesser/Library GNU Public License.  The contents of the javacc.jar
+are subject to the JavaCC license.  Please see the file JavaCCLicense.txt
 
 
 TO INSTALL:
@@ -15,16 +16,7 @@ TO INSTALL:
    end up with a plugin directory called 
    com.subx.eclipse.javacc_<version>.
 
-2) Due to licensing restrictions, you will need to download 
-   the JavaCC library yourself and manually put it into the
-   plugin directory as follows:
-
-	a) Goto http://www.webgain.com/products/java_cc/
-	b) Follow instructions to download and unpack the JavaCC tool.
-	c) Copy the JavaCC.zip file from the JavaCC install directory:
-		<javacc_install>/bin/lib into the unpacked plugin directory.
-		
-3) At this stage of development, you will manually need to edit the 
+2) At this stage of development, you will manually need to edit the 
    project files of projects you wish to use the javacc-plugin with.
    	
    	a) quit Eclipse

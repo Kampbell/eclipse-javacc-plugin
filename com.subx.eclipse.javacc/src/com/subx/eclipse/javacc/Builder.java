@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -23,13 +22,13 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.IJavaProject;
-
-import COM.sun.labs.javacc.Main;
+import org.eclipse.jdt.core.JavaCore;
+import org.javacc.parser.Main;
 
 /**
  * @author Peter M. Murray
@@ -229,7 +228,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 			while ((line = reader.readLine()) != null)
 			{
 				//System.out.println("LINE:" + line);
-				if (line.startsWith("Error:") || line.startsWith("COM.sun.labs.javacc.ParseException") || line.startsWith("Warning:"))
+				if (line.startsWith("Error:") || line.startsWith("org.javacc.parser.ParseException") || line.startsWith("Warning:"))
 				{
 					if (line.startsWith("Warning:"))
 					{

@@ -2,13 +2,15 @@
 <plugin
    id="com.subx.eclipse.javacc"
    name="Javacc Plug-in"
-   version="0.8.1"
+   version="0.9.5"
    provider-name="s u b x, i n c."
    class="com.subx.eclipse.javacc.JavaccPlugin">
 
    <runtime>
       <library name="javacc.jar"/>
-      <library name="JavaCC.zip"/>
+      <library name="eclipse-javacc.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
