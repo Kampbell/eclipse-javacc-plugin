@@ -2,10 +2,10 @@
 <classpath>
     <classpathentry kind="src" path="src/"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
-    <classpathentry kind="lib" path="lib-javacc.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.runtime_2.0.1/runtime.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.resources_2.0.1/resources.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.jdt.core_2.0.1/jdtcore.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ui_2.0.1/workbench.jar"/>
+    <classpathentry kind="lib" path="JavaCC.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

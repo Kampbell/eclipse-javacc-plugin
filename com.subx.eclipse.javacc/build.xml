@@ -11,7 +11,7 @@
   
   <path id="project.class.path">
     <fileset dir=".">
-      <include name="lib-javacc.jar"/>
+      <include name="JavaCC.zip"/>
     </fileset>
     <fileset dir="${eclipse.home}/plugins">
       <include name="org.eclipse.core.runtime_*/runtime.jar"/>
@@ -63,7 +63,6 @@
 
   <target name="prepare.dist" depends="jar.binary,jar.src">
     <copy todir="${dist.folder}" file="plugin.xml"/>
-    <copy todir="${dist.folder}" file="lib-javacc.jar"/>
   </target>
 
   <target name="dist" depends="prepare.dist">

@@ -8,7 +8,7 @@
 
    <runtime>
       <library name="javacc.jar"/>
-      <library name="lib-javacc.jar"/>
+      <library name="JavaCC.zip"/>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
