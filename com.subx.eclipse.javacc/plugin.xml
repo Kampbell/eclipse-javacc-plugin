@@ -7,7 +7,7 @@
    class="com.subx.eclipse.javacc.JavaccPlugin">
 
    <runtime>
-      <library name="subx-eclipse-javacc.jar"/>
+      <library name="javacc.jar"/>
       <library name="lib-javacc.jar"/>
    </runtime>
    <requires>

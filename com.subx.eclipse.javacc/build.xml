@@ -1,115 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="com.subx.eclipse.javacc" default="build.jars" basedir=".">
+  
+  <property name="eclipse.home" value="/eclipse"/>
 
-	<property name="bootclasspath" value=""/>
-	<property name="ws" value="win32"/>
-	<property name="os" value="win32"/>
-	<property name="arch" value="x86"/>
+  <property name="short.name" value="javacc"/>
 
-	<target name="init" depends="properties">
-		<property name="plugin" value="com.subx.eclipse.javacc"/>
-		<property name="version.suffix" value="_1.0.0"/>
-		<property name="full.name" value="${plugin}${version.suffix}"/>
-		<property name="temp.folder" value="${basedir}/temp.folder"/>
-		<property name="plugin.destination" value="${basedir}"/>
-		<property name="build.result.folder" value="${basedir}"/>
-	</target>
+  <property name="ws" value="win32"/>
+  <property name="os" value="win32"/>
+  <property name="arch" value="x86"/>
+  
+  <path id="project.class.path">
+    <fileset dir=".">
+      <include name="lib-javacc.jar"/>
+    </fileset>
+    <fileset dir="${eclipse.home}/plugins">
+      <include name="org.eclipse.core.runtime_*/runtime.jar"/>
+      <include name="org.eclipse.core.resources_*/resources.jar"/>
+      <include name="org.eclipse.jdt.core_*/jdtcore.jar"/>
+      <include name="org.eclipse.ui_*/workbench.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="plugin" value="com.subx.eclipse.javacc"/>
+  <property name="version.suffix" value="_1.0.0"/>
+  <property name="full.name" value="${plugin}${version.suffix}"/>
+  <property name="temp.folder" value="${basedir}/temp.folder"/>
+  <property name="plugin.destination" value="${basedir}"/>
+  <property name="dist.folder" value="${temp.folder}/${full.name}"/>
+  
+  <target name="_compiler" if="eclipse.running">
+    <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+  </target>
+  
+  <target name="_init" depends="_compiler">
+    <mkdir dir="${temp.folder}"/>
+    <mkdir dir="${temp.folder}/${full.name}"/>
+  </target>
 
-	<target name="properties" if="eclipse.running">
-		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-	</target>
+  <target name="clean">
+    <delete dir="${temp.folder}"/>
+  </target>
 
-	<target name="build.update.jar" depends="init">
-		<delete dir="${temp.folder}"/>
-		<mkdir dir="${temp.folder}"/>
-		<antcall target="build.jars"/>
-		<antcall target="gather.bin.parts">
-			<param name="destination.temp.folder" value="${temp.folder}/"/>
-		</antcall>
-		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>
-		<delete dir="${temp.folder}"/>
-	</target>
+  <target name="compile" depends="_init">
+    <property name="destdir" value="${temp.folder}/javacc.jar.bin"/>
+    <delete dir="${destdir}"/>
+    <mkdir dir="${destdir}"/>
+    <javac destdir="${destdir}" verbose="true" debug="on" classpathref="project.class.path">
+      <src path="src/"/>
+    </javac>
+    <copy todir="${destdir}">
+      <fileset dir="src/" excludes="**/*.java"/>
+    </copy>
+  </target>
+  
+  <target name="jar.binary" depends="compile">
+    <jar jarfile="${dist.folder}/${short.name}.jar" basedir="${destdir}"/>
+  </target>
 
-	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/${full.name}"/>
-		<copy file="${build.result.folder}/javacc.jar" todir="${destination.temp.folder}/${full.name}"/>
-	</target>
+  <target name="jar.src" depends="_init">
+    <zip zipfile="${dist.folder}/${short.name}src.zip" basedir="src/"/>
+  </target>
 
-	<target name="javacc.jar" depends="init" unless="javacc.jar">
-		<property name="destdir" value="${temp.folder}/javacc.jar.bin"/>
-		<delete dir="${temp.folder}/javacc.jar.bin"/>
-		<mkdir dir="${temp.folder}/javacc.jar.bin"/>
-		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/javacc.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="C:/Eclipse/plugins/org.eclipse.core.runtime_2.0.0/runtime.jar;../org.eclipse.jdt.core/bin;lib-javacc.jar;../org.eclipse.jdt.core/jdtcore.jar;C:/Eclipse/plugins/org.eclipse.core.resources_2.0.0/bin;C:/Eclipse/plugins/org.eclipse.swt.win32_2.0.0/ws/${ws}/swt.jar;../org.eclipse.ui/workbench.jar;C:/Eclipse/plugins/org.eclipse.core.boot_2.0.0/bin;C:/Eclipse/plugins/org.eclipse.ui.win32_2.0.0/workbench.jar;C:/Eclipse/plugins/org.eclipse.swt_2.0.0/bin;C:/Eclipse/plugins/org.eclipse.ui.win32_2.0.0/workbenchwin32.jar;../org.eclipse.ui/bin;C:/Eclipse/plugins/org.eclipse.core.resources_2.0.0/resources.jar;C:/Eclipse/plugins/org.eclipse.swt_2.0.0/ws/${ws}/swt.jar;subx-eclipse-javacc.jar;C:/Eclipse/plugins/org.eclipse.core.runtime_2.0.0/bin;C:/Eclipse/plugins/org.eclipse.core.boot_2.0.0/boot.jar;C:/Eclipse/plugins/org.eclipse.core.resources.win32_2.0.0/resources.jar">
-			<src path="src/"/>
-		</javac>
-		<!-- copy necessary resources -->
-		<copy todir="${temp.folder}/javacc.jar.bin">
-			<fileset dir="src/" excludes="**/*.java"/>
-		</copy>
-		<mkdir dir="${build.result.folder}"/>
-		<jar jarfile="${build.result.folder}/javacc.jar" basedir="${temp.folder}/javacc.jar.bin"/>
-		<delete dir="${temp.folder}/javacc.jar.bin"/>
-	</target>
+  <target name="prepare.dist" depends="jar.binary,jar.src">
+    <copy todir="${dist.folder}" file="plugin.xml"/>
+    <copy todir="${dist.folder}" file="lib-javacc.jar"/>
+  </target>
 
-	<target name="javaccsrc.zip" depends="init" unless="javaccsrc.zip">
-		<mkdir dir="${build.result.folder}"/>
-		<zip zipfile="${build.result.folder}/javaccsrc.zip" filesonly="false">
-			<fileset dir="src/" includes="**/*.java"/>
-		</zip>
-	</target>
-
-	<target name="build.jars" depends="init">
-		<available property="javacc.jar" file="${build.result.folder}/javacc.jar"/>
-		<antcall target="javacc.jar"/>
-	</target>
-
-	<target name="build.sources" depends="init">
-		<available property="javaccsrc.zip" file="${build.result.folder}/javaccsrc.zip"/>
-		<antcall target="javaccsrc.zip"/>
-	</target>
-
-	<target name="build.zips" depends="init">
-	</target>
-
-	<target name="gather.sources" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/${full.name}"/>
-		<copy file="${build.result.folder}/javaccsrc.zip" todir="${destination.temp.folder}/${full.name}"/>
-	</target>
-
-	<target name="gather.logs" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/${full.name}"/>
-		<copy file="${temp.folder}/javacc.jar.bin.log" todir="${destination.temp.folder}/${full.name}"/>
-	</target>
-
-	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/javacc.jar"/>
-		<delete file="${build.result.folder}/javaccsrc.zip"/>
-		<delete file="${plugin.destination}/${full.name}.jar"/>
-		<delete file="${plugin.destination}/${full.name}.zip"/>
-		<delete dir="${temp.folder}"/>
-	</target>
-
-	<target name="refresh" depends="init" if="eclipse.running">
-		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
-	</target>
-
-	<target name="zip.plugin" depends="init">
-		<delete dir="${temp.folder}"/>
-		<mkdir dir="${temp.folder}"/>
-		<antcall target="build.jars"/>
-		<antcall target="build.sources"/>
-		<antcall target="gather.bin.parts">
-			<param name="destination.temp.folder" value="${temp.folder}/"/>
-		</antcall>
-		<antcall target="gather.sources">
-			<param name="destination.temp.folder" value="${temp.folder}/"/>
-		</antcall>
-		<delete>
-			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
-		</delete>
-		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
-		<delete dir="${temp.folder}"/>
-	</target>
+  <target name="dist" depends="prepare.dist">
+    <zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" includes="${full.name}/**"/>
+    <delete dir="${temp.folder}"/>
+  </target>
 
 </project>

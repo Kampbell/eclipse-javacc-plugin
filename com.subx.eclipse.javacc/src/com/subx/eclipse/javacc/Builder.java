@@ -65,7 +65,9 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
 
 	private void incrementalBuild(IProgressMonitor monitor) throws CoreException
 	{
-		getDelta(getProject()).accept(this);
+		IResourceDelta delta = getDelta(getProject());
+		if(delta != null)
+			delta.accept(this);
 	}
 
 	public boolean visit(IResourceDelta delta) throws CoreException
