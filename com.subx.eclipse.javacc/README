@@ -21,7 +21,9 @@ TO INSTALL:
    end up with a plugin directory called 
    com.subx.eclipse.javacc_<version>.
 
-2) At this stage of development, you will manually need to edit the 
+2) Remove any previous versions of the javacc plugin in your plugins directory.
+
+3) At this stage of development, you will manually need to edit the 
    project files of projects you wish to use the javacc-plugin with.
    	
    	a) quit Eclipse
