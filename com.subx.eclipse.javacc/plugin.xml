@@ -8,7 +8,7 @@
 
    <runtime>
       <library name="subx-eclipse-javacc.jar"/>
-      <library name="javacc.jar"/>
+      <library name="lib-javacc.jar"/>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
