@@ -438,17 +438,21 @@ public class JJBuilder extends IncrementalProjectBuilder
   }
   
   /**
-   * Look for Errors reported by JavaCC
+   * Look for Errors reported by JavaCC the form is more or less standard
+   * "Error: Line 73, Column 1: Left recursion detected..."
+   * "Warning: Line 6, Column 9: Command line..."
    */
   public static int parseLine(String res){
     int l1=-1, l2=-1;
-    l1 = res.indexOf("line"); //$NON-NLS-1$
-    l2 = res.indexOf("Line"); //$NON-NLS-1$
+    l1 = res.indexOf("Line"); //$NON-NLS-1$
+    l2 = res.indexOf("line"); //$NON-NLS-1$
     if (l1 == -1) l1 = l2;
     int c1=-1, c2=-1;
     c1 = res.indexOf("column"); //$NON-NLS-1$
     c2 = res.indexOf("Column"); //$NON-NLS-1$
     if (c1 == -1) c1 = c2;
+    // if there are "line" and "Line" 
+    // return the number between "Line" and ","
     if (l1 != -1 && c1 != -1)
       return Integer.parseInt(res.substring(l1+5,res.indexOf(","))); //$NON-NLS-1$
     else return -1;
