@@ -2,7 +2,7 @@
 <plugin
    id="com.subx.eclipse.javacc"
    name="Javacc Plug-in"
-   version="1.0.0"
+   version="0.8.0"
    provider-name="s u b x, i n c."
    class="com.subx.eclipse.javacc.JavaccPlugin">
 
