@@ -13,6 +13,18 @@ import java.io.InputStreamReader;
  * GPL Licence www.gnu.org/licenses/gpl.txt
  */
 public class JarLauncher {
+	private static String javaCmd;
+  
+	static{
+		String os= System.getProperty("os.name");
+		if(os!=null){
+			if (os.indexOf("win") >= 0 || os.indexOf("win") >= 0)
+			  javaCmd = "javaw";
+			else
+			  javaCmd = "java";
+		}
+	}
+  
   /**
    * A Thread to get Output from External Process
    */
@@ -63,7 +75,7 @@ public class JarLauncher {
    */
   public static void launchJavaCC(String javaccJarFile, String[] args, String dir) {
     String[] cmd = new String[args.length + 4];
-    cmd[0] = "javaw";
+    cmd[0] = javaCmd;
     cmd[1] = "-classpath";
     cmd[2] = javaccJarFile;
     cmd[3] = "javacc";
@@ -80,7 +92,7 @@ public class JarLauncher {
   */
   public static void launchJJTree(String javaccJarFile, String[] args, String dir) {
     String[] cmd = new String[args.length + 4];
-    cmd[0] = "javaw";
+    cmd[0] = javaCmd;
     cmd[1] = "-classpath";
     cmd[2] = javaccJarFile;
     cmd[3] = "jjtree";
@@ -97,7 +109,7 @@ public class JarLauncher {
    */
   public static void launchJJDoc(String javaccJarFile, String[] args, String dir) {
     String[] cmd = new String[args.length + 4];
-    cmd[0] = "javaw";
+    cmd[0] = javaCmd;
     cmd[1] = "-classpath";
     cmd[2] = javaccJarFile;
     cmd[3] = "jjdoc";

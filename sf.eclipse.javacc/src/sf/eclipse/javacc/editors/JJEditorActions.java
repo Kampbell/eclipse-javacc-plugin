@@ -2,7 +2,6 @@ package sf.eclipse.javacc.editors;
 
 import java.util.LinkedList;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -94,7 +93,7 @@ public class JJEditorActions extends BasicTextEditorActionContributor {
         // Call JJDoc
         JJBuilder.GenDocForJJResource(res);
       	// Refresh Project
-        res.getProject().refreshLocal(IProject.DEPTH_INFINITE, null);
+        res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
       } catch (CoreException e) {
         e.printStackTrace();
       }

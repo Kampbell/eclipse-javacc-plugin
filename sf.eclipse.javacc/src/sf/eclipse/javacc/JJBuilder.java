@@ -126,7 +126,6 @@ public class JJBuilder extends IncrementalProjectBuilder
     if (!(name.endsWith(".jj") || name.endsWith(".jjt"))) //$NON-NLS-1$ //$NON-NLS-2$
       return;
     JJConsole console = JavaccPlugin.getConsole();
-    if (DEBUG) System.out.println("Compile " + res); //$NON-NLS-1$
 
     // Retrieves runtime options
     boolean projectOverride = false;
@@ -244,7 +243,6 @@ public class JJBuilder extends IncrementalProjectBuilder
     if (!(name.endsWith(".jj") || name.endsWith(".jjt"))) //$NON-NLS-1$ //$NON-NLS-2$
       return;
     JJConsole console = JavaccPlugin.getConsole();
-    if (DEBUG) System.out.println("JJDoc " + res); //$NON-NLS-1$
         
     // Retrieves runtime options
     boolean projectOverride = false;
@@ -455,21 +453,19 @@ public class JJBuilder extends IncrementalProjectBuilder
     // return the number between "Line" and ","
     if (l1 != -1 && c1 != -1)
       return Integer.parseInt(res.substring(l1+5,res.indexOf(","))); //$NON-NLS-1$
-    else return -1;
+    return -1;
   }
   
   /**
    * Add a marker to signal an error or a warning
+   * NB. Hover tips are managed by JJSourceViewerConfiguration
    */
-  static void markError(IResource res, String s, int type, int line) {
+  static void markError(IResource res, String msg, int type, int line) {
     try {
-      if (res != null) {
-        IMarker im =
-          res.createMarker("org.eclipse.core.resources.problemmarker"); //$NON-NLS-1$
-        String attNames[] = { "message", "severity", "lineNumber" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        Object attValues[] = { s, new Integer(type), new Integer(line)};
-        im.setAttributes(attNames, attValues);
-      }
+      IMarker im = res.createMarker(IMarker.PROBLEM); 
+      im.setAttribute(IMarker.MESSAGE, msg);
+      im.setAttribute(IMarker.SEVERITY, new Integer(type));
+      im.setAttribute(IMarker.LINE_NUMBER, new Integer(line));
     } catch (CoreException ex) {
       System.err.println(JavaccPlugin.getResourceString("JJBuilder.Exception_setting_marker") + ex); //$NON-NLS-1$
       ex.printStackTrace();

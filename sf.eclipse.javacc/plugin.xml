@@ -83,6 +83,12 @@
       </page>
 <!-- Properties for Project -->
       <page
+            objectClass="org.eclipse.core.resources.IProject"
+            name="JavaCC options"
+            class="sf.eclipse.javacc.options.JJPropertyPage"
+            id="sf.eclipse.javacc.options.JJPropertyPage">
+      </page>
+      <page
             objectClass="org.eclipse.jdt.core.IJavaProject"
             name="JavaCC options"
             class="sf.eclipse.javacc.options.JJPropertyPage"

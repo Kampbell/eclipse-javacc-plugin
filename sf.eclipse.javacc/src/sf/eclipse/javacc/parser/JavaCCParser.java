@@ -111,7 +111,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         case VOID:
         case IDENTIFIER:
         case LT:
-          ;
           break;
         default:
           break label_1;
@@ -183,7 +182,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case VOID:
       case IDENTIFIER:
       case LT:
-        ;
         break;
       default:
         break label_2;
@@ -211,7 +209,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
           case _IGNORE_CASE:
           case STATIC:
           case IDENTIFIER:
-            ;
             break;
           default:
             break label_3;
@@ -220,7 +217,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         jj_consume_token(RBRACE);
         break;
       default:
-        ;
       }
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -344,7 +340,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
-          ;
           break;
         default:
           break label_4;
@@ -354,14 +349,12 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       }
       break;
     default:
-      ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case SHARP:
       node_descriptor();
       break;
     default:
-      ;
     }
     Block();
   }
@@ -384,7 +377,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case COMMA:
-            ;
             break;
           default:
             break label_5;
@@ -394,14 +386,12 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         }
         break;
       default:
-        ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case SHARP:
         node_descriptor();
         break;
       default:
-        ;
       }
       jj_consume_token(COLON);
       Block();
@@ -452,7 +442,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
             while (true) {
               switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
               case COMMA:
-                ;
                 break;
               default:
                 break label_6;
@@ -469,7 +458,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         }
         break;
       default:
-        ;
       }
       regexpr_kind();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -479,7 +467,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         jj_consume_token(RBRACKET);
         break;
       default:
-        ;
       }
       jj_consume_token(COLON);
       jj_consume_token(LBRACE);
@@ -488,7 +475,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case BIT_OR:
-          ;
           break;
         default:
           break label_7;
@@ -603,7 +589,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Block();
       break;
     default:
-      ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case COLON:
@@ -611,7 +596,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(IDENTIFIER);
       break;
     default:
-      ;
     }
   }
 
@@ -621,7 +605,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case BIT_OR:
-        ;
         break;
       default:
         break label_8;
@@ -640,7 +623,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(RPAREN);
       break;
     default:
-      ;
     }
     label_9:
     while (true) {
@@ -650,10 +632,8 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         node_descriptor();
         break;
       default:
-        ;
       }
-      if (notTailOfExpansionUnit()) {
-        ;
+      if (notTailOfExpansionUnit()) {// 
       } else {
         break label_9;
       }
@@ -668,33 +648,25 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
           emptyLA = false;
       break;
     default:
-      ;
     }
     if (!emptyLA && (getToken(1).kind != RPAREN)) {
       jj_consume_token(COMMA);
           commaAtEnd = true;
-    } else {
-      ;
+    } else {//
     }
     if (getToken(1).kind != RPAREN && getToken(1).kind != LBRACE) {
       expansion_choices();
           emptyLA = false; commaAtEnd = false;
-    } else {
-      ;
-    }
+    } 
     if (!emptyLA && !commaAtEnd && (getToken(1).kind != RPAREN)) {
       jj_consume_token(COMMA);
           commaAtEnd = true;
-    } else {
-      ;
-    }
+    } 
     if (emptyLA || commaAtEnd) {
       jj_consume_token(LBRACE);
       Expression();
       jj_consume_token(RBRACE);
-    } else {
-      ;
-    }
+    } 
   }
 
   static final public void expansion_unit() throws ParseException {
@@ -722,7 +694,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case CATCH:
-          ;
           break;
         default:
           break label_10;
@@ -740,7 +711,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         Block();
         break;
       default:
-        ;
       }
       break;
     default:
@@ -748,9 +718,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         if (jj_2_2(2147483647)) {
           PrimaryExpression();
           jj_consume_token(ASSIGN);
-        } else {
-          ;
-        }
+        } 
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case STRING_LITERAL:
         case LT:
@@ -790,7 +758,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
             }
             break;
           default:
-            ;
           }
           break;
         default:
@@ -817,13 +784,11 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
             jj_consume_token(SHARP);
             break;
           default:
-            ;
           }
           identifier();
           jj_consume_token(COLON);
           break;
         default:
-          ;
         }
         complex_regular_expression_choices();
         jj_consume_token(GT);
@@ -852,7 +817,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case BIT_OR:
-        ;
         break;
       default:
         break label_11;
@@ -872,7 +836,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case LBRACKET:
       case LT:
       case TILDE:
-        ;
         break;
       default:
         break label_12;
@@ -918,7 +881,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         }
         break;
       default:
-        ;
       }
       break;
     default:
@@ -933,7 +895,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(TILDE);
       break;
     default:
-      ;
     }
     jj_consume_token(LBRACKET);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -943,7 +904,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
-          ;
+
           break;
         default:
           break label_13;
@@ -953,7 +914,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       }
       break;
     default:
-      ;
     }
     jj_consume_token(RBRACKET);
   }
@@ -966,7 +926,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       StringLiteral();
       break;
     default:
-      ;
     }
   }
 
@@ -1002,13 +961,11 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         jj_consume_token(GT);
         break;
       default:
-        ;
       }
       node_descriptor_expression();
       jj_consume_token(RPAREN);
       break;
     default:
-      ;
     }
   }
 
@@ -1108,7 +1065,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         jj_consume_token(GT);
         break;
       default:
-        ;
       }
       break;
     default:
@@ -1130,7 +1086,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         jj_consume_token(GT);
         break;
       default:
-        ;
       }
       jj_consume_token(GE);
       break;
@@ -1149,13 +1104,11 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       PackageDeclaration();
       break;
     default:
-      ;
     }
     label_14:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IMPORT:
-        ;
         break;
       default:
         break label_14;
@@ -1171,7 +1124,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case INTERFACE:
       case PUBLIC:
       case SEMICOLON:
-        ;
         break;
       default:
         break label_15;
@@ -1200,7 +1152,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(STAR);
       break;
     default:
-      ;
     }
     jj_consume_token(SEMICOLON);
   }
@@ -1235,7 +1186,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case ABSTRACT:
       case FINAL:
       case PUBLIC:
-        ;
         break;
       default:
         break label_16;
@@ -1273,7 +1223,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         Name();
         break;
       default:
-        ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IMPLEMENTS:
@@ -1281,7 +1230,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         NameList();
         break;
       default:
-        ;
       }
       ClassBody();
     } catch (Throwable jjte000) {
@@ -1346,7 +1294,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case VOLATILE:
       case IDENTIFIER:
       case LBRACE:
-        ;
         break;
       default:
         break label_17;
@@ -1366,7 +1313,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case PROTECTED:
       case PUBLIC:
       case STATIC:
-        ;
         break;
       default:
         break label_18;
@@ -1461,7 +1407,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case PUBLIC:
       case STATIC:
       case SYNCHRONIZED:
-        ;
         break;
       default:
         break label_19;
@@ -1507,7 +1452,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case ABSTRACT:
       case PUBLIC:
-        ;
         break;
       default:
         break label_20;
@@ -1537,7 +1481,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case PROTECTED:
       case PUBLIC:
       case STATIC:
-        ;
         break;
       default:
         break label_21;
@@ -1578,7 +1521,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       NameList();
       break;
     default:
-      ;
     }
     jj_consume_token(LBRACE);
     label_22:
@@ -1618,7 +1560,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case VOID:
       case VOLATILE:
       case IDENTIFIER:
-        ;
         break;
       default:
         break label_22;
@@ -1685,7 +1626,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case STATIC:
       case TRANSIENT:
       case VOLATILE:
-        ;
         break;
       default:
         break label_23;
@@ -1723,7 +1663,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
-        ;
         break;
       default:
         break label_24;
@@ -1742,7 +1681,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       VariableInitializer();
       break;
     default:
-      ;
     }
   }
 
@@ -1752,7 +1690,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case LBRACKET:
-        ;
         break;
       default:
         break label_25;
@@ -1860,8 +1797,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       VariableInitializer();
       label_26:
       while (true) {
-        if (jj_2_15(2)) {
-          ;
+        if (jj_2_15(2)) {//
         } else {
           break label_26;
         }
@@ -1870,14 +1806,12 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       }
       break;
     default:
-      ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case COMMA:
       jj_consume_token(COMMA);
       break;
     default:
-      ;
     }
     jj_consume_token(RBRACE);
   }
@@ -1894,7 +1828,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case PUBLIC:
       case STATIC:
       case SYNCHRONIZED:
-        ;
         break;
       default:
         break label_27;
@@ -1937,7 +1870,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       NameList();
       break;
     default:
-      ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LBRACE:
@@ -1959,7 +1891,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case LBRACKET:
-        ;
         break;
       default:
         break label_28;
@@ -1999,7 +1930,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
-          ;
+
           break;
         default:
           break label_29;
@@ -2009,7 +1940,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       }
       break;
     default:
-      ;
     }
     jj_consume_token(RPAREN);
   }
@@ -2020,7 +1950,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(FINAL);
       break;
     default:
-      ;
     }
     Type();
     VariableDeclaratorId();
@@ -2047,7 +1976,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       }
       break;
     default:
-      ;
     }
     JavaIdentifier();
     FormalParameters();
@@ -2057,14 +1985,11 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       NameList();
       break;
     default:
-      ;
     }
     jj_consume_token(LBRACE);
     if (jj_2_16(2147483647)) {
       ExplicitConstructorInvocation();
-    } else {
-      ;
-    }
+    } 
     label_30:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2119,7 +2044,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case SEMICOLON:
       case INCR:
       case DECR:
-        ;
         break;
       default:
         break label_30;
@@ -2172,9 +2096,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         if (jj_2_17(2)) {
           PrimaryExpression();
           jj_consume_token(DOT);
-        } else {
-          ;
-        }
+        } 
         jj_consume_token(SUPER);
         Arguments();
         jj_consume_token(SEMICOLON);
@@ -2192,7 +2114,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(STATIC);
       break;
     default:
-      ;
     }
     Block();
   }
@@ -2235,7 +2156,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case LBRACKET:
-        ;
         break;
       default:
         break label_31;
@@ -2315,8 +2235,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     JavaIdentifier();
     label_32:
     while (true) {
-      if (jj_2_19(2)) {
-        ;
+      if (jj_2_19(2)) {//
       } else {
         break label_32;
       }
@@ -2331,7 +2250,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
-        ;
         break;
       default:
         break label_33;
@@ -2362,7 +2280,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Expression();
       break;
     default:
-      ;
     }
   }
 
@@ -2415,7 +2332,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       ConditionalExpression();
       break;
     default:
-      ;
     }
   }
 
@@ -2425,7 +2341,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case SC_OR:
-        ;
         break;
       default:
         break label_34;
@@ -2441,7 +2356,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case SC_AND:
-        ;
         break;
       default:
         break label_35;
@@ -2457,7 +2371,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case BIT_OR:
-        ;
         break;
       default:
         break label_36;
@@ -2473,7 +2386,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case XOR:
-        ;
         break;
       default:
         break label_37;
@@ -2489,7 +2401,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case BIT_AND:
-        ;
         break;
       default:
         break label_38;
@@ -2506,7 +2417,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case EQ:
       case NE:
-        ;
         break;
       default:
         break label_39;
@@ -2534,7 +2444,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Type();
       break;
     default:
-      ;
     }
   }
 
@@ -2542,8 +2451,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     ShiftExpression();
     label_40:
     while (true) {
-      if (jj_2_20(2)) {
-        ;
+      if (jj_2_20(2)) {//
       } else {
         break label_40;
       }
@@ -2572,8 +2480,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     AdditiveExpression();
     label_41:
     while (true) {
-      if (jj_2_21(3)) {
-        ;
+      if (jj_2_21(3)) {//
       } else {
         break label_41;
       }
@@ -2589,7 +2496,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PLUS:
       case MINUS:
-        ;
         break;
       default:
         break label_42;
@@ -2617,7 +2523,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case STAR:
       case SLASH:
       case REM:
-        ;
         break;
       default:
         break label_43;
@@ -2872,7 +2777,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       }
       break;
     default:
-      ;
     }
   }
 
@@ -2897,8 +2801,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     PrimaryPrefix();
     label_44:
     while (true) {
-      if (jj_2_27(2)) {
-        ;
+      if (jj_2_27(2)) {//
       } else {
         break label_44;
       }
@@ -3089,7 +2992,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       ArgumentList();
       break;
     default:
-      ;
     }
     jj_consume_token(RPAREN);
   }
@@ -3100,7 +3002,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
-        ;
         break;
       default:
         break label_45;
@@ -3131,7 +3032,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
             ClassBody();
             break;
           default:
-            ;
+  
           }
           break;
         default:
@@ -3157,16 +3058,15 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         jj_consume_token(LBRACKET);
         Expression();
         jj_consume_token(RBRACKET);
-        if (jj_2_32(2)) {
-          ;
+        if (jj_2_32(2)) {//
         } else {
           break label_46;
         }
       }
       label_47:
       while (true) {
-        if (jj_2_33(2)) {
-          ;
+        if (jj_2_33(2)) {//
+
         } else {
           break label_47;
         }
@@ -3182,7 +3082,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
           jj_consume_token(RBRACKET);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case LBRACKET:
-            ;
+  
             break;
           default:
             break label_48;
@@ -3351,7 +3251,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       case SEMICOLON:
       case INCR:
       case DECR:
-        ;
         break;
       default:
         break label_49;
@@ -3436,7 +3335,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       jj_consume_token(FINAL);
       break;
     default:
-      ;
     }
     Type();
     VariableDeclarator();
@@ -3444,7 +3342,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
-        ;
         break;
       default:
         break label_50;
@@ -3541,7 +3438,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         }
         break;
       default:
-        ;
       }
       break;
     default:
@@ -3561,7 +3457,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CASE:
       case _DEFAULT:
-        ;
         break;
       default:
         break label_51;
@@ -3621,7 +3516,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
         case SEMICOLON:
         case INCR:
         case DECR:
-          ;
+
           break;
         default:
           break label_52;
@@ -3661,7 +3556,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Statement();
       break;
     default:
-      ;
     }
   }
 
@@ -3726,7 +3620,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       ForInit();
       break;
     default:
-      ;
     }
     jj_consume_token(SEMICOLON);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -3772,7 +3665,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Expression();
       break;
     default:
-      ;
     }
     jj_consume_token(SEMICOLON);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -3814,7 +3706,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       ForUpdate();
       break;
     default:
-      ;
     }
     jj_consume_token(RPAREN);
     Statement();
@@ -3875,7 +3766,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
-        ;
         break;
       default:
         break label_53;
@@ -3908,7 +3798,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       JavaIdentifier();
       break;
     default:
-      ;
     }
     jj_consume_token(SEMICOLON);
   }
@@ -3932,7 +3821,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       JavaIdentifier();
       break;
     default:
-      ;
     }
     jj_consume_token(SEMICOLON);
   }
@@ -3982,7 +3870,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Expression();
       break;
     default:
-      ;
     }
     jj_consume_token(SEMICOLON);
   }
@@ -4008,7 +3895,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CATCH:
-        ;
         break;
       default:
         break label_54;
@@ -4025,7 +3911,6 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
       Block();
       break;
     default:
-      ;
     }
   }
 
@@ -8189,7 +8074,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   static final private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=JavaCCParserTokenManager.getNextToken()).kind);
-    else
+//    else
       return (jj_ntk = jj_nt.kind);
   }
 
@@ -8201,9 +8086,11 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   }
 
   static final public void enable_tracing() {
+      //
   }
 
   static final public void disable_tracing() {
+      //
   }
 
 }

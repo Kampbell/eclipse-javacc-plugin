@@ -1,0 +1,140 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<title>Faq Javacc plugin</title>
+</head>
+
+<body lang="en-US" dir="LTR">
+
+<h1>Frequently asked questions </h1>
+
+<ul>
+    <li><a href="#JJDoc">The option OUTPUT_DIR doesn't work for
+        JJDoc</a></li>
+    <li><a href="#JJFiles_in_bin">*.jj files are copied in bin
+        directory</a> </li>
+    <li><a href="#Packages">Packages are not generated in the
+        correct directory</a></li>
+    <li><a href="#Warnings">JavacCC generated code generates
+        plenty of warnings</a></li>
+</ul>
+
+<p><a name="JJDoc"></a><b>1) The option OUTPUT_DIR doesn't work
+for JJDoc.</b><br>
+This is a bug in JJDOC.<br>
+Try directly from the console :</p>
+
+<p>&gt;jjdoc -OUTPUT_DIRECTORY:doc new_file.jj<br>
+Java Compiler Compiler Version 3.2 (Documentation Generator
+Version 0.1.4)<br>
+(type &quot;jjdoc&quot; with no arguments for help)<br>
+Reading from file new_file.jj . . .<br>
+Grammar documentation generated successfully in new_file.html</p>
+
+<p>The &quot;new_file.html&quot; has not been generated in &quot;doc&quot;
+directory !<br>
+We should have read : &quot;generated successfully in doc/new_file.html&quot;</p>
+
+<p><b>Workaround</b> : you can use the -OUTPUT_FILE option :<br>
+&gt;jjdoc -OUTPUT_FILE:doc/doc.html new_file.jj<br>
+Java Compiler Compiler Version 3.2 (Documentation Generator
+Version 0.1.4)<br>
+(type &quot;jjdoc&quot; with no arguments for help)<br>
+Reading from file new_file.jj . . .<br>
+Grammar documentation generated successfully in doc/doc.html</p>
+
+<p>Unfortunately you now have to specify -OUTPUT_FILE option for
+each file you compile with JJDoc.<br>
+The plugin is ready for the correction; it passes both options
+when invoking JJDoc.</p>
+
+<p><a name="JJFiles_in_bin"></a><b>2) *.jj files are copied in
+bin directory<br>
+</b>It is a feature of Eclipse which copies all files which are
+not *.java in the bin directory.<br>
+You have the choice to make Eclipse copy or not copy theses files.</p>
+
+<p>You can disable copy of .jj and .jjt files with :<br>
+Menu &quot;Window&quot; -&gt; &quot;Preferences&quot;<br>
+Choose &quot;Java&quot; -&gt; &quot;Compiler&quot; then &quot;Build
+path&quot; tab and add in<br>
+Filtered Resources : *.jj,*.jjt</p>
+
+<p><a name="Packages"></a><b>3) Packages are not generated in the
+correct directory<br>
+</b>JJTree has two bugs :</p>
+
+<p>In your Test.jjt file maybe you have something like :<br>
+options {<br>
+OUTPUT_DIRECTORY=&quot;src/foo&quot;; <br>
+}<br>
+PARSER_BEGIN(eg2)<br>
+package foo;<br>
+class eg2 {...</p>
+
+<p>Compiling with JJTree you get a &quot;Fatal Exception&quot;<br>
+JJTree does NOT creates the directory &quot;foo&quot; if it
+doesn't exist.<br>
+(First bug, JJTree doesn't behaves like javacc)<br>
+=&gt; You must create directory &quot;foo&quot; manually.</p>
+
+<p>Now JJTree generates &quot;eg2TreeConstants.java&quot; in the
+directory &quot;foo&quot;.<br>
+But there still are warnings, the files are not generated in the
+correct directory.<br>
+In fact the &quot;test.jj&quot; file is generated WITHOUT the
+&quot;options&quot; part.<br>
+(Second bug, JJTree doesn't keep this options part)<br>
+=&gt; You add &quot;options { OUTPUT_DIRECTORY=&quot;src/foo&quot;;
+}&quot; in the test.jj file.</p>
+
+<p>All right ? Not at all !<br>
+Every time you edit the .jjt file, the .jj file gets corrupted.<br>
+Forget the modifications in .jj file.<br>
+=&gt; You add a command line option: &quot;-OUTPUT_DIRECTORY=src/foo&quot;
+to JavaCC.</p>
+
+<p>OK you set it for the whole project.<br>
+All right ?</p>
+
+<p>There is still a small problem, if you have two grammars in
+two different packages.<br>
+=&gt; uncheck &quot;Project options overrides File options&quot;<br>
+=&gt; set the different options on each .jj file<br>
+=&gt; set also the options on each .jjt file as they have now per
+file options.</p>
+
+<p>All right ?<br>
+OK seems to work... what a mess ;-)</p>
+
+<p><a name="Warnings"></a><b>4) JavacCC generated code generate
+plenty of warnings</b><br>
+You can configure Eclipse not to show them.<br>
+Window-&gt;Preferences-&gt;Java-&gt;Compiler-&gt;Non-static
+access to static members: ignore.</p>
+
+<p>Beside, are they really relevant ?<br>
+I think so, because :<br>
+- Sun says you should avoid using an object to access static
+methods <br>
+see <a
+href="http://java.sun.com/docs/codeconv/html/CodeConventions.doc9.html#587">http://java.sun.com/docs/codeconv/html/CodeConventions.doc9.html#587<br>
+</a>- I found bugs like : <br>
+Integer in = new Integer(0);<br>
+in.parseInt(myString);<br>
+There the programmer expected variable &quot;in&quot; to get the
+value parsed from myString,<br>
+and he always gets 0 in the variable &quot;in&quot;...<br>
+He should have wrote &quot;val = Integer.parseInt(myString);&quot;
+or &quot;in = Integer.getInteger(myString);&quot;<br>
+Maybe writing Integer.parseInt(myStringValue) alone would have
+made clear that the &quot;in&quot; variable was not set.</p>
+
+<p><b>5) Any other bug ?<br>
+</b>Send a mail to <a href="mailto:remi.koutcherawy@wanadoo.fr">remi.koutcherawy@wanadoo.fr</a></p>
+
+<p>&nbsp;</p>
+</body>
+</html>

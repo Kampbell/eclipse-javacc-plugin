@@ -33,6 +33,8 @@ public class JJCodeScanner extends RuleBasedScanner {
   public static final int STRING = SWT.COLOR_BLUE;
   public static final int COMMENT = SWT.COLOR_DARK_GREEN;
   public static final int JDOC_COMMENT = SWT.COLOR_DARK_BLUE;
+  public static final int TOKEN = SWT.COLOR_DARK_YELLOW;
+  public static final int PTOKEN = SWT.COLOR_DARK_MAGENTA;
   public static final int DEFAULT = SWT.COLOR_BLACK;
 
   public static final String[] fgJJkeywords =
@@ -46,6 +48,7 @@ public class JJCodeScanner extends RuleBasedScanner {
       "TOKEN",
       "SPECIAL_TOKEN",
       "MORE",
+      "MULTI",
       "SKIP",
       "TOKEN_MGR_DECLS",
       "EOF",
@@ -158,6 +161,8 @@ public class JJCodeScanner extends RuleBasedScanner {
     Color cSTRING = display.getSystemColor(STRING);
     Color cCOMMENT = display.getSystemColor(COMMENT);
     Color cJDOC_COMMENT = display.getSystemColor(JDOC_COMMENT);
+    Color cTOKEN = display.getSystemColor(TOKEN);
+    Color cPTOKEN = display.getSystemColor(PTOKEN);
     Color cDEFAULT = display.getSystemColor(DEFAULT);
 
     IToken jjkeyword =
@@ -167,6 +172,8 @@ public class JJCodeScanner extends RuleBasedScanner {
     IToken string = new Token(new TextAttribute(cSTRING));
     IToken comment = new Token(new TextAttribute(cCOMMENT));
     IToken jdocComment = new Token(new TextAttribute(cJDOC_COMMENT));
+    IToken token = new Token(new TextAttribute(cTOKEN));
+    IToken ptoken = new Token(new TextAttribute(cPTOKEN));
     IToken other = new Token(new TextAttribute(cDEFAULT));
 
     List rules = new ArrayList();
@@ -179,6 +186,10 @@ public class JJCodeScanner extends RuleBasedScanner {
     // Add rule for strings and character constants.
     rules.add(new SingleLineRule("\"", "\"", string, '\\'));
     rules.add(new SingleLineRule("'", "'", string, '\\'));
+    rules.add(new SingleLineRule("< #", " ", ptoken, '\\'));
+    rules.add(new SingleLineRule("<#", " ", ptoken, '\\'));
+    rules.add(new SingleLineRule("< ", " ", token, '\\'));
+    rules.add(new SingleLineRule("<", " ", token, '\\'));
 
     // Add word rule for JJKeywords and JavaKeywords.
     WordRule wordRule = new WordRule(new JJWordDetector(), other);

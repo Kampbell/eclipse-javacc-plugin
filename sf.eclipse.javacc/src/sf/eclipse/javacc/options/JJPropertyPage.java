@@ -68,7 +68,9 @@ public class JJPropertyPage extends PropertyPage
         isProjectOverride = ("true").equals((project.getPersistentProperty( //$NON-NLS-1$
           QN_PROJECT_OVERRIDE)));
       }
-    } catch (CoreException e) {}
+    } catch (CoreException e) {
+        // Nothing do do, we don't need to bother the user
+    }
     isFile = (res != null && res.getType() == IResource.FILE);
     isJJ = (res != null && isFile && res.getName().endsWith("jj")); //$NON-NLS-1$
     

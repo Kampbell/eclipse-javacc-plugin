@@ -48,7 +48,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * Update the Outline View
    */
   public void update() {
-    Display.getDefault().syncExec(new Runnable() {
+    Display.getDefault().asyncExec(new Runnable() {
       public void run() {
         editor.updateOutlinePage();
       }
@@ -59,5 +59,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
    */
   public void setProgressMonitor(IProgressMonitor monitor) {
+      // Needed by implementing IReconcilingStrategyExtension
+      // Do nothing
   }
 }

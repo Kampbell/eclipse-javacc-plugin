@@ -1,5 +1,9 @@
 package sf.eclipse.javacc.editors;
 
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -12,8 +16,11 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 
 /**
@@ -74,8 +81,7 @@ public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
    * Method declared on SourceViewerConfiguration
    */
   public ITextDoubleClickStrategy getDoubleClickStrategy(
-    ISourceViewer sourceViewer,
-    String contentType) {
+      ISourceViewer sourceViewer, String contentType) {
     doubleClickStrategy = new JJDoubleClickStrategy();
     return doubleClickStrategy;
   }
@@ -122,11 +128,45 @@ public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
     }
     return iRreconciler;
   }
+  
   /**
-   * @return
+   * Annotation hover for error and warning markers 
    */
-  public static JJDoubleClickStrategy getDoubleClickStrategy() {
-    return doubleClickStrategy;
+  static class JJHover implements IAnnotationHover {
+    /*
+     * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
+     */
+    public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
+      String text = null;
+      IAnnotationModel model = sourceViewer.getAnnotationModel();
+      Iterator iter = model.getAnnotationIterator();
+      while (iter.hasNext()) {
+        Object obj = iter.next();
+        // test necessary not to cast DiffRegion objects
+        if (obj instanceof MarkerAnnotation) {
+          MarkerAnnotation annotation = (MarkerAnnotation) obj;
+          IMarker marker = annotation.getMarker();
+          try {
+            Integer line  = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
+            // System.err.println("IMarker.LINE_NUMBER "+line);
+            if (line.intValue() == lineNumber + 1) { // different offsets
+              text = annotation.getText();
+              break;
+            }
+          } catch (CoreException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      // System.err.println("getHoverInfo " + lineNumber);
+      return text;
+    }
   }
 
+  /*
+   * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
+   */
+  public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+    return new JJHover();
+  }
 }

@@ -326,7 +326,9 @@ public abstract class JJAbstractTab extends Composite
     if (res != null)
       try {
         res.setPersistentProperty(qualifiedName,options);
-      } catch (CoreException e) {}
+      } catch (CoreException e) {
+          // Nothing do do, we don't need to bother the user
+      }
     return true;
   }
 

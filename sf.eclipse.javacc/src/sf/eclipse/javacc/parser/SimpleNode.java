@@ -22,9 +22,11 @@ public class SimpleNode implements Node {
   }
 
   public void jjtOpen() {
+      // required from interface Node
   }
 
   public void jjtClose() {
+      // required from interface Node
   }
   
   public void jjtSetParent(Node n) { parent = n; }
