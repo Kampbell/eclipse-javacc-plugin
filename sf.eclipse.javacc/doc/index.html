@@ -1,0 +1,121 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<title>Table of Contents</title>
+</head>
+
+<body>
+
+<h1>JavaCC Eclipse Plugin v1.1 for Eclipse 3.0</h1>
+
+<p>JavaCC plugin is designed to help development of JavaCC
+applications.<br>
+This plugin provides a set of features, including : </p>
+
+<ul>
+    <li><a href="editor.html">Editor with outline and navigation
+        facilities</a></li>
+    <li><a href="newwizard.html">Templates for JavaCC File or
+        JJTree file</a></li>
+    <li><a href="compilation.html">Compilation with JavaCC,
+        JJTree and JJDoc (compatible with all versions, just
+        specify the jar to use)</a></li>
+    <li><a href="options.html">Compilation options for JavaCC,
+        JJTree, JJDoc (for each file or for the whole project)</a></li>
+    <li><a href="console.html">Console showing JavaCC outputs</a></li>
+    <li><a href="editor.html#Errors">JavaCC Errors and warnings
+        reported in Problems tab with links to editor</a>.</li>
+    <li><a href="index.html">Help</a> (this help is available via
+        menu Help -&gt; Help Contents)</li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<p><strong>1) To install unzip &quot;sf.eclipse.javacc.1.1.zip&quot;
+in the &quot;plugins&quot; directory of Eclipse</strong></p>
+
+<p><strong>2) Launch Eclipse</strong></p>
+
+<p><strong>3) Create a new Java Project :</strong><br>
+Menu : &quot;File&quot; -&gt; &quot;New&quot; -&gt; &quot;Project...&quot;-&gt;
+&quot;Java Project&quot;<br>
+For the example create a &quot;TestJavaCC&quot; project.<br>
+Select &quot;Create separate source and output folders&quot; to
+get a &quot;src&quot; folder.</p>
+
+<p><strong>4) Create a new JavaCC file :</strong><br>
+Menu &quot;File&quot; -&gt; &quot;New&quot; -&gt; &quot;Other...&quot;<br>
+Select Wizard &quot;JavaCC&quot; -&gt; &quot;JavaCC Template file&quot;</p>
+
+<p><img src="new_file_jj.png"></p>
+
+<p>Choose the java project you just created &quot;TestJavaCC&quot;
+and &quot;src&quot; as a container for the new JavaCC file.</p>
+
+<p><strong>5) You have now a new JavaCC file :</strong><br>
+To compile <strong>you must indicate where your JavaCC is located</strong>.
+See next step.</p>
+
+<p><img src="editor_file_jj.png"></p>
+
+<p><strong>6) Set Properties for the project :</strong><br>
+Select &quot;<strong>TestJavaCC</strong>&quot; and right clic -&gt;
+&quot;<strong>Properties</strong>&quot;<br>
+<strong>Indicate the path to javacc.jar</strong>. (which is in
+the &quot;bin/lib/&quot; directory of your JavaCC distribution)<br>
+Here I use JavaCC version 3.2 (the plugin works also with JavaCC
+2.1, 3.0, 3.1,).</p>
+
+<p><strong>Warning</strong> : you must set &quot;<strong>OUTPUT_DIRECTORY</strong>&quot;
+= &quot;<strong>src</strong>&quot; in the &quot;JavaCC options&quot;
+tab.<br>
+You can also clic on &quot;Restore Defaults&quot; to set that.</p>
+
+<p><img src="file_properties.png"></p>
+
+<p><strong>7) Compile new_file.jj</strong><br>
+If you checked &quot;<strong>Build automatically on save</strong>&quot;
+the files should have been already generated.<br>
+If not, you can use the icon <img src="jj_compile.png" width="16"
+height="16"> on the toolbar, which is active when the the editor
+is selected,<br>
+or you can rigth clic on the file in the Package Explorer (or
+Navigator) and select &quot;<strong>Compile with JavaCC</strong>&quot;.</p>
+
+<p>Note that :<br>
+- the generated files are decorated with a &quot;<strong>G</strong>&quot;
+and a <strong>&quot;&lt;from.jj&gt;&quot;</strong> to indicate
+the .jj file they are from,<br>
+- if you have not set &quot;OUTPUT_DIRECTORY&quot; = &quot;src&quot;
+in the &quot;JavaCC options&quot; tab, the files are generated
+outside &quot;src&quot;<br>
+&nbsp;&nbsp;directory and have a ligth J as icon <img
+src="light_j.png"> which indicate they are
+not to be compiled.<br>
+- there may be warnings from the Java Compiler (Eclipse don't
+like JavaCC generated code),<br>
+&nbsp;&nbsp;you can get rid of them selecting &quot;ignore&quot;
+in the java compiler options for &quot;Non-static access to
+static member:&quot;<br>
+- running JJDoc is only possible using the icon <img
+src="jj_gendoc.png"> on the toolbar.</p>
+
+<p><img src="files_generated.png"></p>
+
+<p><strong>8) Run the example :</strong><br>
+Select &quot;TestJavaCC&quot; and menu &quot;Run&quot;-&gt;
+&quot;Run as...&quot; -&gt; &quot;Java application&quot;<br>
+Choose &quot;eg1&quot; for the main type.</p>
+
+<p>You can now test your JavaCC application :</p>
+
+<p><img src="file_run_test.png"></p>
+
+<p>You can do the same with the template for JJTree :</p>
+
+<p><img src="file_run_eg2.png"><br>
+</p>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="sf.eclipse.javacc"
+   name="Sourceforge JavaCC Plug-in"
+   version="1.1.0"
+   provider-name="Remi Koutcherawy"
+   class="sf.eclipse.javacc.JavaccPlugin">
+
+   <runtime>
+      <library name="sf.eclipse.javacc.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.help"/>
+   </requires>
+
+<!-- Nature and Builder Extensions -->
+   <extension
+         id="javaccnature"
+         name="JavaCC Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+          class="sf.eclipse.javacc.JJNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="javaccbuilder"
+         name="JavaCC Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="sf.eclipse.javacc.JJBuilder">
+         </run>
+      </builder>
+   </extension>
+<!-- Console View -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="JavaCC Console"
+            id="sf.eclipse.javacc">
+      </category>
+      <view
+            allowMultiple="false"
+            class="sf.eclipse.javacc.JJConsole"
+            icon="icons/jj_console.gif"
+            category="sf.eclipse.javacc"
+            name="JavaCC console"
+            id="sf.eclipse.javacc.Console">
+      </view>
+   </extension>
+<!-- Properties Extensions -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+<!-- Properties for Files .jj or .jjt -->
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            name="JavaCC options"
+            nameFilter="*.jj"
+            class="sf.eclipse.javacc.options.JJPropertyPage"
+            id="sf.eclipse.javacc.options.JJFileOptions">
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            name="JavaCC options"
+            nameFilter="*.jjt"
+            class="sf.eclipse.javacc.options.JJPropertyPage"
+            id="sf.eclipse.javacc.options.JJTFileOptions">
+      </page>
+<!-- Properties for Project -->
+      <page
+            objectClass="org.eclipse.jdt.core.IJavaProject"
+            name="JavaCC options"
+            class="sf.eclipse.javacc.options.JJPropertyPage"
+            id="sf.eclipse.javacc.options.JJPropertyPage">
+      </page>
+   </extension>
+<!-- Popup Menus extension on Package Explorer -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            nameFilter="*.jj*"
+            id="javacccompile">
+         <action
+               label="Compile with JavaCC"
+               icon="icons/jj_file.gif"
+               class="sf.eclipse.javacc.CompileAction"
+               enablesFor="1"
+               id="javaccsupport.compileAction">
+         </action>
+      </objectContribution>
+   </extension>
+<!-- Decorator to show a JJ Icon disabled -->
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            label="JacaCC Decorator"
+            state="true"
+            class="sf.eclipse.javacc.JJDecorator"
+            id="sf.eclipse.javacc.jjdecorator">
+         <!--description>
+            <decorator.description/>
+         </description-->
+      </decorator>
+   </extension>
+<!-- Editor Extension -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="JavaCC Editor"
+            icon="icons/jj_file.gif"
+            extensions="jjt, jj, jtb"
+            contributorClass="sf.eclipse.javacc.editors.JJEditorActions"
+            class="sf.eclipse.javacc.editors.JJEditor"
+            id="sf.eclipse.javacc.editors.JJEditor">
+      </editor>
+   </extension>
+<!-- New Wizard Extension -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="JavaCC"
+            id="sf.eclipse.javacc"/>
+      <wizard
+            icon="icons/jj_file.gif"
+            class="sf.eclipse.javacc.wizards.JJNewWizard"
+            category="sf.eclipse.javacc"
+            project="false"
+            name="JavaCC Template file"
+            id="sf.eclipse.javacc.wizards.JJNewWizard"/>
+   </extension>
+<!-- Help Extension -->   
+   <extension
+         id="javaccPluginHelp"
+         name="JavaCC Plugin Help"
+         point="org.eclipse.help.toc">
+      <toc
+            file="JJToc.xml"
+            extradir="doc"/>
+      <toc
+            primary="true"
+            file="JJPlgToc.xml"
+            extradir="doc"/>
+   </extension>
+</plugin>

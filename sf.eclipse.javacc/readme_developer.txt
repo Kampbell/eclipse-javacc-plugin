@@ -1,0 +1,112 @@
+
+This plugin uses 9 extensions:
+
+1) Nature
+   point="org.eclipse.core.resources.natures"
+   class="sf.eclipse.javacc.JJNature"
+   
+   This class sets and removes JavaCC Nature to projects.
+   The nature is used by the Workbench to identify the builder.
+   JJNature.configure() adds a new Command with JJBuilder.
+   
+2) Builder
+   point="org.eclipse.core.resources.builders"
+   class="sf.eclipse.javacc.JJBuilder"
+   
+   Builder extends IncrementalProjectBuilder
+   and is called by the Workbench to compile javaCC files.
+   
+   Note that it is also used to compile files via static methods.
+   (On Actions triggered from contextual menu on a Resource, 
+    or from Editor Toolbar)
+    
+   Builder uses also in this package :
+   -Dirlist to retrieve JavaCC generated files.
+   -JarLauncher to launch JavaCC via Runtime.exec()
+   -JarLoader - experimental - to launch JavaCC via a ClassLoader
+    see plugin.properties to use this feature.
+   
+3) Console View for JavaCC output
+   point="org.eclipse.ui.views"
+   class="sf.eclipse.javacc.JJConsole"
+   
+   JJConsole extends ViewPart
+   and is used to show JavaCC outputs.
+   
+   Note that to access JJConsole, you should get an instance
+   via JavaccPlugin.getConsole().
+   
+4) Properties for Grammar files or Project
+   point="org.eclipse.ui.propertyPages"
+   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jj" files
+   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jjt" files
+   class="sf.eclipse.javacc.options.JJPropertyPage" for Project Properties
+   
+   JJPropertyPage extends PropertyPage
+   and provide a way to set JavaCC command line arguments.
+   -JJCCOptions   for javacc arguments
+   -JJTreeOptions for jjtree arguments
+   -JJDocOptions  for jjdoc arguments
+   -JJRuntimeOptions for Eclipse use of JavaCC
+    (Console, jarfile setting, Builder)
+    
+   JJPropertyPage sets up a TabFolder to show 4 tabs
+   for these 4 classes.
+   3 of them (JJCCOptions, JJTreeOptions, JJDocOptions)
+   extends JJAbstractTab to share a lot of methods.
+   JJRuntimeOptions extends directly Composite.
+   
+   These classes use OptionSet which manage a set of Option(s).
+   OptionSet provide a way to generate a CommandLine, which
+   gather all the options in a single PersistentProperty 
+   which is set on the Resource.
+   JJRuntimeOptions sets PersistentProperty on Project.
+   (These PersistentProperty are retrieved by Builder from
+    Resource or Project)
+    
+   BooleanFieldEditor and DirectoryFieldEditor
+   are modified versions of :
+     org.eclipse.jface.preference.BooleanFieldEditor
+     org.eclipse.jface.preference.DirectoryFieldEditor
+   to bypass oddities (not really bugs).
+
+   TabFolderLayout is copied from
+     org.eclipse.jdt.internal.ui.util.TabFolderLayout
+   Odd to see that it is defined in JDT not SWT !
+   
+5) PopupMenu extension on Package Explorer
+   point="org.eclipse.ui.popupMenus"
+   class="sf.eclipse.javacc.CompileAction" for .jj or .jjt files
+
+   CompileAction provides a direct way to compile .jj or .jjt files
+   in the contextual PopupMenu associated with a File.
+   CompileAction simply calls a static method of Builder.
+   
+6) Decorator to annotate generated files
+   point="org.eclipse.ui.decorators">
+   class="sf.eclipse.javacc.JJDecorator"
+
+   JJDecorator provides a decoration for generated files.
+   A text is added <file.jj> if the file is derived from file.jj.
+   An icon 'G' is added on top right of the Icon.
+   Note that isDerived() is tested before decoration.
+   To remove decoration, if you choose to manually modify
+   the generated file, uncheck the "Derived" property in Info.
+   
+7) Editor Extension
+   point="org.eclipse.ui.editors"
+   class="sf.eclipse.javacc.editors.JJEditor"
+   
+   JJEditor extends TextEditor
+   
+8) New Wizard
+   point="org.eclipse.ui.newWizards"
+   class=""sf.eclipse.javacc.wizards.JJNewWizard"
+   
+   Provides a basic .jj or jjt file to help begin a new JavaCC project.
+   The file "new_file.jj" is in the templates directory of the plugin.
+
+9) Help 
+   point="org.eclipse.help.toc"
+   file="JJToc.xml" and JJPlgToc.xml"
+   

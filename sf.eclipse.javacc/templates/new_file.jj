@@ -1,0 +1,98 @@
+/**
+ * Example of JavaCC file.
+ */
+
+options {
+LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(eg1)
+
+public class eg1 {
+    public static void main(String args[]) throws ParseException {
+	eg1 parser = new eg1(System.in);
+	while (true) {
+	    System.out.print("Enter Expression: ");
+	    System.out.flush();
+	    try {
+		switch (parser.one_line()) {
+		    case 0:
+		    System.out.println("Goodbye.");
+			System.exit(0);
+			case -1:
+			System.exit(0);
+		    default:
+			break;
+		}
+	    } catch (ParseException x) {
+		System.out.println("Exiting.");
+		throw x;
+	    }
+	}
+    }
+}
+
+PARSER_END(eg1)
+
+SKIP :
+{
+ 	" "
+|	"\r"
+|	"\t"
+}
+
+TOKEN :
+{
+	< EOL: "\n" >
+}
+
+TOKEN : /* OPERATORS */
+{
+	< PLUS: "+" >
+|	< MINUS: "-" >
+|	< MULTIPLY: "*" >
+|	< DIVIDE: "/" >
+}
+
+TOKEN :
+{
+    < CONSTANT: ( <DIGIT> )+ >
+|   < #DIGIT: ["0" - "9"] >
+}
+
+int one_line() :
+{}
+{
+    sum() <EOL>
+	{ return 1; }
+  | <EOL>
+	{ return 0; }
+  | <EOF>
+	{ return -1; }
+}
+
+void sum() :
+{ }
+{
+    term() (( <PLUS> | <MINUS> ) term())*
+}
+
+void term() :
+{ }
+{
+    unary() (( <MULTIPLY> | <DIVIDE> ) unary())*
+}
+
+void unary() :
+{ }
+{
+    <MINUS> element()
+  |     element()
+}
+
+void element() :
+{}
+{
+    <CONSTANT>
+|   "(" sum() ")"
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="JavaCC plugin Guide toc">
+	<topic label="Quick start" href="doc/index.html"/>
+	<topic label="Editor"  href="doc/editor.html"> 
+		<topic label="Outline" href="doc/editor.html#Outline"/> 
+		<topic label="Navigation" href="doc/editor.html#Navigation"/> 
+		<topic label="Outline" href="doc/editor.html#Outline"/> 
+		<topic label="Errors and Warnings" href="doc/editor.html#Errors"/> 
+		<topic label="Console" href="doc/editor.html#Console"/>
+	</topic>
+	<topic label="JavaCC and JJTree Wizard"  href="doc/newwizard.html"/>
+	<topic label="JavaCC Compilation"  href="doc/compilation.html"/>
+	<topic label="Options" href="doc/options.html">
+		<topic label="Runtime" href="doc/options.html#Runtime"/> 
+		<topic label="JavaCC" href="doc/options.html#JavaCC"/> 
+		<topic label="JJTree" href="doc/options.html#JJTree"/> 
+		<topic label="JJDoc" href="doc/options.html#JJDoc"/> 
+	</topic>
+	<topic label="Console" href="doc/console.html"/>
+</toc>
