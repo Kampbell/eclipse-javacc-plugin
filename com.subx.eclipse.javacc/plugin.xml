@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="com.subx.eclipse.javacc"
+   name="Javacc Plug-in"
+   version="1.0.0"
+   provider-name="s u b x, i n c."
+   class="com.subx.eclipse.javacc.JavaccPlugin">
+
+   <runtime>
+      <library name="subx-eclipse-javacc.jar"/>
+      <library name="javacc.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+
+
+   <extension
+         id="Builder"
+         name="s u b x JavaCC Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="com.subx.eclipse.javacc.Builder">
+         </run>
+      </builder>
+   </extension>
+
+</plugin>
