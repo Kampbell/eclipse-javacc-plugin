@@ -1,0 +1,75 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Faq Javacc plugin</title>
+<meta content="Ñandú 0.5.5" name="GENERATOR">
+</head>
+<body lang="en-US" dir="ltr">
+<h1>Frequently asked questions </h1>
+
+<ul>
+    <li><a href="#JJDoc">The option OUTPUT_DIR doesn't work for
+        JJDoc</a></li>
+    <li><a href="#JJFiles_in_bin">*.jj files are copied in bin
+        directory</a> </li>
+    
+    <li><a href="#Warnings">JavacCC generated code generates
+        plenty of warnings</a></li>
+</ul>
+
+<p><a name="JJDoc"></a><b>1) The option OUTPUT_DIR doesn't work
+for JJDoc.</b><br>
+This is a bug in JJDOC.<br>
+Try directly from the console :</p>
+
+<p>&gt;jjdoc -OUTPUT_DIRECTORY:doc new_file.jj<br>
+Java Compiler Compiler Version 3.2 (Documentation Generator
+Version 0.1.4)<br>
+(type "jjdoc" with no arguments for help)<br>
+Reading from file new_file.jj . . .<br>
+Grammar documentation generated successfully in new_file.html</p>
+
+<p>The "new_file.html" has not been generated in "doc"
+directory !<br>
+We should have read : "generated successfully in doc/new_file.html"</p>
+
+<p><b>Workaround</b> : you can use the -OUTPUT_FILE option :<br>
+&gt;jjdoc -OUTPUT_FILE:doc/doc.html new_file.jj<br>
+Java Compiler Compiler Version 3.2 (Documentation Generator
+Version 0.1.4)<br>
+(type "jjdoc" with no arguments for help)<br>
+Reading from file new_file.jj . . .<br>
+Grammar documentation generated successfully in doc/doc.html</p>
+
+<p>Unfortunately you now have to specify -OUTPUT_FILE option for
+each file you compile with JJDoc.<br>
+The plugin is ready for the correction; it passes both options
+when invoking JJDoc.</p>
+
+<p><a name="JJFiles_in_bin"></a><b>2) *.jj files are copied in
+bin directory<br>
+</b>It is a feature of Eclipse which copies all files which are
+not *.java in the bin directory.<br>
+You have the choice to make Eclipse copy or not copy theses files.</p>
+
+<p>You can disable copy of .jj and .jjt files with :<br>
+Menu "Window" -&gt; "Preferences"<br>
+Choose "Java" -&gt; "Compiler" then "Build
+path" tab and add in<br>
+Filtered Resources : *.jj,*.jjt</p>
+
+<p><a name="Packages"></a><b></b></p><b>3) JavacCC generated code generate
+plenty of warnings</b><br>
+<p>
+You can configure Eclipse not to show them.<br>
+Window-&gt;Preferences-&gt;Java-&gt;Compiler-&gt;Non-static
+access to static members: ignore.</p>
+
+
+
+<p><b>5) Any other question ?<br>
+</b>Send a mail to <a href="mailto:remi.koutcherawy@wanadoo.fr">remi.koutcherawy@wanadoo.fr</a></p>
+
+<p>&nbsp;</p>
+</body>
+</html>

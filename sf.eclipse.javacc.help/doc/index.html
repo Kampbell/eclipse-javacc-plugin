@@ -1,0 +1,110 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Table of Contents</title>
+<meta content="Ñandú 0.5.5" name="GENERATOR">
+</head>
+<body bgcolor="#ffffff">
+<h1>JavaCC Eclipse Plugin v1.3 for Eclipse 3.0</h1>
+
+<p>JavaCC plugin is designed to help development of JavaCC
+applications.<br>
+This plugin provides a set of features, including : </p>
+
+<ul>
+    <li><a href="editor.html">Editor with outline and navigation
+        facilities</a></li>
+    <li><a href="newwizard.html">Templates for JavaCC File,
+        JJTree or JTB&nbsp; file</a></li>
+    <li><a href="compilation.html">Compilation with JavaCC,
+        JJTree, JJDoc, JTB (compatible with all versions, just
+        specify the jar to use)</a></li>
+    <li><a href="options.html">Compilation options for JavaCC,
+        JJTree, JJDoc, JTB (for each file or for the whole project)<br>
+</a></li>
+    <li><a href="console.html">Console showing JavaCC outputs</a></li>
+    <li><a href="editor.html#Errors">JavaCC Errors and warnings
+        reported in Problems tab with links to editor</a>.</li>
+    <li><a href="index.html">Help</a> (this help is available via
+        menu Help -&gt; Help Contents)</li><li><a href="faq.html">Faq</a> <br>
+  </li>
+
+</ul>
+
+<h2>Getting Started</h2>
+
+<p><strong>1) To install unzip "rk.eclipse.javacc.1.3.zip"
+in the "plugins" directory of Eclipse</strong></p>
+
+<p><strong>2) Launch Eclipse</strong></p>
+
+<p><strong>3) Create a new Java Project :</strong><br>
+Menu : "File" -&gt; "New" -&gt; "Project..."-&gt;
+"Java Project"<br>
+For the example create a "TestJavaCC" project.<br>
+Select "Create separate source and output folders" to
+get a "src" folder.<br>
+Create a package "testjj".<br>
+</p>
+
+<p><strong>4) Create a new JavaCC file :</strong><br>Select the "testjj" package and Menu "File" -&gt; "New" -&gt; "Other..."<br>
+Select Wizard "JavaCC" -&gt; "JavaCC Template file"</p>
+
+<p><img src="new_file_jj.png"></p>
+
+<p>Leave defaults for a quick start.</p>
+
+<p><strong>5) You have now a new JavaCC file :</strong><br>
+To compile <strong>you must indicate where your JavaCC is located</strong>.
+See next step.</p>
+
+<p><img src="editor_file_jj.png"></p>
+
+<p><strong>6) Set Properties for the project :</strong><br>
+Select project "<strong>TestJavaCC</strong>" and right clic -&gt;
+"<strong>Properties</strong>"<br>
+<strong>Indicate the path to javacc.jar</strong>. (which is in
+the "bin/lib/" directory of your JavaCC distribution)<br>
+Select "Restore Defaults" to get an hint.<br>
+Here I use JavaCC version 4.0beta1 (the plugin works also with JavaCC
+2.1, 3.0, 3.1, 3.2).</p>
+
+<p><img src="project_properties.png" alt="" border=""></p>
+
+<p><strong>7) Compile new_file.jj</strong><br>
+If you checked "<strong>Build automatically on save</strong>"
+the files should have been already generated.<br>
+If not, you can right click on the file in the Package Explorer (or
+Navigator) and select "<strong>Compile with JavaCC</strong>".</p>
+
+<p>Note that :<br>
+- the generated files are decorated with a "<strong>G</strong>"
+and a <strong>"&lt;from.jj&gt;"</strong> to indicate
+the .jj file they are from,<br>- there may be warnings from the Java Compiler (Eclipse don't
+like JavaCC generated code),<br>
+&nbsp;&nbsp;you can get rid of them selecting "ignore"
+in the java compiler options for "Non-static access to
+static member:"<br>
+- the JavaCC console opens automatically.<br>
+</p>
+
+<p><img src="files_generated.png" alt="" border=""></p>
+
+<p><strong>8) Run the example :</strong><br>
+Select "TestJavaCC" and menu "Run"-&gt;
+"Run as..." -&gt; "Java application"<br>
+Choose "eg1" for the main type.</p>
+
+<p>You can now test your JavaCC application :</p>
+
+<p><img src="file_run_test.png"></p>
+
+<p>You can do the same with the template for JJTree :</p>
+
+<p><img src="file_run_eg2.png"><br>
+</p>
+<p>and also with the template for JTB:</p>
+<p><img src="file_run_eg3.png" alt="" border="">
+</p>
+</body>
+</html>

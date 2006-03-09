@@ -1,0 +1,124 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Options</title>
+<meta content="Ñandú 0.5.5" name="GENERATOR">
+</head>
+<body>
+<h1>Compilation options</h1>
+
+<ul>
+    <li><a href="#Runtime">Runtime options</a></li>
+    <li><a href="#JavaCC">JavaCC options</a></li>
+    <li><a href="#JJTree">JJTree options</a></li>
+    <li><a href="#JJDoc">JJDoc options</a></li>
+    <li><a href="#JTB">JTB options</a></li>
+
+</ul>
+
+<p>You can set properties for the whole project, select the
+projet right clic -&gt; properties.<br>
+Or you can set properties for each file (deselect "Project
+options override File options") and  select the fileright clic -&gt; properties.<br>
+This is designed to handle options like -OUTPUT_FILE which can
+only be set for a single file.</p>
+
+<p><a name="Runtime"></a><strong>Runtime options<br>
+<img src="options_runtime.png"><br>
+</strong>When you check "Build automatically before save"
+a nature and a builder will be added when you clic OK.<br>
+Note that automatic compilation is only effective if you check
+the menu "Project" -&gt; "Build automatically".</p>
+
+<p>The Checkbox "Project options override file options"
+forces the options to be the same for all files.<br>
+Uncheck this if you want to use a per file options setting.<br>
+</p>
+<p>You can leave "JTB jar" blank if you don't use JTB.<br>
+</p>
+
+
+<p><a name="JavaCC"></a><strong>JavaCC options</strong><br>
+<img src="options_javacc.png"><br>
+All these options are described in the javacc documents.<br>
+Note that the first line "JAVACC_OPTIONS" recalls the
+options passed to javacc.<br>
+You can type in this line or check the boxes, but do not type a
+wrong option (like -MY_OPTION=foo) it will be ignored.<br>
+It is sometimes useful to "DEBUG_PARSER" or to "DEBUG_LOOKAHEAD"
+just the time to correct an error.<br>
+When doing that, you can do it for one file only, setting the
+properties per file.</p>
+
+<p><a name="JJTree"></a><strong>JJTree options</strong><br>
+<img src="options_jjtree.png"><br>
+All these options are described in the javacc documentation.<br>
+</p>
+
+<p><a name="JTB"></a><strong>JTB options</strong><br>
+<img src="options_jtb.png"><br>
+All these options are described in the jtb documentation.<br><br>
+Here is a reminder :
+<br>
+<b>-h</b> Displays a help message including a table with brief descriptions of
+these options.
+<br>
+<b>-o NAME</b> Specifies the filename JTB should use to output the annotated
+grammar rather than use the default jtb.out.jj.
+<br>
+<b>-np NAME</b> Specifies the directory and package JTB should place the
+generated syntax tree classes rather than use the default syntaxtree.
+<br>
+Note: for nested packages, JTB assumes the current directory is the one
+directly above the package stated. For example, if you used
+"-np=foo.bar.bletch", JTB will assume you are in the directory foo/bar
+and will generate a directory called bletch to store the node classes.
+<br>
+<b>-vp NAME</b> Specifies the directory and package JTB should place the
+generated visitor classes rather than use the default visitor. The
+above note for the -np otion applies to this option as well.
+<br>
+<b>-p NAME</b> Shorthand for "-np NAME.syntaxtree -vp NAME.visitor".
+<br>
+<b>-si</b> Reads input from standard input (typically the keyboard) rather
+than an input grammar file.
+<br>
+<b>-w</b> JTB will no longer overwrite existing files.
+<br>
+<b>-e</b> Supresses JTB semantic error checking.
+<br>
+<b>-jd</b> Generates JavaDoc-friendly comments in generated visitors and
+syntax tree classes.
+<br>
+<b>-f</b> Generates descrpitive node class child field names such as
+whileStatement and nodeToken2 rather than f0, f1, etc.
+<br>
+<b>-ns</b> NAME Specifies the name of the class (e.g. mypackage.MyClass) that
+all node classes should subclass. This class must be supplied by the
+user.
+<br>
+<b>-pp</b> Generates parent pointers in all node classes as well as
+getParent() and setParent() methods. The parent reference of a given
+node will automatically be set when the node is passed to the
+constructor of another node. The root node's parent will be null.
+<br>
+<b>-tk</b> Stores special tokens into the parse tree.
+<br>
+<b>-r</b> Generate ObjectDepthFirst with alternative return channels.
+</p>
+
+<p><a name="JJDoc"></a><strong>JJDoc options</strong><br>
+<img src="options_jjdoc.png"><br>
+There is a bug in JJDOC : the option "-OUTPUT_DIRECTORY"
+is not taken by JJDoc.</p>
+
+<p>Workaround : you can use the -OUTPUT_FILE option setting the
+directory with the file.<br>
+Drawback : you have to do that for each file.</p>
+
+<p>Note that the option -OUTPUT_FILE doesn't show up when you set
+the properties for the project.<br>
+It would be of no use to generate doc for all the grammar files
+in the same html file.</p>
+</body>
+</html>

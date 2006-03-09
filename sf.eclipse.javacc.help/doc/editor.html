@@ -1,0 +1,55 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Editor</title>
+<meta content="Ñandú 0.5.5" name="GENERATOR">
+</head>
+<body bgcolor="#ffffff">
+<h1>Editor with outline and navigation facilities</h1>
+
+<p>The main features are :<br>
+1 - <a href="#Syntax">Syntax coloring</a><br>
+2 - <a href="#Outline">Outline</a><br>
+3 - <a href="#Navigation">Navigation to definition and back</a><br>
+4 - <a href="#Errors">Errors and warnings reporting</a><br>
+5 - <a href="#Console">Full output from JavaCC in console</a></p>
+
+<p><a name="Syntax"></a><strong>1) Syntax coloring<br>
+</strong>JavaCC keywords are in dark green; "<font color="#008040">LOOKAHEAD</font>", "<font color="#008040">PARSER_BEGIN</font>"...<br>
+Java keywords are in dark red; "<font color="#800000">abstract</font>","<font color="#800000">boolean</font>","<font color="#800000">break</font>","<font color="#800000">byte</font>".</p>
+
+<p><a name="Outline"></a><strong>2) Outline<br>
+<br>
+<img src="outline.png"><br>
+</strong>Icons are "o" for Options, "t" for
+Token, "e" for Expressions, "r" for Rules, "c" for Class, "m" for Methods.<br>
+The .jjt and .jj files are parsed with the JavaCC.jj grammar
+given in the examples of JavaCC.</p>
+
+<p><a name="Navigation"></a><strong>3) Navigation to definition
+and back<br>
+</strong>Select a rule and open context menu (right
+clic).<br>
+Or press "Ctrl" and let your mouse over an indentifier to show the hyperlink, then click.<br>
+Or clic on an identifier and press F3.<br>
+<br>
+<strong><img src="goto_declaration.png"><br>
+</strong><br>
+You can go back of to last selection if you whish, with the history navigation of Eclipse.<br>
+<img src="goto_back.png" height="600" width="800"></p>
+
+
+<p><a name="Errors"></a><strong>4) Errors and warnings reporting<br>
+<img src="error_warning.png"></strong></p>
+
+<p><a name="Console"></a><strong>5) Full output from JavaCC in
+console</strong><br>
+To show JavaCC console menu "Window" -&gt; "Show
+view" -&gt; "Other..."<br>
+The JavaCC output is parsed to show hyperlinks.<br>
+<img src="javacc_console.png"></p>
+
+
+<p>&nbsp;</p>
+</body>
+</html>

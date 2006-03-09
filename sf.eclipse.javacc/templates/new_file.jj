@@ -1,37 +1,41 @@
 /**
- * Example of JavaCC file.
+ * JavaCC file
  */
-
+ 
 options {
-LOOKAHEAD=1;
+  JDK_VERSION = "1.5";
 }
-
 PARSER_BEGIN(eg1)
-
+<?package_declare?>
 public class eg1 {
-    public static void main(String args[]) throws ParseException {
-	eg1 parser = new eg1(System.in);
-	while (true) {
-	    System.out.print("Enter Expression: ");
-	    System.out.flush();
-	    try {
-		switch (parser.one_line()) {
-		    case 0:
-		    System.out.println("Goodbye.");
-			System.exit(0);
-			case -1:
-			System.exit(0);
-		    default:
-			break;
-		}
-	    } catch (ParseException x) {
-		System.out.println("Exiting.");
-		throw x;
-	    }
-	}
+  public static void main(String args[]) throws ParseException {
+    eg1 parser = new eg1(System.in);
+    while (true) {
+      System.out.println("Reading from standard input...");
+      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");
+      try {
+        switch (eg1.one_line()) {
+        case 0:
+          System.out.println("OK.");
+          break;
+        case 1:
+          System.out.println("Goodbye.");
+          break;
+        default:
+          break;
+        }
+      } catch (Exception e) {
+        System.out.println("NOK.");
+        System.out.println(e.getMessage());
+        eg1.ReInit(System.in);
+      } catch (Error e) {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+        break;
+      }
     }
+  }
 }
-
 PARSER_END(eg1)
 
 SKIP :
@@ -39,13 +43,8 @@ SKIP :
  	" "
 |	"\r"
 |	"\t"
+|	"\n"
 }
-
-TOKEN :
-{
-	< EOL: "\n" >
-}
-
 TOKEN : /* OPERATORS */
 {
 	< PLUS: "+" >
@@ -53,46 +52,31 @@ TOKEN : /* OPERATORS */
 |	< MULTIPLY: "*" >
 |	< DIVIDE: "/" >
 }
-
 TOKEN :
 {
     < CONSTANT: ( <DIGIT> )+ >
 |   < #DIGIT: ["0" - "9"] >
 }
-
-int one_line() :
-{}
+int one_line() : {}
 {
-    sum() <EOL>
-	{ return 1; }
-  | <EOL>
-	{ return 0; }
-  | <EOF>
-	{ return -1; }
+  sum() ";" { return 0; }
+| ";"	    { return 1; }
 }
-
-void sum() :
-{ }
+void sum() : {}
 {
-    term() (( <PLUS> | <MINUS> ) term())*
+  term() (( <PLUS> | <MINUS> ) term())*
 }
-
-void term() :
-{ }
+void term() : {}
 {
-    unary() (( <MULTIPLY> | <DIVIDE> ) unary())*
+  unary() (( <MULTIPLY> | <DIVIDE> ) unary())*
 }
-
-void unary() :
-{ }
+void unary() : {}
 {
-    <MINUS> element()
-  |     element()
+  <MINUS> element()
+ | element()
 }
-
-void element() :
-{}
+void element() : {}
 {
-    <CONSTANT>
-|   "(" sum() ")"
+  <CONSTANT>
+| "(" sum() ")"
 }

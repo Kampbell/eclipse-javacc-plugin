@@ -1,0 +1,617 @@
+package sf.eclipse.javacc.wizards;
+
+import java.text.MessageFormat;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+//import org.eclipse.jdt.internal.core.PackageFragmentRoot;
+//import org.eclipse.jdt.internal.corext.util.Messages;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider;
+import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
+import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaElementSorter;
+import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
+
+import sf.eclipse.javacc.Activator;
+
+/**
+ * The "New" wizard page allows setting the srcdir, 
+ * the package for the new file,
+ * the extension, as well as the file name. 
+ * This page handle the creation of the file.
+ * 
+ * @author Remi Koutcherawy 2003-2006
+ * CeCILL Licence http://www.cecill.info/index.en.html
+ */
+
+public class JJNewJJPage extends WizardPage {
+  private IPackageFragmentRoot fSrcRootFragment;   
+  private IPackageFragment fPackageFragment;   
+  private IWorkspaceRoot fWorkspaceRoot;
+  
+  private Text fSrcRootText; 
+  private Text fPackageText;
+  private Text fFileNameText;
+  
+  protected IStatus fSrcRootStatus;
+  protected IStatus fPackageStatus;
+  protected IStatus fExtensionStatus;
+  protected IStatus fFileStatus;
+  
+  private String fSrcRoot;
+  private String fPackage;
+  private String fFileName;
+  private String fExtension;
+
+  /**
+   * Creates a new <code>NewJJWizardPage</code>
+   */
+  public JJNewJJPage() {
+    super("NewJJWizardPage");
+    fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();   
+    setDescription("This wizard creates a new example file.");
+    setTitle("New JavaCC or JTB file");
+  }
+
+  /**
+   * The selection is used to initialize the fields.
+   * @param selection used to initialize the fields
+   * @throws JavaModelException 
+   */
+  public void init(IStructuredSelection selection) {
+    IJavaElement jelem = getInitialJavaElement(selection);
+    fPackage = ""; //$NON-NLS-1$
+    fSrcRoot = ""; //$NON-NLS-1$
+    if (jelem != null) {
+      // init package name
+      fPackageFragment = (IPackageFragment) jelem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+      if (fPackageFragment != null && !fPackageFragment.isDefaultPackage())
+        fPackage = fPackageFragment.getElementName();
+      // init SrcRoot
+      IPackageFragmentRoot pfr = (IPackageFragmentRoot) jelem.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+      if (pfr != null){
+        fSrcRoot = pfr.getPath().toString();
+      }
+    }
+    // init extension
+    fExtension = ".jj";
+    // init filename
+    fFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
+  }
+
+  /*
+   * @see WizardPage#createControl
+   */
+  public void createControl(Composite parent) {
+    Composite topLevel = new Composite(parent, SWT.NONE);
+    topLevel.setFont(parent.getFont());
+    GridLayout layout = new GridLayout();
+    layout.numColumns = 3;
+    layout.verticalSpacing = 9;
+    topLevel.setLayout(layout);
+
+    // First: the source folder where to create the file
+    Label label = new Label(topLevel, SWT.NULL);
+    label.setText(Activator.getString("JJNewJJPage.Folder")); //$NON-NLS-1$
+    // the input field
+    fSrcRootText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
+    GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
+    fSrcRootText.setLayoutData(gd);
+    fSrcRootText.setText(fSrcRoot);    
+    fSrcRootText.addModifyListener(new ModifyListener() {
+      public void modifyText(ModifyEvent e) {
+        fSrcRootStatus = sourceContainerChanged();
+        if (fSrcRootStatus.isOK())
+          packageChanged(); // revalidate package
+        updateStatus();
+      }
+    });
+    // the browse button
+    Button button = new Button(topLevel, SWT.PUSH);
+    button.setText(Activator.getString("JJNewJJPage.Browse...")); //$NON-NLS-1$
+    button.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        IPackageFragmentRoot root = chooseSourceContainer();
+        if (root != null) {
+          fSrcRootFragment = root;
+          fSrcRoot = root.getPath().makeRelative().toString(); 
+          fSrcRootText.setText(fSrcRoot);
+          fSrcRootStatus = sourceContainerChanged();
+          updateStatus();
+        }
+      }
+    });
+
+    // Second: the package name
+    label = new Label(topLevel, SWT.NULL);
+    label.setText(Activator.getString("JJNewJJPage.Package_name")); //$NON-NLS-1$
+    // The input field
+    fPackageText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
+    gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
+    fPackageText.setLayoutData(gd);
+    fPackageText.setText(fPackage);
+    fPackageText.addModifyListener(new ModifyListener() {
+      public void modifyText(ModifyEvent e) {
+        fPackageStatus = packageChanged();
+        updateStatus();
+      }
+    });
+    // the browse button
+    button = new Button(topLevel, SWT.PUSH);
+    button.setText(Activator.getString("JJNewJJPage.Browse...")); //$NON-NLS-1$
+    button.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        IPackageFragment pack = choosePackage();
+        if (pack != null) {
+          String str = pack.getElementName(); 
+          fPackageText.setText(str);
+          fPackageStatus = packageChanged();
+          updateStatus();
+        }
+      }
+    });
+    // Third: three check box for .jj, .jjt, .jtb
+    label = new Label(topLevel, SWT.NULL);
+    label.setText(Activator.getString("JJNewJJPage.Choose_type")); //$NON-NLS-1$
+
+    Composite group = new Composite(topLevel, SWT.NONE);
+    group.setLayoutData(new GridData());
+    GridLayout gd1 = new GridLayout();
+    gd1.numColumns = 3;
+    group.setLayout(gd1);
+
+    // The radio button listener
+    SelectionAdapter listener = new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent event) {
+        fExtension = (String)event.widget.getData();
+        fExtensionStatus = extensionChanged();
+        updateStatus();
+      }
+    };
+    // .jj
+    Button radio = new Button(group, SWT.RADIO);
+    radio.setText("JJ file");
+    radio.setData(".jj");
+    radio.setSelection(true);
+    radio.addSelectionListener(listener);
+    // .jjt
+    radio = new Button(group, SWT.RADIO);
+    radio.setText("JJT file");
+    radio.setData(".jjt");
+    radio.setSelection(false);
+    radio.addSelectionListener(listener);
+    // .jtb
+    radio = new Button(group, SWT.RADIO);
+    radio.setText("JTB file");
+    radio.setData(".jtb");
+    radio.addSelectionListener(listener);
+    new Label(topLevel, SWT.NULL); // to fill the line
+
+    // Fourth: the file name
+    label = new Label(topLevel, SWT.NULL);
+    label.setText(Activator.getString("JJNewJJPage.File_name")); //$NON-NLS-1$
+    // The input field
+    fFileNameText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
+    fFileNameText.setText(fFileName);    
+    gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+    fFileNameText.setLayoutData(gd);
+    fFileNameText.addModifyListener(new ModifyListener() {
+      public void modifyText(ModifyEvent e) {
+        fFileStatus = fileNameChanged();
+        updateStatus();
+      }
+    });
+    label = new Label(topLevel, SWT.NULL); // to fill the line
+
+    // Finish
+    setControl(topLevel);
+    
+    // Verifies that all this is OK
+    fSrcRootStatus  = sourceContainerChanged();
+    fPackageStatus = packageChanged();
+    fFileStatus = fileNameChanged();
+    fExtensionStatus = new Status();
+    if (fSrcRootStatus.getSeverity() == IStatus.ERROR
+        || fPackageStatus.getSeverity() == IStatus.ERROR
+        || fFileStatus.getSeverity() == IStatus.ERROR)
+      setPageComplete(false);
+    
+    // help context
+    PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, "JJNewJJPage");
+  }
+
+  /**
+   * Verifies the input for the Source container field.
+   */
+  private IStatus sourceContainerChanged() {
+    Status status= new Status();
+    
+    fSrcRootFragment= null;
+    String str= fSrcRootText.getText();
+    if (str.length() == 0) {
+      status.setError("Folder name is empty"); 
+      return status;
+    }
+    IPath path= new Path(str);
+    IResource res= fWorkspaceRoot.findMember(path);
+    if (res != null) {
+      int resType= res.getType();
+      if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
+        IProject proj= res.getProject();
+        if (!proj.isOpen()) {
+          status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ProjectClosed, 
+              new Object[] {proj.getFullPath().toString()} )); 
+          return status;
+        }               
+        IJavaProject jproject= JavaCore.create(proj);
+        fSrcRootFragment= jproject.getPackageFragmentRoot(res);
+        if (res.exists()) {
+          try {
+            if (!proj.hasNature(JavaCore.NATURE_ID)) {
+              if (resType == IResource.PROJECT) {
+                status.setError(NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject); 
+              } else {
+                status.setWarning(NewWizardMessages.NewContainerWizardPage_warning_NotInAJavaProject); 
+              }
+              return status;
+            }
+            if (fSrcRootFragment.isArchive()) {
+              status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary, new Object[] {str})); 
+              return status;
+            }
+            if (fSrcRootFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
+              status.setWarning(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder, new Object[] {str})); 
+            } else if (!jproject.isOnClasspath(fSrcRootFragment)) {
+              status.setWarning(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath, new Object[] {str})); 
+            }       
+          } catch (CoreException e) {
+            status.setWarning(NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject); 
+          }
+        }
+        return status;
+      } else {
+        status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_NotAFolder, new Object[] {str})); 
+        return status;
+      }
+    } else {
+      status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist, new Object[] {str})); 
+      return status;
+    }
+  }
+  
+  /**
+   * Verifies the input for the package field.
+   */
+  private IStatus packageChanged() {
+    Status status = new Status();
+    String packName = getPackage();
+    
+    if (packName.length() > 0) {
+      IStatus val = JavaConventions.validatePackageName(packName);
+      if (val.getSeverity() == IStatus.ERROR) {
+        status.setError(MessageFormat.format(
+            NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
+            new Object[] {val.getMessage()}));
+        return status;
+      } else if (val.getSeverity() == IStatus.WARNING) {
+        status.setWarning(MessageFormat.format(
+            NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
+            new Object[] {val.getMessage()}));
+      }
+    } 
+
+    IPackageFragmentRoot root = fSrcRootFragment;
+    if (root != null && root.getJavaProject().exists()) {
+      IPackageFragment pack = root.getPackageFragment(packName);
+      try {
+        IPath rootPath = root.getPath();
+        IPath outputPath = root.getJavaProject().getOutputLocation();
+        if (rootPath.isPrefixOf(outputPath) && !rootPath.equals(outputPath)) {
+          // if the bin folder is inside of our root, don't allow to name a
+          // package like the bin folder
+          IPath packagePath = pack.getPath();
+          if (outputPath.isPrefixOf(packagePath)) {
+            status.setError(NewWizardMessages.NewPackageWizardPage_error_IsOutputFolder);
+            return status;
+          }
+        }
+        if (!pack.exists()) // check the existence
+          status.setError("Package '"+pack.getElementName()+"' does not exist");
+      } catch (JavaModelException e) {
+        Activator.log(e.toString());
+      }
+    }
+    return status;
+  }
+  
+  /**
+   * Handle extension change
+   */
+  private IStatus extensionChanged() {
+    String fileName = getFileName();
+    int dotLoc = fileName.lastIndexOf('.');
+    if (dotLoc == -1)
+      dotLoc = fileName.length();
+    fileName = fileName.substring(0, dotLoc) + fExtension;
+    fFileNameText.setText(fileName);
+    // Does not really matter
+    Status status = new Status();
+    return status;
+  }
+  
+  /**
+   * Verifies the input for the filename field.
+   */
+  private IStatus fileNameChanged() {
+    String fileName = getFileName();
+    if (fileName.length() == 0) {
+      // if no filename
+      Status status = new Status();
+      status.setError(Activator.getString("JJNewJJPage.File_name_must_be_specified")); //$NON-NLS-1$
+      return status;
+    }
+    int dotLoc = fileName.lastIndexOf('.');
+    if (dotLoc != -1) {
+      String ext = fileName.substring(dotLoc + 1);
+      if (ext.equalsIgnoreCase("jj") == false //$NON-NLS-1$
+          && ext.equalsIgnoreCase("jjt") == false //$NON-NLS-1$
+          && ext.equalsIgnoreCase("jtb") == false) { //$NON-NLS-1$
+        // if filename with the wrong extension
+        Status status = new Status();
+        status.setError(Activator.getString("JJNewJJPage.File_extension_must_be_jj")); //$NON-NLS-1$
+        return status;
+      }
+      fileName = fileName.substring(0, dotLoc);
+    }
+    // in the end validate using JavaConventions
+    return (JavaConventions.validateIdentifier(fileName));
+  }
+  
+  /**
+   * Updates the status line and the OK button according to the given status
+   */
+  protected void updateStatus() {
+    IStatus status  = StatusUtil.getMostSevere(new IStatus[]{
+      fSrcRootStatus, fPackageStatus, fExtensionStatus, fFileStatus
+    });
+    setPageComplete(!status.matches(IStatus.ERROR));
+    StatusUtil.applyToStatusLine(this, status);
+  }
+
+  /**
+   * Returns the directory input field.
+   */
+  public String getSrcDir() {
+    return fSrcRoot;
+  }
+  
+  /**
+   * Returns the content of the package input field.
+   */
+  public String getPackage() {
+    return fPackageText.getText();
+  }
+  
+  /**
+   * Returns the content of the file input field.
+   */
+  public String getFileName() {
+    return fFileNameText.getText();
+  }
+  
+  /**
+   * Returns the filename without extension.
+   */
+  public String getFileNameWithoutExtension() {
+    String fileName = getFileName();
+    int dotLoc = fileName.lastIndexOf('.');
+    if (dotLoc != -1) {
+      fileName = fileName.substring(0, dotLoc);
+    }
+    return fileName;
+  }
+
+  /**
+   * Returns the extension from the file
+   * @return choosen extension
+   */
+  public String getExtension() {
+    String fileName = getFileName();
+    int dotLoc = fileName.lastIndexOf('.');
+    if (dotLoc != -1) {
+      String ext = fileName.substring(dotLoc);
+      return ext;
+    }
+    return fExtension;
+  }
+  
+  /**
+   * Open a dialog to let user choose Source Container
+   */
+  private IPackageFragmentRoot chooseSourceContainer() {
+    Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
+    TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, false) {
+      public boolean isSelectedValid(Object element) {
+        try {
+          if (element instanceof IJavaProject) {
+            IJavaProject jproject= (IJavaProject)element;
+            IPath path= jproject.getProject().getFullPath();
+            return (jproject.findPackageFragmentRoot(path) != null);
+          } else if (element instanceof IPackageFragmentRoot) {
+            return (((IPackageFragmentRoot)element).getKind() == IPackageFragmentRoot.K_SOURCE);
+          }
+          return true;
+        } catch (JavaModelException e) {
+          Activator.log(e.getStatus().getMessage()); 
+        }
+        return false;
+      }
+    };
+    
+    acceptedClasses= new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class };
+    ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+      public boolean select(Viewer viewer, Object parent, Object element) {
+        if (element instanceof IPackageFragmentRoot) {
+          try {
+            return (((IPackageFragmentRoot)element).getKind() == IPackageFragmentRoot.K_SOURCE);
+          } catch (JavaModelException e) {
+            Activator.log(e.getStatus().getMessage());
+            return false;
+          }
+        }
+        return super.select(viewer, parent, element);
+      }
+    };      
+    
+    StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
+    ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT); 
+    ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), labelProvider, provider);
+    dialog.setValidator(validator);
+    dialog.setSorter(new JavaElementSorter());
+    dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title); 
+    dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description); 
+    dialog.addFilter(filter);
+    dialog.setInput(JavaCore.create(fWorkspaceRoot));
+    dialog.setInitialSelection("dummy");
+    
+    if (dialog.open() == Window.OK) {
+      Object element= dialog.getFirstResult();
+      if (element instanceof IJavaProject) {
+        IJavaProject jproject= (IJavaProject)element;
+        return jproject.getPackageFragmentRoot(jproject.getProject());
+      } else if (element instanceof IPackageFragmentRoot) {
+        return (IPackageFragmentRoot)element;
+      }
+      return null;
+    }
+    return null;
+  }
+  /**
+   * Open a dialog to let user choose a Package
+   */
+  IPackageFragment choosePackage() {
+    IPackageFragmentRoot froot= fSrcRootFragment;
+    IJavaElement[] packages= null;
+    try {
+      if (froot != null && froot.exists()) {
+        packages= froot.getChildren();
+      }
+    } catch (JavaModelException e) {
+      Activator.log(e.getMessage());
+    }
+    if (packages == null) {
+      packages= new IJavaElement[0];
+    }
+    
+    ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT));
+    dialog.setIgnoreCase(false);
+    dialog.setTitle(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_title); 
+    dialog.setMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description); 
+    dialog.setEmptyListMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty); 
+    dialog.setElements(packages);
+    if (fPackageFragment != null) {
+      dialog.setInitialSelections(new Object[] { fPackageFragment });
+    }
+    
+    if (dialog.open() == Window.OK) {
+      return (IPackageFragment) dialog.getFirstResult();
+    }
+    return null;
+  }
+  
+  /**
+   * Utility method to inspect a selection to find a Java element.
+   * @param selection the selection to be inspected
+   * @return a Java element to be used as the initial selection, or
+   * <code>null</code>, if no Java element exists in the given selection
+   */
+  protected IJavaElement getInitialJavaElement(IStructuredSelection selection) {
+    IJavaElement jelem = null;
+    if (selection != null && !selection.isEmpty()) {
+      Object selectedElement = selection.getFirstElement();
+      if (selectedElement instanceof IAdaptable) {
+        IAdaptable adaptable = (IAdaptable) selectedElement;
+
+        jelem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+        if (jelem == null) {
+          IResource resource = (IResource) adaptable.getAdapter(IResource.class);
+          if (resource != null && resource.getType() != IResource.ROOT) {
+            while (jelem == null && resource.getType() != IResource.PROJECT) {
+              resource = resource.getParent();
+              jelem = (IJavaElement) resource.getAdapter(IJavaElement.class);
+            }
+            if (jelem == null) {
+              jelem = JavaCore.create(resource); // java project
+            }
+          }
+        }
+      }
+    }
+    if (jelem == null) {
+      IWorkbenchPart part = JavaPlugin.getActivePage().getActivePart();
+      if (part instanceof ContentOutline) {
+        part = JavaPlugin.getActivePage().getActiveEditor();
+      }
+
+      if (part instanceof IViewPartInputProvider) {
+        Object elem = ((IViewPartInputProvider) part).getViewPartInput();
+        if (elem instanceof IJavaElement) {
+          jelem = (IJavaElement) elem;
+        }
+      }
+    }
+
+    if (jelem == null || jelem.getElementType() == IJavaElement.JAVA_MODEL) {
+      try {
+        IJavaProject[] projects = JavaCore.create(fWorkspaceRoot).getJavaProjects();
+        if (projects.length == 1) {
+          jelem = projects[0];
+        }
+      } catch (JavaModelException e) {
+        Activator.log(e.getMessage());
+      }
+    }
+    return jelem;
+  }
+}

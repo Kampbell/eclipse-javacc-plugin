@@ -1,8 +1,28 @@
-This plug-in uses 9 extensions:
+If you want to hack the source, it's very simple:
+- from Eclipse menu choose: File / Import... / External plug-ins and Fragments
+- choose Projets with source folders
+- select rk.eclipse.javacc.1.4.0 on the left
+- clic Add--> in the middle
+- clic Finish on the bottom right
+
+You have now have a project rk.eclipse.javacc you can modify.
+
+eg. 
+- open rk.eclipse.javacc.action.JJFormat.java
+- add 2 lines afer  public void run(IAction action) {
+    IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    MessageDialog.openInformation(w.getShell()," My Hack "," Format action"); 
+- open plugin.xml and on the "Overview" tab clic "Launch an Eclipse application"
+- now test on a .jj file Ctrl+shift+F you should see a Message window " My Hack "
+
+Now that you have a plug-in to hack 
+here is more insight on how the plug-in is designed...
+
+This plug-in uses 13 extensions:
 
 1) Nature
    point="org.eclipse.core.resources.natures"
-   class="sf.eclipse.javacc.JJNature"
+   class="rk.eclipse.javacc.JJNature"
    
    This class sets and removes JavaCC Nature to projects.
    The nature is used by the Workbench to identify the builder.
@@ -10,24 +30,21 @@ This plug-in uses 9 extensions:
    
 2) Builder
    point="org.eclipse.core.resources.builders"
-   class="sf.eclipse.javacc.JJBuilder"
+   class="rk.eclipse.javacc.JJBuilder"
    
    Builder extends IncrementalProjectBuilder
    and is called by the Workbench to compile javaCC files.
    
    Note that it is also used to compile files via static methods.
-   (On Actions triggered from contextual menu on a Resource, 
-    or from Editor Toolbar)
+   (On Actions triggered from contextual menu on a Resource)
     
    Builder uses also in this package :
    -Dirlist to retrieve JavaCC generated files.
    -JarLauncher to launch JavaCC via Runtime.exec()
-   -JarLoader - experimental - to launch JavaCC via a ClassLoader
-    see plugin.properties to use this feature.
    
 3) Console View for JavaCC output
    point="org.eclipse.ui.views"
-   class="sf.eclipse.javacc.JJConsole"
+   class="rk.eclipse.javacc.JJConsole"
    
    JJConsole extends ViewPart
    and is used to show JavaCC outputs.
@@ -37,25 +54,27 @@ This plug-in uses 9 extensions:
    
 4) Properties for Grammar files or Project
    point="org.eclipse.ui.propertyPages"
-   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jj" files
-   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jjt" files
-   class="sf.eclipse.javacc.options.JJPropertyPage" for Project Properties
+   class="rk.eclipse.javacc.options.JJPropertyPage" for "*.jj" files
+   class="rk.eclipse.javacc.options.JJPropertyPage" for "*.jjt" files
+   class="rk.eclipse.javacc.options.JJPropertyPage" for "*.jtb" files
+   class="rk.eclipse.javacc.options.JJPropertyPage" for Project Properties
    
-   JJPropertyPage extends PropertyPage
+   JJPropertyPage extends org.eclipse.ui.dialogs.PropertyPage
    and provides a way to set JavaCC command line arguments.
    -JJCCOptions   for javacc arguments
    -JJTreeOptions for jjtree arguments
    -JJDocOptions  for jjdoc arguments
+   -JTBOptions  for jjdoc arguments
    -JJRuntimeOptions for Eclipse use of JavaCC
     (Console, jarfile setting, Builder)
     
    JJPropertyPage sets up a TabFolder to show 4 tabs
-   for these 4 classes.
-   3 of them (JJCCOptions, JJTreeOptions, JJDocOptions)
+   for these 5 classes.
+   4 of them (JJCCOptions, JJTreeOptions, JJDocOptions, JTBOptions)
    extends JJAbstractTab to share a lot of methods.
    JJRuntimeOptions extends directly Composite.
    
-   These classes use OptionSet which manages a set of Option(s).
+   These classes use OptionSet which manages a set of Options.
    OptionSet provide a way to generate a CommandLine, which
    gather all the options in a single PersistentProperty 
    which is set on the Resource.
@@ -68,22 +87,18 @@ This plug-in uses 9 extensions:
      org.eclipse.jface.preference.BooleanFieldEditor
      org.eclipse.jface.preference.DirectoryFieldEditor
    to bypass oddities (not really bugs).
-
-   TabFolderLayout is copied from
-     org.eclipse.jdt.internal.ui.util.TabFolderLayout
-   Odd to see that it is defined in JDT not SWT !
    
 5) PopupMenu extension on Package Explorer
    point="org.eclipse.ui.popupMenus"
-   class="sf.eclipse.javacc.CompileAction" for .jj or .jjt files
+   class="rk.eclipse.javacc.JJCompile" for .jj, .jjt or jtb files
 
-   CompileAction provides a direct way to compile .jj or .jjt files
+   CompileAction provides a direct way to compile .jj, .jjt or jtb files
    in the contextual PopupMenu associated with a File.
    CompileAction simply calls a static method of Builder.
    
 6) Decorator to annotate generated files
    point="org.eclipse.ui.decorators">
-   class="sf.eclipse.javacc.JJDecorator"
+   class="rk.eclipse.javacc.JJDecorator"
 
    JJDecorator provides a decoration for generated files.
    A text is added <file.jj> if the file is derived from file.jj.
@@ -94,7 +109,7 @@ This plug-in uses 9 extensions:
    
 7) Editor Extension
    point="org.eclipse.ui.editors"
-   class="sf.eclipse.javacc.editors.JJEditor"
+   class="rk.eclipse.javacc.editors.JJEditor"
    
    JJEditor extends TextEditor
    
@@ -104,14 +119,46 @@ This plug-in uses 9 extensions:
    uses SimpleNode (generated by JavaCC and modified to fit ITreeContentProvider)
    which is used as a leaf for the tree.
    
-8) New Wizard
+8) Popup menu Extension 
+   point="org.eclipse.ui.popupMenus"
+   class="rk.eclipse.javacc.actions.xxx"
+   
+   As you might guess theses classes are for the popup menu of the editor.
+   
+9) Editor Actions
+   point="org.eclipse.ui.editorActions"
+   class="rk.eclipse.javacc.actions.xxx"
+   
+   Theses classes are for the actions of the editor.
+
+10)Editors Commands
+   point="org.eclipse.ui.commands"
+    
+   This extension is necessary for key bindings.
+    
+11) Editor key bindings
+   point="org.eclipse.ui.bindings"
+
+   This extension bind the actions of the editor to shortcut keys.
+   There is no class in this extension, it's just a binding of keys
+   to actions defined in 9) which are the sames are actions defined in 8).
+
+12) New Wizard
    point="org.eclipse.ui.newWizards"
-   class=""sf.eclipse.javacc.wizards.JJNewWizard"
+   class=""rk.eclipse.javacc.wizards.JJNewWizard"
    
    Provides a basic .jj or jjt file to help begin a new JavaCC project.
    The file "new_file.jj" is in the templates directory of the plug-in.
+   
+   This extension highly relies on "internal" of JDT.
+   This generate number of Warnings :
+   Warning Discouraged access: The type xxx is not accessible due
+    to restriction on required library ... org.eclipse.jdt.ui.jar
+   Try to see if you can get rid of them...
 
-9) Help 
+13) Help 
    point="org.eclipse.help.toc"
    file="JJToc.xml" and JJPlgToc.xml"
+   
+  Well the help is in need of a serious update...
    
