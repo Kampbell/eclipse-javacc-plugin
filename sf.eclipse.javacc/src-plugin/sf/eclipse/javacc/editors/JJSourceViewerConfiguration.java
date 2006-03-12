@@ -24,9 +24,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 /**
  * ViewerConfiguration for JavaCC code.
  * 
- * NB. Oddity, The IAutoIndentStrategy is deprecated,
- * but the SourceViewerConfiguration class needs this interface. 
- * 
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
@@ -45,9 +42,7 @@ public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
   /**
    * Returns the auto indentation strategy
    */
-  public IAutoEditStrategy[] getAutoEditStrategies(
-    ISourceViewer isv,
-    String ctype) {
+  public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer isv, String ctype) {
     IAutoEditStrategy[] ret = {new JJAutoIndentStrategy()};
     return (ret);
   }
