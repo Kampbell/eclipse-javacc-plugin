@@ -34,14 +34,13 @@ public class JJLabelProvider extends LabelProvider {
    */
   public JJLabelProvider() {
     super();
-    Activator jpg = Activator.getDefault();
-    desc_option = jpg.getImageDescriptor("jj_option.gif"); //$NON-NLS-1$
-    desc_parser = jpg.getImageDescriptor("jj_parser.gif"); //$NON-NLS-1$
-    desc_token = jpg.getImageDescriptor("jj_token.gif"); //$NON-NLS-1$
-    desc_rule = jpg.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
-    desc_expr = jpg.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
-    desc_class = jpg.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
-    desc_method = jpg.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
+    desc_option = Activator.getImageDescriptor("jj_option.gif"); //$NON-NLS-1$
+    desc_parser = Activator.getImageDescriptor("jj_parser.gif"); //$NON-NLS-1$
+    desc_token = Activator.getImageDescriptor("jj_token.gif"); //$NON-NLS-1$
+    desc_rule = Activator.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
+    desc_expr = Activator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
+    desc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
+    desc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
   }
 
   /**
