@@ -44,8 +44,7 @@ public class JJOutlinePage extends ContentOutlinePage {
     public CollapseAllAction(TreeViewer aViewer) {
       super(Activator.getString("JJOutlinePage.Collapse_all_Action")); //$NON-NLS-1$
       fViewer = aViewer;
-      Activator jpg = Activator.getDefault();
-      ImageDescriptor desc = jpg.getImageDescriptor("jj_collapse.gif"); //$NON-NLS-1$
+      ImageDescriptor desc = Activator.getImageDescriptor("jj_collapse.gif"); //$NON-NLS-1$
       setImageDescriptor(desc);
       setToolTipText(Activator.getString("JJOutlinePage.Collapse_all_Tooltip")); //$NON-NLS-1$
     }
@@ -66,8 +65,7 @@ public class JJOutlinePage extends ContentOutlinePage {
       public AlphabeticSortingAction(StructuredViewer aViewer) {
         super(Activator.getString("JJOutlinePage.Sort_Action"), AS_RADIO_BUTTON); //$NON-NLS-1$
         fViewer = aViewer;
-        Activator jpg = Activator.getDefault();
-        ImageDescriptor desc = jpg.getImageDescriptor("jj_alphab_sort.gif"); //$NON-NLS-1$
+        ImageDescriptor desc = Activator.getImageDescriptor("jj_alphab_sort.gif"); //$NON-NLS-1$
         setImageDescriptor(desc);
         setToolTipText(Activator.getString("JJOutlinePage.Sort_Tooltip")); //$NON-NLS-1$
       }
