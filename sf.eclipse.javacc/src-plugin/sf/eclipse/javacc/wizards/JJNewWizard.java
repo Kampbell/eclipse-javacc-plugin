@@ -45,8 +45,7 @@ public class JJNewWizard extends NewElementWizard {
    */
   public JJNewWizard() {
     super();
-    ImageDescriptor id = Activator.getDefault().getImageDescriptor(
-        "jjnew_wiz.gif");
+    ImageDescriptor id = Activator.getImageDescriptor("jjnew_wiz.gif");
     setDefaultPageImageDescriptor(id);
     setDialogSettings(Activator.getDefault().getDialogSettings());
     setWindowTitle("Creates .jj, .jjt or .jtb example file.");
