@@ -21,3 +21,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help,
  org.eclipse.jdt
 Eclipse-AutoStart: true
+Eclipse-LazyStart: true
