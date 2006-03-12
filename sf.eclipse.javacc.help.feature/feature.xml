@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="sf.eclipse.javacc.help.feature"
+      label="JavaCC Feature Help"
+      version="1.4.0"
+      provider-name="Remi Koutcherawy"
+      plugin="sf.eclipse.javacc.help">
+
+   <description url="http://perso.wanadoo.fr/eclipse_javacc/">
+      This Feature provide Help for JavaCC Eclipse Plugin.
+   </description>
+
+   <copyright>
+      (c) Remi Koutcherawy
+   </copyright>
+
+   <license url="http://www.cecill.info/index.en.html">
+      CeCILL FREE SOFTWARE LICENSE AGREEMENT
+   </license>
+
+   <url>
+      <update label="JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/updates/"/>
+      <discovery label="Eclipse JavaCC" url="http://perso.wanadoo.fr/eclipse_javacc/"/>
+   </url>
+
+   <plugin
+         id="sf.eclipse.javacc.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
