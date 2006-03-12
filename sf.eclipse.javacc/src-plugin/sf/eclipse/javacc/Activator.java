@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
  * The main plugin.
  * Referenced by plugin.xml
  *  Bundle-Activator: sf.eclipse.javacc.Activator
- *  Bundle-ClassPath: library.jar, javacc.jar
+ *  Bundle-ClassPath: plugin.jar, javacc.jar
  * 
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
@@ -27,19 +27,12 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin implements IJJConstants {
   // The shared instance.
   private static Activator plugin;
-  // The bundle from plugin.properties
-  private static ResourceBundle resourceBundle;
 
   /**
-   * The constructor initializes resourceBundle 'plugin.properties'
+   * The constructor
    */
   public Activator() {
     plugin = this;
-    try {
-      resourceBundle = ResourceBundle.getBundle("plugin"); //$NON-NLS-1$
-    } catch (MissingResourceException x) {
-      resourceBundle = null;
-    }
   }
   
   /**
@@ -105,7 +98,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   /**
    * Returns image descriptor
    */
-  public ImageDescriptor getImageDescriptor(String path) {
+  public static ImageDescriptor getImageDescriptor(String path) {
     return AbstractUIPlugin.imageDescriptorFromPlugin("sf.eclipse.javacc", "icons/"+path);
   }
 
@@ -114,19 +107,18 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
    * found.
    */
   public static String getString(String key) {
-    ResourceBundle bundle = Activator.getDefault().getResourceBundle();
+    // The bundle plugin.properties which is inside the jar
+    ResourceBundle bundle;
+    try {
+      bundle = ResourceBundle.getBundle("plugin"); //$NON-NLS-1$
+    } catch (MissingResourceException x) {
+      bundle = null;
+    }
     try {
       return (bundle != null) ? bundle.getString(key) : key;
     } catch (MissingResourceException e) {
       return key;
     }
-  }
-
-  /**
-   * Returns the plugin's resource bundle,
-   */
-  public ResourceBundle getResourceBundle() {
-    return resourceBundle;
   }
 
   public static void log(String msg) {
