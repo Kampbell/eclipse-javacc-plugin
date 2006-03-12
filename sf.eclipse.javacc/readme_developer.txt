@@ -1,14 +1,14 @@
 If you want to hack the source, it's very simple:
 - from Eclipse menu choose: File / Import... / External plug-ins and Fragments
 - choose Projets with source folders
-- select rk.eclipse.javacc.1.4.0 on the left
+- select sf.eclipse.javacc.1.4.0 on the left
 - clic Add--> in the middle
 - clic Finish on the bottom right
 
-You have now have a project rk.eclipse.javacc you can modify.
+You have now a project sf.eclipse.javacc you can modify.
 
 eg. 
-- open rk.eclipse.javacc.action.JJFormat.java
+- open sf.eclipse.javacc.action.JJFormat.java
 - add 2 lines afer  public void run(IAction action) {
     IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     MessageDialog.openInformation(w.getShell()," My Hack "," Format action"); 
@@ -22,7 +22,7 @@ This plug-in uses 13 extensions:
 
 1) Nature
    point="org.eclipse.core.resources.natures"
-   class="rk.eclipse.javacc.JJNature"
+   class="sf.eclipse.javacc.JJNature"
    
    This class sets and removes JavaCC Nature to projects.
    The nature is used by the Workbench to identify the builder.
@@ -30,7 +30,7 @@ This plug-in uses 13 extensions:
    
 2) Builder
    point="org.eclipse.core.resources.builders"
-   class="rk.eclipse.javacc.JJBuilder"
+   class="sf.eclipse.javacc.JJBuilder"
    
    Builder extends IncrementalProjectBuilder
    and is called by the Workbench to compile javaCC files.
@@ -44,7 +44,7 @@ This plug-in uses 13 extensions:
    
 3) Console View for JavaCC output
    point="org.eclipse.ui.views"
-   class="rk.eclipse.javacc.JJConsole"
+   class="sf.eclipse.javacc.JJConsole"
    
    JJConsole extends ViewPart
    and is used to show JavaCC outputs.
@@ -54,10 +54,10 @@ This plug-in uses 13 extensions:
    
 4) Properties for Grammar files or Project
    point="org.eclipse.ui.propertyPages"
-   class="rk.eclipse.javacc.options.JJPropertyPage" for "*.jj" files
-   class="rk.eclipse.javacc.options.JJPropertyPage" for "*.jjt" files
-   class="rk.eclipse.javacc.options.JJPropertyPage" for "*.jtb" files
-   class="rk.eclipse.javacc.options.JJPropertyPage" for Project Properties
+   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jj" files
+   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jjt" files
+   class="sf.eclipse.javacc.options.JJPropertyPage" for "*.jtb" files
+   class="sf.eclipse.javacc.options.JJPropertyPage" for Project Properties
    
    JJPropertyPage extends org.eclipse.ui.dialogs.PropertyPage
    and provides a way to set JavaCC command line arguments.
@@ -90,7 +90,7 @@ This plug-in uses 13 extensions:
    
 5) PopupMenu extension on Package Explorer
    point="org.eclipse.ui.popupMenus"
-   class="rk.eclipse.javacc.JJCompile" for .jj, .jjt or jtb files
+   class="sf.eclipse.javacc.JJCompile" for .jj, .jjt or jtb files
 
    CompileAction provides a direct way to compile .jj, .jjt or jtb files
    in the contextual PopupMenu associated with a File.
@@ -98,7 +98,7 @@ This plug-in uses 13 extensions:
    
 6) Decorator to annotate generated files
    point="org.eclipse.ui.decorators">
-   class="rk.eclipse.javacc.JJDecorator"
+   class="sf.eclipse.javacc.JJDecorator"
 
    JJDecorator provides a decoration for generated files.
    A text is added <file.jj> if the file is derived from file.jj.
@@ -109,7 +109,7 @@ This plug-in uses 13 extensions:
    
 7) Editor Extension
    point="org.eclipse.ui.editors"
-   class="rk.eclipse.javacc.editors.JJEditor"
+   class="sf.eclipse.javacc.editors.JJEditor"
    
    JJEditor extends TextEditor
    
@@ -121,13 +121,13 @@ This plug-in uses 13 extensions:
    
 8) Popup menu Extension 
    point="org.eclipse.ui.popupMenus"
-   class="rk.eclipse.javacc.actions.xxx"
+   class="sf.eclipse.javacc.actions.xxx"
    
    As you might guess theses classes are for the popup menu of the editor.
    
 9) Editor Actions
    point="org.eclipse.ui.editorActions"
-   class="rk.eclipse.javacc.actions.xxx"
+   class="sf.eclipse.javacc.actions.xxx"
    
    Theses classes are for the actions of the editor.
 
@@ -145,7 +145,7 @@ This plug-in uses 13 extensions:
 
 12) New Wizard
    point="org.eclipse.ui.newWizards"
-   class=""rk.eclipse.javacc.wizards.JJNewWizard"
+   class=""sf.eclipse.javacc.wizards.JJNewWizard"
    
    Provides a basic .jj or jjt file to help begin a new JavaCC project.
    The file "new_file.jj" is in the templates directory of the plug-in.
