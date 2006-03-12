@@ -406,7 +406,7 @@ Version 2.0 dated 2005-05-21.
    </license>
 
    <url>
-      <update label="JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/updates/"/>
+      <update label="SF JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/updates/"/>
       <discovery label="Eclipse JavaCC" url="http://perso.wanadoo.fr/eclipse_javacc/"/>
    </url>
 
