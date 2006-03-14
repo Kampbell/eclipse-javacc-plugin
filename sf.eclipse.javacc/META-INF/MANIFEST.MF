@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JavaCC Plug-in
 Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true
-Bundle-Version: 1.4.0
+Bundle-Version: 1.5.0
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.Activator
 Bundle-Vendor: Remi Koutcherawy
@@ -17,8 +17,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.views,
  org.eclipse.jdt.ui,
- org.eclipse.jdt.core,
  org.eclipse.help,
- org.eclipse.jdt
+ org.eclipse.jdt,
+ org.eclipse.jdt.core
 Eclipse-AutoStart: true
 Eclipse-LazyStart: true

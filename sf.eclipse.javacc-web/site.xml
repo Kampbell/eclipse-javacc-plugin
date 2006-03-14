@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/sf.eclipse.javacc.feature_1.4.0.jar" id="sf.eclipse.javacc.feature" version="1.4.0">
-      <category name="SF Eclipse JavaCC"/>
+      <category name="Eclipse JavaCC Plugin"/>
    </feature>
    <feature url="features/sf.eclipse.javacc.help.feature_1.4.0.jar" id="sf.eclipse.javacc.help.feature" version="1.4.0">
-      <category name="SF Eclipse JavaCC"/>
+      <category name="Eclipse JavaCC Plugin"/>
    </feature>
-   <category-def name="SF Eclipse JavaCC" label=""/>
+   <category-def name="Eclipse JavaCC Plugin" label="Eclipse JavaCC Plugin"/>
 </site>
