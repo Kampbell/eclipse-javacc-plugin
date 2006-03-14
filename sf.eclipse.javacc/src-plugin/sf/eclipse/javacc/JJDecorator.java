@@ -37,10 +37,9 @@ public class JJDecorator extends LabelProvider
    */
   public JJDecorator() {
     super();
-    Activator jpg = Activator.getDefault();
-    ImageDescriptor desc = jpg.getImageDescriptor("jj_generated.gif"); //$NON-NLS-1$
+    ImageDescriptor desc = Activator.getImageDescriptor("jj_generated.gif"); //$NON-NLS-1$
     imgGeneratedStamp = desc.createImage(Display.getDefault());
-    desc = jpg.getImageDescriptor("jj_file_exclude.gif"); //$NON-NLS-1$
+    desc = Activator.getImageDescriptor("jj_file_exclude.gif"); //$NON-NLS-1$
     imgExcludedStamp = desc.createImage(Display.getDefault());
   }
 

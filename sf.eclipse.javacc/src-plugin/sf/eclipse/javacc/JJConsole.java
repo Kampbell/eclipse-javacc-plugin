@@ -68,7 +68,7 @@ public class JJConsole extends ViewPart implements IJJConstants {
         clear();
       }
     };
-    ImageDescriptor desc = Activator.getDefault().getImageDescriptor("jj_clear_co.gif"); //$NON-NLS-1$
+    ImageDescriptor desc = Activator.getImageDescriptor("jj_clear_co.gif"); //$NON-NLS-1$
     clear.setImageDescriptor(desc);
     clear.setToolTipText(Activator.getString("JJConsole.Clear_JavaCC_console")); //$NON-NLS-1$
     
