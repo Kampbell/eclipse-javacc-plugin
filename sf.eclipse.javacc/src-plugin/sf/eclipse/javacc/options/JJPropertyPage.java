@@ -16,7 +16,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
-import sf.eclipse.javacc.JJDecorator;
 
 /**
  * The Property page class for JavaCC projects or files
@@ -70,12 +69,11 @@ public class JJPropertyPage extends PropertyPage
     try {
       if (res != null) {
         project = res.getProject();
-        isProjectOverride = ("true").equals((project.getPersistentProperty( //$NON-NLS-1$
-          QN_PROJECT_OVERRIDE)));
+        String prop = project.getPersistentProperty(QN_PROJECT_OVERRIDE);
+        isProjectOverride = ("true").equals(prop);//$NON-NLS-1$
       }
     } catch (CoreException e) {
-      // Nothing do do, we don't need to bother the user
-      performDefaults();
+      // Nothing to do, we don't need to bother the user
     }
     isFile = (res != null && res.getType() == IResource.FILE);
     isJJ = (res != null && isFile && res.getName().endsWith("jj")); //$NON-NLS-1$
@@ -110,6 +108,13 @@ public class JJPropertyPage extends PropertyPage
       addJTreeTab();
       addJDocTab();
       addJTBTab();
+    }
+    // Test a property to see if in need of a first initialization
+    try {
+      if (project.getPersistentProperty(QN_PROJECT_OVERRIDE) == null)
+        performDefaults();
+    } catch (CoreException e) {
+      // Nothing to do
     }
     return parent;
   }
@@ -146,14 +151,6 @@ public class JJPropertyPage extends PropertyPage
           jjDocItem.dispose();
         }
       }
-    }
-    if (name.equals(EXCLUDE_FROM_BUILD)) {
-      try {
-	res.setPersistentProperty(QN_EXCLUDE_FROM_BUILD, b.booleanValue() ? "true":"false");//$NON-NLS-1$ //$NON-NLS-2$
-      } catch (CoreException e) {
-	e.printStackTrace();
-      } 
-      JJDecorator.refresh();
     }
   }
   

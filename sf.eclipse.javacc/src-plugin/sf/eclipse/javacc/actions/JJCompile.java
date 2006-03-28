@@ -68,11 +68,7 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
     if (res == null)
       return;
     
-    try {
-      // The user triggers on an disabled file ? force !
-      String prop = res.getPersistentProperty(QN_EXCLUDE_FROM_BUILD);
-      res.setPersistentProperty(QN_EXCLUDE_FROM_BUILD, "false");
-      
+    try {      
       // Saving the file triggers a new Compilation if project has JJNature
       if (editor != null) 
         editor.doSave(null); // Called from Editor
@@ -84,9 +80,6 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
         JJBuilder.CompileJJResource(res);
       }
       
-      // Restore old state
-      res.setPersistentProperty(QN_EXCLUDE_FROM_BUILD, prop);
-
       // Refresh the whole project to trigger compilation of Java files
       res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
       

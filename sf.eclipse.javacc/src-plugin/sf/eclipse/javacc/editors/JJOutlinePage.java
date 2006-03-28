@@ -55,9 +55,10 @@ public class JJOutlinePage extends ContentOutlinePage {
   /**
    * An Action to sort the tree alphabeticaly
    */
-  public static class AlphabeticSortingAction extends org.eclipse.jface.action.Action {
-    private static final ViewerSorter SORTER = new JJOutlineSorter();
+  public class AlphabeticSortingAction extends org.eclipse.jface.action.Action {
+    private final ViewerSorter SORTER = new JJOutlineSorter();
     private StructuredViewer fViewer;
+    private boolean oldState = false;
 
       /**
        * Constructor for LexicalSortingAction.
@@ -70,11 +71,13 @@ public class JJOutlinePage extends ContentOutlinePage {
         setToolTipText(Activator.getString("JJOutlinePage.Sort_Tooltip")); //$NON-NLS-1$
       }
       public void run() {
-          valueChanged(isChecked(), true);
-      }
-      private void valueChanged(boolean aValue, boolean aDoStore) {
-          setChecked(aValue);
-          fViewer.setSorter(aValue ? SORTER : null);
+	if (oldState == true){
+	  fViewer.setSorter(null);
+	  setChecked(false);
+	}
+	else
+	  fViewer.setSorter(SORTER);
+	oldState = isChecked();
       }
   }
   /**

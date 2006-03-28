@@ -85,7 +85,8 @@ public class JJCodeScanner extends RuleBasedScanner {
 	  "VISITOR_EXCEPTION", //$NON-NLS-1$
 	  "OUTPUT_FILE", //$NON-NLS-1$
       "JDK_VERSION", //$NON-NLS-1$
-      "NODE_EXTENDS" //$NON-NLS-1$
+      "NODE_EXTENDS", //$NON-NLS-1$
+      "TOKEN_MANAGER_USES_PARSER" //$NON-NLS-1$
 	  };
   
   public static final String[] fgJavaKeywords =

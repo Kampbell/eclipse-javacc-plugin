@@ -99,7 +99,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
    * Returns image descriptor
    */
   public static ImageDescriptor getImageDescriptor(String path) {
-    return AbstractUIPlugin.imageDescriptorFromPlugin("sf.eclipse.javacc", "icons/"+path);
+    return AbstractUIPlugin.imageDescriptorFromPlugin("sf.eclipse.javacc", "icons/"+path); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   /**
@@ -110,7 +110,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
     // The bundle plugin.properties which is inside the jar
     ResourceBundle bundle;
     try {
-      bundle = ResourceBundle.getBundle("plugin"); //$NON-NLS-1$
+      bundle = ResourceBundle.getBundle("messages"); //$NON-NLS-1$
     } catch (MissingResourceException x) {
       bundle = null;
     }

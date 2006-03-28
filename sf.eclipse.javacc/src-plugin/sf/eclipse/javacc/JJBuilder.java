@@ -13,8 +13,11 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -32,6 +35,10 @@ import sf.eclipse.javacc.options.OptionSet;
  */
 public class JJBuilder extends IncrementalProjectBuilder
   implements IResourceDeltaVisitor, IResourceVisitor, IJJConstants {
+  
+  // Needed to test if the resource is on class path
+  protected IJavaProject javaProject;
+  protected IPath outputFolder;
  
  /**
   * Invoked in response to a call to one of the <code>IProject.build</code>
@@ -39,6 +46,10 @@ public class JJBuilder extends IncrementalProjectBuilder
   */
   protected IProject[] build(int kind, Map args, IProgressMonitor mon)
     throws CoreException {
+    // These are Contants on the build
+    javaProject = JavaCore.create(getProject());
+    outputFolder = javaProject.getOutputLocation().removeFirstSegments(1);
+    
     if (kind == IncrementalProjectBuilder.FULL_BUILD) {
       fullBuild(mon);
     } else {
@@ -86,14 +97,17 @@ public class JJBuilder extends IncrementalProjectBuilder
    * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
    */
   public boolean visit(IResource res) throws CoreException {
-    String extension = res.getFullPath().getFileExtension();
-    if ("jj".equals(extension) || "jjt".equals(extension)) //$NON-NLS-1$ //$NON-NLS-2$
-      CompileJJResource(res);
-    if ("jtb".equals(extension)) //$NON-NLS-1$
-      CompileJTBResource(res);    
-    // This excludes traversing the bin directory
-    // But do not prevent .jj to be copied to bin dir...
-    return !res.toString().endsWith("bin"); //$NON-NLS-1$
+    boolean okToCompile = javaProject.isOnClasspath(res);
+    if (okToCompile) {
+      String extension = res.getFullPath().getFileExtension();
+      if ("jj".equals(extension) || "jjt".equals(extension)) //$NON-NLS-1$ //$NON-NLS-2$
+	CompileJJResource(res);
+      if ("jtb".equals(extension)) //$NON-NLS-1$
+	CompileJTBResource(res);
+    }
+    // This prevents traversing output directories
+    boolean isOut = res.getProjectRelativePath().equals(outputFolder);
+    return !isOut;
   }
 
   /**
@@ -102,9 +116,6 @@ public class JJBuilder extends IncrementalProjectBuilder
    */
   public static void CompileJJResource(IResource res) throws CoreException {
     if (!(res instanceof IFile) || !res.exists())
-      return;
-    //String test = res.getPersistentProperty(QN_EXCLUDE_FROM_BUILD);
-    if (("true").equals(res.getPersistentProperty(QN_EXCLUDE_FROM_BUILD)))
       return;
 
     IFile file = (IFile) res;
@@ -485,10 +496,15 @@ public class JJBuilder extends IncrementalProjectBuilder
       // If the user has given a path, we use it
       jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JAR);
       // else we use the jar in the plugin
-      if (jarfile == null || jarfile.equals("")) {//$NON-NLS-1$
+      if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
 	URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
+	// Eclipse 3.1 way. Deprecated in 3.2
 	URL resolvedURL = Platform.resolve(installURL);
 	String home = Platform.asLocalURL(resolvedURL).getFile();
+	// Eclipse 3.2 way. Only available in Eclipse 3.2
+//	  URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+//	  String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+	// Same for both
 	jarfile = home + "javacc.jar"; //$NON-NLS-1$
       }
     } catch (Exception e) {
@@ -506,9 +522,20 @@ public class JJBuilder extends IncrementalProjectBuilder
   protected static String getJTBJarFile(IFile file) {
     String jarfile = null;
     try {
+      // If the user has given a path, we use it
       jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JTBJAR);
-      if (jarfile == null || jarfile.equals("")) //$NON-NLS-1$
-        jarfile = null;
+      // else we use the jar in the plugin
+      if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
+	URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
+	// Eclipse 3.1 way. Deprecated in 3.2
+	URL resolvedURL = Platform.resolve(installURL);
+	String home = Platform.asLocalURL(resolvedURL).getFile();
+	// Eclipse 3.2 way. Only available in Eclipse 3.2
+//	  URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+//	  String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+	// Same for both
+	jarfile = home + "jtb132.jar"; //$NON-NLS-1$
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }

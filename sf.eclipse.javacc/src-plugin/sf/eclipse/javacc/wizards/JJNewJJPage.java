@@ -88,10 +88,10 @@ public class JJNewJJPage extends WizardPage {
    * Creates a new <code>NewJJWizardPage</code>
    */
   public JJNewJJPage() {
-    super("NewJJWizardPage");
+    super("NewJJWizardPage"); //$NON-NLS-1$
     fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();   
-    setDescription("This wizard creates a new example file.");
-    setTitle("New JavaCC or JTB file");
+    setDescription(Activator.getString("JJNewJJPage.This_wizard_creates_a_new_file")); //$NON-NLS-1$
+    setTitle(Activator.getString("JJNewJJPage.New_javacc_or_jtb_file")); //$NON-NLS-1$
   }
 
   /**
@@ -115,7 +115,7 @@ public class JJNewJJPage extends WizardPage {
       }
     }
     // init extension
-    fExtension = ".jj";
+    fExtension = ".jj"; //$NON-NLS-1$
     // init filename
     fFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
   }
@@ -149,7 +149,7 @@ public class JJNewJJPage extends WizardPage {
     });
     // the browse button
     Button button = new Button(topLevel, SWT.PUSH);
-    button.setText(Activator.getString("JJNewJJPage.Browse...")); //$NON-NLS-1$
+    button.setText(Activator.getString("JJNewJJPage.Browse")); //$NON-NLS-1$
     button.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
         IPackageFragmentRoot root = chooseSourceContainer();
@@ -179,7 +179,7 @@ public class JJNewJJPage extends WizardPage {
     });
     // the browse button
     button = new Button(topLevel, SWT.PUSH);
-    button.setText(Activator.getString("JJNewJJPage.Browse...")); //$NON-NLS-1$
+    button.setText(Activator.getString("JJNewJJPage.Browse")); //$NON-NLS-1$
     button.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
         IPackageFragment pack = choosePackage();
@@ -211,20 +211,20 @@ public class JJNewJJPage extends WizardPage {
     };
     // .jj
     Button radio = new Button(group, SWT.RADIO);
-    radio.setText("JJ file");
-    radio.setData(".jj");
+    radio.setText(Activator.getString("JJNewJJPage.JJ_file")); //$NON-NLS-1$
+    radio.setData(".jj"); //$NON-NLS-1$
     radio.setSelection(true);
     radio.addSelectionListener(listener);
     // .jjt
     radio = new Button(group, SWT.RADIO);
-    radio.setText("JJT file");
-    radio.setData(".jjt");
+    radio.setText(Activator.getString("JJNewJJPage.JJT_file")); //$NON-NLS-1$
+    radio.setData(".jjt"); //$NON-NLS-1$
     radio.setSelection(false);
     radio.addSelectionListener(listener);
     // .jtb
     radio = new Button(group, SWT.RADIO);
-    radio.setText("JTB file");
-    radio.setData(".jtb");
+    radio.setText(Activator.getString("JJNewJJPage.JTB_File")); //$NON-NLS-1$
+    radio.setData(".jtb"); //$NON-NLS-1$
     radio.addSelectionListener(listener);
     new Label(topLevel, SWT.NULL); // to fill the line
 
@@ -258,7 +258,7 @@ public class JJNewJJPage extends WizardPage {
       setPageComplete(false);
     
     // help context
-    PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, "JJNewJJPage");
+    PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, "JJNewJJPage"); //$NON-NLS-1$
   }
 
   /**
@@ -270,7 +270,7 @@ public class JJNewJJPage extends WizardPage {
     fSrcRootFragment= null;
     String str= fSrcRootText.getText();
     if (str.length() == 0) {
-      status.setError("Folder name is empty"); 
+      status.setError(Activator.getString("JJNewJJPage.Folder_name_is_empty"));  //$NON-NLS-1$
       return status;
     }
     IPath path= new Path(str);
@@ -357,7 +357,7 @@ public class JJNewJJPage extends WizardPage {
           }
         }
         if (!pack.exists()) // check the existence
-          status.setError("Package '"+pack.getElementName()+"' does not exist");
+          status.setError(Activator.getString("JJNewJJPage.the_package")+" "+pack.getElementName()+" "+Activator.getString("JJNewJJPage._does_not_exist")); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (JavaModelException e) {
         Activator.log(e.toString());
       }
@@ -513,7 +513,7 @@ public class JJNewJJPage extends WizardPage {
     dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description); 
     dialog.addFilter(filter);
     dialog.setInput(JavaCore.create(fWorkspaceRoot));
-    dialog.setInitialSelection("dummy");
+    dialog.setInitialSelection("dummy"); //$NON-NLS-1$
     
     if (dialog.open() == Window.OK) {
       Object element= dialog.getFirstResult();

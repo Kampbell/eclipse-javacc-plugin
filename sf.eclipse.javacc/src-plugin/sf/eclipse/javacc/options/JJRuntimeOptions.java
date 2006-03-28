@@ -22,7 +22,7 @@ import sf.eclipse.javacc.JJNature;
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
-public class JJRuntimeOptions extends Composite implements IJJConstants{
+public class JJRuntimeOptions extends Composite implements IJJConstants {
   
   // Controls
   protected FileFieldEditor jarFile;
@@ -30,7 +30,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
   protected BooleanFieldEditor checkShowConsole;
   protected BooleanFieldEditor checkClearConsole;
   protected BooleanFieldEditor checkJJNature;
-  protected BooleanFieldEditor checkExcludeFromBuild;
   protected FileFieldEditor jtbjarFile;
   
   // The Resource to work on.
@@ -65,7 +64,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
     new Label(subGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     jarFile = new FileFieldEditor(RUNTIME_JAR,
       Activator.getString("JJRuntimeOptions.Set_the_JavaCC_jar_file"), subGroup); //$NON-NLS-1$
-    jarFile.setFileExtensions(new String[] {"*.jar", "*.zip"}); //$NON-NLS-1$ //$NON-NLS-2$
+//    jarFile.setFileExtensions(new String[] {"*.jar", "*.zip"}); //$NON-NLS-1$ //$NON-NLS-2$
     
     // Add Checkboxes for boolean values
     Composite checkGroup = new Composite(groupProject, SWT.NONE);
@@ -78,9 +77,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
 	Activator.getString("JJRuntimeOptions.Build_automatically_on_save"), checkGroup);           //$NON-NLS-1$
     checkProjectOverride = new BooleanFieldEditor(PROJECT_OVERRIDE,
 	Activator.getString("JJRuntimeOptions.Project_options_override_File_options"), checkGroup); //$NON-NLS-1$
-    if (isFile)
-      checkExcludeFromBuild = new BooleanFieldEditor(EXCLUDE_FROM_BUILD,
-        Activator.getString("JJRuntimeOptions.file_exclude_from_build"), checkGroup); //$NON-NLS-1$
     
     // Adds jtb runtime_jar selection control
     Composite jtbGroup = new Composite(groupProject, SWT.NONE);
@@ -89,7 +85,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
     new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     jtbjarFile = new FileFieldEditor(RUNTIME_JAR,
       Activator.getString("JJRuntimeOptions.Set_the_jtb_jar_file"), subGroup); //$NON-NLS-1$
-    jtbjarFile.setFileExtensions(new String[] {"*.jar", "*.zip"}); //$NON-NLS-1$ //$NON-NLS-2$
+//    jtbjarFile.setFileExtensions(new String[] {"*.jar", "*.zip"}); //$NON-NLS-1$ //$NON-NLS-2$
 
     // Reads and sets values
     if (res != null) {
@@ -105,9 +101,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
         checkJJNature.setBooleanValue(hasJavaccNature);
         checkProjectOverride.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
             QN_PROJECT_OVERRIDE))));
-        if (isFile)
-          checkExcludeFromBuild.setBooleanValue("true".equals((res.getPersistentProperty( //$NON-NLS-1$
-            QN_EXCLUDE_FROM_BUILD))));
         jtbjarFile.setStringValue(proj.getPersistentProperty(QN_RUNTIME_JTBJAR));
        } catch (CoreException e) {
         e.printStackTrace();
@@ -121,12 +114,10 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
   public void performDefaults() {
     jarFile.setStringValue(Activator.getString("JJBuilder.defaultJar"));  //$NON-NLS-1$
     jtbjarFile.setStringValue(Activator.getString("JJBuilder.defaultJtbJar"));  //$NON-NLS-1$
-    checkShowConsole.setBooleanValue("true".equals(Activator.getString("JJRuntimeOptions.showConsole"))); //$NON-NLS-1$ //$NON-NLS-2$
-    checkClearConsole.setBooleanValue("true".equals(Activator.getString("JJRuntimeOptions.clearConsole"))); //$NON-NLS-1$ //$NON-NLS-2$
-    checkProjectOverride.setBooleanValue("true".equals(Activator.getString("JJRuntimeOptions.projectOverride"))); //$NON-NLS-1$ //$NON-NLS-2$
-    if (isFile)
-      checkExcludeFromBuild.setBooleanValue("false".equals(Activator.getString("JJRuntimeOptions.file_exclude_from_build"))); //$NON-NLS-1$ //$NON-NLS-2$
-    checkJJNature.setBooleanValue("true".equals(Activator.getString("JJRuntimeOptions.jjNature"))); //$NON-NLS-1$ //$NON-NLS-2$
+    checkShowConsole.setBooleanValue(true); 
+    checkClearConsole.setBooleanValue(false);
+    checkProjectOverride.setBooleanValue(true); 
+    checkJJNature.setBooleanValue(true);
   }
 
   /**
@@ -148,9 +139,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
         checkClearConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
        proj.setPersistentProperty(QN_PROJECT_OVERRIDE,
          checkProjectOverride.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-       if (isFile)
-	 res.setPersistentProperty(QN_EXCLUDE_FROM_BUILD,
-	   checkExcludeFromBuild.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
        proj.setPersistentProperty(QN_JJ_NATURE,
          checkJJNature.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
      
@@ -171,7 +159,5 @@ public class JJRuntimeOptions extends Composite implements IJJConstants{
   public void setPropertyChangeListener(IPropertyChangeListener listener) {
       checkProjectOverride.setPropertyChangeListener(listener);
       checkJJNature.setPropertyChangeListener(listener);
-      if (isFile)
-	checkExcludeFromBuild.setPropertyChangeListener(listener);
   }
 }

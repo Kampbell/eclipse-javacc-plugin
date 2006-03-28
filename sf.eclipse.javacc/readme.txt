@@ -29,6 +29,12 @@ Features
    use Workbench "Back" to go back.
 
 History
+27/03/06
+- removed "exclude from build" and adopted Eclipse way, ie Build Path.
+- added a French translation in a plugin fragment / feature patch
+- corrected bug in outline alphabetic sort
+- corrected bug in JTB wizard when default or no package is selected
+
 24/02/06
 - added property to exclude a jj file from build
 - packaged plug-in as Eclipse feature with update site

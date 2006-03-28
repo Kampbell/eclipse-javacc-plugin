@@ -89,7 +89,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
       // we need to treat full editor text using JavaCC grammar
       // and we have to replace only part of it.
       String endLineDelim = doc.getLegalLineDelimiters()[0];
-      String identString = "  "; // TODO grep Legal ident string
+      String identString = "  "; // TODO grep Legal ident string //$NON-NLS-1$
       formatSelection(doc.get(), endLineDelim, identString,
 	  ts.getStartLine() + 1, ts.getEndLine() + 1, strbuf);
       
@@ -161,7 +161,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
 	  || f.kind == EQ || f.kind == LE || f.kind == GE || f.kind == NE
 	  || f.kind == SC_OR|| f.kind == SC_AND || f.kind == BIT_AND
 	  || f.kind == INSTANCEOF)
-	sb.append(" ");
+	sb.append(" "); //$NON-NLS-1$
       
       // the special token(s)
       Token st = f.specialToken;
@@ -202,13 +202,13 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
       if ( (f.kind >= ABSTRACT && f.kind <= WHILE )
 	  && f.kind != NULL && f.kind != CONTINUE
 	  && f.kind != FALSE && f.kind != TRUE )
-	sb.append(" ");
+	sb.append(" "); //$NON-NLS-1$
       else if ( f.kind == ASSIGN || f.kind == COMMA 
 	  || f.kind == EQ || f.kind == LE || f.kind == GE || f.kind == NE
 	  || f.kind == SC_OR || f.kind == SC_AND || f.kind == BIT_AND 
 	  || f.kind == BIT_OR 
 	  || f.kind == _JAVACODE || f.kind == INSTANCEOF )
-	sb.append(" ");
+	sb.append(" "); //$NON-NLS-1$
 
       // next token
       lastkind = f.kind;
@@ -222,7 +222,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
    * @throws IOException
    */
   public static void main(String[] args) throws IOException {
-    String testFile = new File(".").getCanonicalPath()+"/Divers/test.jjt";
+    String testFile = new File(".").getCanonicalPath()+"/Divers/test.jjt"; //$NON-NLS-1$ //$NON-NLS-2$
     StringBuffer sb = new StringBuffer();
     
     // Read the test file to format
@@ -239,14 +239,14 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
     // Here are the arguments
     String txt = sb.toString();
     sb = new StringBuffer();
-    String endline = "\n";
-    String identString = "~";
+    String endline = "\n"; //$NON-NLS-1$
+    String identString = "~"; //$NON-NLS-1$
 
     // Do format
     JJFormat jjf = new JJFormat();
     jjf.formatSelection(txt, endline, identString, 0, nLines , sb); // nLines
     
     // See what we got
-    System.out.println("after>"+sb.toString());
+    System.out.println("after>"+sb.toString()); //$NON-NLS-1$
   }
 }

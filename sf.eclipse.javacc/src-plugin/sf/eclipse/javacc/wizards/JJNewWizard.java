@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,6 +28,7 @@ import org.eclipse.ui.ide.IDE;
 
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.JJNature;
 
 /**
  * This wizard creates one file with the extension "jj", "jjt" or "jtb" based on
@@ -36,7 +38,7 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
-public class JJNewWizard extends NewElementWizard {
+public class JJNewWizard extends NewElementWizard implements IJJConstants {
   private JJNewJJPage fPage;
 
   /**
@@ -45,10 +47,10 @@ public class JJNewWizard extends NewElementWizard {
    */
   public JJNewWizard() {
     super();
-    ImageDescriptor id = Activator.getImageDescriptor("jjnew_wiz.gif");
+    ImageDescriptor id = Activator.getImageDescriptor("jjnew_wiz.gif"); //$NON-NLS-1$
     setDefaultPageImageDescriptor(id);
     setDialogSettings(Activator.getDefault().getDialogSettings());
-    setWindowTitle("Creates .jj, .jjt or .jtb example file.");
+    setWindowTitle(Activator.getString("JJNewWizard.creates_jj_example_file")); //$NON-NLS-1$
   }
 
   /**
@@ -74,6 +76,7 @@ public class JJNewWizard extends NewElementWizard {
         try {
           doFinish(srcdir, fileName, extension, packageName, monitor);
         } catch (CoreException e) {
+          e.printStackTrace();
           Activator.log(e.getMessage());
         } finally {
           monitor.done();
@@ -101,14 +104,14 @@ public class JJNewWizard extends NewElementWizard {
     
     // first look for the srcDir+package 
     String resName;
-    if (packageName.equals(""))
+    if (packageName.equals("")) //$NON-NLS-1$
       resName = srcDir;
     else
-      resName = srcDir+"/"+packageName.replace('.','/');
+      resName = srcDir+"/"+packageName.replace('.','/'); //$NON-NLS-1$
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     IResource res = root.findMember(new Path(resName));
     if (!res.exists() || !(res instanceof IContainer)) {
-      Activator.log("SrcDir does not exist.");
+      Activator.log(Activator.getString("JJNewWizard.src_dir_doesnot_exist")); //$NON-NLS-1$
     }
     
     // second create the file
@@ -123,7 +126,7 @@ public class JJNewWizard extends NewElementWizard {
       }
       stream.close();
     } catch (IOException e) {
-      Activator.log("Creation of "+fileName+" failed. "+e.getMessage());
+      Activator.log(Activator.getString("JJNewWizard.Creation_of")+fileName+Activator.getString("JJNewWizard.failed")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
     }
     monitor.worked(1);
     monitor.setTaskName(Activator.getString("JJNewWizard.Opening_file_for_editing")); //$NON-NLS-1$
@@ -133,14 +136,26 @@ public class JJNewWizard extends NewElementWizard {
         try {
           IDE.openEditor(wpage, file, true);
         } catch (PartInitException e) {
-          Activator.log("Opening of "+file+" failed. "+e.getMessage());
+          Activator.log(Activator.getString("JJNewWizard.opening_of")+file+Activator.getString("JJNewWizard.failed")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
     });
     monitor.worked(1);
     
-    // Tricky part JTB needs -p packageName
-    res.getProject().setPersistentProperty(IJJConstants.QN_JTB_OPTIONS,"-p="+packageName);
+    // Tricky part JTB needs -p packageName, only if there is a package name
+    if (!packageName.equals("")) //$NON-NLS-1$
+      res.getProject().setPersistentProperty(IJJConstants.QN_JTB_OPTIONS,"-p="+packageName); //$NON-NLS-1$
+    
+    // Initialize properties do get automaticclay a full build
+    IProject pro = res.getProject();
+    pro.setPersistentProperty(QN_RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
+    pro.setPersistentProperty(QN_RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
+    pro.setPersistentProperty(QN_SHOW_CONSOLE, "true");
+    pro.setPersistentProperty(QN_CLEAR_CONSOLE, "false");
+    pro.setPersistentProperty(QN_PROJECT_OVERRIDE, "true");
+    pro.setPersistentProperty(QN_JJ_NATURE, "true"); 
+    // Sets the nature directly
+    JJNature.setJJNature(true, pro);
   }
 
   /**
@@ -152,7 +167,7 @@ public class JJNewWizard extends NewElementWizard {
     URL url;
     try {
       // the extension gives the right template
-      String filename = Activator.getString("JJNewWizard.new_file") + extension; //$NON-NLS-1$
+      String filename = "new_file"+extension; //$NON-NLS-1$
       url = new URL(installURL, filename);
       // makeInputStream customize the template
       return makeInputStream(url.openStream(), packageName);
@@ -177,7 +192,7 @@ public class JJNewWizard extends NewElementWizard {
       buffer = Util.getInputStreamAsByteArray(stream, -1);
       stream.close();      
     } catch (IOException e) {
-      Activator.log("Reading failed "+e.getMessage());
+      Activator.log(Activator.getString("JJNewWizard.Reading_failed")+e.getMessage()); //$NON-NLS-1$
       return null;
     }
     
@@ -185,14 +200,14 @@ public class JJNewWizard extends NewElementWizard {
     String str = new String(buffer);
     
     // instanciate template
-    if (packageName.equals("")){
+    if (packageName.equals("")){ //$NON-NLS-1$
       // default package ? remove all
-      str = str.replaceAll("<\\?package.*\\?>", ""); 
+      str = str.replaceAll("<\\?package.*\\?>", "");  //$NON-NLS-1$ //$NON-NLS-2$
     }
     else {
       // add lines
-      str = str.replaceAll("<\\?package_declare\\?>", "package "+packageName+";\n");
-      str = str.replaceAll("<\\?package\\?>", packageName+".");
+      str = str.replaceAll("<\\?package_declare\\?>", "package "+packageName+";\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      str = str.replaceAll("<\\?package\\?>", packageName+"."); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     // return InputStream made from str
