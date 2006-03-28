@@ -1,8 +1,11 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>Eclipse JavaCC Plugin Home</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<style>@import url("web/site.css");</style>
+  <title>Eclipse JavaCC Plugin Home</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <style>@import url("web/site.css");</style>
+</head>
+<body onload="init();">
 <script type="text/javascript">
 	var returnval = 0;
 	var stylesheet, xmlFile, cache, doc;
@@ -52,92 +55,97 @@
 		}
 	}
 </script>
-</head>
-<body onload="init();">
-<!--[insert static HTML here]-->
-<a href="http://sourceforge.net">
-  <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo">
-</a>
-
+<!--[insert static HTML here]--><a href="http://sourceforge.net"> <img
+ src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5"
+ alt="SourceForge Logo" border="0" height="62" width="210"></a>
 <h1>JavaCC Eclipse Plug-in for Eclipse 3.1 - 3.2</h1>
-<h2>Last update 12 March 2006</h2>
+<h2>Last update 28 March 2006</h2>
 JavaCC plug-in is designed to help development of JavaCC applications.<br>
-License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a href="http://www.cecill.info/">Cecill</a> <br>
-
-You can download the last version on sourceforge : <a href="http://sourceforge.net/projects/eclipse-javacc">sourceforge site</a><br>
-Or use this site as an update site in Eclipse : http://eclipse-javacc.sourceforge.net/<br><br>
+License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a
+ href="http://www.cecill.info/">Cecill</a> <br>
+You can download the last version from sourceforge : <a
+ href="http://sourceforge.net/projects/eclipse-javacc">sourceforge site</a><br>
+Or use this site as an update site in Eclipse :
+http://eclipse-javacc.sourceforge.net/<br>
+<br>
 To install just unzip in C:/eclipse. The sources are with the plugin. <br>
-See <a href="readme_developer.txt">readme_developer.txt</a> if you want to hack the sources. 
-
+See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if
+you want to hack the sources.
 <h2>This plug-in provides : </h2>
 <ul>
-<li>Editor 
-<li>Outline 
-<li>Format (still to improve) 
-<li>JavaCC JJTree JJDoc compilation, (see <a href="https://javacc.dev.java.net/">https://javacc.dev.java.net/</a>)
-<li>JTB compilation, (You must provide your version of JTB see <a href="http://compilers.cs.ucla.edu/jtb/">http://compilers.cs.ucla.edu/jtb/</a>)
-<li>JavaCC, JJTree, JJDoc, JTB options
-<li>Problems reporting 
-<li>Console for JavaCC outputs with hyperlinks to Errors and Warnings 
-<li>Decoration of generated files 
-<li>Navigation into rules definitions (open declaration) 
-<li>Support Eclipse 3.1, Java 1.5, JavaCC4.0, JTB 132 
-<li>Matching bracket highlight 
-<li>Keyboard shortcuts : Comment lines Ctrl+/, Open declaration Ctrl+clic, Format Ctrl+Shift+F 
-<li>JavaCC is launched in the same directory as the grammar files (to facilitate package handling) 
-<li>More help is available with the plug-in via Eclipse menu Help / Help Contents. 
+  <li>Editor </li>
+  <li>Outline </li>
+  <li>Format (still to improve) </li>
+  <li>JavaCC JJTree JJDoc compilation, (see <a
+ href="https://javacc.dev.java.net/">https://javacc.dev.java.net/</a>) </li>
+  <li>JTB compilation, (You must provide your version of JTB see <a
+ href="http://compilers.cs.ucla.edu/jtb/">http://compilers.cs.ucla.edu/jtb/</a>)
+  </li>
+  <li>JavaCC, JJTree, JJDoc, JTB options </li>
+  <li>Problems reporting </li>
+  <li>Console for JavaCC outputs with hyperlinks to Errors and Warnings
+  </li>
+  <li>Decoration of generated files </li>
+  <li>Navigation into rules definitions (open declaration) </li>
+  <li>Support Eclipse 3.1, 3.2 Java 1.4, 1.5, JavaCC4.0, JTB 132 </li>
+  <li>Matching bracket highlight </li>
+  <li>Keyboard shortcuts : Comment lines Ctrl+/, Open declaration
+Ctrl+clic, Format Ctrl+Shift+F </li>
+  <li>JavaCC is launched in the same directory as the grammar files (to
+facilitate package handling) </li>
+  <li>More help is available with the plug-in via Eclipse menu Help /
+Help Contents. </li>
 </ul>
-New in 1.4 : update site, automatic format, self-contained javacc.jar, exclude a jj file from build<br>
-
+New in 1.5.1 : french version<br>
+New in 1.5 : update site, automatic format, self-contained javacc.jar,
+exclude a jj file from build<br>
 <h2>Quick Start</h2>
-
-<strong>1) Create a new JavaCC file :</strong><br>
-Menu <strong>File / New / Other...</strong><br>
-Select Wizard <strong>JavaCC / JavaCC Template file</strong><br>
+<strong>
+1) Create a new Java project and a package "foo"<br>
+<br>
+2) Select package "foo" and create a new JavaCC file.
+Just accept all default settings.<br>
+<br>
+<img src="new_project.png" alt="new project"><br>
+<br>
+Beware templates files are for Java 1.5 (you must change in generated
+file
+to JDK_VERSION = 1.4 if you use java 1.4)<br>
+<br>
+3) You have now a new JavaCC file, compiled with JavaCC and all
+generated java files in you project.<br>
+<br>
+<img src="files_generated.png" alt="files generated"><br>
+<br>
 Note that :<br>
-1 - templates are ready for Java 1.5 (you'll have to set Eclipse preference compiler
-compliance level to 5.0)<br>
-2 - we use package &quot;foo&quot;
-(you'll have to create the package before using the wizard or move the .jj file after creation)<br>
-3 - we use annotation @SuppressWarnings({&quot;all&quot;}) to get rid of Eclipse Warnings
-on generated files.<br><br>
-<img src="editor_file_jj.png"><br><br>
-
-<strong>2) Set Properties for the project :</strong><br>
-Select the Java Project &quot;<strong>TestJavaCC</strong>&quot;
-and right click <strong>Properties</strong><br>
-<strong>Indicate the path to javacc.jar</strong>. (which is in the &quot;bin/lib/&quot;
-directory of your JavaCC distribution)<br>
-Here I use JavaCC version 4.0 (the plug-in works also with JavaCC 2.1, 3.0, 3.1, 3.2).<br>
-<img src="project_properties.png"><br><br>
-
-<strong>3) Compile new_file.jj</strong><br>
-If you checked &quot;<strong>Build automatically on save</strong>&quot;
-the files should have been already generated.<br>
-If not, you can right click on the file in the Package Explorer (or Navigator) and select
-&quot;<strong>Compile with JavaCC</strong>&quot;.
-Note that :<br>
-- the generated files are decorated with a &quot;<strong>G</strong>&quot;
-and a <strong>&quot;&lt;from.jj&gt;&quot;</strong> to indicate the
+- the generated files are decorated with a "<big>G</big>"
+and a "<big>&lt;from.jj&gt;</big>" to indicate the
 .jj file they come from,<br>
 - there may be warnings from the Java
 Compiler (Eclipse doesn't like JavaCC generated code),<br>
 - JavaCC console opens automatically.<br>
-<img src="files_generated.png"><br><br>
-
-<strong>4) Run the example :</strong><br>
-Select &quot;TestJavaCC&quot; and menu &quot;Run&quot;-&gt; &quot;Run as...&quot; -&gt; &quot;Java
-application&quot;<br>
-Choose &quot;eg1&quot; for the main type. You can now test your JavaCC application :<br>
-<img src="file_run_test.png"><br><br>
-
+<br>
+4) Run the example<br>
+Select "<big>TestJavaCC</big>" and menu "<big>Run</big>"/ "<big>Run
+as...</big>" / "<big>Java
+application</big>"<br>
+Choose "<big>eg1</big>" for the main type. <br>
+You can now test your JavaCC
+application :<br>
+<br>
+<img src="file_run_test.png"><br>
+<br>
 You can do the same with the template for JJTree :<br>
-<img src="file_run_eg2.png"><br><br>
-
+<br>
+<img src="file_run_eg2.png"><br>
+<br>
 and also with the template for JTB:<br>
+<br>
 <img src="file_run_eg3.png">
-<br><br>
-
-<div id="data"><!-- this is where the transformed data goes --></div>
+<br>
+<br>
+</strong>
+<!--
+<div id="data"><!-- this is where the transformed data goes -->
 </body>
 </html>
