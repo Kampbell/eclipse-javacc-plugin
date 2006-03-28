@@ -6,7 +6,7 @@
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc.help">
 
-   <description>
+   <description url="http://eclipse-javacc.sourceforge.net/">
       This Feature provide Help for JavaCC Eclipse Plugin.
    </description>
 
