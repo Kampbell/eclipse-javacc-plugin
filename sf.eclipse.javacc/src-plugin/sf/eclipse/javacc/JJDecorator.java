@@ -1,10 +1,10 @@
 package sf.eclipse.javacc;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -26,10 +26,9 @@ import org.eclipse.ui.IDecoratorManager;
 public class JJDecorator extends LabelProvider
   implements ILabelDecorator, IJJConstants {
   
-  // Private HasMap to cache Images
-  private HashMap imgHashMap = new HashMap();
+  // Images to add on the original if generated or exluded
   private Image imgGeneratedStamp;
-  private Image imgExcludedStamp;
+  private Image imgExcludedJJ;
   
   /**
    * JJDecorator provides a small G in top right and <fromFile.jj>
@@ -40,7 +39,7 @@ public class JJDecorator extends LabelProvider
     ImageDescriptor desc = Activator.getImageDescriptor("jj_generated.gif"); //$NON-NLS-1$
     imgGeneratedStamp = desc.createImage(Display.getDefault());
     desc = Activator.getImageDescriptor("jj_file_exclude.gif"); //$NON-NLS-1$
-    imgExcludedStamp = desc.createImage(Display.getDefault());
+    imgExcludedJJ = desc.createImage(Display.getDefault());
   }
 
   /**
@@ -48,12 +47,8 @@ public class JJDecorator extends LabelProvider
    */
   public void dispose() {
     super.dispose();
-    for (Iterator it = imgHashMap.values().iterator(); it.hasNext();) {
-      ((Image)it.next()).dispose();
-    }
-    imgHashMap.clear();
     imgGeneratedStamp.dispose();
-    imgExcludedStamp.dispose();
+    imgExcludedJJ.dispose();
   }
 
   /**
@@ -65,26 +60,20 @@ public class JJDecorator extends LabelProvider
     Image newimg = image;
     // Look if decoration is needed
     boolean flagGenerated = (getGeneratedProperty(element) != null);
-    boolean flagExcluded = getExcludeProperty(element);
+    boolean flagExcluded = ! isOnClasspath(element);
     if (flagGenerated == true || flagExcluded == true) {
-      // Get the cached image corresponding to the decorated image
-      newimg = (Image) imgHashMap.get(image);
-      if (newimg == null) {
-        // Create
-        Rectangle bounds = image.getBounds();
-        Display display = Display.getDefault();
-        newimg = new Image(display, bounds.height, bounds.width);
-        // Decorate
-        GC gc = new GC(newimg);
-        gc.drawImage(image, 0, 0);
-        if (flagGenerated == true)
-          gc.drawImage(imgGeneratedStamp, 10, 0);
-        if (flagExcluded)
-          gc.drawImage(imgExcludedStamp, 0, 0);
-        gc.dispose();
-        // Archive
-        imgHashMap.put(image, newimg);
-      }
+      // Create
+      Rectangle bounds = image.getBounds();
+      Display display = Display.getDefault();
+      newimg = new Image(display, bounds.height, bounds.width);
+      // Decorate
+      GC gc = new GC(newimg);
+      gc.drawImage(image, 0, 0);
+      if (flagGenerated == true)
+	gc.drawImage(imgGeneratedStamp, 10, 0);
+      if (flagExcluded)
+	gc.drawImage(imgExcludedJJ, 0, 0);
+      gc.dispose();
     }
     return newimg;
   }
@@ -125,20 +114,21 @@ public class JJDecorator extends LabelProvider
   }
   
   /**
-   * Retrieves the "exclude" property.
-   * @param res
-   * @return Originator file
+   * Check if obj is a .jj, .jjt, jtb file and is on classpath
+   * @param Object obj
    */
-  protected boolean getExcludeProperty(Object obj) {
-    boolean gen = false;
+  protected boolean isOnClasspath(Object obj) {
+    boolean gen = true;
     if (obj instanceof IResource) {
       IResource res = (IResource)obj;
-      try {
-        String prop = res.getPersistentProperty(QN_EXCLUDE_FROM_BUILD);
-        if (prop != null && prop.equals("true"))
-          gen = true;
-      } catch (CoreException e) {
-        // e.printStackTrace();
+      // Look only for jj, jjt and jtb files
+      String ext = res.getFullPath().getFileExtension();
+      if ("jj".equals(ext) || "jjt".equals(ext) || "jtb".equals(ext)){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	// Look only for 
+	IProject project = res.getProject();
+	IJavaProject javaProject = JavaCore.create(project);
+	if (javaProject != null) 
+	  gen = javaProject.isOnClasspath(res);
       }
     }
     return gen;
