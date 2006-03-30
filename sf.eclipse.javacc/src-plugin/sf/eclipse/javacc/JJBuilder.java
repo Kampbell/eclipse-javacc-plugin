@@ -535,6 +535,8 @@ public class JJBuilder extends IncrementalProjectBuilder
 //	  String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
 	// Same for both
 	jarfile = home + "jtb132.jar"; //$NON-NLS-1$
+	if (jarfile.startsWith("/"))
+	  jarfile = jarfile.substring(1);
       }
     } catch (Exception e) {
       e.printStackTrace();
