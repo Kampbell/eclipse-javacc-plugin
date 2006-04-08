@@ -2,11 +2,11 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="JavaCC Feature"
-      version="1.5.0"
+      version="1.5.1"
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
-   <description url="http://perso.wanadoo.fr/eclipse_javacc/">
+   <description url="http://eclipse-javacc.sourceforge.net/">
       This Feature is designed to make JavaCC Eclipse Plugin available for installation via Eclipse Update manager.
    </description>
 
@@ -406,7 +406,8 @@ Version 2.0 dated 2005-05-21.
    </license>
 
    <url>
-      <update label="SourceForge JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/"/>
+      <update label="SF JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/updates/"/>
+      <discovery label="Eclipse JavaCC" url="http://eclipse-javacc.sourceforge.net/"/>
    </url>
 
    <requires>
