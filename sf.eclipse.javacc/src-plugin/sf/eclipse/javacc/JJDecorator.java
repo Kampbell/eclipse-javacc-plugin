@@ -24,7 +24,7 @@ import org.eclipse.ui.IDecoratorManager;
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 public class JJDecorator extends LabelProvider
-  implements ILabelDecorator, IJJConstants {
+implements ILabelDecorator, IJJConstants {
   
   // Images to add on the original if generated or exluded
   private Image imgGeneratedStamp;
@@ -41,7 +41,7 @@ public class JJDecorator extends LabelProvider
     desc = Activator.getImageDescriptor("jj_file_exclude.gif"); //$NON-NLS-1$
     imgExcludedJJ = desc.createImage(Display.getDefault());
   }
-
+  
   /**
    * @see ILabelDecorator#dispose
    */
@@ -50,7 +50,7 @@ public class JJDecorator extends LabelProvider
     imgGeneratedStamp.dispose();
     imgExcludedJJ.dispose();
   }
-
+  
   /**
    * Decorate Image with jj_generated.gif on top right
    * @see ILabelDecorator#decorateImage
@@ -70,14 +70,14 @@ public class JJDecorator extends LabelProvider
       GC gc = new GC(newimg);
       gc.drawImage(image, 0, 0);
       if (flagGenerated == true)
-	gc.drawImage(imgGeneratedStamp, 10, 0);
+        gc.drawImage(imgGeneratedStamp, 10, 0);
       if (flagExcluded)
-	gc.drawImage(imgExcludedJJ, 0, 0);
+        gc.drawImage(imgExcludedJJ, 0, 0);
       gc.dispose();
     }
     return newimg;
   }
-
+  
   /**
    * Decorate Text with a reference <...> to .jj file
    * @see ILabelDecorator#decorateText
@@ -93,7 +93,7 @@ public class JJDecorator extends LabelProvider
     }
     return aText;
   }
-
+  
   /**
    * Retrieves the .jj file name if the file is derived.
    * @param res
@@ -124,16 +124,15 @@ public class JJDecorator extends LabelProvider
       // Look only for jj, jjt and jtb files
       String ext = res.getFullPath().getFileExtension();
       if ("jj".equals(ext) || "jjt".equals(ext) || "jtb".equals(ext)){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	// Look only for 
-	IProject project = res.getProject();
-	IJavaProject javaProject = JavaCore.create(project);
-	if (javaProject != null) 
-	  gen = javaProject.isOnClasspath(res);
+        IProject project = res.getProject();
+        IJavaProject javaProject = JavaCore.create(project);
+        if (javaProject != null) 
+          gen = javaProject.isOnClasspath(res);
       }
     }
     return gen;
   }
-
+  
   /**
    * Get the static instance of JJDecorator
    * @return JJDecorator object
@@ -143,13 +142,13 @@ public class JJDecorator extends LabelProvider
     JJDecorator result = null;
     IDecoratorManager decoratorManager =
       Activator.getDefault().getWorkbench().getDecoratorManager();
-
+    
     if (decoratorManager.getEnabled("sf.eclipse.javacc.jjdecorator")) //$NON-NLS-1$
-    result= (JJDecorator) decoratorManager.getBaseLabelProvider(
-        "sf.eclipse.javacc.jjdecorator"); //$NON-NLS-1$
+      result= (JJDecorator) decoratorManager.getBaseLabelProvider(
+      "sf.eclipse.javacc.jjdecorator"); //$NON-NLS-1$
     return result;
   }
-
+  
   /**
    * Redecorate Files
    * Fire a Label Change event to refresh all decorators
