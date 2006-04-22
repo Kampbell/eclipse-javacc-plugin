@@ -101,9 +101,9 @@ public class JJBuilder extends IncrementalProjectBuilder
     if (okToCompile) {
       String extension = res.getFullPath().getFileExtension();
       if ("jj".equals(extension) || "jjt".equals(extension)) //$NON-NLS-1$ //$NON-NLS-2$
-	CompileJJResource(res);
+        CompileJJResource(res);
       if ("jtb".equals(extension)) //$NON-NLS-1$
-	CompileJTBResource(res);
+        CompileJTBResource(res);
     }
     // This prevents traversing output directories
     boolean isOut = res.getProjectRelativePath().equals(outputFolder);
@@ -117,6 +117,12 @@ public class JJBuilder extends IncrementalProjectBuilder
   public static void CompileJJResource(IResource res) throws CoreException {
     if (!(res instanceof IFile) || !res.exists())
       return;
+    // In case of a false way
+    String extension = res.getFullPath().getFileExtension();
+    if ("jtb".equals(extension)) {//$NON-NLS-1$
+      CompileJTBResource(res);
+      return;
+    }
 
     IFile file = (IFile) res;
     IProject pro = file.getProject();
