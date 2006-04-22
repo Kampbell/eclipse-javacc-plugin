@@ -109,7 +109,7 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="false"
-            nameFilter="*.jtb*"
+            nameFilter="*.jtb"
             id="jtbcompile">
         <action
             label="%Compile_with_JTB"
@@ -153,7 +153,7 @@
             extensions="jtb"
             class="sf.eclipse.javacc.editors.JJEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            id="sf.eclipse.javacc.editors.JJEditor">
+            id="sf.eclipse.javacc.editors.JTBEditor">
       </editor>  
    </extension>
 <!-- Editor Popup Menu Extensions -->
