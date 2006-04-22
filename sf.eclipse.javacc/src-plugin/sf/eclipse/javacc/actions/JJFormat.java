@@ -90,27 +90,29 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
       // and we have to replace only part of it.
       String endLineDelim = doc.getLegalLineDelimiters()[0];
       String identString = "  "; // TODO grep Legal ident string //$NON-NLS-1$
-      formatSelection(doc.get(), endLineDelim, identString,
-	  ts.getStartLine() + 1, ts.getEndLine() + 1, strbuf);
+      if (formatSelection(doc.get(), endLineDelim, identString,
+          ts.getStartLine() + 1, ts.getEndLine() + 1, strbuf) == true) {
       
       // Replace the text with the modified version
       doc.replace(startLine.getOffset(), ts.getLength(), strbuf.toString());
-      
+      }
       // Reselect text... not exactly as JavaEditor... whole text here
-      editor.selectAndReveal(startLine.getOffset(), strbuf.length());
+//    editor.selectAndReveal(startLine.getOffset(), strbuf.length());
     } catch (Exception e) {
       // Should not append
     }
     return;
   }
   
-  protected void formatSelection(String txt, String endLineDelim, 
+  protected boolean formatSelection(String txt, String endLineDelim, 
       String identString, int begin, int end, StringBuffer sb) {
     // Parse the full text, retain only the chain of Tokens
     StringReader in = new StringReader(txt);
     JJNode node = JavaCCParser.parse(in);
     in.close();
-   
+    if (node.getFirstToken().kind ==  0) {
+      return false;
+    }
     Token f = node.getFirstToken();
     StringBuffer ident = new StringBuffer();
     
@@ -214,6 +216,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
       lastkind = f.kind;
       f = f.next;
     }   
+    return true;
   }
   
   /**
