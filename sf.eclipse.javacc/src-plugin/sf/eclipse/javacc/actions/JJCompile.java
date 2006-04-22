@@ -1,8 +1,11 @@
 package sf.eclipse.javacc.actions;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -76,9 +79,9 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
         res.touch(null);     // Called from Package explorer
       
       // Force Compile if not triggered
-      if (!("true").equals(res.getProject().getPersistentProperty(QN_JJ_NATURE))){ //$NON-NLS-1$ 
+      if (!("true").equals(res.getProject().getPersistentProperty(QN_JJ_NATURE))  //$NON-NLS-1$
+          || !isOnClasspath(res) )
         JJBuilder.CompileJJResource(res);
-      }
       
       // Refresh the whole project to trigger compilation of Java files
       res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -87,5 +90,24 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
       e.printStackTrace();
     }
     return;
+  }
+  /**
+   * Check if res is a .jj, .jjt, jtb file and is on classpath
+   * @param Object obj
+   */
+  protected boolean isOnClasspath(Object obj) {
+    boolean gen = true;
+    if (obj instanceof IResource) {
+      IResource res = (IResource)obj;
+      // Look only for jj, jjt and jtb files
+      String ext = res.getFullPath().getFileExtension();
+      if ("jj".equals(ext) || "jjt".equals(ext) || "jtb".equals(ext)){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        IProject project = res.getProject();
+        IJavaProject javaProject = JavaCore.create(project);
+        if (javaProject != null) 
+          gen = javaProject.isOnClasspath(res);
+      }
+    }
+    return gen;
   }
 }
