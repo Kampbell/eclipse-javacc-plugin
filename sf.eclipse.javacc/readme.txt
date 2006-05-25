@@ -29,31 +29,36 @@ Features
    use Workbench "Back" to go back.
 
 History
-27/03/06
+24/05/06 - version 1.5.3
+- corrected plugin key conflict F3 is now defined only for JavaCCPlugin
+- corrected bug in automatic format
+- added global preferences for colors
+
+27/03/06 - version 1.5.2
 - removed "exclude from build" and adopted Eclipse way, ie Build Path.
 - added a French translation in a plugin fragment / feature patch
 - corrected bug in outline alphabetic sort
 - corrected bug in JTB wizard when default or no package is selected
 
-24/02/06
+24/02/06 - version 1.5.1
 - added property to exclude a jj file from build
 - packaged plug-in as Eclipse feature with update site
 - packaged plug-in as a Directory (no more as a single jar) to use self contained javacc.jar 
 - added automatic format
 
-13/11/05
+13/11/05 - version 1.5.0
 - java 1.4 .class files compatibility
 - bug correction (double compilation for .jtb in some case)
 - icons for jtb files
 - context help F1
 
-31/10/05 - 1.3
+31/10/05 - version 1.3
 - support JTB
 - Ctrl+ clic to open definition
 - corrected bug in outline now showing up the first time
 - removed self-history (now use the Workbench history)
 
-28/08/05 - 1.2 
+28/08/05 - version 1.2 
 - support Eclipse 3.1
 - support Java 1.5
 - matching bracket highlight
@@ -68,14 +73,14 @@ History
 - removed button on the toolbar (replaced with popup menu)
 - added Class and Method icons in outline
 
-26/10/04 - 1.1 
+26/10/04 - version 1.1 
 - support Eclipse 3.0
 - added syntax highlight for private productions <# token>
 - added use of java instead of javaw on Window's systems to call javacc
 - added marker hover 
 - correct outline, was showing '.' when rule returns a class or Object[]
 
-28/07/05 - 1.2 
+28/07/05 - version 1.2 
 - hyperlinks in Console
 - bug correction in Builder, Console
 

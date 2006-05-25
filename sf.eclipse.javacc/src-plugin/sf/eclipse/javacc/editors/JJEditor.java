@@ -64,6 +64,13 @@ INavigationLocationProvider {
     // Actions are declared in plugin.xml
   }
   
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
+   */
+  protected void initializeKeyBindingScopes() {
+    setKeyBindingScopes(new String[] { "sf.eclipse.javacc.JJEditorScope" });
+  }
+  
   /**
    * Subclassed in order to add a Parent Painter to the SourceViewer. One
    * Need to first create PartControl to get a SourceViewer.

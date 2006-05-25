@@ -56,7 +56,7 @@
             class="sf.eclipse.javacc.options.JJPropertyPage"
             icon="icons/jj_file.gif"
             id="sf.eclipse.javacc.options.JCCOptions"
-            name="%JavaCC_options"
+            name="%JavaCC_Options"
             nameFilter="*.jj"
             objectClass="org.eclipse.core.resources.IFile">
       </page>
@@ -64,7 +64,7 @@
             class="sf.eclipse.javacc.options.JJPropertyPage"
             icon="icons/jj_file.gif"
             id="sf.eclipse.javacc.options.JJTreeOptions"
-            name="%JavaCC_options"
+            name="%JavaCC_Options"
             nameFilter="*.jjt"
             objectClass="org.eclipse.core.resources.IFile">
       </page>
@@ -72,20 +72,20 @@
             class="sf.eclipse.javacc.options.JJPropertyPage"
             icon="icons/jtb_file.gif"
             objectClass="org.eclipse.core.resources.IFile"
-            name="%JavaCC_options"
+            name="%JavaCC_Options"
             nameFilter="*.jtb"
             id="sf.eclipse.javacc.options.JTBOptions">
       </page>
 <!-- Properties for Project -->
       <page
             objectClass="org.eclipse.jdt.core.IJavaProject"
-            name="%JavaCC_options"
+            name="%JavaCC_Options"
             class="sf.eclipse.javacc.options.JJPropertyPage"
             id="sf.eclipse.javacc.options.JJPropertyPage">
       </page>
       <page
             objectClass="org.eclipse.core.resources.IProject"
-            name="%JavaCC_options"
+            name="%JavaCC_Options"
             class="sf.eclipse.javacc.options.JJPropertyPage"
             id="sf.eclipse.javacc.options.JJPropertyPage">
       </page>  
@@ -206,7 +206,7 @@
             class="sf.eclipse.javacc.actions.JJFormat"
             definitionId="commands.jjformat"
             id="javacc.jjformat"
-            label="%Format"
+            label="%JavaCC_Format"
             menubarPath="JJGroup"/>
       </viewerContribution>
    </extension>   
@@ -237,14 +237,21 @@
             class="sf.eclipse.javacc.actions.JJFormat"
             definitionId="commands.jjformat"
             id="javacc.jjformat"
-            label="%Format"
+            label="%JavaCC_Format"
             style="push"/>      
       </editorContribution>
    </extension>
 <!-- Commands for key binding -->
+   <extension point="org.eclipse.ui.contexts">
+     <context
+       id="sf.eclipse.javacc.JJEditorScope"
+       name="%In_JavaCC_editor"
+       parentId="org.eclipse.jdt.ui.javaEditorScope">
+     </context>
+   </extension>
    <extension point="org.eclipse.ui.commands">
       <category
-            name="%JavaCC_editor_commands"
+            name="%JavaCC_editor"
             description="%JavaCC_editor_commands"
             id="JavaCC.category">
       </category>
@@ -261,29 +268,29 @@
             id="commands.jjgotorule">
       </command>
       <command
-            description="%JavaCC_compile"
+            description="%Compile_with_JavaCC"
             categoryId="JavaCC.category"
-            name="%JavaCC_compile"
+            name="%Compile_with_JavaCC"
             id="commands.jjcompile">
       </command>
       <command
-            description="%Format"
+            description="%JavaCC_Format"
             categoryId="JavaCC.category"
-            name="%JavaCC_format"
+            name="%JavaCC_Format"
             id="commands.jjformat"/>
    </extension>
 <!-- Keyboard shortcuts -->
    	<extension point="org.eclipse.ui.bindings">
-	 <key sequence="Ctrl+/"
-            contextId="org.eclipse.ui.textEditorScope"
+     <key sequence="Ctrl+/"
+            contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-	 <key sequence="F3"
-            contextId="org.eclipse.ui.textEditorScope"
+     <key sequence="F3"
+            contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjgotorule"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      	 <key sequence="Ctrl+Shift+F"
-            contextId="org.eclipse.ui.textEditorScope"
+     <key sequence="Ctrl+Shift+F"
+            contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjformat"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>

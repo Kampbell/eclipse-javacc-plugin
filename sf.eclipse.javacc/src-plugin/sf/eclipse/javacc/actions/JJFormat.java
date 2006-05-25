@@ -104,118 +104,114 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
     return;
   }
   
-  protected boolean formatSelection(String txt, String endLineDelim, 
+  protected boolean formatSelection(String txt, String endLineDelim,
       String identString, int begin, int end, StringBuffer sb) {
     // Parse the full text, retain only the chain of Tokens
     StringReader in = new StringReader(txt);
     JJNode node = JavaCCParser.parse(in);
     in.close();
-    if (node.getFirstToken().kind ==  0) {
+    if (node.getFirstToken().kind == 0) {
       return false;
     }
     Token f = node.getFirstToken();
     StringBuffer ident = new StringBuffer();
-    
-    // states 
+
+    // states
     boolean needNewLine = false;
     int lastkind = -1;
 
-    while(f.kind != EOF) {
+    while (f.kind != EOF) {
       // Special rule, for these keyword add a new line after ')'
       if (f.kind == _PARSER_BEGIN || f.kind == _PARSER_END)
-	needNewLine = true;
+        needNewLine = true;
       if (f.beginLine < begin || f.endLine > end) {
-	// next token
-	lastkind = f.kind;
-	f = f.next;
-	continue;
-      }
-     
-      // update identation for opening brace
-      if (lastkind == LBRACE && f.kind != RBRACE ){
-	ident.append(identString);
-	sb.append(endLineDelim).append(ident);
-      }
-      
-      // prepend newline and ident after JAVACC keyword
-      if ( lastkind == RPAREN && needNewLine) {
- 	sb.append(endLineDelim).append(ident);
- 	needNewLine = false;
-      }
-      if ( f.kind == BIT_OR && lastkind != RBRACE) {
- 	sb.append(endLineDelim).append(ident);
-      }
-      if (f.kind == RBRACE && lastkind != SEMICOLON 
-	  && lastkind != LBRACE && lastkind != RBRACE
-	  && lastkind != BIT_OR) {
-	sb.append(endLineDelim).append(ident);
-      }
-      // Closing brace delete ident
-      if (f.kind == RBRACE && lastkind != LBRACE ) {
-	if (ident.length() != 0) {
-	  sb.delete(sb.length()-identString.length(), sb.length());
-	}
-      }
-      
-      // prepend space  
-      if ( f.kind == ASSIGN 
-	  || (f.kind == IDENTIFIER && lastkind == IDENTIFIER)
-	  || f.kind == EQ || f.kind == LE || f.kind == GE || f.kind == NE
-	  || f.kind == SC_OR|| f.kind == SC_AND || f.kind == BIT_AND
-	  || f.kind == INSTANCEOF)
-	sb.append(" "); //$NON-NLS-1$
-      
-      // the special token(s)
-      Token st = f.specialToken;
-      if (st != null){
-	// Rewind to the first
-	while (st.specialToken != null)
-	  st = st.specialToken; 
-	// Examine each
-	while (st != null) {
-	  if (st.kind == SINGLE_LINE_COMMENT 
-	      ||st.kind == FORMAL_COMMENT
-	      ||st.kind == MULTI_LINE_COMMENT) { 
-	    if(st.beginLine >= begin) {
-	      sb.append(st.toString());
-	      sb.append(endLineDelim);
-	    }
-	  }
-	  st = st.next;
-	}
-      }
-      
-      // THE token
-//      strbuf.append("["+f.kind+"]");
-      sb.append(f.toString());
-      
-      // append newline and ident
-      if (f.kind == SEMICOLON ) {
-	sb.append(endLineDelim).append(ident);
-      }
-      if (f.kind == RBRACE && lastkind != LBRACE ) {
-	if (ident.length() != 0) {
-	  ident.delete(ident.length()-identString.length(), ident.length());
-	}
-	sb.append(endLineDelim).append(ident);
+        // next token
+        lastkind = f.kind;
+        f = f.next;
+        continue;
       }
 
-      // append space 
-      if ( (f.kind >= ABSTRACT && f.kind <= WHILE )
-	  && f.kind != NULL && f.kind != CONTINUE
-	  && f.kind != FALSE && f.kind != TRUE )
-	sb.append(" "); //$NON-NLS-1$
-      else if ( f.kind == ASSIGN || f.kind == COMMA 
-	  || f.kind == EQ || f.kind == LE || f.kind == GE || f.kind == NE
-	  || f.kind == SC_OR || f.kind == SC_AND || f.kind == BIT_AND 
-	  || f.kind == BIT_OR 
-	  || f.kind == _JAVACODE || f.kind == INSTANCEOF )
-	sb.append(" "); //$NON-NLS-1$
+      // update identation for opening brace
+      if (lastkind == LBRACE && f.kind != RBRACE) {
+        ident.append(identString);
+        sb.append(endLineDelim).append(ident);
+      }
+
+      // prepend newline and ident after JAVACC keyword
+      if (lastkind == RPAREN && needNewLine) {
+        sb.append(endLineDelim).append(ident);
+        needNewLine = false;
+      }
+      if (f.kind == BIT_OR && lastkind != RBRACE) {
+        sb.append(endLineDelim).append(ident);
+      }
+      if (f.kind == RBRACE && lastkind != SEMICOLON && lastkind != LBRACE
+          && lastkind != RBRACE && lastkind != BIT_OR) {
+        sb.append(endLineDelim).append(ident);
+      }
+      // Closing brace delete ident
+      if (f.kind == RBRACE && lastkind != LBRACE) {
+        if (ident.length() != 0) {
+          sb.delete(sb.length() - identString.length(), sb.length());
+        }
+      }
+
+      // prepend space
+      if (f.kind == ASSIGN || (f.kind == IDENTIFIER && lastkind == IDENTIFIER)
+          || f.kind == EQ || f.kind == LE || f.kind == GE || f.kind == NE
+          || f.kind == SC_OR || f.kind == SC_AND || f.kind == BIT_AND
+          || f.kind == INSTANCEOF || f.kind == EXTENDS)
+        sb.append(" "); //$NON-NLS-1$
+
+      // the special token(s)
+      Token st = f.specialToken;
+      if (st != null) {
+        // Rewind to the first
+        while (st.specialToken != null)
+          st = st.specialToken;
+        // Examine each
+        while (st != null) {
+          if (st.kind == SINGLE_LINE_COMMENT || st.kind == FORMAL_COMMENT
+              || st.kind == MULTI_LINE_COMMENT) {
+            if (st.beginLine >= begin) {
+              sb.append(st.toString());
+            }
+          }
+          if (st.kind == FORMAL_COMMENT || st.kind == MULTI_LINE_COMMENT)
+            sb.append(endLineDelim);
+          st = st.next;
+        }
+      }
+
+      // THE token
+      //sb.append("["+f.kind+"]");
+      sb.append(f.toString());
+
+      // append newline and ident
+      if (f.kind == SEMICOLON) {
+        sb.append(endLineDelim).append(ident);
+      }
+      if (f.kind == RBRACE && lastkind != LBRACE) {
+        if (ident.length() != 0) {
+          ident.delete(ident.length() - identString.length(), ident.length());
+        }
+        sb.append(endLineDelim).append(ident);
+      }
+
+      // append space
+      if ((f.kind >= ABSTRACT && f.kind <= WHILE) && f.kind != NULL
+          && f.kind != CONTINUE && f.kind != FALSE && f.kind != TRUE)
+        sb.append(" "); //$NON-NLS-1$
+      else if (f.kind == ASSIGN || f.kind == COMMA || f.kind == EQ
+          || f.kind == LE || f.kind == GE || f.kind == NE || f.kind == SC_OR
+          || f.kind == SC_AND || f.kind == BIT_AND || f.kind == BIT_OR
+          || f.kind == _JAVACODE || f.kind == INSTANCEOF)
+        sb.append(" "); //$NON-NLS-1$
 
       // next token
       lastkind = f.kind;
       f = f.next;
-    }   
+    }
     return true;
   }
   
