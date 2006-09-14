@@ -20,6 +20,7 @@ public interface IJJConstants {
   public static final String JJDOC_OPTIONS = "JJDOC_OPTIONS"; //$NON-NLS-1$
   public static final String RUNTIME_JAR = "RUNTIME_JAR"; //$NON-NLS-1$
   public static final String PROJECT_OVERRIDE = "PROJECT_OVERRIDE"; //$NON-NLS-1$
+  public static final String SUPPRESS_WARNINGS = "SUPPRESS_WARNINGS"; //$NON-NLS-1$  
   public static final String GENERATED_FILE = "GENERATED_FILE"; //$NON-NLS-1$
   public static final String SHOW_CONSOLE = "SHOW_CONSOLE"; //$NON-NLS-1$
   public static final String CLEAR_CONSOLE = "CLEAR_CONSOLE"; //$NON-NLS-1$
@@ -41,6 +42,7 @@ public interface IJJConstants {
   public static final QualifiedName QN_RUNTIME_JAR = new QualifiedName(ID, RUNTIME_JAR);
   public static final QualifiedName QN_CLEAR_CONSOLE = new QualifiedName(ID, CLEAR_CONSOLE);
   public static final QualifiedName QN_PROJECT_OVERRIDE = new QualifiedName(ID, PROJECT_OVERRIDE);
+  public static final QualifiedName QN_SUPPRESS_WARNINGS = new QualifiedName(ID, SUPPRESS_WARNINGS);
   public static final QualifiedName QN_SHOW_CONSOLE = new QualifiedName(ID, SHOW_CONSOLE);
   public static final QualifiedName QN_GENERATED_FILE = new QualifiedName(ID, GENERATED_FILE);
   public static final QualifiedName QN_JJ_NATURE = new QualifiedName(ID, JJ_NATURE);

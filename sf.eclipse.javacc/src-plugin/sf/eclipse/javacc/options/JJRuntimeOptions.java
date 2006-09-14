@@ -27,6 +27,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   // Controls
   protected FileFieldEditor jarFile;
   protected BooleanFieldEditor checkProjectOverride;
+  protected BooleanFieldEditor checkSuppressWarnings;
   protected BooleanFieldEditor checkShowConsole;
   protected BooleanFieldEditor checkClearConsole;
   protected BooleanFieldEditor checkJJNature;
@@ -77,7 +78,9 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
 	Activator.getString("JJRuntimeOptions.Build_automatically_on_save"), checkGroup);           //$NON-NLS-1$
     checkProjectOverride = new BooleanFieldEditor(PROJECT_OVERRIDE,
 	Activator.getString("JJRuntimeOptions.Project_options_override_File_options"), checkGroup); //$NON-NLS-1$
-    
+    checkSuppressWarnings = new BooleanFieldEditor(SUPPRESS_WARNINGS,
+	Activator.getString("JJRuntimeOptions.Automatically_suppress_warnings"), checkGroup); //$NON-NLS-1$
+   
     // Adds jtb runtime_jar selection control
     Composite jtbGroup = new Composite(groupProject, SWT.NONE);
     new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText("JJRuntimeOptions.Select_jtb_jar_file"); //$NON-NLS-1$
@@ -101,6 +104,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         checkJJNature.setBooleanValue(hasJavaccNature);
         checkProjectOverride.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
             QN_PROJECT_OVERRIDE))));
+        checkSuppressWarnings.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
+        		QN_SUPPRESS_WARNINGS))));
         jtbjarFile.setStringValue(proj.getPersistentProperty(QN_RUNTIME_JTBJAR));
        } catch (CoreException e) {
         e.printStackTrace();
@@ -116,7 +121,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     jtbjarFile.setStringValue(Activator.getString("JJBuilder.defaultJtbJar"));  //$NON-NLS-1$
     checkShowConsole.setBooleanValue(true); 
     checkClearConsole.setBooleanValue(false);
-    checkProjectOverride.setBooleanValue(true); 
+    checkProjectOverride.setBooleanValue(true);
+    checkSuppressWarnings.setBooleanValue(false);
     checkJJNature.setBooleanValue(true);
   }
 
@@ -139,6 +145,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         checkClearConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
        proj.setPersistentProperty(QN_PROJECT_OVERRIDE,
          checkProjectOverride.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+       proj.setPersistentProperty(QN_SUPPRESS_WARNINGS,
+    	 checkSuppressWarnings.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
        proj.setPersistentProperty(QN_JJ_NATURE,
          checkJJNature.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
      

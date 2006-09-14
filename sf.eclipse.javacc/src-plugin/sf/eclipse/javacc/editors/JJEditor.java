@@ -68,7 +68,7 @@ INavigationLocationProvider {
    * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
    */
   protected void initializeKeyBindingScopes() {
-    setKeyBindingScopes(new String[] { "sf.eclipse.javacc.JJEditorScope" });
+    setKeyBindingScopes(new String[] { "sf.eclipse.javacc.JJEditorScope" }); //$NON-NLS-1$
   }
   
   /**
