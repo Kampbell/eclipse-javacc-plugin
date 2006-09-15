@@ -230,7 +230,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 					resgenerated.setDerived(true);
 					resgenerated.setPersistentProperty(QN_GENERATED_FILE, name);
 					IJavaElement element = (IJavaElement) resgenerated.getAdapter(IJavaElement.class);
-					if (pro.getPersistentProperty(QN_SUPPRESS_WARNINGS).equals("true") && element instanceof ICompilationUnit) //$NON-NLS-1$
+					if ("true".equals(pro.getPersistentProperty(QN_SUPPRESS_WARNINGS)) && element instanceof ICompilationUnit) //$NON-NLS-1$
 					{
 						ICompilationUnit cu = (ICompilationUnit) element;
 						String source = cu.getBuffer().getContents();
