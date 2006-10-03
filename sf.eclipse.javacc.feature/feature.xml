@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="JavaCC Feature"
-      version="1.5.3"
+      version="1.5.4"
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
