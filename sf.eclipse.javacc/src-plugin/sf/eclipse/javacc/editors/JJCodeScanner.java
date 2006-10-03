@@ -3,6 +3,8 @@ package sf.eclipse.javacc.editors;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
@@ -17,6 +19,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
+import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.options.JJPreferences;
+
 /**
  * A rudimentary JavaCC code scanner
  * coloring words and comments.
@@ -26,19 +31,17 @@ import org.eclipse.swt.widgets.Display;
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 public class JJCodeScanner extends RuleBasedScanner {
-  /** The color keys */
-  public static final int JJKEYWORD = SWT.COLOR_DARK_GREEN;
-  public static final int JAVAKEYWORD = SWT.COLOR_DARK_RED;
-  public static final int BACKGROUND = SWT.COLOR_WIDGET_BACKGROUND;
-  public static final int STRING = SWT.COLOR_BLUE;
-  public static final int COMMENT = SWT.COLOR_DARK_GREEN;
-  public static final int JDOC_COMMENT = SWT.COLOR_DARK_BLUE;
-  public static final int TOKEN = SWT.COLOR_DARK_YELLOW;
-  public static final int PTOKEN = SWT.COLOR_DARK_MAGENTA;
-  public static final int DEFAULT = SWT.COLOR_BLACK;
-
-  public static final String[] fgJJkeywords =
-    {
+  Color cJJKEYWORD;
+  Color cJAVAKEYWORD;
+  Color cBACKGROUND;
+  Color cSTRING;
+  Color cCOMMENT;
+  Color cJDOC_COMMENT;
+  Color cTOKEN;
+  Color cPTOKEN;
+  Color cDEFAULT;
+  
+  public static final String[] fgJJkeywords = {
       "options", //$NON-NLS-1$
       "LOOKAHEAD", //$NON-NLS-1$
       "IGNORE_CASE", //$NON-NLS-1$
@@ -89,8 +92,7 @@ public class JJCodeScanner extends RuleBasedScanner {
       "TOKEN_MANAGER_USES_PARSER" //$NON-NLS-1$
 	  };
   
-  public static final String[] fgJavaKeywords =
-    {
+  public static final String[] fgJavaKeywords = {
       "abstract", //$NON-NLS-1$
       "boolean", //$NON-NLS-1$
       "break", //$NON-NLS-1$
@@ -162,32 +164,56 @@ public class JJCodeScanner extends RuleBasedScanner {
     super();
     fRules = createRules();
   }
-
+  
+  public void dispose() {
+    if (cJJKEYWORD != null) {
+      cJJKEYWORD.dispose();
+      cJJKEYWORD= null;
+      cJAVAKEYWORD.dispose();
+      cBACKGROUND.dispose();
+      cSTRING.dispose();
+      cCOMMENT.dispose();
+      cJDOC_COMMENT.dispose();
+      cTOKEN.dispose();
+      cPTOKEN.dispose();
+      cDEFAULT.dispose();
+    }
+  }
+  
   /**
    * Create Rules
    */
   public IRule[] createRules() {
     Display display = Display.getCurrent();
-    Color cJJKEYWORD = display.getSystemColor(JJKEYWORD);
-    Color cJAVAKEYWORD = display.getSystemColor(JAVAKEYWORD);
-    Color cBACKGROUND = null; //display.getSystemColor(BACKGROUND);
-    Color cSTRING = display.getSystemColor(STRING);
-    Color cCOMMENT = display.getSystemColor(COMMENT);
-    Color cJDOC_COMMENT = display.getSystemColor(JDOC_COMMENT);
-    Color cTOKEN = display.getSystemColor(TOKEN);
-    Color cPTOKEN = display.getSystemColor(PTOKEN);
-    Color cDEFAULT = display.getSystemColor(DEFAULT);
+    IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+    
+    cJJKEYWORD = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
+    cJAVAKEYWORD = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_JAVAKEYWORD));
+    cBACKGROUND = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND)); // null ?
+    cSTRING = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_STRING));
+    cCOMMENT = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_COMMENT));
+    cJDOC_COMMENT = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_JDOC_COMMENT));
+    cTOKEN = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_TOKEN));
+    cPTOKEN = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_PTOKEN));
+    cDEFAULT = new Color(display, 
+        PreferenceConverter.getColor(store, JJPreferences.P_DEFAULT));
 
-    IToken jjkeyword =
-      new Token(new TextAttribute(cJJKEYWORD, cBACKGROUND, SWT.BOLD));
-    IToken keyword =
-      new Token(new TextAttribute(cJAVAKEYWORD, cBACKGROUND, SWT.BOLD));
-    IToken string = new Token(new TextAttribute(cSTRING));
-    IToken comment = new Token(new TextAttribute(cCOMMENT));
-    IToken jdocComment = new Token(new TextAttribute(cJDOC_COMMENT));
-    IToken token = new Token(new TextAttribute(cTOKEN));
-    IToken ptoken = new Token(new TextAttribute(cPTOKEN));
-    IToken other = new Token(new TextAttribute(cDEFAULT));
+    IToken jjkeyword = new Token(new TextAttribute(cJJKEYWORD, cBACKGROUND, SWT.BOLD));
+    IToken keyword = new Token(new TextAttribute(cJAVAKEYWORD, cBACKGROUND, SWT.BOLD));
+    IToken string = new Token(new TextAttribute(cSTRING, cBACKGROUND, 0));
+    IToken comment = new Token(new TextAttribute(cCOMMENT, cBACKGROUND, 0));
+    IToken jdocComment = new Token(new TextAttribute(cJDOC_COMMENT, cBACKGROUND, 0));
+    IToken token = new Token(new TextAttribute(cTOKEN, cBACKGROUND, 0));
+    IToken ptoken = new Token(new TextAttribute(cPTOKEN, cBACKGROUND, 0));
+    IToken other = new Token(new TextAttribute(cDEFAULT, cBACKGROUND, 0));
 
     List rules = new ArrayList();
 

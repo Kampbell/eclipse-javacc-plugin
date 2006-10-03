@@ -8,7 +8,6 @@ options {
  
 PARSER_BEGIN(eg2) 
 <?package_declare?>
-@SuppressWarnings({"all"})
 public class eg2 {
   public static void main(String args[]) {
     System.out.println("Reading from standard input...");

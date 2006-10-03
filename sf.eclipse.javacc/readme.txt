@@ -29,10 +29,13 @@ Features
    use Workbench "Back" to go back.
 
 History
+01/10/06 - version 1.5.4
+- suppress warnings in generated files thanks to Peter Murray and Ben Wake
+- added global preferences for colors
+
 24/05/06 - version 1.5.3
 - corrected plugin key conflict F3 is now defined only for JavaCCPlugin
 - corrected bug in automatic format
-- added global preferences for colors
 
 27/03/06 - version 1.5.2
 - removed "exclude from build" and adopted Eclipse way, ie Build Path.

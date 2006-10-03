@@ -376,13 +376,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 		// Retrieves command line
 		String[] args = getJTBArgs(file, name, projectOverride);
 		String jarfile = getJTBJarFile(file);
-		if (jarfile == null)
-		{
-			IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			MessageDialog.openInformation(w.getShell(), Activator.getString("JJBuilder.JJBuilder"), //$NON-NLS-1$
-			Activator.getString("JJBuilder.Please_set_the_jar_file")); //$NON-NLS-1$
-			return;
-		}
 
 		// Redirects standard and error streams
 		PrintStream orgOut = System.out;
@@ -428,6 +421,19 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 				{
 					resgenerated.setDerived(true);
 					resgenerated.setPersistentProperty(QN_GENERATED_FILE, name);
+          IJavaElement element = (IJavaElement) resgenerated.getAdapter(IJavaElement.class);
+          if ("true".equals(pro.getPersistentProperty(QN_SUPPRESS_WARNINGS)) && element instanceof ICompilationUnit) //$NON-NLS-1$
+          {
+            ICompilationUnit cu = (ICompilationUnit) element;
+            String source = cu.getBuffer().getContents();
+            Matcher filematcher = filepattern.matcher(source);
+            if (filematcher.find())
+            {
+              String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
+              cu.getBuffer().setContents(newsource);
+              cu.getBuffer().save(null, true);
+            }
+          }
 				}
 				if (name.endsWith(".jtb") && jjgenerated[i].endsWith(".jj")) { //$NON-NLS-1$ //$NON-NLS-2$
 					// Compile .jj if project has not Javacc Nature, ie no automatic build

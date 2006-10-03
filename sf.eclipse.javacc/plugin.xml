@@ -37,7 +37,7 @@
       </view>
    </extension>
    
-<!-- Preferences Extension (Global) 
+<!-- Preferences Extension (Global) -->
    <extension point="org.eclipse.ui.preferencePages">
       <page
             class="sf.eclipse.javacc.options.JJPreferencesPage"
@@ -45,9 +45,8 @@
             name="JavaCC Preferences"/>
    </extension>
    <extension point="org.eclipse.core.runtime.preferences">
-      <initializer class="sf.eclipse.javacc.options.JJPreferenceInitializer"/>
+      <initializer class="sf.eclipse.javacc.options.JJPreferences"/>
    </extension>
- -->
 
 <!-- Properties Extensions -->
    <extension point="org.eclipse.ui.propertyPages">

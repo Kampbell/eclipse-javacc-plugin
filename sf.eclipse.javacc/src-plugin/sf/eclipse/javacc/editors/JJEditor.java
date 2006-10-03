@@ -1,5 +1,7 @@
 package sf.eclipse.javacc.editors;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -7,7 +9,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -16,7 +17,9 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.options.JJPreferences;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
@@ -26,14 +29,14 @@ import sf.eclipse.javacc.parser.JJNode;
  * @author Remi Koutcherawy 2003-2006 CeCILL Licence
  *         http://www.cecill.info/index.en.html
  */
-public class JJEditor extends TextEditor implements IJJConstants,
-INavigationLocationProvider {
+public class JJEditor extends TextEditor implements IJJConstants, INavigationLocationProvider {
   protected JJOutlinePage outlinePage;
-  
   protected JJReconcilingStrategy reconcilingStrategy;
+  protected JJSourceViewerConfiguration jjSourceViewerConfiguration;
   
   /** The editor's peer Parent Matcher */
   ParentMatcher fParentMatcher = new ParentMatcher();
+  Color colorMatchingChar;
   
   /** The editor's peer character painter */
   private MatchingCharacterPainter fMatchingCharacterPainter;
@@ -57,11 +60,27 @@ INavigationLocationProvider {
     // Generic Document provider
     setDocumentProvider(new FileDocumentProvider());
     // JJ CodeScanner, Formatter, IndentStrategy, ContentAssist,...
-    setSourceViewerConfiguration(new JJSourceViewerConfiguration(this));
+    jjSourceViewerConfiguration = new JJSourceViewerConfiguration(this);
+    setSourceViewerConfiguration(jjSourceViewerConfiguration);
     // Used to synchronize Outline and Editor
     reconcilingStrategy = new JJReconcilingStrategy(this);
     
     // Actions are declared in plugin.xml
+  }
+  
+  /** 
+   * Dispose of colors
+   */
+  public void dispose() {
+    if (colorMatchingChar != null) {
+      colorMatchingChar.dispose();
+      colorMatchingChar= null;
+    }    
+    if (jjSourceViewerConfiguration != null) {
+      jjSourceViewerConfiguration.dispose();
+      jjSourceViewerConfiguration= null;
+    }
+    super.dispose();
   }
   
   /* (non-Javadoc)
@@ -79,21 +98,22 @@ INavigationLocationProvider {
     super.createPartControl(parent);
     showMatchingCharacters();
   }
-  
+
   /**
    * Add a Painter to show matching characters.
    */
   private final void showMatchingCharacters() {
-    int colorNb = SWT.COLOR_DARK_GREEN;
     if (fMatchingCharacterPainter == null) {
       if (getSourceViewer() instanceof ISourceViewerExtension2) {
-	fMatchingCharacterPainter = new MatchingCharacterPainter(
-	    getSourceViewer(), fParentMatcher);
-	Display display = Display.getCurrent();
-	Color color = display.getSystemColor(colorNb);
-	fMatchingCharacterPainter.setColor(color);
-	ITextViewerExtension2 extension = (ITextViewerExtension2) getSourceViewer();
-	extension.addPainter(fMatchingCharacterPainter);
+        fMatchingCharacterPainter = new MatchingCharacterPainter(
+            getSourceViewer(), fParentMatcher);
+        Display display = Display.getCurrent();
+        IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+        colorMatchingChar = new Color(display, PreferenceConverter.getColor(
+            store, JJPreferences.P_MATCHING_CHAR));
+        fMatchingCharacterPainter.setColor(colorMatchingChar);
+        ITextViewerExtension2 extension = (ITextViewerExtension2) getSourceViewer();
+        extension.addPainter(fMatchingCharacterPainter);
       }
     }
   }
@@ -104,8 +124,8 @@ INavigationLocationProvider {
   public Object getAdapter(Class key) {
     if (key.equals(IContentOutlinePage.class)) {
       if (outlinePage == null) {
-	outlinePage = new JJOutlinePage(this);
-	updateOutlinePage();
+        outlinePage = new JJOutlinePage(this);
+        updateOutlinePage();
       }
       return outlinePage;
     }
@@ -154,21 +174,20 @@ INavigationLocationProvider {
   
   /**
    * Set the Selection given a Node of the AST
-   * 
    * @param node
    */
   public void setSelection(JJNode node) {
     try {
       IDocument doc = getDocument();
       if (doc != null) {
-	int start = doc.getLineOffset(node.getBeginLine() - 1);
-	int end = doc.getLineOffset(node.getEndLine());
-	if (start > end)
-	  end = start;
-	int length = end - start;
-	resetHighlightRange();
-	setHighlightRange(start, length, true);
-	markInNavigationHistory();
+        int start = doc.getLineOffset(node.getBeginLine() - 1);
+        int end = doc.getLineOffset(node.getEndLine());
+        if (start > end)
+          end = start;
+        int length = end - start;
+        resetHighlightRange();
+        setHighlightRange(start, length, true);
+        markInNavigationHistory();
       }
     } catch (IllegalArgumentException e) {
       e.printStackTrace();

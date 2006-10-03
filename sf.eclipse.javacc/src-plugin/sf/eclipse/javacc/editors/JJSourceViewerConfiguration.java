@@ -30,6 +30,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
   protected PresentationReconciler reconciler = null;
   protected JJEditor editor;
+  protected JJCodeScanner codeScanner;
   public static JJDoubleClickStrategy doubleClickStrategy;
 
   /**
@@ -37,6 +38,16 @@ public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
    */
   public JJSourceViewerConfiguration(JJEditor editor) {
     this.editor = editor;
+  }
+  
+  /** 
+   * Dispose of Colors created by CodeScanner
+   */
+  public void dispose(){
+    if (codeScanner != null) {
+      codeScanner.dispose();
+      codeScanner = null;
+    }
   }
 
   /**
@@ -89,7 +100,8 @@ public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
     reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
     // JJCodeScanner is used for all sections
-    DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new JJCodeScanner());
+    codeScanner = new JJCodeScanner();
+    DefaultDamagerRepairer dr = new DefaultDamagerRepairer(codeScanner);
     reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
     reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 

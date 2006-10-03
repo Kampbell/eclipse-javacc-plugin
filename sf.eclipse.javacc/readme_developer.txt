@@ -18,7 +18,7 @@ eg.
 Now that you have a plug-in to hack 
 here is more insight on how the plug-in is designed...
 
-This plug-in uses 13 extensions:
+This plug-in uses 14 extensions:
 
 1) Nature
    point="org.eclipse.core.resources.natures"
@@ -160,5 +160,14 @@ This plug-in uses 13 extensions:
    point="org.eclipse.help.toc"
    file="JJToc.xml" and JJPlgToc.xml"
    
-  Well the help is in need of a serious update...
+   Well, the help is in need of a serious update...
+  
+14) Preferences Extension (Global)
+   point="org.eclipse.ui.preferencePages">
+   class="sf.eclipse.javacc.options.JJPreferencesPage"
+   class="sf.eclipse.javacc.options.JJPreferences"
+
+   Provides a basic customisation of colors.
+   Well, not fully terminated, don't know how to change colors in Editor
+   without closing and reopening it.
    
