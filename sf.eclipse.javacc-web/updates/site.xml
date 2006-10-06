@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://eclipse-javacc.sourceforge.net/">
+   <description url="http://eclipse-javacc.sourceforge.net/updates">
       Site Sourceforge
    </description>
    <feature url="features/sf.eclipse.javacc.feature_1.5.0.jar" id="sf.eclipse.javacc.feature" version="1.5.0">
