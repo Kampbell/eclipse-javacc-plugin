@@ -45,7 +45,6 @@ public class JJConsoleHyperlink implements IJJConstants {
  
   /**
    * Constructs a hyperlink in the StyledText to the specified file.
-   * @param styleText where this link will be
    * @param offset of text to mark
    * @param length of text to mark
    * @param file the target of Hyperlink
@@ -58,7 +57,8 @@ public class JJConsoleHyperlink implements IJJConstants {
     fFile = file;
     fFileLine = line;
     fFileCol = col;
-	addStyleToStyledText();
+    
+    addStyleToStyledText();
   }
   
   /**
