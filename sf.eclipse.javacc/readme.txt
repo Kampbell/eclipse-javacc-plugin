@@ -38,10 +38,13 @@ Features
 
 History
 05/11/06 - version 1.5.5
-- switch to Java 1.5 and Eclipse 3.2 to allow install on Eclipse 3.2.1
-- suppress warnings in sf.eclipse.javacc.wizards @SuppressWarnings("restriction") Java1.5
-- correct bug in console hyperlinks (Warning / Error on two lines where not parsed)
+- add feature 1584400 Better recognition of error/warning messages in console 
+  hyperlinks (Warning / Error on two lines where not parsed)
+- correct bug 1585822 Plug-in not working with Eclipse 3.2.1
+- correct bug 1588477 Option 'suppress warnings' works only for public classes
 - added a (basic) Ctrl+space content assistant for options keywords
+- suppress warnings in sf.eclipse.javacc.wizards @SuppressWarnings("restriction") Java1.5
+- switch the source to Java 1.5
 
 01/10/06 - version 1.5.4
 - suppress warnings in generated files thanks to Peter Murray and Ben Wake
