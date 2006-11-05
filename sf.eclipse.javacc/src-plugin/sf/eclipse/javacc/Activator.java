@@ -27,7 +27,9 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin implements IJJConstants {
   // The shared instance.
   private static Activator plugin;
-
+  // The resource bundle 'messages_fr.properties' inside the jar
+  private static ResourceBundle bundle;
+  
   /**
    * The constructor
    */
@@ -47,6 +49,13 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
    */
   public void start(BundleContext context) throws Exception {
     super.start(context);
+    
+    // Load bundle messages.properties 
+    try {
+      bundle = ResourceBundle.getBundle("messages"); //$NON-NLS-1$
+    } catch (MissingResourceException x) {
+      bundle = null;
+    }
   }
 
   /**
@@ -107,13 +116,6 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
    * found.
    */
   public static String getString(String key) {
-    // The bundle plugin.properties which is inside the jar
-    ResourceBundle bundle;
-    try {
-      bundle = ResourceBundle.getBundle("messages"); //$NON-NLS-1$
-    } catch (MissingResourceException x) {
-      bundle = null;
-    }
     try {
       return (bundle != null) ? bundle.getString(key) : key;
     } catch (MissingResourceException e) {
@@ -125,5 +127,9 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
     Status status = new Status(IStatus.INFO, "JavaCC", IStatus.OK, msg, //$NON-NLS-1$
         new Exception("For information only")); //$NON-NLS-1$
     getDefault().getLog().log(status);
+  }
+
+  public ResourceBundle getResourceBundle() {
+    return bundle;
   }
 }

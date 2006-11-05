@@ -131,7 +131,7 @@ public class JJConsoleHyperlink implements IJJConstants {
   static Cursor busyCursor;
   static boolean mouseDown;
   static boolean dragEvent;
-  static private List linksList = new ArrayList();
+  static private List<JJConsoleHyperlink> linksList = new ArrayList<JJConsoleHyperlink>();
   // Only One Static StyledText Console
   static private StyledText fStyledText; 
 
@@ -141,9 +141,9 @@ public class JJConsoleHyperlink implements IJJConstants {
    */
   static JJConsoleHyperlink getLinkAt(int offset) {
     JJConsoleHyperlink link;
-    Iterator iter = linksList.iterator();
+    Iterator<JJConsoleHyperlink> iter = linksList.iterator();
     while(iter.hasNext()){
-      link = (JJConsoleHyperlink) iter.next();
+      link = iter.next();
       if (link.isLinkAt(offset))
         return link;
     }

@@ -215,7 +215,7 @@ public class JJCodeScanner extends RuleBasedScanner {
     IToken ptoken = new Token(new TextAttribute(cPTOKEN, cBACKGROUND, 0));
     IToken other = new Token(new TextAttribute(cDEFAULT, cBACKGROUND, 0));
 
-    List rules = new ArrayList();
+    List<IRule> rules = new ArrayList<IRule>();
 
     // Add rules for comments.
     rules.add(new EndOfLineRule("//", comment)); //$NON-NLS-1$

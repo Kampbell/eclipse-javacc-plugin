@@ -38,6 +38,7 @@ import sf.eclipse.javacc.JJNature;
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
+@SuppressWarnings("restriction")
 public class JJNewWizard extends NewElementWizard implements IJJConstants {
   private JJNewJJPage fPage;
 

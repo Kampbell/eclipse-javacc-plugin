@@ -61,4 +61,5 @@ public interface IJJConstants {
   
   // JJEditor
   public static final String EDITOR_ID = "sf.eclipse.javacc.editors.JJEditor"; //$NON-NLS-1$
+  public static final String CONTENTASSIST_ID = "JJEditorContentAssist"; //$NON-NLS-1$
 }

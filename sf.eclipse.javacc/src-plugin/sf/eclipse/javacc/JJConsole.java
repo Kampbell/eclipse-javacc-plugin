@@ -196,40 +196,72 @@ public class JJConsole extends ViewPart implements IJJConstants {
     int offset, length; // location of the link in console
 
     // We get outputs like : Error at line 14, column 15
-    // parse to get the number following 'line '
-    String REGEX = "(?:[eE]rror[: ]|[wW]arning[^s]|ParseException:)(?:[^lL]+)([lL]ine (\\d+), [cC]olumn (\\d+))(.+)"; //$NON-NLS-1$
-    Pattern p = Pattern.compile(REGEX);
-    Matcher m = p.matcher(txt);
-    while (m.find()) {
-      report = m.group(0);
-      int severity = (report.indexOf("Warning") != -1) ?  //$NON-NLS-1$
+    // Warning: Lookahead adequacy checking not being performed since option LOOKAHEAD is more than 1.  Set option FORCE_LA_CHECK to true to force checking.
+    // Parse line by line to find Error and Warnings
+    // Then get the numbers following 'line ' and 'column ' on the line or the next line
+    // Hyperlinks are added with offset, length in the text and file, line, col references 
+    Pattern linePattern = Pattern.compile("^.*", Pattern.MULTILINE); //$NON-NLS-1$
+    Pattern errorWarningPattern = Pattern.compile("([eE]rror[: ]|[wW]arning[^s]|ParseException:|Encountered\\s\")(.+)");//$NON-NLS-1$
+    Pattern lineColumnPattern = Pattern.compile("[lL]ine (\\d+), [cC]olumn (\\d+)");//$NON-NLS-1$
+
+    // Match line by line
+    Matcher lineMatcher = linePattern.matcher(txt);
+    while (lineMatcher.find()) {
+      report = lineMatcher.group();
+
+      // Look 'Error' or 'Warning' or 'ParseException'
+      Matcher errorWarningMatcher = errorWarningPattern.matcher(report);
+      if (errorWarningMatcher.find() == false)
+        continue;
+      
+      // Set severity accordingly
+      int severity = (errorWarningMatcher.group().indexOf("arning") != -1) ? //$NON-NLS-1$
           IMarker.SEVERITY_WARNING : IMarker.SEVERITY_ERROR;
-      if (m.group(1) == null) {
-        // If the report indicates no line, link to the beginning
-        line = 1;
-        col = 1;
-        offset = m.start(0);
-        length = m.end(0) - offset;
-      } else {
-        line = Integer.parseInt(m.group(2));
-        col = Integer.parseInt(m.group(3));
-        offset = m.start(1);
-        length = m.end(1) - offset;
+      // Note the position of the Warning in the text
+      offset = lineMatcher.start() + errorWarningMatcher.start();
+      length = errorWarningMatcher.end(1) - errorWarningMatcher.start();
+
+      // Look for 'line l, column c' 
+      Matcher lineColumnMatcher = lineColumnPattern.matcher(report);
+      
+      // If there is no line col, guess they are on the next line
+      if (lineColumnMatcher.find() == false){
+        lineMatcher.find();
+        // Add next line to the report
+        report += "\n"+ lineMatcher.group();
+        lineColumnMatcher = lineColumnPattern.matcher(lineMatcher.group());
+        // If the report doesn't give any line
+        if (lineColumnMatcher.find() == false) {
+          // Mark at the beginning of the editor
+          markError(fFile, report, severity, 1, 0);
+          // Mark the Warning with an hyperlink pointing to the beginning of the file
+          new JJConsoleHyperlink(lastOffset+offset, length, fFile, 1, 0);
+          continue;
+        }
       }
-      // Add the Error or Warning in the editor Problems 
-      markError(fFile, report, severity, line, col);
-      // Note that the first line is 1 for JavaCC and 0 for Eclipse editors
-      new JJConsoleHyperlink(lastOffset+offset, length, fFile, line-1, col-1);
+      // For each line,col add a report and an hyperlink
+      do {
+        line = Integer.parseInt(lineColumnMatcher.group(1));
+        col = Integer.parseInt(lineColumnMatcher.group(2));
+        offset = lineColumnMatcher.start();
+        length = lineColumnMatcher.end() - offset;
+
+        // Add the Error or Warning in the editor Problems
+        markError(fFile, report, severity, line, col);
+
+        // Add Hyperlink in the console
+        // The first line is 1 for JavaCC and 0 for Eclipse editors
+        new JJConsoleHyperlink(lastOffset+lineMatcher.start()+offset, length, fFile, line-1, col-1);
+      } // Do this for all occurrences on the line.
+      while (lineColumnMatcher.find());
     }
     
     // From JTB we get outputs like 
     // "testJTB.jj (67):  warning:  Block of Java code in one_line()."
     // "new_file.jtb (67):  Undefined token "EOL".
     // "Encountered "<" at line 77, column 15."
-    // parse to get the number
-    REGEX = "\\((\\d+)\\)(:  warning(.*))?"; //$NON-NLS-1$
-    p = Pattern.compile(REGEX);
-    m = p.matcher(txt);
+    Pattern p = Pattern.compile("\\((\\d+)\\)(:  warning(.*))?"); //$NON-NLS-1$
+    Matcher m = p.matcher(txt);
     while (m.find()) {
       report = m.group(0);
       int severity = (report.indexOf("warning") != -1) ?  //$NON-NLS-1$
@@ -240,7 +272,7 @@ public class JJConsole extends ViewPart implements IJJConstants {
       length = m.end(0) - offset;
       // Add the Error or Warning in the editor Problems 
       markError(fFile, report, severity, line, col);
-      // Note that the first line is 1 for JTB and 0 for Eclipse editors
+      // The first line is 1 for JTB and 0 for Eclipse editors
       new JJConsoleHyperlink(lastOffset+offset, length, fFile, line-1, col-1);
     }    
     
@@ -256,11 +288,11 @@ public class JJConsole extends ViewPart implements IJJConstants {
   private static void markError(IFile file, String msg, int type, int line, int col) {
     try {
       IMarker marker = file.createMarker(IMarker.PROBLEM); 
-      HashMap attributes= new HashMap(4);
+      HashMap<String, Comparable> attributes= new HashMap<String, Comparable>(4);
       attributes.put(IMarker.MESSAGE, msg);
       attributes.put(IMarker.SEVERITY, new Integer(type));
       attributes.put(IMarker.LINE_NUMBER, new Integer(line));
-      // Would be nice except it is the char counted from the start of the file
+      // Would be nice except it is the char count from the start of the file
       // LINE_NUMBER is not taken into account if CHAR_START is given
 //      attributes.put(IMarker.CHAR_START, new Integer(col));
 //      attributes.put(IMarker.CHAR_END, new Integer(col+1));

@@ -212,4 +212,11 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
     if (sel != null)
       selectAndReveal(sel.getOffset(), sel.getLength());
   }
+
+  public void updateColors() {
+//    Display display = Display.getCurrent();
+//    IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+//    Color color = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
+//    getSourceViewer().getTextWidget().setBackground(color);
+  }
 }

@@ -12,14 +12,14 @@ import java.util.StringTokenizer;
  */
 public class OptionSet {
 
-  protected ArrayList list;
+  protected ArrayList<Option> list;
   protected String target;
 
   /**
    * Constructor OptionSet.
    */
   public OptionSet() {
-    list = new ArrayList();
+    list = new ArrayList<Option>();
   }
 
   /**

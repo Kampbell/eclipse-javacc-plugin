@@ -19,14 +19,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-//import org.eclipse.jdt.internal.core.PackageFragmentRoot;
-//import org.eclipse.jdt.internal.corext.util.Messages;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider;
-import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
-import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaElementSorter;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
@@ -264,6 +256,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the Source container field.
    */
+  @SuppressWarnings("restriction")
   private IStatus sourceContainerChanged() {
     Status status= new Status();
     
@@ -280,7 +273,7 @@ public class JJNewJJPage extends WizardPage {
       if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
         IProject proj= res.getProject();
         if (!proj.isOpen()) {
-          status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ProjectClosed, 
+          status.setError(MessageFormat.format(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_ProjectClosed, 
               new Object[] {proj.getFullPath().toString()} )); 
           return status;
         }               
@@ -290,32 +283,32 @@ public class JJNewJJPage extends WizardPage {
           try {
             if (!proj.hasNature(JavaCore.NATURE_ID)) {
               if (resType == IResource.PROJECT) {
-                status.setError(NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject); 
+                status.setError(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject); 
               } else {
-                status.setWarning(NewWizardMessages.NewContainerWizardPage_warning_NotInAJavaProject); 
+                status.setWarning(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotInAJavaProject); 
               }
               return status;
             }
             if (fSrcRootFragment.isArchive()) {
-              status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary, new Object[] {str})); 
+              status.setError(MessageFormat.format(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary, new Object[] {str})); 
               return status;
             }
             if (fSrcRootFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
-              status.setWarning(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder, new Object[] {str})); 
+              status.setWarning(MessageFormat.format(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder, new Object[] {str})); 
             } else if (!jproject.isOnClasspath(fSrcRootFragment)) {
-              status.setWarning(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath, new Object[] {str})); 
+              status.setWarning(MessageFormat.format(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath, new Object[] {str})); 
             }       
           } catch (CoreException e) {
-            status.setWarning(NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject); 
+            status.setWarning(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject); 
           }
         }
         return status;
       } else {
-        status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_NotAFolder, new Object[] {str})); 
+        status.setError(MessageFormat.format(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_NotAFolder, new Object[] {str})); 
         return status;
       }
     } else {
-      status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist, new Object[] {str})); 
+      status.setError(MessageFormat.format(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist, new Object[] {str})); 
       return status;
     }
   }
@@ -323,6 +316,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the package field.
    */
+  @SuppressWarnings("restriction")
   private IStatus packageChanged() {
     Status status = new Status();
     String packName = getPackage();
@@ -331,12 +325,12 @@ public class JJNewJJPage extends WizardPage {
       IStatus val = JavaConventions.validatePackageName(packName);
       if (val.getSeverity() == IStatus.ERROR) {
         status.setError(MessageFormat.format(
-            NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
+            org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
             new Object[] {val.getMessage()}));
         return status;
       } else if (val.getSeverity() == IStatus.WARNING) {
         status.setWarning(MessageFormat.format(
-            NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
+            org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
             new Object[] {val.getMessage()}));
       }
     } 
@@ -352,7 +346,7 @@ public class JJNewJJPage extends WizardPage {
           // package like the bin folder
           IPath packagePath = pack.getPath();
           if (outputPath.isPrefixOf(packagePath)) {
-            status.setError(NewWizardMessages.NewPackageWizardPage_error_IsOutputFolder);
+            status.setError(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_IsOutputFolder);
             return status;
           }
         }
@@ -411,12 +405,13 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Updates the status line and the OK button according to the given status
    */
+  @SuppressWarnings("restriction")
   protected void updateStatus() {
-    IStatus status  = StatusUtil.getMostSevere(new IStatus[]{
+    IStatus status  = org.eclipse.jdt.internal.ui.dialogs.StatusUtil.getMostSevere(new IStatus[]{
       fSrcRootStatus, fPackageStatus, fExtensionStatus, fFileStatus
     });
     setPageComplete(!status.matches(IStatus.ERROR));
-    StatusUtil.applyToStatusLine(this, status);
+    org.eclipse.jdt.internal.ui.dialogs.StatusUtil.applyToStatusLine(this, status);
   }
 
   /**
@@ -469,9 +464,10 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Open a dialog to let user choose Source Container
    */
+  @SuppressWarnings("restriction")
   private IPackageFragmentRoot chooseSourceContainer() {
     Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
-    TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, false) {
+    org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator validator= new org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator(acceptedClasses, false) {
       public boolean isSelectedValid(Object element) {
         try {
           if (element instanceof IJavaProject) {
@@ -490,7 +486,7 @@ public class JJNewJJPage extends WizardPage {
     };
     
     acceptedClasses= new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class };
-    ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+    ViewerFilter filter= new org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter(acceptedClasses) {
       public boolean select(Viewer viewer, Object parent, Object element) {
         if (element instanceof IPackageFragmentRoot) {
           try {
@@ -509,8 +505,8 @@ public class JJNewJJPage extends WizardPage {
     ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), labelProvider, provider);
     dialog.setValidator(validator);
     dialog.setSorter(new JavaElementSorter());
-    dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title); 
-    dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description); 
+    dialog.setTitle(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title); 
+    dialog.setMessage(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description); 
     dialog.addFilter(filter);
     dialog.setInput(JavaCore.create(fWorkspaceRoot));
     dialog.setInitialSelection("dummy"); //$NON-NLS-1$
@@ -530,6 +526,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Open a dialog to let user choose a Package
    */
+  @SuppressWarnings("restriction")
   IPackageFragment choosePackage() {
     IPackageFragmentRoot froot= fSrcRootFragment;
     IJavaElement[] packages= null;
@@ -546,9 +543,9 @@ public class JJNewJJPage extends WizardPage {
     
     ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT));
     dialog.setIgnoreCase(false);
-    dialog.setTitle(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_title); 
-    dialog.setMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description); 
-    dialog.setEmptyListMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty); 
+    dialog.setTitle(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_title); 
+    dialog.setMessage(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description); 
+    dialog.setEmptyListMessage(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty); 
     dialog.setElements(packages);
     if (fPackageFragment != null) {
       dialog.setInitialSelections(new Object[] { fPackageFragment });
@@ -566,6 +563,7 @@ public class JJNewJJPage extends WizardPage {
    * @return a Java element to be used as the initial selection, or
    * <code>null</code>, if no Java element exists in the given selection
    */
+  @SuppressWarnings("restriction")
   protected IJavaElement getInitialJavaElement(IStructuredSelection selection) {
     IJavaElement jelem = null;
     if (selection != null && !selection.isEmpty()) {
@@ -589,13 +587,13 @@ public class JJNewJJPage extends WizardPage {
       }
     }
     if (jelem == null) {
-      IWorkbenchPart part = JavaPlugin.getActivePage().getActivePart();
+      IWorkbenchPart part = org.eclipse.jdt.internal.ui.JavaPlugin.getActivePage().getActivePart();
       if (part instanceof ContentOutline) {
-        part = JavaPlugin.getActivePage().getActiveEditor();
+        part = org.eclipse.jdt.internal.ui.JavaPlugin.getActivePage().getActiveEditor();
       }
 
-      if (part instanceof IViewPartInputProvider) {
-        Object elem = ((IViewPartInputProvider) part).getViewPartInput();
+      if (part instanceof org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider) {
+        Object elem = ((org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider) part).getViewPartInput();
         if (elem instanceof IJavaElement) {
           jelem = (IJavaElement) elem;
         }

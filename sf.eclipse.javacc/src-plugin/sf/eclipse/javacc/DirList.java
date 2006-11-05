@@ -12,14 +12,14 @@ import java.util.Collection;
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 public class DirList {
-  static Collection oldCol;
+  static Collection<DatedFile> oldCol;
   
   /**
    * Add all files found under Directory root to collection col
    * @param File root (directory)
    * @param Collection col
    */
-  protected static void listFiles(File root, Collection col) {
+  protected static void listFiles(File root, Collection<DatedFile> col) {
     File[] f = root.listFiles();
     for (int i = 0; i < f.length; i++) {
       if(f[i].isDirectory())
@@ -36,7 +36,7 @@ public class DirList {
    * @param dir
    */
   public static void snapshot(String dir) {
-    oldCol = new ArrayList();
+    oldCol = new ArrayList<DatedFile>();
     listFiles(new File(dir), oldCol);
   }
 
@@ -46,7 +46,7 @@ public class DirList {
    * @return String[] filename
    */
   public static String[] getDiff(String dir) {
-    Collection newCol = new ArrayList();
+    Collection<DatedFile> newCol = new ArrayList<DatedFile>();
     listFiles(new File(dir), newCol);
     if (oldCol == null) {
       return null;

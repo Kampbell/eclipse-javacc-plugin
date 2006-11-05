@@ -18,7 +18,8 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+//import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
@@ -27,7 +28,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
-public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
+public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
   protected PresentationReconciler reconciler = null;
   protected JJEditor editor;
   protected JJCodeScanner codeScanner;
@@ -70,13 +71,11 @@ public class JJSourceViewerConfiguration extends SourceViewerConfiguration {
    */
   public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
     ContentAssistant assistant = new ContentAssistant();
-    //		assistant.setContentAssistProcessor(new JJCompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
-    //		assistant.enableAutoActivation(true);
-    //		assistant.setAutoActivationDelay(500);
-    //		assistant.setProposalPopupOrientation(assistant.PROPOSAL_OVERLAY);
-    //		assistant.setContextInformationPopupOrientation(assistant.CONTEXT_INFO_ABOVE);
-    //		assistant.setContextInformationPopupBackground(JJEditorEnvironment.getColorManager().getColor(new RGB(150, 150, 0)));
-    //
+    assistant.setContentAssistProcessor(new JJCompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+// Should we place this in Preferences ?
+// assistant.enableAutoActivation(store.getBoolean(PreferenceConstants.CODEASSIST_AUTOACTIVATION));
+// assistant.setAutoActivationDelay(500); 
+    assistant.install(sourceViewer);
     return assistant;
   }
 

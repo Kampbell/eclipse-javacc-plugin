@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -41,7 +40,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 	protected IJavaProject javaProject;
 	protected IPath outputFolder;
 
-	private final static Pattern filepattern = Pattern.compile("(?:@SuppressWarnings.*?\n)?(public (?:class|interface|enum))"); //$NON-NLS-1$
+	private final static Pattern filepattern = Pattern.compile("(\n(?:public )?(?:final )?class|interface|enum)"); //$NON-NLS-1$
 
 	/**
 	 * Invoked in response to a call to one of the <code>IProject.build</code> Look at
@@ -237,7 +236,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 						Matcher filematcher = filepattern.matcher(source);
 						if (filematcher.find())
 						{
-							String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
+							String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")$1"); //$NON-NLS-1$
 							cu.getBuffer().setContents(newsource);
 							cu.getBuffer().save(null, true);
 						}
@@ -429,7 +428,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
             Matcher filematcher = filepattern.matcher(source);
             if (filematcher.find())
             {
-              String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
+              String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")$1"); //$NON-NLS-1$
               cu.getBuffer().setContents(newsource);
               cu.getBuffer().save(null, true);
             }
@@ -607,11 +606,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 			if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
 				URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 				// Eclipse 3.1 way. Deprecated in 3.2
-				URL resolvedURL = Platform.resolve(installURL);
-				String home = Platform.asLocalURL(resolvedURL).getFile();
+//				URL resolvedURL = Platform.resolve(installURL);
+//				String home = Platform.asLocalURL(resolvedURL).getFile();
 				// Eclipse 3.2 way. Only available in Eclipse 3.2
-				// URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
-				// String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+				 URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+				 String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
 				// Same for both
 				jarfile = home + "javacc.jar"; //$NON-NLS-1$
 			}
@@ -642,11 +641,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 			if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
 				URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 				// Eclipse 3.1 way. Deprecated in 3.2
-				URL resolvedURL = Platform.resolve(installURL);
-				String home = Platform.asLocalURL(resolvedURL).getFile();
+//				URL resolvedURL = Platform.resolve(installURL);
+//				String home = Platform.asLocalURL(resolvedURL).getFile();
 				// Eclipse 3.2 way. Only available in Eclipse 3.2
-				// URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
-				// String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+				 URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+				 String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
 				// Same for both
 				jarfile = home + "jtb132.jar"; //$NON-NLS-1$
 				if (jarfile.startsWith("/")) //$NON-NLS-1$

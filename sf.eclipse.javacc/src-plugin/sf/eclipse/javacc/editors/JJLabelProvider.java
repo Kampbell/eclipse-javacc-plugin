@@ -20,7 +20,7 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 public class JJLabelProvider extends LabelProvider {
-  private HashMap imgHashMap = new HashMap();
+  private HashMap<ImageDescriptor, Image> imgHashMap = new HashMap<ImageDescriptor, Image>();
   ImageDescriptor desc_option;
   ImageDescriptor desc_parser;
   ImageDescriptor desc_token;
@@ -70,7 +70,7 @@ public class JJLabelProvider extends LabelProvider {
       return null;
     }
     // obtain the cached image corresponding to the descriptor
-    Image image = (Image) imgHashMap.get(desc);
+    Image image = imgHashMap.get(desc);
     if (image == null) {
       image = desc.createImage();
       imgHashMap.put(desc, image);
@@ -91,8 +91,8 @@ public class JJLabelProvider extends LabelProvider {
    */
   public void dispose() {
     super.dispose();
-    for (Iterator it = imgHashMap.values().iterator(); it.hasNext();) {
-      ((Image)it.next()).dispose();
+    for (Iterator<Image> it = imgHashMap.values().iterator(); it.hasNext();) {
+      it.next().dispose();
     }
     imgHashMap.clear();
   }

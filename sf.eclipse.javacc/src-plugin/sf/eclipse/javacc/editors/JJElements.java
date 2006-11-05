@@ -13,7 +13,7 @@ import sf.eclipse.javacc.parser.JJNode;
  */
 public class JJElements {
   private static final long serialVersionUID = 1L;
-  private static final HashMap map = new HashMap();
+  private static final HashMap<String, JJNode> map = new HashMap<String, JJNode>();
 
   public static final Object put(String arg0, JJNode arg1) {
     return map.put(arg0, arg1);
@@ -23,11 +23,11 @@ public class JJElements {
     return map.containsKey(key);
   }
 
-  public static final HashMap getMap() {
+  public static final HashMap<String, JJNode> getMap() {
     return map;
   }
 
   public static JJNode getNode(String key) {
-    return (JJNode) map.get(key);
+    return map.get(key);
   }
 }

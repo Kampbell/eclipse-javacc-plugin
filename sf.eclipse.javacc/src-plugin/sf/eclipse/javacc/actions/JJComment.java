@@ -30,8 +30,7 @@ public class JJComment implements IEditorActionDelegate{
   static String prefix = "//"; //$NON-NLS-1$
 
   /* (non-Javadoc)
-   * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction,
-   *      org.eclipse.ui.IEditorPart)
+   * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
   public void setActiveEditor(IAction action, IEditorPart targetEditor) {
     if (targetEditor == null)
@@ -41,8 +40,7 @@ public class JJComment implements IEditorActionDelegate{
   }
   
   /* (non-Javadoc)
-   * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-   *      org.eclipse.jface.viewers.ISelection)
+   * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
    */
   public void selectionChanged(IAction action, ISelection selection) {
     // not used
