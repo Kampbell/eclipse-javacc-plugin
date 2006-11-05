@@ -1,7 +1,15 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.4.0.zip into Eclipse directory. 
+1) Unzip JavaCC_Feature_1.5.5.zip into Eclipse directory. 
 2) Launch Eclipse.
+
+or
+
+1) Menu Help / Software Updates / Find and Install... / Search for new features to install
+2) Next > / New remote site...
+ Name : SF Eclipse JavaCC 
+ URL : http://eclipse-javacc.sourceforge.net/
+3) Check "SF Eclipse JavaCC" and click Finish
 
 Features
 
@@ -29,6 +37,12 @@ Features
    use Workbench "Back" to go back.
 
 History
+05/11/06 - version 1.5.5
+- switch to Java 1.5 and Eclipse 3.2 to allow install on Eclipse 3.2.1
+- suppress warnings in sf.eclipse.javacc.wizards @SuppressWarnings("restriction") Java1.5
+- correct bug in console hyperlinks (Warning / Error on two lines where not parsed)
+- added a (basic) Ctrl+space content assistant for options keywords
+
 01/10/06 - version 1.5.4
 - suppress warnings in generated files thanks to Peter Murray and Ben Wake
 - added global preferences for colors

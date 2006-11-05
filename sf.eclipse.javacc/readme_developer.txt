@@ -154,7 +154,6 @@ This plug-in uses 14 extensions:
    This generate number of Warnings :
    Warning Discouraged access: The type xxx is not accessible due
     to restriction on required library ... org.eclipse.jdt.ui.jar
-   Try to see if you can get rid of them...
 
 13) Help 
    point="org.eclipse.help.toc"

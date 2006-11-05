@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+<?eclipse version="3.2"?>
 <plugin>
 
 <!-- Nature and Builder Extensions -->
@@ -167,24 +167,18 @@
             label="JavaCC"> 
       <separator name="JJGroup"/> 
       </menu> 
-      <!--action
-            class="sf.eclipse.javacc.actions.JJPreferences"
-            id="jjpreferences"
-            label="Preferences..."
-            menubarPath="JJGroup">
-      </action -->
       <action
             class="sf.eclipse.javacc.actions.JJComment"
             id="javacc.comment"
-            label="%Toggle_Comment"
             definitionId="commands.comment"
+            label="%Toggle_Comment"
             menubarPath="JJGroup">
       </action>      
       <action
-            label="%Compile_with_JJDoc"
             class="sf.eclipse.javacc.actions.JJDocCompile"
-            menubarPath="JJGroup"
-            id="javacc.jjdoccompile">
+            id="javacc.jjdoccompile"
+            label="%Compile_with_JJDoc"
+            menubarPath="JJGroup">
       </action>
       <action
             class="sf.eclipse.javacc.actions.JJGotoRule"
@@ -203,8 +197,8 @@
       </action>
       <action
             class="sf.eclipse.javacc.actions.JJFormat"
-            definitionId="commands.jjformat"
             id="javacc.jjformat"
+            definitionId="commands.jjformat"
             label="%JavaCC_Format"
             menubarPath="JJGroup"/>
       </viewerContribution>
@@ -233,11 +227,16 @@
             id="javacc.jjcompile">
       </action>
       <action
+            label="%JavaCC_Format"
             class="sf.eclipse.javacc.actions.JJFormat"
             definitionId="commands.jjformat"
             id="javacc.jjformat"
-            label="%JavaCC_Format"
-            style="push"/>      
+            style="push"/>
+      <action
+            label="%JavaCC_ContentAssist"
+            class="sf.eclipse.javacc.actions.JJContentAssist"
+            definitionId="commands.jjcontentassist"
+            id="javacc.jjcontentassist"/>      
       </editorContribution>
    </extension>
 <!-- Commands for key binding -->
@@ -258,25 +257,27 @@
             description="%Comments_the_lines"
             categoryId="JavaCC.category"
             name="%Toggle_Comment"
-            id="commands.comment">
-      </command>
+            id="commands.comment"/>
       <command
             description="%Open_declaration"
             categoryId="JavaCC.category"
             name="%Open_JavaCC_declaration"
-            id="commands.jjgotorule">
-      </command>
+            id="commands.jjgotorule"/>
       <command
             description="%Compile_with_JavaCC"
             categoryId="JavaCC.category"
             name="%Compile_with_JavaCC"
-            id="commands.jjcompile">
-      </command>
+            id="commands.jjcompile"/>
       <command
             description="%JavaCC_Format"
             categoryId="JavaCC.category"
             name="%JavaCC_Format"
             id="commands.jjformat"/>
+      <command
+            description="%JavaCC_ContentAssist"
+            categoryId="JavaCC.category"
+            name="%JavaCC_ContentAssist"
+            id="commands.jjcontentassist"/>
    </extension>
 <!-- Keyboard shortcuts -->
    	<extension point="org.eclipse.ui.bindings">
@@ -292,6 +293,10 @@
             contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjformat"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key sequence="Ctrl+Space"
+            contextId="sf.eclipse.javacc.JJEditorScope"
+            commandId="commands.jjcontentassist"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>           
    </extension>
 <!-- New Wizard Extension -->
    <extension point="org.eclipse.ui.newWizards">
