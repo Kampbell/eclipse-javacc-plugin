@@ -1,6 +1,6 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.5.5.zip into Eclipse directory. 
+1) Unzip JavaCC_Feature_1.5.6.zip into Eclipse directory. 
 2) Launch Eclipse.
 
 or
@@ -37,6 +37,10 @@ Features
    use Workbench "Back" to go back.
 
 History
+26/11/06 - version 1.5.6
+- restore compatibility with Eclipse 3.1
+- handle case with no src/bin dir defined
+
 05/11/06 - version 1.5.5
 - add feature 1584400 Better recognition of error/warning messages in console 
   hyperlinks (Warning / Error on two lines where not parsed)
