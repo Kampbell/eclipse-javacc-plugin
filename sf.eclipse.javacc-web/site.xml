@@ -12,7 +12,7 @@
    <feature url="features/sf.eclipse.javacc.feature_1.5.4.jar" id="sf.eclipse.javacc.feature" version="1.5.4">
       <category name="Eclipse JavaCC Plugin"/>
    </feature>
-   <feature url="features/sf.eclipse.javacc.feature_1.5.5.jar" id="sf.eclipse.javacc.feature" version="1.5.5">
+   <feature url="features/sf.eclipse.javacc.feature_1.5.6.jar" id="sf.eclipse.javacc.feature" version="1.5.6">
       <category name="Eclipse JavaCC Plugin"/>
    </feature>
    <category-def name="Eclipse JavaCC Plugin" label="Eclipse JavaCC Plugin"/>
