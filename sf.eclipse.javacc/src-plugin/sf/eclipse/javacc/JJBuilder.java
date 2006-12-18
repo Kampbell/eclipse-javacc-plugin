@@ -44,8 +44,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
   protected IPath outputFolder;
 
-  private final static Pattern filepattern = Pattern
-      .compile("(\n(?:public )?(?:final )?class|interface|enum)"); //$NON-NLS-1$
+  private final static Pattern filepattern =
+	  Pattern.compile("(?:\n|^)((?:public )?(?:final )?(?:class|interface|enum)\\s)"); //$NON-NLS-1$
 
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>
@@ -217,7 +217,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
             Matcher filematcher = filepattern.matcher(source);
             if (filematcher.find()) {
               String newsource = filematcher
-                  .replaceFirst("@SuppressWarnings(\"all\")$1"); //$NON-NLS-1$
+                  .replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
               cu.getBuffer().setContents(newsource);
               cu.getBuffer().save(null, true);
             }
