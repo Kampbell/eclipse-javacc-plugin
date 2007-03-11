@@ -59,7 +59,8 @@
  src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5"
  alt="SourceForge Logo" border="0" height="62" width="210"></a>
 <h1>JavaCC Eclipse Plug-in for Eclipse 3.1 - 3.2</h1>
-<h2>Last update 26 november 2006</h2>
+<h2>Last update 11march 2007<br>
+</h2>
 JavaCC plug-in is designed to help development of JavaCC applications.<br>
 License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a
  href="http://www.cecill.info/">Cecill</a> <br>
@@ -67,16 +68,19 @@ You can download the last version from sourceforge : <a
  href="http://sourceforge.net/projects/eclipse-javacc">sourceforge site</a><br>
 Or use this site as an update site in Eclipse :
 http://eclipse-javacc.sourceforge.net<br>
+The plugin needs Java 1.5 to run, sources contain Java 5.0 templates.<br>
 <br>
 To install, unzip in C:/eclipse and launch Eclipse with -clean.<br>
-The sources are with the plugin. See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if
+The sources are bundled with the plugin and on sourceforge.<br>
+See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if
 you want to hack the sources.
 <h2>This plug-in provides : </h2>
 <ul>
   <li>Editor </li>
   <li>Outline </li>
   <li>Format (still to improve) </li>
-  <li>JavaCC JJTree JJDoc compilation, (see <a href="https://javacc.dev.java.net/">https://javacc.dev.java.net/</a>) </li>
+  <li>JavaCC JJTree JJDoc compilation, (see <a
+ href="https://javacc.dev.java.net/">https://javacc.dev.java.net/</a>) </li>
   <li>JTB compilation, (see <a href="http://compilers.cs.ucla.edu/jtb/">http://compilers.cs.ucla.edu/jtb/</a>)
   </li>
   <li>JavaCC, JJTree, JJDoc, JTB options </li>
@@ -94,7 +98,10 @@ facilitate package handling) </li>
   <li>More help is available with the plug-in via Eclipse menu Help /
 Help Contents. </li>
 </ul>
-New in 1.5.6 : Eclipse 3.1 compatible, handle case where no src/bin dir are defined <br>
+New in 1.5.7 : Correct double suppress warning and preserve unicode
+escape when formatting<br>
+New in 1.5.6 : Eclipse 3.1 compatible, handle case where no src/bin dir
+are defined <br>
 New in 1.5.5 : Eclipse 3.2.1 Bug 1585822, console hyperlinks <br>
 New in 1.5.4 : suppress warnings in generated files <br>
 New in 1.5.3 : corrected plugin key conflict F3 <br>
