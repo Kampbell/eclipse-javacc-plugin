@@ -3,6 +3,7 @@ package sf.eclipse.javacc;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -41,16 +42,17 @@ public class MarkAndCorrect implements IJJConstants{
       IJavaElement element = (IJavaElement) res.getAdapter(IJavaElement.class);
       if ("true".equals(pro.getPersistentProperty(QN_SUPPRESS_WARNINGS)) //$NON-NLS-1$
           && element instanceof ICompilationUnit) { 
-        ICompilationUnit cu = (ICompilationUnit) element;
-        String source = cu.getBuffer().getContents();
-//      String source = FileUtils.getFileContents(jjgenerated[i]); // Direct access
+//        ICompilationUnit cu = (ICompilationUnit) element;
+//        String source = cu.getBuffer().getContents();
+      String filename = ((IFile) res).getLocation().toOSString();
+      String source = FileUtils.getFileContents(filename); // Direct access
 
         Matcher filematcher = filepattern.matcher(source);
         if (filematcher.find()) {
           String newsource = filematcher.replaceFirst("$1@SuppressWarnings(\"all\") $2"); //$NON-NLS-1$
-          cu.getBuffer().setContents(newsource);
-          cu.getBuffer().save(null, true);
-//        FileUtils.saveFileContents(jjgenerated[i], newsource);
+//          cu.getBuffer().setContents(newsource);
+//          cu.getBuffer().save(null, true);
+        FileUtils.saveFileContents(filename, newsource);
         }
       }
   }
