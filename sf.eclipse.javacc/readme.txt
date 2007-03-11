@@ -1,6 +1,6 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.5.6.zip into Eclipse directory. 
+1) Unzip JavaCC_Feature_1.5.7.zip into Eclipse directory. 
 2) Launch Eclipse.
 
 or
@@ -37,6 +37,11 @@ Features
    use Workbench "Back" to go back.
 
 History
+10/03/07 - version 1.5.7
+- correct double suppress warning 
+- preserve unicode escape in characters and strings when formatting
+- correct JJTree grammar to handle >> in outline
+
 26/11/06 - version 1.5.6
 - restore compatibility with Eclipse 3.1
 - handle case with no src/bin dir defined

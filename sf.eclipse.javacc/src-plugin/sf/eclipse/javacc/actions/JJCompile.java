@@ -81,7 +81,7 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
       // Force Compile if not triggered
       if (!("true").equals(res.getProject().getPersistentProperty(QN_JJ_NATURE))  //$NON-NLS-1$
           || !isOnClasspath(res) )
-        JJBuilder.CompileJJResource(res);
+        JJBuilder.CompileResource(res);
       
       // Refresh the whole project to trigger compilation of Java files
       res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);

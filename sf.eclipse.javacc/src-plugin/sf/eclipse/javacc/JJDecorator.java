@@ -23,8 +23,7 @@ import org.eclipse.ui.IDecoratorManager;
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
-public class JJDecorator extends LabelProvider
-implements ILabelDecorator, IJJConstants {
+public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJConstants {
   
   // Images to add on the original if generated or exluded
   private Image imgGeneratedStamp;

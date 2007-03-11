@@ -2,7 +2,7 @@
 
 package sf.eclipse.javacc.parser;
 
-public interface JavaCCParserTreeConstants
+public @SuppressWarnings("all")interface JavaCCParserTreeConstants
 {
   public int JJTROOT = 0;
   public int JJTPARSER_BEGIN = 1;

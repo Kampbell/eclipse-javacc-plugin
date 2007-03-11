@@ -1,9 +1,9 @@
 /*
- * Rewriten for Java 1.5 and JJTree
+ * Rewritten for Java 1.5 and JJTree
  */
  
 options {
-  JAVA_UNICODE_ESCAPE = true;
+  JAVA_UNICODE_ESCAPE = false; // See CHARACTER_LITERAL definition
   MULTI = true;
   NODE_DEFAULT_VOID = true;
   NODE_SCOPE_HOOK = true;
@@ -230,6 +230,7 @@ TOKEN :
 |
   < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 |
+/* Character and String can contain Unicode escapes */
   < CHARACTER_LITERAL:
       "'"
       (   (~["'","\\","\n","\r"])
@@ -237,6 +238,7 @@ TOKEN :
             ( ["n","t","b","r","f","\\","'","\""]
             | ["0"-"7"] ( ["0"-"7"] )?
             | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            | "u" ["0"-"9","a"-"f"]["0"-"9","a"-"f"]["0"-"9","a"-"f"]["0"-"9","a"-"f"]
             )
           )
       )
@@ -250,6 +252,7 @@ TOKEN :
             ( ["n","t","b","r","f","\\","'","\""]
             | ["0"-"7"] ( ["0"-"7"] )?
             | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            | "u" ["0"-"9","a"-"f"]["0"-"9","a"-"f"]["0"-"9","a"-"f"]["0"-"9","a"-"f"]
             )
           )
       )*
@@ -299,9 +302,9 @@ TOKEN :
 | < BIT_OR: "|" >
 | < XOR: "^" >
 | < REM: "%" >
-| < LSHIFT: "<<" >
-| < RSIGNEDSHIFT: ">>" >
-| < RUNSIGNEDSHIFT: ">>>" >
+//| < LSHIFT: "<<" >
+//| < RSIGNEDSHIFT: ">>" >
+//| < RUNSIGNEDSHIFT: ">>>" >
 | < PLUSASSIGN: "+=" >
 | < MINUSASSIGN: "-=" >
 | < STARASSIGN: "*=" >
@@ -310,9 +313,9 @@ TOKEN :
 | < ORASSIGN: "|=" >
 | < XORASSIGN: "^=" >
 | < REMASSIGN: "%=" >
-| < LSHIFTASSIGN: "<<=" >
-| < RSIGNEDSHIFTASSIGN: ">>=" >
-| < RUNSIGNEDSHIFTASSIGN: ">>>=" >
+//| < LSHIFTASSIGN: "<<=" >
+//| < RSIGNEDSHIFTASSIGN: ">>=" >
+//| < RUNSIGNEDSHIFTASSIGN: ">>>=" >
 }
 
 /************************************************
@@ -865,7 +868,8 @@ void RelationalExpression(): {}
 
 void ShiftExpression(): {}
 {
-  AdditiveExpression() ( ( "<<" | <RSIGNEDSHIFT> | <RUNSIGNEDSHIFT> ) AdditiveExpression() )*
+//  AdditiveExpression() ( ( "<<" | <RSIGNEDSHIFT> | <RUNSIGNEDSHIFT> ) AdditiveExpression() )*
+  AdditiveExpression() ( LOOKAHEAD(3) ( ShiftOps() ) AdditiveExpression() )*
 }
 
 void AdditiveExpression():{}

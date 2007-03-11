@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="JavaCC Feature"
-      version="1.5.6"
+      version="1.5.7"
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
@@ -407,7 +407,7 @@ Version 2.0 dated 2005-05-21.
 
    <url>
       <update label="SF JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/"/>
-      <discovery label="Eclipse JavaCC" url="http://eclipse-javacc.sourceforge.net/updates"/>
+      <discovery label="Eclipse JavaCC" url="http://eclipse-javacc.sourceforge.net"/>
    </url>
 
    <requires>
@@ -430,6 +430,6 @@ Version 2.0 dated 2005-05-21.
          id="sf.eclipse.javacc"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.5.7"/>
 
 </feature>

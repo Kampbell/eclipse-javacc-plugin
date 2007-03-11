@@ -1,5 +1,5 @@
 /**
- * The JJNode is a SimpleNode with aditions
+ * The JJNode is a SimpleNode with additions
  * - toString to have a nice label in outline
  * - buildHashMap to record identifiers in JJElements
  * 
@@ -197,7 +197,7 @@ public class JJNode implements Node {
   }
   
   /**
-   * Build recusively a HasMap of JavaCC Elements
+   * Build recursively a HashMap of JavaCC Elements
    * given JJnode at the root of parse tree.
    */
   public void buildHashMap() {

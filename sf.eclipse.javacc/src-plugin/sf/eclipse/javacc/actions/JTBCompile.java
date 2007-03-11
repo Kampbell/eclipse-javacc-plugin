@@ -78,7 +78,7 @@ public class JTBCompile implements IObjectActionDelegate, IEditorActionDelegate,
       // Force Compile is not triggered
       if (!("true").equals(res.getProject().getPersistentProperty(QN_JJ_NATURE))  //$NON-NLS-1$
           || !isOnClasspath(res) )
-        JJBuilder.CompileJTBResource(res);
+        JJBuilder.CompileResource(res);
       
       // Refresh the whole project to trigger compilation of Java files
       res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);

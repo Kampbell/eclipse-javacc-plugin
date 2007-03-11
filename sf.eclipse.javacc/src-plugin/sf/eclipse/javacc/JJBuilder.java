@@ -3,8 +3,6 @@ package sf.eclipse.javacc;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -18,13 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import sf.eclipse.javacc.options.OptionSet;
 
@@ -41,13 +34,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
   // Needed to test if the resource is on class path
   protected IJavaProject javaProject;
-
   protected IPath outputFolder;
-
-  // The pattern has 2 groups and a non-capturing group
-  // to identify even already treated files
-  private final static Pattern filepattern = Pattern
-      .compile("^((?:public\\s+)?(?:final\\s+)?)(?:@SuppressWarnings\\(\\\"all\\\"\\)\\s+)?(class|interface|enum)", Pattern.MULTILINE); //$NON-NLS-1$
 
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>
@@ -107,14 +94,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
    */
   public boolean visit(IResource res) throws CoreException {
-    boolean okToCompile = javaProject.isOnClasspath(res);
-    if (okToCompile) {
-      String extension = res.getFullPath().getFileExtension();
-      if ("jj".equals(extension) || "jjt".equals(extension)) //$NON-NLS-1$ //$NON-NLS-2$
-        CompileJJResource(res);
-      if ("jtb".equals(extension)) //$NON-NLS-1$
-        CompileJTBResource(res);
-    }
+    boolean okToCompile = javaProject.isOnClasspath(res) 
+     && (res.getFileExtension() == null // a directory
+         || res.getFileExtension().equals("jj") 
+         || res.getFileExtension().equals("jtb") 
+         || res.getFileExtension().equals("jjt")); 
+    if (okToCompile)
+      CompileResource(res);
+
     // This prevents traversing output directories
     boolean isOut = res.getProjectRelativePath().equals(outputFolder) & outputFolder.toString().length() != 0;
     return !isOut;
@@ -124,16 +111,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * Compile a .jj jjt or .jtb file given its IResource
    * @param res IResource to compile
    */
-  public static void CompileJJResource(IResource res) throws CoreException {
+  public static void CompileResource(IResource res) throws CoreException {
     if (!(res instanceof IFile) || !res.exists())
       return;
-    // In case of a false way
-    String extension = res.getFullPath().getFileExtension();
-    if ("jtb".equals(extension)) {//$NON-NLS-1$
-      CompileJTBResource(res);
-      return;
-    }
 
+    // The file, the project and the directory
     IFile file = (IFile) res;
     IProject pro = file.getProject();
     String dir = pro.getLocation().toOSString();
@@ -145,11 +127,12 @@ public class JJBuilder extends IncrementalProjectBuilder implements
       e.printStackTrace();
     }
 
-    // JavaCC is now launched in the directory where .jj is.
+    // JavaCC is launched in the directory where the file is.
     String resdir = file.getLocation().toString();
     String name = resdir.substring(resdir.lastIndexOf("/") + 1); //$NON-NLS-1$
     resdir = resdir.substring(0, resdir.lastIndexOf("/")); //$NON-NLS-1$
-
+    String extension = file.getFullPath().getFileExtension();
+    
     JJConsole console = Activator.getConsole();
 
     // Retrieves runtime options
@@ -160,42 +143,46 @@ public class JJBuilder extends IncrementalProjectBuilder implements
       e.printStackTrace();
     }
 
-    // Retrieves command line
+    // Retrieve command line
     String[] args = getArgs(file, name, projectOverride);
-    String jarfile = getJavaCCJarFile(file);
+    String jarfile = getJarFile(file);
 
-    // Redirects out and error streams
+    // Redirect out and error streams
     PrintStream orgOut = System.out;
     PrintStream orgErr = System.err;
     PrintStream outConsole = console.getPrintStream();
     System.setOut(outConsole);
     System.setErr(outConsole);
 
-    // Recalls Command line on console
-    if (name.endsWith(".jjt")) //$NON-NLS-1$
-      console.print(">jjtree "); //$NON-NLS-1$
-    else
-      console.print(">javacc "); //$NON-NLS-1$
+    // Recall Command line on console
+    if (extension.equals("jjt")) //$NON-NLS-1$
+      console.print(">java -classpath " + jarfile + " javacc "); //$NON-NLS-1$
+    else if (extension.equals("jj")) //$NON-NLS-1$
+      console.print(">java -classpath " + jarfile + " jjtree "); //$NON-NLS-1$
+    else if (extension.equals("jtb")) //$NON-NLS-1$
+      console.print(">java -jar " + jarfile + " "); //$NON-NLS-1$
     for (int i = 0; i < args.length; i++)
       console.print(args[i] + " "); //$NON-NLS-1$
     System.out.println();
 
-    // Calls JavaCC
+    // Call JavaCC, JJTree or JTB
     DirList.snapshot(dir);
-    if (name.endsWith(".jjt")) //$NON-NLS-1$
+    if (extension.equals("jjt")) //$NON-NLS-1$
       JarLauncher.launchJJTree(jarfile, args, resdir);
-    else
+    else if (extension.equals("jj")) //$NON-NLS-1$
       JarLauncher.launchJavaCC(jarfile, args, resdir);
+    else if (extension.equals("jtb")) //$NON-NLS-1$
+      JarLauncher.launchJTB(jarfile, args, resdir);
     System.out.println();
 
-    // Restores standard and error streams
+    // Restore standard and error streams
     System.setOut(orgOut);
     System.setErr(orgErr);
 
     // Notify Console with the File the Console should report Errors to
     console.endReport(file);
 
-    // Compiles Generated .jj File if a .jjt file was processed
+    // Compile Generated .jj File if a .jjt or .jtb file was processed
     String[] jjgenerated = DirList.getDiff(dir);
     if (jjgenerated != null) {
       for (int i = 0; i < jjgenerated.length; i++) {
@@ -206,30 +193,16 @@ public class JJBuilder extends IncrementalProjectBuilder implements
           resgenerated = pro.findMember(jjgenerated[i]);
         }
 
-        // Take the opportunity to mark them with a 'G'
-        if (resgenerated != null) {
-          resgenerated.setDerived(true);
-          resgenerated.setPersistentProperty(QN_GENERATED_FILE, name);
-          IJavaElement element = (IJavaElement) resgenerated
-              .getAdapter(IJavaElement.class);
-          if ("true".equals(pro.getPersistentProperty(QN_SUPPRESS_WARNINGS)) && element instanceof ICompilationUnit) //$NON-NLS-1$
-          {
-            ICompilationUnit cu = (ICompilationUnit) element;
-            String source = cu.getBuffer().getContents();
-            Matcher filematcher = filepattern.matcher(source);
-            if (filematcher.find()) {
-              String newsource = filematcher
-                  .replaceFirst("$1@SuppressWarnings(\"all\") $2"); //$NON-NLS-1$
-              cu.getBuffer().setContents(newsource);
-              cu.getBuffer().save(null, true);
-            }
-          }
-        }
-        if (name.endsWith(".jjt") && jjgenerated[i].endsWith(".jj")) { //$NON-NLS-1$ //$NON-NLS-2$
+        // Take the opportunity to mark them with a 'G' and to correct .java files
+        MarkAndCorrect.markAndCorrect(pro, name, resgenerated);
+        
+        // Compile .jj only if .jjt or .jtb was compiled and .jj was generated
+        if ((extension.equals("jjt") || extension.equals("jtb")) //$NON-NLS-1$ //$NON-NLS-2$
+            && jjgenerated[i].endsWith(".jj")) { //$NON-NLS-1$ 
           // Compile .jj if project has not Javacc Nature, ie no automatic build
           // Well seems Eclipse has a small bug here, it doesn't recompile...
           // if (!pro.getDescription().hasNature(JJ_NATURE_ID))
-          CompileJJResource(resgenerated);
+          CompileResource(resgenerated);
         }
       }
     }
@@ -248,16 +221,9 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     String dir = pro.getLocation().toOSString();
     String name = file.getLocation().toString();
 
-    // Delete markers
-    try {
-      file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-
     JJConsole console = Activator.getConsole();
 
-    // Retrieves runtime options
+    // Retrieve runtime options
     boolean projectOverride = false;
     try {
       projectOverride = ("true").equals(pro.getPersistentProperty( //$NON-NLS-1$
@@ -266,18 +232,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements
       e.printStackTrace();
     }
 
-    // Retrieves command line
+    // Retrieve command line
     String[] args = getJJDocArgs(file, name, projectOverride);
-    String jarfile = getJavaCCJarFile(file);
-    if (jarfile == null) {
-      IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-      MessageDialog.openInformation(w.getShell(), Activator
-          .getString("JJBuilder.JJBuilder"), //$NON-NLS-1$
-          Activator.getString("JJBuilder.Please_set_the_jtb_jar_file")); //$NON-NLS-1$
-      return;
-    }
+    String jarfile = getJarFile(file);
 
-    // Redirects standard and error streams
+    // Redirect standard and error streams
     PrintStream orgOut = System.out;
     PrintStream orgErr = System.err;
     PrintStream outConsole = console.getPrintStream();
@@ -285,12 +244,12 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     System.setErr(outConsole);
 
     // Recall command line on console
-    console.print(">jjdoc "); //$NON-NLS-1$
+    console.print(">java -classpath " + jarfile + " jjdoc "); //$NON-NLS-1$
     for (int i = 0; i < args.length; i++)
       console.print(args[i] + " "); //$NON-NLS-1$
     System.out.println();
 
-    // Calls JJDoc
+    // Call JJDoc
     JarLauncher.launchJJDoc(jarfile, args, dir);
     System.out.println();
 
@@ -303,111 +262,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
   }
 
   /**
-   * Call JTB for a .jtb file given its IResource
-   * @param res IResource to compile
-   */
-  public static void CompileJTBResource(IResource res) throws CoreException {
-    if (!(res instanceof IFile))
-      return;
-
-    IFile file = (IFile) res;
-    IProject pro = file.getProject();
-    String dir = pro.getLocation().toOSString();
-
-    // Launch in the directory where .jtb is.
-    String resdir = file.getLocation().toString();
-    String name = resdir.substring(resdir.lastIndexOf("/") + 1); //$NON-NLS-1$
-    resdir = resdir.substring(0, resdir.lastIndexOf("/")); //$NON-NLS-1$
-
-    // Delete markers
-    try {
-      file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-
-    JJConsole console = Activator.getConsole();
-
-    // Retrieves runtime options
-    boolean projectOverride = false;
-    try {
-      projectOverride = ("true").equals(pro.getPersistentProperty( //$NON-NLS-1$
-          QN_PROJECT_OVERRIDE));
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-
-    // Retrieves command line
-    String[] args = getJTBArgs(file, name, projectOverride);
-    String jarfile = getJTBJarFile(file);
-
-    // Redirects standard and error streams
-    PrintStream orgOut = System.out;
-    PrintStream orgErr = System.err;
-    PrintStream outConsole = console.getPrintStream();
-    System.setOut(outConsole);
-    System.setErr(outConsole);
-
-    // Recall command line on console
-    String jarname = jarfile.substring(jarfile.lastIndexOf("/") + 1); //$NON-NLS-1$
-    console.print(">java -jar " + jarname + " "); //$NON-NLS-1$ //$NON-NLS-2$
-    for (int i = 0; i < args.length; i++)
-      console.print(args[i] + " "); //$NON-NLS-1$
-    System.out.println();
-
-    // Calls JTB
-    DirList.snapshot(dir);
-    JarLauncher.launchJTB(jarfile, args, resdir);
-    System.out.println();
-
-    // Restores standard and error streams
-    System.setOut(orgOut);
-    System.setErr(orgErr);
-
-    // Notify Console with the File the Console should report Errors to
-    console.endReport(file);
-
-    // Compiles Generated .jj File
-    String[] jjgenerated = DirList.getDiff(dir);
-    if (jjgenerated != null) {
-      for (int i = 0; i < jjgenerated.length; i++) {
-        jjgenerated[i] = jjgenerated[i].substring(dir.length() + 1);
-        IResource resgenerated = pro.findMember(jjgenerated[i]);
-        if (resgenerated == null) {
-          pro.refreshLocal(IResource.DEPTH_INFINITE, null);
-          resgenerated = pro.findMember(jjgenerated[i]);
-        }
-        // Take the opportunity to mark them with a 'G'
-        if (resgenerated != null) {
-          resgenerated.setDerived(true);
-          resgenerated.setPersistentProperty(QN_GENERATED_FILE, name);
-          IJavaElement element = (IJavaElement) resgenerated
-              .getAdapter(IJavaElement.class);
-          if ("true".equals(pro.getPersistentProperty(QN_SUPPRESS_WARNINGS)) && element instanceof ICompilationUnit) //$NON-NLS-1$
-          {
-            ICompilationUnit cu = (ICompilationUnit) element;
-            String source = cu.getBuffer().getContents();
-            Matcher filematcher = filepattern.matcher(source);
-            if (filematcher.find()) {
-              String newsource = filematcher
-                  .replaceFirst("@SuppressWarnings(\"all\")$1"); //$NON-NLS-1$
-              cu.getBuffer().setContents(newsource);
-              cu.getBuffer().save(null, true);
-            }
-          }
-        }
-        if (name.endsWith(".jtb") && jjgenerated[i].endsWith(".jj")) { //$NON-NLS-1$ //$NON-NLS-2$
-          // Compile .jj if project has not Javacc Nature, ie no automatic build
-          // Well seems Eclipse has a small bug here, it doesn't recompile...
-          // if (!pro.getDescription().hasNature(JJ_NATURE_ID))
-          CompileJJResource(resgenerated);
-        }
-      }
-    }
-  }
-
-  /**
-   * Make args[] of options to call JavaCC Compiler
+   * Make args[] of options to call JavaCC JJTree or JTB Compiler
    * @param file resource to get the options from
    * @param name file name
    * @param projectOverride true if the properties is from project
@@ -416,34 +271,55 @@ public class JJBuilder extends IncrementalProjectBuilder implements
   protected static String[] getArgs(IFile file, String name,
       boolean projectOverride) {
     String[] args = null;
+    String extension = file.getFullPath().getFileExtension();
     try {
       String options = null;
-      if (name.endsWith(".jj")) { //$NON-NLS-1$
+      if (extension.equals("jj")) { //$NON-NLS-1$
         // Try for resource property
         options = file.getPersistentProperty(QN_JAVACC_OPTIONS);
         // Else take Project Property
         if (options == null || projectOverride)
           options = file.getProject().getPersistentProperty(QN_JAVACC_OPTIONS);
-        // Else takes defaults
-        if (options == null) {
-          options = ""; //$NON-NLS-1$
-        }
-      } else if (name.endsWith(".jjt")) { //$NON-NLS-1$
+      } else if (extension.equals("jjt")) { //$NON-NLS-1$
         options = file.getPersistentProperty(QN_JJTREE_OPTIONS);
         if (options == null || projectOverride)
           options = file.getProject().getPersistentProperty(QN_JJTREE_OPTIONS);
-        if (options == null) {
-          options = ""; //$NON-NLS-1$
-        }
-      }
-      // Adds target ie file to compile
+      } else if (extension.equals("jtb")) { //$NON-NLS-1$
+        options = file.getPersistentProperty(QN_JTB_OPTIONS);
+        if (options == null || projectOverride)
+          options = file.getProject().getPersistentProperty(QN_JTB_OPTIONS);
+      }        
+      if (options == null)
+        options = ""; //$NON-NLS-1$
+        
+      // Add target ie file to compile
       options = options + " \"" + name + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-      // Gets tokens
+      
+      // Get tokens
       args = OptionSet.tokenize(options);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return args;
+    // Standart case for .jj .jjt
+    if (! extension.equals("jtb")) //$NON-NLS-1$
+      return args;
+      
+    // The JTB syntax is "-o" "foo" and not "-o=foo"
+    int nb = 0;
+    for (int i = 0; i < args.length; i++)
+      if (args[i].indexOf('=') != -1)
+        nb++;
+    String[] nargs = new String[args.length + nb];
+    nb = 0;
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].indexOf('=') != -1) {
+        nargs[i + nb] = args[i].substring(0, args[i].indexOf('='));
+        nb++;
+        nargs[i + nb] = args[i].substring(args[i].indexOf('=') + 1);
+      } else
+        nargs[i + nb] = args[i];
+    }
+    return nargs;
   }
 
   /**
@@ -477,62 +353,21 @@ public class JJBuilder extends IncrementalProjectBuilder implements
   }
 
   /**
-   * Make args[] of options to call JTB
-   * @param file  resource to get the options from
-   * @param name  file name
-   * @param projectOverride  true if the properties is from project
-   * @return String[] of options to call JTB compiler with
-   */
-  protected static String[] getJTBArgs(IFile file, String name,
-      boolean projectOverride) {
-    String[] args = null;
-    try {
-      String options = null;
-      // Try for resource property
-      options = file.getPersistentProperty(QN_JTB_OPTIONS);
-      // Else take Project Property
-      if (options == null || projectOverride)
-        options = file.getProject().getPersistentProperty(QN_JTB_OPTIONS);
-      // Else take default
-      if (options == null) {
-        options = ""; //$NON-NLS-1$
-      }
-      // Adds target ie file to compile
-      options = options + " \"" + name + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-      // Gets tokens
-      args = OptionSet.tokenize(options);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    // The JTB syntax is "-o" "foo" and not "-o=foo"
-    int nb = 0;
-    for (int i = 0; i < args.length; i++)
-      if (args[i].indexOf('=') != -1)
-        nb++;
-    String[] nargs = new String[args.length + nb];
-    nb = 0;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].indexOf('=') != -1) {
-        nargs[i + nb] = args[i].substring(0, args[i].indexOf('='));
-        nb++;
-        nargs[i + nb] = args[i].substring(args[i].indexOf('=') + 1);
-      } else
-        nargs[i + nb] = args[i];
-    }
-    return nargs;
-  }
-
-  /**
    * Provide the path to javacc.jar
    * @param file  the resource to get the property from
-   * @return String path to javacc.jar
+   * @return String path to javacc.jar or jtb132.jar
    */
-  protected static String getJavaCCJarFile(IResource file) {
+  protected static String getJarFile(IResource file) {
     String jarfile = null;
+    String extension = file.getFullPath().getFileExtension();
     try {
       // If the user has given a path, we use it
-      jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JAR);
-      // else we use the jar in the plugin
+      if (extension.equals("jj") || extension.equals("jjt"))
+        jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JAR);
+      else if (extension.equals("jtb"))
+        jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JTBJAR);
+      
+      // Else we use the jar in the plugin
       if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
         URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
         // Eclipse 3.1 way. Deprecated in 3.2
@@ -543,39 +378,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements
         // org.eclipse.core.runtime.FileLocator.resolve(installURL);
         // String home =
         // org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+        
         // Same for both
-        jarfile = home + "javacc.jar"; //$NON-NLS-1$
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return jarfile;
-  }
+        if (extension.equals("jj") || extension.equals("jjt"))
+          jarfile = home + "javacc.jar"; //$NON-NLS-1$
+        else if (extension.equals("jtb"))
+          jarfile = home + "jtb132.jar"; //$NON-NLS-1$
 
-  /**
-   * Provide the path to JTB.jar
-   * @param file  the resource to get the property from
-   * @return String path to jtb132.jar
-   */
-  protected static String getJTBJarFile(IFile file) {
-    String jarfile = null;
-    try {
-      // If the user has given a path, we use it
-      jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JTBJAR);
-      // else we use the jar in the plugin
-      if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
-        URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
-        // Eclipse 3.1 way. Deprecated in 3.2
-        URL resolvedURL = Platform.resolve(installURL);
-        String home = Platform.asLocalURL(resolvedURL).getFile();
-        // Eclipse 3.2 way. Only available in Eclipse 3.2
-        // URL resolvedURL =
-        // org.eclipse.core.runtime.FileLocator.resolve(installURL);
-        // String home =
-        // org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
-        // Same for both
-        jarfile = home + "jtb132.jar"; //$NON-NLS-1$
-        if (jarfile.startsWith("/")) //$NON-NLS-1$
+        if (jarfile.startsWith("/") && jarfile.startsWith(":", 2)) //$NON-NLS-1$
           jarfile = jarfile.substring(1);
       }
     } catch (Exception e) {
