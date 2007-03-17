@@ -37,6 +37,11 @@ Features
    use Workbench "Back" to go back.
 
 History
+18/03/07 - version 1.5.8
+- correct JJDoc bug (was not called selected editor) 
+- correct Console report (inverted JJTree and JavaCC)
+- correct JJTREE_OUTPUT_DIRECTORY highlight and option setting
+
 10/03/07 - version 1.5.7
 - correct double suppress warning 
 - preserve unicode escape in characters and strings when formatting
