@@ -228,7 +228,7 @@ public class JJConsole extends ViewPart implements IJJConstants {
       if (lineColumnMatcher.find() == false){
         lineMatcher.find();
         // Add next line to the report
-        report += "\n"+ lineMatcher.group();
+        report += "\n"+ lineMatcher.group(); //$NON-NLS-1$
         lineColumnMatcher = lineColumnPattern.matcher(lineMatcher.group());
         // If the report doesn't give any line
         if (lineColumnMatcher.find() == false) {

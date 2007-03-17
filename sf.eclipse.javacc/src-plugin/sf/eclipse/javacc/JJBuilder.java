@@ -96,9 +96,9 @@ public class JJBuilder extends IncrementalProjectBuilder implements
   public boolean visit(IResource res) throws CoreException {
     boolean okToCompile = javaProject.isOnClasspath(res) 
      && (res.getFileExtension() == null // a directory
-         || res.getFileExtension().equals("jj") 
-         || res.getFileExtension().equals("jtb") 
-         || res.getFileExtension().equals("jjt")); 
+         || res.getFileExtension().equals("jj")  //$NON-NLS-1$
+         || res.getFileExtension().equals("jtb")  //$NON-NLS-1$
+         || res.getFileExtension().equals("jjt"));  //$NON-NLS-1$
     if (okToCompile)
       CompileResource(res);
 
@@ -156,11 +156,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
     // Recall Command line on console
     if (extension.equals("jjt")) //$NON-NLS-1$
-      console.print(">java -classpath " + jarfile + " jjtree "); //$NON-NLS-1$
+      console.print(">java -classpath " + jarfile + " jjtree "); //$NON-NLS-1$ //$NON-NLS-2$
     else if (extension.equals("jj")) //$NON-NLS-1$
-      console.print(">java -classpath " + jarfile + " javacc "); //$NON-NLS-1$
+      console.print(">java -classpath " + jarfile + " javacc "); //$NON-NLS-1$ //$NON-NLS-2$
     else if (extension.equals("jtb")) //$NON-NLS-1$
-      console.print(">java -jar " + jarfile + " "); //$NON-NLS-1$
+      console.print(">java -jar " + jarfile + " "); //$NON-NLS-1$ //$NON-NLS-2$
     for (int i = 0; i < args.length; i++)
       console.print(args[i] + " "); //$NON-NLS-1$
     System.out.println();
@@ -244,7 +244,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     System.setErr(outConsole);
 
     // Recall command line on console
-    console.print(">java -classpath " + jarfile + " jjdoc "); //$NON-NLS-1$
+    console.print(">java -classpath " + jarfile + " jjdoc "); //$NON-NLS-1$ //$NON-NLS-2$
     for (int i = 0; i < args.length; i++)
       console.print(args[i] + " "); //$NON-NLS-1$
     System.out.println();
@@ -362,9 +362,9 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     String extension = file.getFullPath().getFileExtension();
     try {
       // If the user has given a path, we use it
-      if (extension.equals("jj") || extension.equals("jjt"))
+      if (extension.equals("jj") || extension.equals("jjt")) //$NON-NLS-1$ //$NON-NLS-2$
         jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JAR);
-      else if (extension.equals("jtb"))
+      else if (extension.equals("jtb")) //$NON-NLS-1$
         jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JTBJAR);
       
       // Else we use the jar in the plugin
@@ -380,12 +380,12 @@ public class JJBuilder extends IncrementalProjectBuilder implements
         // org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
         
         // Same for both
-        if (extension.equals("jj") || extension.equals("jjt"))
+        if (extension.equals("jj") || extension.equals("jjt")) //$NON-NLS-1$ //$NON-NLS-2$
           jarfile = home + "javacc.jar"; //$NON-NLS-1$
-        else if (extension.equals("jtb"))
+        else if (extension.equals("jtb")) //$NON-NLS-1$
           jarfile = home + "jtb132.jar"; //$NON-NLS-1$
 
-        if (jarfile.startsWith("/") && jarfile.startsWith(":", 2)) //$NON-NLS-1$
+        if (jarfile.startsWith("/") && jarfile.startsWith(":", 2)) //$NON-NLS-1$ //$NON-NLS-2$
           jarfile = jarfile.substring(1);
       }
     } catch (Exception e) {

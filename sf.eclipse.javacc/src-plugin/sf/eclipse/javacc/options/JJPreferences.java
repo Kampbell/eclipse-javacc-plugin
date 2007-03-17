@@ -13,17 +13,17 @@ import sf.eclipse.javacc.Activator;
  * Class used to initialize default preference values.
  */
 public class JJPreferences extends AbstractPreferenceInitializer {
-  public static final String P_JJKEYWORD = "JavaCCKeyWordColorPref"; 
-  public static final String P_JAVAKEYWORD = "JavaKeyWordColorPref"; 
-  public static final String P_BACKGROUND = "BackgroundColorPref"; 
-  public static final String P_STRING = "StringColorPref"; 
-  public static final String P_COMMENT = "CommentColorPref"; 
-  public static final String P_JDOC_COMMENT = "JavaDocCommentColorPref"; 
-  public static final String P_TOKEN = "TokenColorPref"; 
-  public static final String P_PTOKEN = "PrivateTokenColorPref"; 
-  public static final String P_DEFAULT = "DefaultTextColorPref"; 
-  public static final String P_MATCHING_CHAR = "MatchingCharColorPref"; 
-  public static final String P_CONSOLE_COMMAND = "ConsoleCommandColorPref"; 
+  public static final String P_JJKEYWORD = "JavaCCKeyWordColorPref";  //$NON-NLS-1$
+  public static final String P_JAVAKEYWORD = "JavaKeyWordColorPref";  //$NON-NLS-1$
+  public static final String P_BACKGROUND = "BackgroundColorPref";  //$NON-NLS-1$
+  public static final String P_STRING = "StringColorPref";  //$NON-NLS-1$
+  public static final String P_COMMENT = "CommentColorPref";  //$NON-NLS-1$
+  public static final String P_JDOC_COMMENT = "JavaDocCommentColorPref";  //$NON-NLS-1$
+  public static final String P_TOKEN = "TokenColorPref";  //$NON-NLS-1$
+  public static final String P_PTOKEN = "PrivateTokenColorPref";  //$NON-NLS-1$
+  public static final String P_DEFAULT = "DefaultTextColorPref";  //$NON-NLS-1$
+  public static final String P_MATCHING_CHAR = "MatchingCharColorPref";  //$NON-NLS-1$
+  public static final String P_CONSOLE_COMMAND = "ConsoleCommandColorPref";  //$NON-NLS-1$
   
 	/*
 	 * (non-Javadoc)

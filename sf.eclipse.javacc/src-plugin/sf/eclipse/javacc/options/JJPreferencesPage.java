@@ -26,7 +26,7 @@ public class JJPreferencesPage extends FieldEditorPreferencePage implements IWor
   public JJPreferencesPage() {
     super(GRID);
     setPreferenceStore(Activator.getDefault().getPreferenceStore());
-    setDescription("Colors for JavaCC plug-in");
+    setDescription(Activator.getString("JJPreferencesPage.Colors_for_javacc_plugin")); //$NON-NLS-1$
   }
   
   /**
@@ -36,27 +36,27 @@ public class JJPreferencesPage extends FieldEditorPreferencePage implements IWor
   public void createFieldEditors() {
     // Colors
     addField(new ColorFieldEditor(JJPreferences.P_JJKEYWORD,
-        "JavaCC Keyword:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.JavaCC_Keyword"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_JAVAKEYWORD,
-        "Java Keyword:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Java_Keyword"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_BACKGROUND,
-        "Background:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Background"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_STRING,
-        "Strings:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Strings"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_COMMENT,
-        "Comments:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Comments"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_JDOC_COMMENT,
-        "Javadoc comments:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Javadoc_comments"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_TOKEN,
-        "Token declaration:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Token_declaration"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_PTOKEN,
-        "Private token declaration:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Private_token_declaration"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_DEFAULT,
-        "Text by default:", getFieldEditorParent()));
+        Activator.getString("JJPreferencesPage.Text_by_default"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_MATCHING_CHAR,
-        "Matching char:", getFieldEditorParent())); 
+        Activator.getString("JJPreferencesPage.Matching_char"), getFieldEditorParent()));  //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_CONSOLE_COMMAND,
-        "Console commands:", getFieldEditorParent()));  
+        Activator.getString("JJPreferencesPage.Console_commands"), getFieldEditorParent()));   //$NON-NLS-1$
   }
 
   protected void performApply() {

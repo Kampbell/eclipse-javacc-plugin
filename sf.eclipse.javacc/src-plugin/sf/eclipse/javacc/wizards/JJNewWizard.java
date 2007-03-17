@@ -38,7 +38,7 @@ import sf.eclipse.javacc.JJNature;
  * @author Remi Koutcherawy 2003-2006
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings("restriction") //$NON-NLS-1$
 public class JJNewWizard extends NewElementWizard implements IJJConstants {
   private JJNewJJPage fPage;
 
@@ -151,10 +151,10 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     IProject pro = res.getProject();
     pro.setPersistentProperty(QN_RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
     pro.setPersistentProperty(QN_RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
-    pro.setPersistentProperty(QN_SHOW_CONSOLE, "true");
-    pro.setPersistentProperty(QN_CLEAR_CONSOLE, "false");
-    pro.setPersistentProperty(QN_PROJECT_OVERRIDE, "true");
-    pro.setPersistentProperty(QN_JJ_NATURE, "true"); 
+    pro.setPersistentProperty(QN_SHOW_CONSOLE, "true"); //$NON-NLS-1$
+    pro.setPersistentProperty(QN_CLEAR_CONSOLE, "false"); //$NON-NLS-1$
+    pro.setPersistentProperty(QN_PROJECT_OVERRIDE, "true"); //$NON-NLS-1$
+    pro.setPersistentProperty(QN_JJ_NATURE, "true");  //$NON-NLS-1$
     // Sets the nature directly
     JJNature.setJJNature(true, pro);
   }

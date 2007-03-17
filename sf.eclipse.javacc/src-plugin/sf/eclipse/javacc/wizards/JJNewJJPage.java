@@ -256,7 +256,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the Source container field.
    */
-  @SuppressWarnings("restriction")
+  @SuppressWarnings("restriction") //$NON-NLS-1$
   private IStatus sourceContainerChanged() {
     Status status= new Status();
     
@@ -316,7 +316,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the package field.
    */
-  @SuppressWarnings("restriction")
+  @SuppressWarnings("restriction") //$NON-NLS-1$
   private IStatus packageChanged() {
     Status status = new Status();
     String packName = getPackage();
@@ -351,7 +351,7 @@ public class JJNewJJPage extends WizardPage {
           }
         }
         if (!pack.exists()) // check the existence
-          status.setError(Activator.getString("JJNewJJPage.the_package")+" "+pack.getElementName()+" "+Activator.getString("JJNewJJPage._does_not_exist")); //$NON-NLS-1$ //$NON-NLS-2$
+          status.setError(Activator.getString("JJNewJJPage.the_package")+" "+pack.getElementName()+" "+Activator.getString(Activator.getString("JJNewJJPage._does_not_exist"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       } catch (JavaModelException e) {
         Activator.log(e.toString());
       }
@@ -405,7 +405,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Updates the status line and the OK button according to the given status
    */
-  @SuppressWarnings("restriction")
+  @SuppressWarnings("restriction") //$NON-NLS-1$
   protected void updateStatus() {
     IStatus status  = org.eclipse.jdt.internal.ui.dialogs.StatusUtil.getMostSevere(new IStatus[]{
       fSrcRootStatus, fPackageStatus, fExtensionStatus, fFileStatus
@@ -464,7 +464,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Open a dialog to let user choose Source Container
    */
-  @SuppressWarnings("restriction")
+  @SuppressWarnings("restriction") //$NON-NLS-1$
   private IPackageFragmentRoot chooseSourceContainer() {
     Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
     org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator validator= new org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator(acceptedClasses, false) {
@@ -526,7 +526,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Open a dialog to let user choose a Package
    */
-  @SuppressWarnings("restriction")
+  @SuppressWarnings("restriction") //$NON-NLS-1$
   IPackageFragment choosePackage() {
     IPackageFragmentRoot froot= fSrcRootFragment;
     IJavaElement[] packages= null;
@@ -563,7 +563,7 @@ public class JJNewJJPage extends WizardPage {
    * @return a Java element to be used as the initial selection, or
    * <code>null</code>, if no Java element exists in the given selection
    */
-  @SuppressWarnings("restriction")
+  @SuppressWarnings("restriction") //$NON-NLS-1$
   protected IJavaElement getInitialJavaElement(IStructuredSelection selection) {
     IJavaElement jelem = null;
     if (selection != null && !selection.isEmpty()) {
