@@ -2,8 +2,8 @@
 package sf.eclipse.javacc.parser;
 
 import java.io.Reader;
-@SuppressWarnings("all")
-public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, JavaCCParserConstants {/*@bgen(jjtree)*/
+
+public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, JavaCCParserConstants {/*@bgen(jjtree)*/
   protected static JJTJavaCCParserState jjtree = new JJTJavaCCParserState();protected static JavaCCParser parser = null;
 
   public static JJNode parse(Reader in){

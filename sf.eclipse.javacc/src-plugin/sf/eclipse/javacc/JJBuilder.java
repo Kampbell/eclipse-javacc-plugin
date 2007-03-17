@@ -156,9 +156,9 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
     // Recall Command line on console
     if (extension.equals("jjt")) //$NON-NLS-1$
-      console.print(">java -classpath " + jarfile + " javacc "); //$NON-NLS-1$
-    else if (extension.equals("jj")) //$NON-NLS-1$
       console.print(">java -classpath " + jarfile + " jjtree "); //$NON-NLS-1$
+    else if (extension.equals("jj")) //$NON-NLS-1$
+      console.print(">java -classpath " + jarfile + " javacc "); //$NON-NLS-1$
     else if (extension.equals("jtb")) //$NON-NLS-1$
       console.print(">java -jar " + jarfile + " "); //$NON-NLS-1$
     for (int i = 0; i < args.length; i++)

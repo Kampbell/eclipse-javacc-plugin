@@ -3,7 +3,6 @@ package sf.eclipse.javacc.options;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
-import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 
 /**
@@ -92,6 +91,6 @@ public class JJCCOptions extends JJAbstractTab implements IJJConstants {
   public void performDefaults() {
     super.performDefaults();
     // For Eclipse
-    pathField[0].setStringValue(Activator.getString("JJCCOptions.outputdir")); //$NON-NLS-1$
+    // pathField[0].setStringValue(Activator.getString("JJCCOptions.outputdir")); //$NON-NLS-1$
   }
 }

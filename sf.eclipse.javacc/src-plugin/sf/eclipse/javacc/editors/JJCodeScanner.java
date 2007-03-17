@@ -89,7 +89,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
 	  "OUTPUT_FILE", //$NON-NLS-1$
       "JDK_VERSION", //$NON-NLS-1$
       "NODE_EXTENDS", //$NON-NLS-1$
-      "TOKEN_MANAGER_USES_PARSER" //$NON-NLS-1$
+      "TOKEN_MANAGER_USES_PARSER", //$NON-NLS-1$
+      "JJTREE_OUTPUT_DIRECTORY" //$NON-NLS-1$
 	  };
   
   public static final String[] fgJavaKeywords = {

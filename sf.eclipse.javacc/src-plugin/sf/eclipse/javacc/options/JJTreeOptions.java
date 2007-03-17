@@ -3,7 +3,6 @@ package sf.eclipse.javacc.options;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
-import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 
 /**
@@ -31,6 +30,7 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
 //  JDK_VERSION               (default "1.4")
 //  NODE_EXTENDS              (default "")
 //  TOKEN_MANAGER_USES_PARSER (default false)
+// JJTREE_OUTPUT_DIRECTORY (default: use value of OUTPUT_DIRECTORY)
 
   /**
    * Initialize with JJTree known options
@@ -63,6 +63,7 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
 
     // path option
     optionSet.add(new Option("OUTPUT_DIRECTORY", "", Option.PATH)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("JJTREE_OUTPUT_DIRECTORY", "", Option.PATH)); //$NON-NLS-1$ //$NON-NLS-2$
     
     // file option
     optionSet.add(new Option("OUTPUT_FILE", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -80,6 +81,6 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
   public void performDefaults() {
     super.performDefaults();
     // For Eclipse
-    pathField[0].setStringValue(Activator.getString("JJTreeOptions.outputdir")); //$NON-NLS-1$
+    // pathField[0].setStringValue(Activator.getString("JJTreeOptions.outputdir")); //$NON-NLS-1$
   }
 }

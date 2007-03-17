@@ -177,6 +177,7 @@
       <action
             class="sf.eclipse.javacc.actions.JJDocCompile"
             id="javacc.jjdoccompile"
+            definitionId="commands.jjdoccompile"
             label="%Compile_with_JJDoc"
             menubarPath="JJGroup">
       </action>
@@ -213,6 +214,12 @@
             class="sf.eclipse.javacc.actions.JJComment"
             definitionId="commands.comment"
             id="javacc.comment">
+      </action>
+      <action
+            label="%Compile_with_JJDoc"
+            class="sf.eclipse.javacc.actions.JJDocCompile"
+            definitionId="commands.jjdoccompile"
+            id="javacc.jjdoccompile">
       </action>
       <action
             label="%Open_declaration"
@@ -258,6 +265,11 @@
             categoryId="JavaCC.category"
             name="%Toggle_Comment"
             id="commands.comment"/>
+      <command
+            description="%Compile_with_JJDoc"
+            categoryId="JavaCC.category"
+            name="%Compile_with_JJDoc"
+            id="commands.jjdoccompile"/>
       <command
             description="%Open_declaration"
             categoryId="JavaCC.category"
