@@ -147,16 +147,19 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     if (!packageName.equals("")) //$NON-NLS-1$
       res.getProject().setPersistentProperty(IJJConstants.QN_JTB_OPTIONS,"-p="+packageName); //$NON-NLS-1$
     
-    // Initialize properties do get automaticclay a full build
+    // Initialize properties do get automatically a full build
     IProject pro = res.getProject();
-    pro.setPersistentProperty(QN_RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
-    pro.setPersistentProperty(QN_RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
-    pro.setPersistentProperty(QN_SHOW_CONSOLE, "true"); //$NON-NLS-1$
-    pro.setPersistentProperty(QN_CLEAR_CONSOLE, "false"); //$NON-NLS-1$
-    pro.setPersistentProperty(QN_PROJECT_OVERRIDE, "true"); //$NON-NLS-1$
-    pro.setPersistentProperty(QN_JJ_NATURE, "true");  //$NON-NLS-1$
-    // Sets the nature directly
-    JJNature.setJJNature(true, pro);
+    if (pro.getPersistentProperty(QN_RUNTIME_JAR)== null) {
+      pro.setPersistentProperty(QN_RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
+      pro.setPersistentProperty(QN_RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
+      pro.setPersistentProperty(QN_SHOW_CONSOLE, "true"); //$NON-NLS-1$
+      pro.setPersistentProperty(QN_CLEAR_CONSOLE, "false"); //$NON-NLS-1$
+      pro.setPersistentProperty(QN_PROJECT_OVERRIDE, "true"); //$NON-NLS-1$
+      pro.setPersistentProperty(QN_JJ_NATURE, "true");  //$NON-NLS-1$
+      pro.setPersistentProperty(QN_SUPPRESS_WARNINGS, "true");  //$NON-NLS-1$
+      // Sets the nature directly
+      JJNature.setJJNature(true, pro);
+    }
   }
 
   /**

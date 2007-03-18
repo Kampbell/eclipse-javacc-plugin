@@ -93,8 +93,10 @@ public abstract class JJAbstractTab extends Composite
     if (optionSet.getOptionsSize(Option.PATH) != 0)
       addPathOptionsSection();
     if (optionSet.getOptionsSize(Option.FILE) != 0)
-      addFileOptionsSection();
-      isUpdating = false;
+      // Not shown when IResource is a project (irrevelant ... except for CSS for JJDoc)
+      if (resource.getType() != IResource.PROJECT) 
+        addFileOptionsSection();
+    isUpdating = false;
   }
 
   /**
@@ -254,11 +256,8 @@ public abstract class JJAbstractTab extends Composite
   
   /**
    * Shows file options
-   * Not shown when IResource is a project (irrevelant)
    */
   protected void addFileOptionsSection() {
-    if (resource!=null && resource.getType() == IResource.PROJECT)
-      return;
     Composite composite = new Composite(this, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

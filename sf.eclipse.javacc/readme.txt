@@ -38,9 +38,12 @@ Features
 
 History
 18/03/07 - version 1.5.8
-- correct JJDoc bug (was not called selected editor) 
+- correct JJDoc bug (was not called on selected editor) 
 - correct Console report (inverted JJTree and JavaCC)
 - correct JJTREE_OUTPUT_DIRECTORY highlight and option setting
+- correct new file wizard to check if options are set before setting defaults
+- replace javacc.jar with last CVS version 2007/03/18 
+- add new JJDoc options in javacc.jar (modified sources in javacc.jar)
 
 10/03/07 - version 1.5.7
 - correct double suppress warning 
