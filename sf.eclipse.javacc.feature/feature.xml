@@ -428,8 +428,9 @@ Version 2.0 dated 2005-05-21.
 
    <plugin
          id="sf.eclipse.javacc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+         download-size="1470089"
+         install-size="1470089"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
