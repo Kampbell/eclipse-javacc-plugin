@@ -1678,19 +1678,19 @@ static private final int jjMoveNfa_0(int startState, int curPos)
                      jjstateSet[jjnewStateCnt++] = 37;
                   break;
                case 37:
-                  if ((0x7e00000000L & l) != 0L)
+                  if ((0x7e0000007eL & l) != 0L)
                      jjstateSet[jjnewStateCnt++] = 38;
                   break;
                case 38:
-                  if ((0x7e00000000L & l) != 0L)
+                  if ((0x7e0000007eL & l) != 0L)
                      jjstateSet[jjnewStateCnt++] = 39;
                   break;
                case 39:
-                  if ((0x7e00000000L & l) != 0L)
+                  if ((0x7e0000007eL & l) != 0L)
                      jjstateSet[jjnewStateCnt++] = 40;
                   break;
                case 40:
-                  if ((0x7e00000000L & l) != 0L)
+                  if ((0x7e0000007eL & l) != 0L)
                      jjCheckNAddStates(7, 9);
                   break;
                case 42:

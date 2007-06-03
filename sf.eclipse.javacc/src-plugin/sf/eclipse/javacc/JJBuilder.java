@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
@@ -371,13 +370,13 @@ public class JJBuilder extends IncrementalProjectBuilder implements
       if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
         URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
         // Eclipse 3.1 way. Deprecated in 3.2
-        URL resolvedURL = Platform.resolve(installURL);
-        String home = Platform.asLocalURL(resolvedURL).getFile();
+//        URL resolvedURL = org.eclipse.core.runtime.Platform.resolve(installURL);
+//        String home = org.eclipse.core.runtime.Platform.asLocalURL(resolvedURL).getFile();
         // Eclipse 3.2 way. Only available in Eclipse 3.2
-        // URL resolvedURL =
-        // org.eclipse.core.runtime.FileLocator.resolve(installURL);
-        // String home =
-        // org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+         URL resolvedURL =
+         org.eclipse.core.runtime.FileLocator.resolve(installURL);
+         String home =
+         org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
         
         // Same for both
         if (extension.equals("jj") || extension.equals("jjt")) //$NON-NLS-1$ //$NON-NLS-2$

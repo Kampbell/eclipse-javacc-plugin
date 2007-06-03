@@ -7558,8 +7558,8 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   }
   public JavaCCParser(java.io.InputStream stream, String encoding) {
     if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  You must");
-      System.out.println("       either use ReInit() or set the JavaCC option STATIC to false");
+      System.out.println("ERROR: Second call to constructor of static parser.  ");
+      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
       System.out.println("       during parser generation.");
       throw new Error();
     }
@@ -7583,8 +7583,8 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
 
   public JavaCCParser(java.io.Reader stream) {
     if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  You must");
-      System.out.println("       either use ReInit() or set the JavaCC option STATIC to false");
+      System.out.println("ERROR: Second call to constructor of static parser. ");
+      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
       System.out.println("       during parser generation.");
       throw new Error();
     }
@@ -7605,8 +7605,8 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
 
   public JavaCCParser(JavaCCParserTokenManager tm) {
     if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  You must");
-      System.out.println("       either use ReInit() or set the JavaCC option STATIC to false");
+      System.out.println("ERROR: Second call to constructor of static parser. ");
+      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
       System.out.println("       during parser generation.");
       throw new Error();
     }
