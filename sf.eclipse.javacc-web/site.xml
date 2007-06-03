@@ -15,5 +15,8 @@
    <feature url="features/sf.eclipse.javacc.feature_1.5.8.jar" id="sf.eclipse.javacc.feature" version="1.5.8">
       <category name="Eclipse JavaCC Plugin"/>
    </feature>
+   <feature url="features/sf.eclipse.javacc.feature_1.5.9.jar" id="sf.eclipse.javacc.feature" version="1.5.9">
+      <category name="Eclipse JavaCC Plugin"/>
+   </feature>
    <category-def name="Eclipse JavaCC Plugin" label="Eclipse JavaCC Plugin"/>
 </site>
