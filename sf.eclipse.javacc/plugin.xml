@@ -94,8 +94,22 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="false"
-            nameFilter="*.jj, *.jjt"
+            nameFilter="*.jj"
             id="javacccompile">
+        <action
+            label="%Compile_with_JavaCC"
+            menubarPath="JJGroup" 
+            icon="icons/jj_file.gif"
+            class="sf.eclipse.javacc.actions.JJCompile"
+            enablesFor="1"
+            id="javacc.compile">
+        </action>
+      </objectContribution>
+            <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="false"
+            nameFilter="*.jjt"
+            id="jjtreecompile">
         <action
             label="%Compile_with_JavaCC"
             menubarPath="JJGroup" 
@@ -139,7 +153,7 @@
 <!-- Editor Extension -->
    <extension point="org.eclipse.ui.editors">
       <editor
-            name="%javacc_editor"
+            name="%JavaCC_editor"
             icon="icons/jj_file.gif"
             extensions="jjt, jj"
             class="sf.eclipse.javacc.editors.JJEditor"
@@ -147,7 +161,7 @@
             id="sf.eclipse.javacc.editors.JJEditor">
       </editor>
       <editor
-            name="%jtb_editor"
+            name="%JTB_editor"
             icon="icons/jtb_file.gif"
             extensions="jtb"
             class="sf.eclipse.javacc.editors.JJEditor"
@@ -281,7 +295,7 @@
             definitionId="commands.jjcompile"
             id="javacc.jjcompile">
       </action>
-            <action
+      <action
             label="%Compile_with_JTB"
             class="sf.eclipse.javacc.actions.JTBCompile"
             definitionId="commands.jtbcompile"
@@ -344,7 +358,7 @@
    <extension point="org.eclipse.ui.contexts">
      <context
        id="sf.eclipse.javacc.JJEditorScope"
-       name="In_JavaCC_editor"
+       name="%In_JavaCC_editor"
        parentId="org.eclipse.jdt.ui.javaEditorScope">
      </context>
    </extension>

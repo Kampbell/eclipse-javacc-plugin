@@ -23,4 +23,11 @@ Require-Bundle: org.eclipse.ui,
 Comment_One: For Eclipse 3.2
 Eclipse-LazyStart: true
 Comment_Two: For Eclipse 3.1
+Export-Package: sf.eclipse.javacc,
+ sf.eclipse.javacc.actions,
+ sf.eclipse.javacc.editors,
+ sf.eclipse.javacc.filters,
+ sf.eclipse.javacc.options,
+ sf.eclipse.javacc.parser,
+ sf.eclipse.javacc.wizards
 

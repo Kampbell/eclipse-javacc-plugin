@@ -46,6 +46,8 @@ public class JJDocOptions extends JJAbstractTab implements IJJConstants {
 
     // string options    
     // path options
+    optionSet.add(new Option("JJDOC_OUTPUT_DIRECTORY", "", Option.PATH)); //$NON-NLS-1$ //$NON-NLS-2$
+
     // file options
     optionSet.add(new Option("CSS", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("OUTPUT_FILE", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
