@@ -196,8 +196,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
         PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
     cJAVAKEYWORD = new Color(display, 
         PreferenceConverter.getColor(store, JJPreferences.P_JAVAKEYWORD));
-    cBACKGROUND = new Color(display, 
-        PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND)); // null ?
+//    cBACKGROUND = new Color(display, 
+//        PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND)); // null ?
     cSTRING = new Color(display, 
         PreferenceConverter.getColor(store, JJPreferences.P_STRING));
     cCOMMENT = new Color(display, 
@@ -211,14 +211,14 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     cDEFAULT = new Color(display, 
         PreferenceConverter.getColor(store, JJPreferences.P_DEFAULT));
 
-    IToken jjkeyword = new Token(new TextAttribute(cJJKEYWORD, cBACKGROUND, SWT.BOLD));
-    IToken keyword = new Token(new TextAttribute(cJAVAKEYWORD, cBACKGROUND, SWT.BOLD));
-    IToken string = new Token(new TextAttribute(cSTRING, cBACKGROUND, 0));
-    IToken comment = new Token(new TextAttribute(cCOMMENT, cBACKGROUND, 0));
-    IToken jdocComment = new Token(new TextAttribute(cJDOC_COMMENT, cBACKGROUND, 0));
-    IToken token = new Token(new TextAttribute(cTOKEN, cBACKGROUND, 0));
-    IToken ptoken = new Token(new TextAttribute(cPTOKEN, cBACKGROUND, 0));
-    IToken other = new Token(new TextAttribute(cDEFAULT, cBACKGROUND, 0));
+    IToken jjkeyword = new Token(new TextAttribute(cJJKEYWORD, null, SWT.BOLD));
+    IToken keyword = new Token(new TextAttribute(cJAVAKEYWORD, null, SWT.BOLD));
+    IToken string = new Token(new TextAttribute(cSTRING, null, 0));
+    IToken comment = new Token(new TextAttribute(cCOMMENT, null, 0));
+    IToken jdocComment = new Token(new TextAttribute(cJDOC_COMMENT, null, 0));
+    IToken token = new Token(new TextAttribute(cTOKEN, null, 0));
+    IToken ptoken = new Token(new TextAttribute(cPTOKEN, null, 0));
+    IToken other = new Token(new TextAttribute(cDEFAULT, null, 0));
 
     List<IRule> rules = new ArrayList<IRule>();
 

@@ -39,8 +39,8 @@ public class JJPreferencesPage extends FieldEditorPreferencePage implements IWor
         Activator.getString("JJPreferencesPage.JavaCC_Keyword"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_JAVAKEYWORD,
         Activator.getString("JJPreferencesPage.Java_Keyword"), getFieldEditorParent())); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_BACKGROUND,
-        Activator.getString("JJPreferencesPage.Background"), getFieldEditorParent())); //$NON-NLS-1$
+//    addField(new ColorFieldEditor(JJPreferences.P_BACKGROUND,
+//        Activator.getString("JJPreferencesPage.Background"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_STRING,
         Activator.getString("JJPreferencesPage.Strings"), getFieldEditorParent())); //$NON-NLS-1$
     addField(new ColorFieldEditor(JJPreferences.P_COMMENT,
