@@ -58,19 +58,19 @@
  href="http://sourceforge.net"> <img
  src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5"
  alt="SourceForge Logo" border="0" height="62" width="210"></a>
-<h1>JavaCC Eclipse Plug-in for Eclipse 3.1 - 3.2</h1>
-<h2>Last update 18march 2007<br>
-</h2>
+<h1>JavaCC Eclipse Plug-in for Eclipse 3.2</h1>
+<h2>Last update 8 july 2007</h2>
 JavaCC plug-in is designed to help development of JavaCC applications.<br>
 License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a
  href="http://www.cecill.info/">Cecill</a> <br>
 You can download the last version from sourceforge : <a
  href="http://sourceforge.net/projects/eclipse-javacc">sourceforge site</a><br>
 Or use this site as an update site in Eclipse :
-http://eclipse-javacc.sourceforge.net<br>
-The plugin needs Java 1.5 to run, sources contain Java 5.0 templates.<br>
+http://eclipse-javacc.sourceforge.net/<br>
+The plugin needs Java 1.5 to run, sources contain Java 5.0 templates
+and Eclipse 3.2.1 or 3.2.2<br>
 <br>
-To install, unzip in C:/eclipse and launch Eclipse with -clean.<br>
+To install just unzip in C:/eclipse. The sources are with the plugin. <br>
 The sources are bundled with the plugin and on sourceforge.<br>
 See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if
 you want to hack the sources.
@@ -78,18 +78,20 @@ you want to hack the sources.
 <ul>
   <li>Editor </li>
   <li>Outline </li>
-  <li>Format (still to improve) </li>
+  <li>Format&nbsp;<br>
+  </li>
   <li>JavaCC JJTree JJDoc compilation, (see <a
  href="https://javacc.dev.java.net/">https://javacc.dev.java.net/</a>) </li>
   <li>JTB compilation, (see <a href="http://compilers.cs.ucla.edu/jtb/">http://compilers.cs.ucla.edu/jtb/</a>)
   </li>
-  <li>JavaCC, JJTree, JJDoc, JTB options </li>
+  <li>JavaCC, JJTree, JJDoc, JTB options setting<br>
+  </li>
   <li>Problems reporting </li>
   <li>Console for JavaCC outputs with hyperlinks to Errors and Warnings
   </li>
   <li>Decoration of generated files </li>
-  <li>Navigation into rules definitions (open declaration) </li>
-  <li>Support Eclipse 3.1, 3.2 Java 1.4, 1.5, JavaCC4.0, JTB 132 </li>
+  <li>Navigation into rules definitions (open declaration and back) </li>
+  <li>Support Eclipse 3.2.2 Java 1.5, JavaCC4.0, JTB132 </li>
   <li>Matching bracket highlight </li>
   <li>Keyboard shortcuts : Comment lines Ctrl+/, Open declaration
 Ctrl+clic, Format Ctrl+Shift+F </li>
@@ -98,19 +100,27 @@ facilitate package handling) </li>
   <li>More help is available with the plug-in via Eclipse menu Help /
 Help Contents. </li>
 </ul>
-New in 1.5.8 : Correct JJDoc, JJConsole, Wizard bugs and use last CVS
-JavaCC 4.1b<br>
-New in 1.5.7 : Correct double suppress warning and preserve unicode
+10/06/07 New in 1.5.10 : Correct JJTREE_OUTPUT_DIRECTORY, NullPointerException<br>
+10/06/07 New in 1.5.9 : Correct javacc.jar to handle output directory
+for JJDoc<br>
+11/03/07 New in 1.5.7 : Correct suppress warnings and preserve unicode
 escape when formatting<br>
-New in 1.5.6 : Eclipse 3.1 compatible, handle case where no src/bin dir
-are defined <br>
-New in 1.5.5 : Eclipse 3.2.1 Bug 1585822, console hyperlinks <br>
-New in 1.5.4 : suppress warnings in generated files <br>
-New in 1.5.3 : corrected plugin key conflict F3 <br>
+26/11/06 New in 1.5.6 : Restore compatibility with Eclipse 3.1 and
+handle case where no src/bin dir are defined.<br>
+05/11/06 New in 1.5.5 : Java 1.5 and Eclipse 3.2.1, correct bug in
+console hyperlinks, basic content assistant<br>
+01/10/06 New in 1.5.4 : Suppress warnings in generated files, global
+preferences for colors<br>
+24/05/06 New in 1.5.3 : Correct plugin key conflict F3 <br>
+27/03/06 New in 1.5.2 : Removed "exclude from build" and adopted
+Eclipse way, ie Build Path.
 New in 1.5.2 : bug correction <br>
-New in 1.5.1 : french version<br>
-New in 1.5 : update site, automatic format, self-contained javacc.jar,
-exclude a jj file from build<br>
+24/02/06 New in 1.5.1 : French version, sauf que je n'ai pas
+encore
+traduit l'aide en fran&ccedil;ais.<br>
+13/11/05 New in 1.4.0 : Update site, automatic format, java 1.4 .class
+files compatibility<br>
+31/10/05 New in 1.3.0 : JTB, Ctrl+clic, Wizard<br>
 <h2>Quick Start</h2>
 <strong>
 1) Create a new Java project and a package "foo"<br>
