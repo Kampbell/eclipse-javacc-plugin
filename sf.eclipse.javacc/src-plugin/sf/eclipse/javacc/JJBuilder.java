@@ -93,14 +93,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
    */
   public boolean visit(IResource res) throws CoreException {
-    boolean okToCompile = javaProject.isOnClasspath(res) 
-     && (res.getFileExtension() == null // a directory
-         || res.getFileExtension().equals("jj")  //$NON-NLS-1$
-         || res.getFileExtension().equals("jtb")  //$NON-NLS-1$
-         || res.getFileExtension().equals("jjt"));  //$NON-NLS-1$
+    boolean okToCompile = javaProject.isOnClasspath(res)
+      && res.getFileExtension() != null
+      && (res.getFileExtension().equals("jj") //$NON-NLS-1$
+          || res.getFileExtension().equals("jtb") //$NON-NLS-1$
+          || res.getFileExtension().equals("jjt")); //$NON-NLS-1$
     if (okToCompile)
       CompileResource(res);
-
+    
     // This prevents traversing output directories
     boolean isOut = res.getProjectRelativePath().equals(outputFolder) & outputFolder.toString().length() != 0;
     return !isOut;
