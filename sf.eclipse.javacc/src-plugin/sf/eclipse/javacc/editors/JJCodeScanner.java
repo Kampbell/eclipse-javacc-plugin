@@ -175,7 +175,6 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       cJJKEYWORD.dispose();
       cJJKEYWORD= null;
       cJAVAKEYWORD.dispose();
-      cBACKGROUND.dispose();
       cSTRING.dispose();
       cCOMMENT.dispose();
       cJDOC_COMMENT.dispose();
@@ -196,8 +195,6 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
         PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
     cJAVAKEYWORD = new Color(display, 
         PreferenceConverter.getColor(store, JJPreferences.P_JAVAKEYWORD));
-//    cBACKGROUND = new Color(display, 
-//        PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND)); // null ?
     cSTRING = new Color(display, 
         PreferenceConverter.getColor(store, JJPreferences.P_STRING));
     cCOMMENT = new Color(display, 
