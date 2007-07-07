@@ -1,6 +1,6 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.5.7.zip into Eclipse directory. 
+1) Unzip JavaCC_Feature_1.5.10.zip into Eclipse directory. 
 2) Launch Eclipse.
 
 or
@@ -37,6 +37,18 @@ Features
    use Workbench "Back" to go back.
 
 History
+08/07/07 - version 1.5.10
+- bug 1682259 JJTREE_OUTPUT_DIRECTORY
+- bug 1745835 NullPointerException thrown for files with no extension
+
+10/06/2007 - version 1.5.9 
+Bug correction
+- bug 1726419 Unicode Problem uppercase were not accepted
+- bug 1720584 Not enough install space: 2.8G required
+- bug 1702922 JTBEditor popup menu
+- bug 1702893 xxx.jj.jtb Compile with JTB in popup menu.
+- bug 1702776 error with JTB generated code JTB generates < < javacc corrected to allow << 
+
 18/03/07 - version 1.5.8
 - correct JJDoc bug (was not called on selected editor) 
 - correct Console report (inverted JJTree and JavaCC)
