@@ -99,14 +99,14 @@ public class JJNode implements Node {
     // Parser ClassDeclaration => Class name
     if (id == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION){
       Token f = first;
-      while(f != last && f.kind!=JavaCCParserConstants.IDENTIFIER)
+      while(f != last && f.next.kind != JavaCCParserConstants.LPAREN)
         f = f.next;
       name = f.image;
     }      
     // Parser MethodDeclaration => Method name
     if (id == JavaCCParserTreeConstants.JJTMETHODDECLARATION){
       Token f = first;
-      while(f != last && f.kind!=JavaCCParserConstants.IDENTIFIER)
+      while(f != last && f.next.kind != JavaCCParserConstants.LPAREN)
         f = f.next;
       name = f.image;
     }    
