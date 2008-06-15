@@ -10,7 +10,7 @@ package sf.eclipse.javacc.parser;
 
 import sf.eclipse.javacc.editors.JJElements;
 
-public class JJNode implements Node {
+public class JJNode implements Node, JavaCCParserTreeConstants {
   protected Node parent;
   protected JavaCCParser parser;
   protected Node[] children;
@@ -88,7 +88,7 @@ public class JJNode implements Node {
     name = getName();
     
     // Options option_binding => Option name
-    if (id == JavaCCParserTreeConstants.JJTOPTION_BINDING){
+    if (id == JJTOPTION_BINDING){
       Token f = first;
       while(f != last && f.kind != JavaCCParserConstants.IDENTIFIER
             && f.kind != 2 && f.kind != 3) {
@@ -97,35 +97,35 @@ public class JJNode implements Node {
       name = f.image;
     }
     // Parser ClassDeclaration => Class name
-    if (id == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION){
+    if (id == JJTCLASSORINTERFACEDECLARATION){
       Token f = first;
       while(f != last && f.next.kind != JavaCCParserConstants.LPAREN)
         f = f.next;
       name = f.image;
     }      
     // Parser MethodDeclaration => Method name
-    if (id == JavaCCParserTreeConstants.JJTMETHODDECLARATION){
+    if (id == JJTMETHODDECLARATION){
       Token f = first;
       while(f != last && f.next.kind != JavaCCParserConstants.LPAREN)
         f = f.next;
       name = f.image;
     }    
     // Rules => Rule name
-    if (id == JavaCCParserTreeConstants.JJTBNF_PRODUCTION){
+    if (id == JJTBNF_PRODUCTION){
       Token f = first;
       while(f != last && f.next.kind!=JavaCCParserConstants.LPAREN)
         f = f.next;
       name = f.image;
     }
     // Token section => Token section name, skip "<"
-    if (id == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION){
+    if (id == JJTREGULAR_EXPR_PRODUCTION){
       Token f = first;
       while(f != last && f.kind == JavaCCParserConstants.LT)
         f = f.next;
       name = f.image;
     }    
     // Token => Token name, skip "<" and keep "#" plus name
-    if (id == JavaCCParserTreeConstants.JJTREGEXPR_SPEC){
+    if (id == JJTREGEXPR_SPEC){
       Token f = first;
       while(f != last && f.kind == JavaCCParserConstants.LT )
         f = f.next;
@@ -137,7 +137,7 @@ public class JJNode implements Node {
       return name;
 
     // Should not append
-    return JavaCCParserTreeConstants.jjtNodeName[id]; 
+    return jjtNodeName[id]; 
   }
 
   /**

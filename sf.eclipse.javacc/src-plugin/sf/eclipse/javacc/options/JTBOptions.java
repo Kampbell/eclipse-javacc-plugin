@@ -39,7 +39,7 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
     super(parent, res);
  
     // All options are saved in a single property
-    qualifiedName = QN_JTB_OPTIONS;
+    preferenceName = JTB_OPTIONS;
     optionSet = new OptionSet();
 
     // int options    

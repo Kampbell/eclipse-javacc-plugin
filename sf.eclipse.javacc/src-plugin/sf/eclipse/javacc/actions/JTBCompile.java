@@ -3,7 +3,10 @@ package sf.eclipse.javacc.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
@@ -76,7 +79,10 @@ public class JTBCompile implements IObjectActionDelegate, IEditorActionDelegate,
         res.touch(null);     // Called from Package explorer    
       
       // Force Compile is not triggered
-      if (!("true").equals(res.getProject().getPersistentProperty(QN_JJ_NATURE))  //$NON-NLS-1$
+      IScopeContext projectScope = new ProjectScope(res.getProject());
+      IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+
+      if (!("true").equals(prefs.get(JJ_NATURE, "false"))  //$NON-NLS-1$ //$NON-NLS-2$
           || !isOnClasspath(res) )
         JJBuilder.CompileResource(res);
       

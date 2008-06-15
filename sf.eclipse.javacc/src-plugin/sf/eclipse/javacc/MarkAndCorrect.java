@@ -6,7 +6,9 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
@@ -38,9 +40,11 @@ public class MarkAndCorrect implements IJJConstants{
       res.setDerived(true);
       res.setPersistentProperty(QN_GENERATED_FILE, name);
 
+      IEclipsePreferences prefs = new ProjectScope(res.getProject()).getNode(IJJConstants.ID);
+
       // Correct
       IJavaElement element = (IJavaElement) res.getAdapter(IJavaElement.class);
-      if ("true".equals(pro.getPersistentProperty(QN_SUPPRESS_WARNINGS)) //$NON-NLS-1$
+      if ("true".equals(prefs.get(SUPPRESS_WARNINGS, "false")) //$NON-NLS-1$ //$NON-NLS-2$
           && element instanceof ICompilationUnit) { 
 //        ICompilationUnit cu = (ICompilationUnit) element;
 //        String source = cu.getBuffer().getContents();

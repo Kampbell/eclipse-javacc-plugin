@@ -2,7 +2,10 @@ package sf.eclipse.javacc.options;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
@@ -11,6 +14,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.osgi.service.prefs.BackingStoreException;
 
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
@@ -93,20 +97,18 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     // Reads and sets values
     if (res != null) {
       IProject proj = res.getProject();
+      IScopeContext projectScope = new ProjectScope(proj);
+      IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
       try {
         // Sets according to PersistentProperties
-        jarFile.setStringValue(proj.getPersistentProperty(QN_RUNTIME_JAR));
-        checkShowConsole.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
-          QN_SHOW_CONSOLE))));        
-        checkClearConsole.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
-          QN_CLEAR_CONSOLE))));
+        jarFile.setStringValue(prefs.get(RUNTIME_JAR, "")); //$NON-NLS-1$
+        checkShowConsole.setBooleanValue("true".equals((prefs.get(SHOW_CONSOLE, "true")))); //$NON-NLS-1$ //$NON-NLS-2$
+        checkClearConsole.setBooleanValue("true".equals((prefs.get(CLEAR_CONSOLE, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
         boolean hasJavaccNature = proj.getDescription().hasNature(JJ_NATURE_ID);
         checkJJNature.setBooleanValue(hasJavaccNature);
-        checkProjectOverride.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
-            QN_PROJECT_OVERRIDE))));
-        checkSuppressWarnings.setBooleanValue("true".equals((proj.getPersistentProperty( //$NON-NLS-1$
-        		QN_SUPPRESS_WARNINGS))));
-        jtbjarFile.setStringValue(proj.getPersistentProperty(QN_RUNTIME_JTBJAR));
+        checkProjectOverride.setBooleanValue("true".equals((prefs.get(PROJECT_OVERRIDE, "true"))));  //$NON-NLS-1$//$NON-NLS-2$
+        checkSuppressWarnings.setBooleanValue("true".equals((prefs.get(SUPPRESS_WARNINGS, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
+        jtbjarFile.setStringValue(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
        } catch (CoreException e) {
         e.printStackTrace();
       }
@@ -117,8 +119,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
    * Just set defaults
    */
   public void performDefaults() {
-    jarFile.setStringValue(Activator.getString("JJBuilder.defaultJar"));  //$NON-NLS-1$
-    jtbjarFile.setStringValue(Activator.getString("JJBuilder.defaultJtbJar"));  //$NON-NLS-1$
+    jarFile.setStringValue("");  //$NON-NLS-1$
+    jtbjarFile.setStringValue("");  //$NON-NLS-1$
     checkShowConsole.setBooleanValue(true); 
     checkClearConsole.setBooleanValue(false);
     checkProjectOverride.setBooleanValue(true);
@@ -132,29 +134,31 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   public boolean performOk() {
    // Reads and store values
     IResource res = resource;
-    if (res != null) {
-      IProject proj = res.getProject();
-      try {
-       proj.setPersistentProperty(QN_RUNTIME_JAR,
-         jarFile.getStringValue());
-       proj.setPersistentProperty(QN_RUNTIME_JTBJAR,
-         jtbjarFile.getStringValue());  
-       proj.setPersistentProperty(QN_SHOW_CONSOLE,
-        checkShowConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-       proj.setPersistentProperty(QN_CLEAR_CONSOLE,
-        checkClearConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-       proj.setPersistentProperty(QN_PROJECT_OVERRIDE,
-         checkProjectOverride.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-       proj.setPersistentProperty(QN_SUPPRESS_WARNINGS,
-    	 checkSuppressWarnings.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-       proj.setPersistentProperty(QN_JJ_NATURE,
-         checkJJNature.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-     
-       // Sets the nature directly
-       JJNature.setJJNature(checkJJNature.getBooleanValue(), proj);
-     } catch (CoreException e) {
-        e.printStackTrace();
-      }
+    if (res != null) 
+    {
+        IProject proj = res.getProject();
+        IScopeContext projectScope = new ProjectScope(proj);
+        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+
+        prefs.put(RUNTIME_JAR, jarFile.getStringValue());
+        prefs.put(SHOW_CONSOLE, checkShowConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+        prefs.put(CLEAR_CONSOLE, checkClearConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+        prefs.put(PROJECT_OVERRIDE, checkProjectOverride.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+        prefs.put(SUPPRESS_WARNINGS, checkSuppressWarnings.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+        prefs.put(JJ_NATURE, checkJJNature.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        // Sets the nature directly
+        JJNature.setJJNature(checkJJNature.getBooleanValue(), proj);
+        
+        try
+        {
+    	   prefs.flush();
+        }
+        catch (BackingStoreException e1)
+        {
+        	e1.printStackTrace();
+        	return false;
+        }
     }
     return true;
   }

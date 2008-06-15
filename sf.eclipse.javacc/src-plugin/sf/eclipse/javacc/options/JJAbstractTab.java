@@ -1,8 +1,10 @@
 package sf.eclipse.javacc.options;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -14,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.osgi.service.prefs.BackingStoreException;
 
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
@@ -41,7 +44,7 @@ public abstract class JJAbstractTab extends Composite
   protected FileFieldEditor[] fileField;
   
   // Option name, defined in subclasses
-  protected QualifiedName qualifiedName = null;
+  protected String preferenceName = null;
   
   // To prevent loops
   protected boolean isUpdating;
@@ -73,12 +76,11 @@ public abstract class JJAbstractTab extends Composite
     IResource res = resource;
     String options = null;
     if (res != null) {
-      try {
-        options = res.getPersistentProperty(qualifiedName);
+        IProject proj = res.getProject();
+        IScopeContext projectScope = new ProjectScope(proj);
+        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+        options = prefs.get(preferenceName, ""); //$NON-NLS-1$
         optionSet.configuresFrom(options);
-      } catch (CoreException e) {
-        e.printStackTrace();
-      }
     }         
 
     // Add required sections
@@ -109,8 +111,8 @@ public abstract class JJAbstractTab extends Composite
 
     optionsField =
       new StringFieldEditor(
-    qualifiedName.getLocalName(),// name
-    qualifiedName.getLocalName() + " :", // label //$NON-NLS-1$
+    preferenceName,// name
+    preferenceName + " :", // label //$NON-NLS-1$
         StringFieldEditor.UNLIMITED, //width
         StringFieldEditor.VALIDATE_ON_FOCUS_LOST,//strategy
         composite);
@@ -341,11 +343,19 @@ public abstract class JJAbstractTab extends Composite
     String options = optionsField.getStringValue();
     IResource res = this.resource;
     if (res != null)
-      try {
-        res.setPersistentProperty(qualifiedName, options);
-      } catch (CoreException e) {
-          // Nothing do do, we don't need to bother the user
-      }
+    {
+        IProject proj = res.getProject();
+        IScopeContext projectScope = new ProjectScope(proj);
+        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+        prefs.put(preferenceName, options);
+        try 
+        {
+        	prefs.flush();
+        } catch (BackingStoreException e) {
+        	e.printStackTrace();
+        	return false;
+        }
+    }
     return true;
   }
 

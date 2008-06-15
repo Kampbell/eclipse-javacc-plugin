@@ -12,9 +12,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
@@ -117,6 +119,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     // The file, the project and the directory
     IFile file = (IFile) res;
     IProject pro = file.getProject();
+    IEclipsePreferences prefs = new ProjectScope(pro).getNode(IJJConstants.ID);
     String dir = pro.getLocation().toOSString();
 
     // Delete markers
@@ -135,12 +138,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     JJConsole console = Activator.getConsole();
 
     // Retrieves runtime options
-    boolean projectOverride = false;
-    try {
-      projectOverride = ("true").equals(pro.getPersistentProperty(QN_PROJECT_OVERRIDE)); //$NON-NLS-1$
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+    boolean projectOverride = "true".equals(prefs.get(PROJECT_OVERRIDE, "false")); //$NON-NLS-1$ //$NON-NLS-2$
 
     // Retrieve command line
     String[] args = getArgs(file, name, projectOverride);
@@ -217,19 +215,15 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
     IFile file = (IFile) res;
     IProject pro = file.getProject();
+    IEclipsePreferences prefs = new ProjectScope(pro).getNode(IJJConstants.ID);
     String dir = pro.getLocation().toOSString();
     String name = file.getLocation().toString();
 
     JJConsole console = Activator.getConsole();
 
     // Retrieve runtime options
-    boolean projectOverride = false;
-    try {
-      projectOverride = ("true").equals(pro.getPersistentProperty( //$NON-NLS-1$
-          QN_PROJECT_OVERRIDE));
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+    // Retrieves runtime options
+    boolean projectOverride = "true".equals(prefs.get(PROJECT_OVERRIDE, "false")); //$NON-NLS-1$ //$NON-NLS-2$
 
     // Retrieve command line
     String[] args = getJJDocArgs(file, name, projectOverride);
@@ -273,20 +267,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     String extension = file.getFullPath().getFileExtension();
     try {
       String options = null;
+      IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
+ 
       if (extension.equals("jj")) { //$NON-NLS-1$
-        // Try for resource property
-        options = file.getPersistentProperty(QN_JAVACC_OPTIONS);
-        // Else take Project Property
-        if (options == null || projectOverride)
-          options = file.getProject().getPersistentProperty(QN_JAVACC_OPTIONS);
+        options = prefs.get(JAVACC_OPTIONS, ""); //$NON-NLS-1$
       } else if (extension.equals("jjt")) { //$NON-NLS-1$
-        options = file.getPersistentProperty(QN_JJTREE_OPTIONS);
-        if (options == null || projectOverride)
-          options = file.getProject().getPersistentProperty(QN_JJTREE_OPTIONS);
+        options = prefs.get(JJTREE_OPTIONS, ""); //$NON-NLS-1$
       } else if (extension.equals("jtb")) { //$NON-NLS-1$
-        options = file.getPersistentProperty(QN_JTB_OPTIONS);
-        if (options == null || projectOverride)
-          options = file.getProject().getPersistentProperty(QN_JTB_OPTIONS);
+        options = prefs.get(JTB_OPTIONS, ""); //$NON-NLS-1$
       }        
       if (options == null)
         options = ""; //$NON-NLS-1$
@@ -332,12 +320,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements
       boolean projectOverride) {
     String[] args = null;
     try {
+    	
+        IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
       String options = null;
       // Try for resource property
-      options = file.getPersistentProperty(QN_JJDOC_OPTIONS);
+      options = prefs.get(JJDOC_OPTIONS, ""); //$NON-NLS-1$
       // Else take Project Property
       if (options == null || projectOverride)
-        options = file.getProject().getPersistentProperty(QN_JJDOC_OPTIONS);
+        options = prefs.get(JJDOC_OPTIONS, ""); //$NON-NLS-1$
       // Else take default
       if (options == null)
         options = ""; //$NON-NLS-1$
@@ -360,11 +350,12 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     String jarfile = null;
     String extension = file.getFullPath().getFileExtension();
     try {
+        IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
       // If the user has given a path, we use it
       if (extension.equals("jj") || extension.equals("jjt")) //$NON-NLS-1$ //$NON-NLS-2$
-        jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JAR);
+        jarfile = prefs.get(RUNTIME_JAR, ""); //$NON-NLS-1$
       else if (extension.equals("jtb")) //$NON-NLS-1$
-        jarfile = file.getProject().getPersistentProperty(QN_RUNTIME_JTBJAR);
+        jarfile = prefs.get(RUNTIME_JTBJAR, ""); //$NON-NLS-1$
       
       // Else we use the jar in the plugin
       if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
@@ -398,7 +389,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @throws CoreException
    */
   protected void clearConsole() throws CoreException {
-    boolean clr = ("true").equals(getProject().getPersistentProperty(QN_CLEAR_CONSOLE)); //$NON-NLS-1$
+    boolean clr = ("true").equals(new ProjectScope(getProject()).getNode(IJJConstants.ID).get(CLEAR_CONSOLE, "false")); //$NON-NLS-1$ //$NON-NLS-2$
     if (clr) {
       JJConsole console = Activator.getConsole();
       if (console != null)

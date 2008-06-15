@@ -2,8 +2,10 @@ package sf.eclipse.javacc.options;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -66,15 +68,15 @@ public class JJPropertyPage extends PropertyPage
     IAdaptable ia = getElement();
     res = (IResource) ia.getAdapter(IResource.class);
     isProject = (res != null && res.getType() == IResource.PROJECT);
-    try {
       if (res != null) {
         project = res.getProject();
-        String prop = project.getPersistentProperty(QN_PROJECT_OVERRIDE);
+        IScopeContext projectScope = new ProjectScope(project);
+        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+
+        String prop = prefs.get(PROJECT_OVERRIDE, "false"); //$NON-NLS-1$
         isProjectOverride = ("true").equals(prop);//$NON-NLS-1$
       }
-    } catch (CoreException e) {
-      // Nothing to do, we don't need to bother the user
-    }
+
     isFile = (res != null && res.getType() == IResource.FILE);
     isJJ = (res != null && isFile && res.getName().endsWith("jj")); //$NON-NLS-1$
     isJJT = (res != null && isFile && res.getName().endsWith("jjt")); //$NON-NLS-1$
@@ -110,11 +112,12 @@ public class JJPropertyPage extends PropertyPage
       addJTBTab();
     }
     // Test a property to see if in need of a first initialization
-    try {
-      if (project.getPersistentProperty(QN_PROJECT_OVERRIDE) == null)
+    {
+        IScopeContext projectScope = new ProjectScope(project);
+        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+
+      if (prefs.get(PROJECT_OVERRIDE, null) == null)
         performDefaults();
-    } catch (CoreException e) {
-      // Nothing to do
     }
     return parent;
   }

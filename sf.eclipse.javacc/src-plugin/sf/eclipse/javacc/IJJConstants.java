@@ -29,26 +29,13 @@ public interface IJJConstants {
   public static final String JTB_OPTIONS = "JTB_OPTIONS"; //$NON-NLS-1$
   public static final String RUNTIME_JTBJAR = "RUNTIME_JTBJAR"; //$NON-NLS-1$
 
+  public static final QualifiedName QN_GENERATED_FILE = new QualifiedName(ID, GENERATED_FILE);
+
   // JJBuilder and JJNature ID (see plugin.xml)
   public static final String JJ_NATURE_ID = "sf.eclipse.javacc.javaccnature"; //$NON-NLS-1$
   public static final String JJ_BUILDER_ID = "sf.eclipse.javacc.javaccbuilder"; //$NON-NLS-1$
   public static final String JJ_NATURE_NAME = "JavaCC Nature"; //$NON-NLS-1$
   public static final String JJ_BUILDER_NAME = "JavaCC JJBuilder"; //$NON-NLS-1$
-
-  // Qualified Names
-  public static final QualifiedName QN_JJTREE_OPTIONS = new QualifiedName(ID, JJTREE_OPTIONS);
-  public static final QualifiedName QN_JAVACC_OPTIONS = new QualifiedName(ID, JAVACC_OPTIONS);
-  public static final QualifiedName QN_JJDOC_OPTIONS = new QualifiedName(ID, JJDOC_OPTIONS);
-  public static final QualifiedName QN_RUNTIME_JAR = new QualifiedName(ID, RUNTIME_JAR);
-  public static final QualifiedName QN_CLEAR_CONSOLE = new QualifiedName(ID, CLEAR_CONSOLE);
-  public static final QualifiedName QN_PROJECT_OVERRIDE = new QualifiedName(ID, PROJECT_OVERRIDE);
-  public static final QualifiedName QN_SUPPRESS_WARNINGS = new QualifiedName(ID, SUPPRESS_WARNINGS);
-  public static final QualifiedName QN_SHOW_CONSOLE = new QualifiedName(ID, SHOW_CONSOLE);
-  public static final QualifiedName QN_GENERATED_FILE = new QualifiedName(ID, GENERATED_FILE);
-  public static final QualifiedName QN_JJ_NATURE = new QualifiedName(ID, JJ_NATURE);
-
-  public static final QualifiedName QN_RUNTIME_JTBJAR = new QualifiedName(ID, RUNTIME_JTBJAR);
-  public static final QualifiedName QN_JTB_OPTIONS = new QualifiedName(ID, JTB_OPTIONS);
 
   // Constant definitions for plug-in Preferences
   public static final String P_PATH = "pathPreference"; //$NON-NLS-1$

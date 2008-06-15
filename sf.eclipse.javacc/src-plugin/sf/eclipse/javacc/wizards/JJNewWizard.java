@@ -12,10 +12,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.compiler.util.Util;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
@@ -25,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.service.prefs.BackingStoreException;
 
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
@@ -143,22 +147,37 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     });
     monitor.worked(1);
     
-    // Tricky part JTB needs -p packageName, only if there is a package name
-    if (!packageName.equals("")) //$NON-NLS-1$
-      res.getProject().setPersistentProperty(IJJConstants.QN_JTB_OPTIONS,"-p="+packageName); //$NON-NLS-1$
-    
     // Initialize properties do get automatically a full build
     IProject pro = res.getProject();
-    if (pro.getPersistentProperty(QN_RUNTIME_JAR)== null) {
-      pro.setPersistentProperty(QN_RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
-      pro.setPersistentProperty(QN_RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
-      pro.setPersistentProperty(QN_SHOW_CONSOLE, "true"); //$NON-NLS-1$
-      pro.setPersistentProperty(QN_CLEAR_CONSOLE, "false"); //$NON-NLS-1$
-      pro.setPersistentProperty(QN_PROJECT_OVERRIDE, "true"); //$NON-NLS-1$
-      pro.setPersistentProperty(QN_JJ_NATURE, "true");  //$NON-NLS-1$
-      pro.setPersistentProperty(QN_SUPPRESS_WARNINGS, "true");  //$NON-NLS-1$
+    IScopeContext projectScope = new ProjectScope(pro);
+    IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+
+    // Tricky part JTB needs -p packageName, only if there is a package name
+    if (!packageName.equals("")) //$NON-NLS-1$
+    {
+    	prefs.put(JTB_OPTIONS,"-p="+packageName); //$NON-NLS-1$
+    }
+    
+    // Initialize properties do get automatically a full build
+    if (prefs.get(RUNTIME_JAR, null)== null) {
+      prefs.put(RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
+      prefs.put(RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
+      prefs.put(SHOW_CONSOLE, "true"); //$NON-NLS-1$
+      prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
+      prefs.put(PROJECT_OVERRIDE, "true"); //$NON-NLS-1$
+      prefs.put(JJ_NATURE, "true");  //$NON-NLS-1$
+      prefs.put(SUPPRESS_WARNINGS, "true");  //$NON-NLS-1$
       // Sets the nature directly
       JJNature.setJJNature(true, pro);
+      
+      try
+      {
+    	  prefs.flush();
+      }
+      catch(BackingStoreException e)
+      {
+    	  e.printStackTrace();
+      }
     }
   }
 

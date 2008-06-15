@@ -36,7 +36,7 @@ public class JJDocOptions extends JJAbstractTab implements IJJConstants {
     super(parent, res);
  
     // All options are saved in a single property
-    qualifiedName = QN_JJDOC_OPTIONS;
+    preferenceName = JJDOC_OPTIONS;
     optionSet = new OptionSet();
 
     // int options

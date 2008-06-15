@@ -1,14 +1,13 @@
 package sf.eclipse.javacc.editors;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewerExtension2;
-import org.eclipse.jface.text.source.ISourceViewerExtension2;
-import org.eclipse.jface.text.source.MatchingCharacterPainter;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -33,10 +32,13 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   protected JJOutlinePage outlinePage;
   protected JJReconcilingStrategy reconcilingStrategy;
   protected JJSourceViewerConfiguration jjSourceViewerConfiguration;
+  private ProjectionSupport projectionSupport;
+  private HashMap<ProjectionAnnotation, Position> oldAnnotations = new HashMap<ProjectionAnnotation, Position>();;
+  private ProjectionAnnotationModel annotationModel;
   
   /** The editor's peer Parent Matcher */
-  ParentMatcher fParentMatcher = new ParentMatcher();
-  Color colorMatchingChar;
+  private ParentMatcher fParentMatcher = new ParentMatcher();
+  private Color colorMatchingChar;
   
   /** The editor's peer character painter */
   private MatchingCharacterPainter fMatchingCharacterPainter;
@@ -91,14 +93,66 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
   
   /**
-   * Subclassed in order to add a Parent Painter to the SourceViewer. One
-   * Need to first create PartControl to get a SourceViewer.
+   * Subclassed in order 
+   * to add MatchingCharacterPainter
+   * to install ProjectionSupport
    */
   public void createPartControl(Composite parent) {
     super.createPartControl(parent);
+    // Parent matcher
     showMatchingCharacters();
+    // Projection Support
+    ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
+    projectionSupport = new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
+    projectionSupport.install();
+    // Turn projection mode on
+    viewer.doOperation(ProjectionViewer.TOGGLE);
+    annotationModel = viewer.getProjectionAnnotationModel();
   }
-
+  /**
+   * Subclassed to return a ProjectionViewer instead of a SourceViewer.
+   */
+  protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+    ISourceViewer viewer = new ProjectionViewer(parent, ruler,  getOverviewRuler(), isOverviewRulerVisible(), styles);
+    // ensure decoration support has been created and configured.
+    getSourceViewerDecorationSupport(viewer);
+    fAnnotationAccess= getAnnotationAccess();
+    fOverviewRuler= createOverviewRuler(getSharedColors());
+    return viewer;
+  }
+  /**
+   * Tell the editor which regions are collapsible
+   * @param positions
+   */
+  public void updateFoldingStructure(ArrayList<Position> positions) {
+    HashMap<ProjectionAnnotation, Position> additions = new HashMap<ProjectionAnnotation, Position>();
+    for (int i = 0; i < positions.size(); i++) {
+      ProjectionAnnotation annotation = null;
+      Position pos = positions.get(i);
+      boolean collapsed = false;
+      // Search existing annotations, to keep state (collapsed or not)
+      Iterator<Entry<ProjectionAnnotation, Position>> e = oldAnnotations.entrySet().iterator();
+      while (e.hasNext()) {
+        Entry<ProjectionAnnotation, Position> mapEntry = e.next();
+        ProjectionAnnotation key = (ProjectionAnnotation) mapEntry.getKey();
+        Position value = (Position) mapEntry.getValue();
+        if (value.equals(pos)) {
+          collapsed = key.isCollapsed();
+          break;
+        }
+      }
+      // Create new annotation eventually with old state
+      annotation = new ProjectionAnnotation(collapsed);
+      additions.put(annotation, pos);
+    }
+    // Clumsy only additions can be passed as a Map, we need to build an array
+    Annotation[] deletions = (Annotation[]) (oldAnnotations.keySet().toArray(new Annotation[] {}));
+    annotationModel.modifyAnnotations(deletions, additions, null);
+    // Now we can add additions to oldAnnotations
+    oldAnnotations.clear();
+    oldAnnotations.putAll(additions);
+  }
+  
   /**
    * Add a Painter to show matching characters.
    */
@@ -151,8 +205,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
       outlinePage = (JJOutlinePage) getAdapter(IContentOutlinePage.class);
     outlinePage.setInput(getDocument());
     // get root node to build JJElement Hashmap
-    JJContentProvider contentProvider = (JJContentProvider) outlinePage
-    .getContentProvider();
+    JJContentProvider contentProvider = (JJContentProvider) outlinePage.getContentProvider();
     JJNode node = contentProvider.getAST();
     // If the outline is not up, then use the ContentProvider directly
     if (outlinePage.getControl() == null) {
