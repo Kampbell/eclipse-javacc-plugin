@@ -8,7 +8,6 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import sf.eclipse.javacc.parser.*;
 
 /**

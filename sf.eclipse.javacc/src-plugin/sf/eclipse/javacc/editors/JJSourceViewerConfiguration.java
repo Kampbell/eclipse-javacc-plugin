@@ -4,9 +4,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
@@ -160,8 +158,15 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
   public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
     return new JJHover();
   }
-  
-   /**
+
+  /*
+   * @see org.eclipse.jface.text.source.TextSourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer)
+   */
+  public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+    return new JJTextHover(); // editor.getSourceViewer()
+  }
+   
+  /**
    * Returns the hyperlink detectors which be used to detect hyperlinks
    * actually only one detector is returned
    */
