@@ -107,7 +107,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy,
         fPositions.add(new Position(start, end - start));
       }
       catch (BadLocationException e) {
-        e.printStackTrace();
+//        e.printStackTrace(); // Ignore
       }
     }
 
