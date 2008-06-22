@@ -4,15 +4,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +34,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * Look at org.eclipse.core.internal.events.InternalBuilder#build(int,
    * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
    */
+  @SuppressWarnings("unchecked")
   protected IProject[] build(int kind, Map args, IProgressMonitor mon)
       throws CoreException {
     // These are Contants on the build
@@ -83,6 +76,27 @@ public class JJBuilder extends IncrementalProjectBuilder implements
   }
 
   /**
+   * Clean all generated files  
+   */
+  protected void clean(IProgressMonitor monitor) throws CoreException {
+    super.clean(monitor);
+    IResource[] members = getProject().members();
+    clean(members, monitor);
+  }
+  /**
+   * Delete recursivelly generated AND derived files
+   * A modified generated file, marked as not derived, shall not be deleted.
+   */
+  private void clean(IResource[] members, IProgressMonitor monitor) throws CoreException {
+    for (IResource res : members) {
+      if (res.getType() == IResource.FOLDER) 
+        clean(((IFolder)res).members(), monitor);
+      else if (res.isDerived() && res.getPersistentProperty(QN_GENERATED_FILE) != null)
+        res.delete(IResource.KEEP_HISTORY, monitor);
+    }
+  }
+
+  /**
    * Visit the given resource delta
    * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
    */
@@ -119,7 +133,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     // The file, the project and the directory
     IFile file = (IFile) res;
     IProject pro = file.getProject();
-    IEclipsePreferences prefs = new ProjectScope(pro).getNode(IJJConstants.ID);
     String dir = pro.getLocation().toOSString();
 
     // Delete markers
@@ -212,7 +225,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
     IFile file = (IFile) res;
     IProject pro = file.getProject();
-    IEclipsePreferences prefs = new ProjectScope(pro).getNode(IJJConstants.ID);
     String dir = pro.getLocation().toOSString();
     String name = file.getLocation().toString();
 
