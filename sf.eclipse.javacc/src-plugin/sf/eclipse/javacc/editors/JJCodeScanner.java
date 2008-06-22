@@ -27,7 +27,7 @@ import sf.eclipse.javacc.options.JJPreferences;
  * coloring words and comments.
  * @look org.eclipse.jdt.internal.ui.text.java.JavaCodeScanner
  * 
- * @author Remi Koutcherawy 2003-2006
+ * @author Remi Koutcherawy 2003-2008
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 public class JJCodeScanner extends BufferedRuleBasedScanner {
@@ -89,8 +89,12 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
 	  "OUTPUT_FILE", //$NON-NLS-1$
       "JDK_VERSION", //$NON-NLS-1$
       "NODE_EXTENDS", //$NON-NLS-1$
+      "NODE_CLASS",
+      "VISITOR_DATA_TYPE",
+      "VISITOR_RETURN_TYPE",
       "TOKEN_MANAGER_USES_PARSER", //$NON-NLS-1$
-      "JJTREE_OUTPUT_DIRECTORY",
+      "TRACK_TOKENS",
+      "JJTREE_OUTPUT_DIRECTORY", 
       "ONE_TABLE", //$NON-NLS-1$
       "TEXT", //$NON-NLS-1$
       "JJDOC_OUTPUT_FILE", //$NON-NLS-1$ 
