@@ -11,8 +11,7 @@ import sf.eclipse.javacc.parser.JJNode;
  */
 class JJTextHover  implements ITextHover {
   
-  public JJTextHover() { // extends DefaultTextHover ISourceViewer sourceViewer
-  }
+  public JJTextHover() {}
 
   /* (non-Javadoc)
    * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
@@ -50,7 +49,6 @@ class JJTextHover  implements ITextHover {
    * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
    */
   public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-    System.out.println("getHoverRegion "+offset);
     IDocument document= textViewer.getDocument();
     IRegion region = findWord(document, offset);
     if (region.getLength() < 1)
