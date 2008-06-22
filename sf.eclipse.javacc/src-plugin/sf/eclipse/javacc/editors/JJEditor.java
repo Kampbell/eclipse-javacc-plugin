@@ -2,7 +2,6 @@ package sf.eclipse.javacc.editors;
 
 import java.util.*;
 import java.util.Map.Entry;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.*;
@@ -15,7 +14,6 @@ import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.options.JJPreferences;
@@ -42,7 +40,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   
   /** The editor's peer character painter */
   private MatchingCharacterPainter fMatchingCharacterPainter;
-  
+
   /**
    * Constructor
    */
@@ -224,7 +222,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
     IDocument doc = getDocumentProvider().getDocument(getEditorInput());
     return doc;
   }
-  
+
   /**
    * Set the Selection given a Node of the AST
    * @param node
@@ -252,6 +250,15 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
   
   /**
+   * Subclassed to add edit location in History
+   * [ 1891111 ] Alt + left arrow should jump back to correct position 
+   */
+  protected void updateContentDependentActions() {
+    super.updateContentDependentActions();
+    markInNavigationHistory();
+  }
+  
+  /**
    * Set the selection
    * 
    * @param IRegion
@@ -264,7 +271,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
       resetHighlightRange();
     if (sel != null)
       selectAndReveal(sel.getOffset(), sel.getLength());
-  }
+    }
 
   public void updateColors() {
 //    Display display = Display.getCurrent();
