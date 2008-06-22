@@ -10,8 +10,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 
-public class JJCompletionProcessor implements IContentAssistProcessor {
+public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCParserTreeConstants{
   /*
    * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
    */
@@ -32,8 +33,21 @@ public class JJCompletionProcessor implements IContentAssistProcessor {
     // TODO choose the keyword from the context
     // TODO alphabetic sort
     for (String s : JJCodeScanner.fgJJkeywords){
-      if (s.startsWith(prefix))
+      if (s.toUpperCase().startsWith(prefix.toUpperCase()))
         suggestions.add(s);
+    }
+    for (String s : JJElements.getMap().keySet()){
+      // nodes
+      if (s.toUpperCase().startsWith(prefix.toUpperCase()))
+        suggestions.add(s+"()");
+      // tokens
+      if (prefix.startsWith("<")) {
+        String token = prefix.substring(1);
+        if (s.toUpperCase().startsWith(token.toUpperCase())) {
+          if (JJElements.getNode(s).getId() == JJTREGEXPR_SPEC)
+            suggestions.add("<"+s+">");
+        }
+      }
     }
     for (Iterator<String> it= suggestions.iterator(); it.hasNext();) {
       String txt = it.next();
