@@ -26,9 +26,15 @@ public class MarkAndCorrect implements IJJConstants{
   // The pattern has 2 groups and a non-capturing group
   // to identify even already treated files
   private final static String 
-  reg = "^((?:public\\s+)?(?:final\\s+)?)(?:@SuppressWarnings\\(\\\"all\\\"\\)\\s+)?(class|interface|enum)"; //$NON-NLS-1$
+  reg = "^((?:@SuppressWarnings.+[\\n\\r]*)?(?:public\\s+)?(?:final\\s+)?)(?:@SuppressWarnings\\(\\\"all\\\"\\)\\s+)?(class|interface|enum)"; //$NON-NLS-1$
   private final static Pattern filepattern = Pattern.compile(reg, Pattern.MULTILINE); //$NON-NLS-1$
 
+  // 4.1 generates this
+  // @SuppressWarnings("serial") @SuppressWarnings({"all","serial"})
+  //  public class TokenMgrError extends Error
+  // The RegExp is adapted to grab the added SuppressWarnings
+  // ^((?:@SuppressWarnings.+[\n\r]*)?(?:public\s+)?(?:final\s+)?)(?:@SuppressWarnings\(\"all\"\)\s+)?(class|interface|enum)
+  
   /**
    * Mark generated files
    * @param pro IProject the resource belongs to
@@ -52,11 +58,11 @@ public class MarkAndCorrect implements IJJConstants{
       String source = FileUtils.getFileContents(filename); // Direct access
 
         Matcher filematcher = filepattern.matcher(source);
-        if (filematcher.find()) {
-          String newsource = filematcher.replaceFirst("$1@SuppressWarnings(\"all\") $2"); //$NON-NLS-1$
-//          cu.getBuffer().setContents(newsource);
-//          cu.getBuffer().save(null, true);
-        FileUtils.saveFileContents(filename, newsource);
+        if (filematcher.find() && !filematcher.group().startsWith("@")) {
+          String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1$2"); //$NON-NLS-1$
+//        cu.getBuffer().setContents(newsource);
+//        cu.getBuffer().save(null, true);
+          FileUtils.saveFileContents(filename, newsource);
         }
       }
   }
