@@ -1,6 +1,6 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.5.10.zip into Eclipse directory. 
+1) Unzip JavaCC_Feature_1.5.12.zip into Eclipse directory. 
 2) Launch Eclipse.
 
 or
@@ -37,6 +37,23 @@ Features
    use Workbench "Back" to go back.
 
 History
+22/06/08 - version 1.5.12
+- Folding rfe 1786801 Collapse/Expand
+- Hovering rfe 1888744 Quick Outline
+- AutoCompletion rfe 1769382 Auto-Completion for both the defined tokens and nodes ignoring case
+- bug 1986438 JavaCC options don't save state in the project directory
+  now saved in \.settings\sf.eclipse.javacc.prefs
+- bug 1986443  Project->Clean doesn't clean the generated files
+  the generated files are now deleted, except if they are marked as not derived in their properties
+- bug 1990463  jjtree option TRACK_TOKENS is not functional 
+  keyword added
+- bug 1891111  Alt + left arrow should jump back to correct position
+- bug 1816600  Outline lists return type instead of method name
+
+08/07/07 - version 1.5.11
+- bug 1682259 JJTREE_OUTPUT_DIRECTORY
+- bug 1745835 NullPointerException thrown for files with no extension
+
 08/07/07 - version 1.5.10
 - bug 1682259 JJTREE_OUTPUT_DIRECTORY
 - bug 1745835 NullPointerException thrown for files with no extension
