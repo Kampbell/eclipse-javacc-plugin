@@ -1,7 +1,6 @@
 package sf.eclipse.javacc.wizards;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jdt.ui.JavaUI;
 
 /**
@@ -72,7 +71,6 @@ public class Status implements IStatus {
    * @param errorMessage The error message (can be empty, but not null)
    */
   public void setError(String errorMessage) {
-    Assert.isNotNull(errorMessage);
     fStatusMessage = errorMessage;
     fSeverity = IStatus.ERROR;
   }
@@ -82,7 +80,6 @@ public class Status implements IStatus {
    * @param warningMessage The warning message (can be empty, but not null)
    */
   public void setWarning(String warningMessage) {
-    Assert.isNotNull(warningMessage);
     fStatusMessage = warningMessage;
     fSeverity = IStatus.WARNING;
   }
@@ -92,7 +89,6 @@ public class Status implements IStatus {
    * @param infoMessage The info message (can be empty, but not null)
    */
   public void setInfo(String infoMessage) {
-    Assert.isNotNull(infoMessage);
     fStatusMessage = infoMessage;
     fSeverity = IStatus.INFO;
   }

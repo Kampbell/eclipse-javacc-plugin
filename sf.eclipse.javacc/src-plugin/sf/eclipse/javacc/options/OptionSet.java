@@ -148,9 +148,9 @@ public class OptionSet {
    * Reset all options to default values.
    */
   public void resetToDefaultValues() {
-    Iterator it = list.iterator();
+    Iterator<Option> it = list.iterator();
     while (it.hasNext()) {
-      Option opt = (Option)it.next();
+      Option opt = it.next();
       opt.setValue(opt.getDefaultValue());
     }
   }
@@ -181,9 +181,9 @@ public class OptionSet {
    */
   public int getOptionsSize(int type) {
     int n = 0;
-    Iterator it = list.iterator();
+    Iterator<Option> it = list.iterator();
     while (it.hasNext())
-      if (((Option)it.next()).getType() == type)
+      if (it.next().getType() == type)
         n++;
     return n;
   }

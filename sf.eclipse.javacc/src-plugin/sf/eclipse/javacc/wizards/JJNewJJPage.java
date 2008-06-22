@@ -2,43 +2,18 @@ package sf.eclipse.javacc.wizards;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaConventions;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.JavaElementSorter;
-import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.ui.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -135,7 +110,7 @@ public class JJNewJJPage extends WizardPage {
       public void modifyText(ModifyEvent e) {
         fSrcRootStatus = sourceContainerChanged();
         if (fSrcRootStatus.isOK())
-          packageChanged(); // revalidate package
+          packageChanged(); // Revalidates package
         updateStatus();
       }
     });
@@ -322,7 +297,7 @@ public class JJNewJJPage extends WizardPage {
     String packName = getPackage();
     
     if (packName.length() > 0) {
-      IStatus val = JavaConventions.validatePackageName(packName);
+      IStatus val = JavaConventions.validatePackageName(packName,null, null);
       if (val.getSeverity() == IStatus.ERROR) {
         status.setError(MessageFormat.format(
             org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
@@ -377,6 +352,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the filename field.
    */
+  @SuppressWarnings("deprecation")
   private IStatus fileNameChanged() {
     String fileName = getFileName();
     if (fileName.length() == 0) {
@@ -464,7 +440,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Open a dialog to let user choose Source Container
    */
-  @SuppressWarnings("restriction") //$NON-NLS-1$
+  @SuppressWarnings({ "restriction", "unchecked", "deprecation" }) //$NON-NLS-1$
   private IPackageFragmentRoot chooseSourceContainer() {
     Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
     org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator validator= new org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator(acceptedClasses, false) {
