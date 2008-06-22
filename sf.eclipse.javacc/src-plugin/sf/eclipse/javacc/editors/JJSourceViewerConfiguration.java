@@ -128,7 +128,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
     public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
       String text = null;
       IAnnotationModel model = sourceViewer.getAnnotationModel();
-      Iterator iter = model.getAnnotationIterator();
+      Iterator<?> iter = model.getAnnotationIterator();
       while (iter.hasNext()) {
         Object obj = iter.next();
         // test necessary not to cast DiffRegion objects
@@ -137,7 +137,6 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
           IMarker marker = annotation.getMarker();
           try {
             Integer line  = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
-            // System.err.println("IMarker.LINE_NUMBER "+line);
             if (line.intValue() == lineNumber + 1) { // different offsets
               text = annotation.getText();
               break;
@@ -147,7 +146,6 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
           }
         }
       }
-      // System.err.println("getHoverInfo " + lineNumber);
       return text;
     }
   }

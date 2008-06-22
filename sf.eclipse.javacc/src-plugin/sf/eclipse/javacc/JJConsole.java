@@ -288,7 +288,7 @@ public class JJConsole extends ViewPart implements IJJConstants {
   private static void markError(IFile file, String msg, int type, int line, int col) {
     try {
       IMarker marker = file.createMarker(IMarker.PROBLEM); 
-      HashMap<String, Comparable> attributes= new HashMap<String, Comparable>(4);
+      HashMap<String, Comparable<?>> attributes= new HashMap<String, Comparable<?>>(4);
       attributes.put(IMarker.MESSAGE, msg);
       attributes.put(IMarker.SEVERITY, new Integer(type));
       attributes.put(IMarker.LINE_NUMBER, new Integer(line));

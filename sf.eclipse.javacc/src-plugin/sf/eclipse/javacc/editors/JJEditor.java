@@ -173,6 +173,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Returns ContentOutlinePage Method declared on IAdaptable
    */
+  @SuppressWarnings("unchecked")
   public Object getAdapter(Class key) {
     if (key.equals(IContentOutlinePage.class)) {
       if (outlinePage == null) {
