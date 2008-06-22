@@ -137,11 +137,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     
     JJConsole console = Activator.getConsole();
 
-    // Retrieves runtime options
-    boolean projectOverride = "true".equals(prefs.get(PROJECT_OVERRIDE, "false")); //$NON-NLS-1$ //$NON-NLS-2$
-
     // Retrieve command line
-    String[] args = getArgs(file, name, projectOverride);
+    String[] args = getArgs(file, name);
     String jarfile = getJarFile(file);
 
     // Redirect out and error streams
@@ -221,12 +218,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
     JJConsole console = Activator.getConsole();
 
-    // Retrieve runtime options
-    // Retrieves runtime options
-    boolean projectOverride = "true".equals(prefs.get(PROJECT_OVERRIDE, "false")); //$NON-NLS-1$ //$NON-NLS-2$
-
     // Retrieve command line
-    String[] args = getJJDocArgs(file, name, projectOverride);
+    String[] args = getJJDocArgs(file, name);
     String jarfile = getJarFile(file);
 
     // Redirect standard and error streams
@@ -261,8 +254,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @param projectOverride true if the properties is from project
    * @return String[] of options to call JavaCC compiler with
    */
-  protected static String[] getArgs(IFile file, String name,
-      boolean projectOverride) {
+  protected static String[] getArgs(IFile file, String name) {
     String[] args = null;
     String extension = file.getFullPath().getFileExtension();
     try {
@@ -316,18 +308,13 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @param projectOverride true if the properties is from project
    * @return String[] of options to call JavaCC compiler with
    */
-  protected static String[] getJJDocArgs(IResource file, String name,
-      boolean projectOverride) {
+  protected static String[] getJJDocArgs(IResource file, String name) {
     String[] args = null;
     try {
-    	
-        IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
+      IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
       String options = null;
-      // Try for resource property
+      // Read project properties
       options = prefs.get(JJDOC_OPTIONS, ""); //$NON-NLS-1$
-      // Else take Project Property
-      if (options == null || projectOverride)
-        options = prefs.get(JJDOC_OPTIONS, ""); //$NON-NLS-1$
       // Else take default
       if (options == null)
         options = ""; //$NON-NLS-1$

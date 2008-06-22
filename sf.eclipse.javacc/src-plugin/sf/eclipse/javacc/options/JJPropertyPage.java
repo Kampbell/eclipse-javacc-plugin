@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
+//import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -43,9 +44,7 @@ public class JJPropertyPage extends PropertyPage
   protected JJTreeOptions jjTree;
   protected JJDocOptions jjDoc;
   protected JTBOptions jtb;
-  
-  protected boolean isProject;
-  protected boolean isProjectOverride;
+
   protected boolean isFile;
   protected boolean isJJ;
   protected boolean isJJT;
@@ -67,15 +66,8 @@ public class JJPropertyPage extends PropertyPage
     // Reads config from IResource
     IAdaptable ia = getElement();
     res = (IResource) ia.getAdapter(IResource.class);
-    isProject = (res != null && res.getType() == IResource.PROJECT);
-      if (res != null) {
-        project = res.getProject();
-        IScopeContext projectScope = new ProjectScope(project);
-        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-
-        String prop = prefs.get(PROJECT_OVERRIDE, "false"); //$NON-NLS-1$
-        isProjectOverride = ("true").equals(prop);//$NON-NLS-1$
-      }
+    if (res != null) 
+      project = res.getProject();
 
     isFile = (res != null && res.getType() == IResource.FILE);
     isJJ = (res != null && isFile && res.getName().endsWith("jj")); //$NON-NLS-1$
@@ -87,38 +79,18 @@ public class JJPropertyPage extends PropertyPage
     jjRunItem = new TabItem(folder, SWT.NONE);
     jjRunItem.setText(Activator.getString("JJPropertyPage.JavaCC_runtime_options_Tab")); //$NON-NLS-1$
     jjRunItem.setControl(jjRun);
-    
-    // To deal with reconfiguration for project override and Nature
-    jjRun.setPropertyChangeListener(this); 
 
-    // For files
-    if (isFile) {
-      if (!isProjectOverride) {
-        if (isJJ)
-          addJCCTab();
-        else if (isJJT)
-          addJTreeTab();
-        else if (isJTB)
-          addJTBTab();
-        addJDocTab();
-      }
-    }
-    
     // For project
-    if (isProject) {
-      addJCCTab();
-      addJTreeTab();
-      addJDocTab();
-      addJTBTab();
-    }
+    addJCCTab();
+    addJTreeTab();
+    addJDocTab();
+    addJTBTab();
+    
     // Test a property to see if in need of a first initialization
-    {
-        IScopeContext projectScope = new ProjectScope(project);
-        IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-
-      if (prefs.get(PROJECT_OVERRIDE, null) == null)
-        performDefaults();
-    }
+    IScopeContext projectScope = new ProjectScope(project);
+    IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+    if (prefs.get(RUNTIME_JAR, null) == null)
+      performDefaults();
     return parent;
   }
   
@@ -128,33 +100,7 @@ public class JJPropertyPage extends PropertyPage
    * and sets tab in coherence
    */
   public void propertyChange(PropertyChangeEvent event) {
-    Boolean b = (Boolean) event.getNewValue();
-    BooleanFieldEditor field = (BooleanFieldEditor) event.getSource();
-    String name = field.getPreferenceName();
 
-    if (name.equals(PROJECT_OVERRIDE)) {
-      isProjectOverride = b.booleanValue();
-      // For files only
-      if (isFile) {
-        if (!isProjectOverride) {
-          if (isJJ)
-            addJCCTab();
-          else if (isJJT)
-            addJTreeTab();
-          else if (isJTB)
-            addJTBTab();
-          addJDocTab();
-        } else {
-          if (isJJ)
-            jjCCItem.dispose();
-          else if (isJJT)
-            jjTreeItem.dispose();
-          else if (isJTB)
-            jtbItem.dispose();
-          jjDocItem.dispose();
-        }
-      }
-    }
   }
   
   /**

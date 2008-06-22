@@ -19,7 +19,6 @@ public interface IJJConstants {
   public static final String JAVACC_OPTIONS = "JAVACC_OPTIONS"; //$NON-NLS-1$
   public static final String JJDOC_OPTIONS = "JJDOC_OPTIONS"; //$NON-NLS-1$
   public static final String RUNTIME_JAR = "RUNTIME_JAR"; //$NON-NLS-1$
-  public static final String PROJECT_OVERRIDE = "PROJECT_OVERRIDE"; //$NON-NLS-1$
   public static final String SUPPRESS_WARNINGS = "SUPPRESS_WARNINGS"; //$NON-NLS-1$  
   public static final String GENERATED_FILE = "GENERATED_FILE"; //$NON-NLS-1$
   public static final String SHOW_CONSOLE = "SHOW_CONSOLE"; //$NON-NLS-1$

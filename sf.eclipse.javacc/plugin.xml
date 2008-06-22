@@ -50,31 +50,6 @@
 
 <!-- Properties Extensions -->
    <extension point="org.eclipse.ui.propertyPages">
-<!-- Properties for Files .jj, .jjt or .jtb -->
-      <page
-            class="sf.eclipse.javacc.options.JJPropertyPage"
-            icon="icons/jj_file.gif"
-            id="sf.eclipse.javacc.options.JCCOptions"
-            name="%JavaCC_Options"
-            nameFilter="*.jj"
-            objectClass="org.eclipse.core.resources.IFile">
-      </page>
-      <page
-            class="sf.eclipse.javacc.options.JJPropertyPage"
-            icon="icons/jj_file.gif"
-            id="sf.eclipse.javacc.options.JJTreeOptions"
-            name="%JavaCC_Options"
-            nameFilter="*.jjt"
-            objectClass="org.eclipse.core.resources.IFile">
-      </page>
-      <page
-            class="sf.eclipse.javacc.options.JJPropertyPage"
-            icon="icons/jtb_file.gif"
-            objectClass="org.eclipse.core.resources.IFile"
-            name="%JavaCC_Options"
-            nameFilter="*.jtb"
-            id="sf.eclipse.javacc.options.JTBOptions">
-      </page>
 <!-- Properties for Project -->
       <page
             objectClass="org.eclipse.jdt.core.IJavaProject"

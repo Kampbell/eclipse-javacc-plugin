@@ -30,7 +30,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   
   // Controls
   protected FileFieldEditor jarFile;
-  protected BooleanFieldEditor checkProjectOverride;
   protected BooleanFieldEditor checkSuppressWarnings;
   protected BooleanFieldEditor checkShowConsole;
   protected BooleanFieldEditor checkClearConsole;
@@ -69,7 +68,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     new Label(subGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     jarFile = new FileFieldEditor(RUNTIME_JAR,
       Activator.getString("JJRuntimeOptions.Set_the_JavaCC_jar_file"), subGroup); //$NON-NLS-1$
-//    jarFile.setFileExtensions(new String[] {"*.jar", "*.zip"}); //$NON-NLS-1$ //$NON-NLS-2$
     
     // Add Checkboxes for boolean values
     Composite checkGroup = new Composite(groupProject, SWT.NONE);
@@ -80,8 +78,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
 	Activator.getString("JJRuntimeOptions.Clear_JavaCC_console_before_build"), checkGroup); //$NON-NLS-1$
     checkJJNature = new BooleanFieldEditor(JJ_NATURE_NAME,
 	Activator.getString("JJRuntimeOptions.Build_automatically_on_save"), checkGroup);           //$NON-NLS-1$
-    checkProjectOverride = new BooleanFieldEditor(PROJECT_OVERRIDE,
-	Activator.getString("JJRuntimeOptions.Project_options_override_File_options"), checkGroup); //$NON-NLS-1$
     checkSuppressWarnings = new BooleanFieldEditor(SUPPRESS_WARNINGS,
 	Activator.getString("JJRuntimeOptions.Automatically_suppress_warnings"), checkGroup); //$NON-NLS-1$
    
@@ -106,7 +102,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         checkClearConsole.setBooleanValue("true".equals((prefs.get(CLEAR_CONSOLE, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
         boolean hasJavaccNature = proj.getDescription().hasNature(JJ_NATURE_ID);
         checkJJNature.setBooleanValue(hasJavaccNature);
-        checkProjectOverride.setBooleanValue("true".equals((prefs.get(PROJECT_OVERRIDE, "true"))));  //$NON-NLS-1$//$NON-NLS-2$
         checkSuppressWarnings.setBooleanValue("true".equals((prefs.get(SUPPRESS_WARNINGS, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
         jtbjarFile.setStringValue(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
        } catch (CoreException e) {
@@ -123,7 +118,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     jtbjarFile.setStringValue("");  //$NON-NLS-1$
     checkShowConsole.setBooleanValue(true); 
     checkClearConsole.setBooleanValue(false);
-    checkProjectOverride.setBooleanValue(true);
     checkSuppressWarnings.setBooleanValue(false);
     checkJJNature.setBooleanValue(true);
   }
@@ -143,7 +137,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         prefs.put(RUNTIME_JAR, jarFile.getStringValue());
         prefs.put(SHOW_CONSOLE, checkShowConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         prefs.put(CLEAR_CONSOLE, checkClearConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-        prefs.put(PROJECT_OVERRIDE, checkProjectOverride.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         prefs.put(SUPPRESS_WARNINGS, checkSuppressWarnings.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         prefs.put(JJ_NATURE, checkJJNature.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         
@@ -164,12 +157,10 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   }
   
   /**
-   * Sets a PropertyChangeListener to CheckBox "Project Override"
-   *  "Add Nature" and "Exclude from build" to handle immediately
-   * @param jJOptions
+   * Sets a PropertyChangeListener to CheckBox "Add Nature" 
+   * and "Exclude from build" to handle immediately
    */
   public void setPropertyChangeListener(IPropertyChangeListener listener) {
-      checkProjectOverride.setPropertyChangeListener(listener);
       checkJJNature.setPropertyChangeListener(listener);
   }
 }

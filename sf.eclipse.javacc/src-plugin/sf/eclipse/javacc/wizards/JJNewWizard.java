@@ -164,7 +164,6 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       prefs.put(RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
       prefs.put(SHOW_CONSOLE, "true"); //$NON-NLS-1$
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
-      prefs.put(PROJECT_OVERRIDE, "true"); //$NON-NLS-1$
       prefs.put(JJ_NATURE, "true");  //$NON-NLS-1$
       prefs.put(SUPPRESS_WARNINGS, "true");  //$NON-NLS-1$
       // Sets the nature directly

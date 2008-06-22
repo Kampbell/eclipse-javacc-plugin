@@ -29,9 +29,15 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
 //    VISITOR_EXCEPTION      (default "")
 //  JDK_VERSION               (default "1.4")
 //  NODE_EXTENDS              (default "")
-//  TOKEN_MANAGER_USES_PARSER (default false)
+//  TOKEN_MANAGER_USES_PARSER (default false) (inherited)
 // JJTREE_OUTPUT_DIRECTORY (default: use value of OUTPUT_DIRECTORY)
+// NODE_CLASS (default: "")
+// TRACK_TOKENS (default: false)
+// VISITOR_DATA_TYPE (default: "Object")
+// VISITOR_RETURN_TYPE (default: "Object")
+// NODE_FACTORY (default: "")
 
+  
   /**
    * Initialize with JJTree known options
    */
@@ -48,18 +54,22 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
     optionSet.add(new Option("MULTI", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_DEFAULT_VOID", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_SCOPE_HOOK", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("NODE_FACTORY", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_USES_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("BUILD_NODE_FILES", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("VISITOR", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("TOKEN_MANAGER_USES_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    
+    optionSet.add(new Option("TRACK_TOKENS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+
     // string options
     optionSet.add(new Option("NODE_PREFIX", "AST", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_PACKAGE", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("VISITOR_EXCEPTION", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("JDK_VERSION", "1.4", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_EXTENDS", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("NODE_CLASS", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("NODE_FACTORY", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("VISITOR_DATA_TYPE", "Object", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("VISITOR_RETURN_TYPE", "Object", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // path option
     optionSet.add(new Option("OUTPUT_DIRECTORY", "", Option.PATH)); //$NON-NLS-1$ //$NON-NLS-2$
