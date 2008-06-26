@@ -286,7 +286,17 @@
             label="%JavaCC_ContentAssist"
             class="sf.eclipse.javacc.actions.JJContentAssist"
             definitionId="commands.jjcontentassist"
-            id="javacc.jjcontentassist"/>      
+            id="javacc.jjcontentassist"/>  
+     <action
+            label="%JavaCC_FoldingCollapse"
+            class="sf.eclipse.javacc.actions.JJFoldingCollapse"
+            definitionId="commands.jjfoldingcollapseall"
+            id="javacc.jjfoldingcollapseall"/>    
+     <action
+            label="%JavaCC_FoldingExpandAll"
+            class="sf.eclipse.javacc.actions.JJFoldingExpandAll"
+            definitionId="commands.jjfoldingexpandall"
+            id="javacc.jjfoldingcollapseall"/>     
       </editorContribution>
 <!-- For JTB -->
       <editorContribution
@@ -378,6 +388,16 @@
             categoryId="JavaCC.category"
             name="%JavaCC_ContentAssist"
             id="commands.jjcontentassist"/>
+      <command
+            description="%JavaCC_FoldingCollapse"
+            categoryId="JavaCC.category"
+            name="%JavaCC_FoldingCollapse"
+            id="commands.jjfoldingcollapseall"/>
+     <command
+            description="%JavaCC_FoldingCollapse"
+            categoryId="JavaCC.category"
+            name="%JavaCC_FoldingCollapse"
+            id="commands.jjfoldingexpandall"/>
    </extension>
 <!-- Keyboard shortcuts -->
    	<extension point="org.eclipse.ui.bindings">
@@ -396,7 +416,16 @@
      <key sequence="Ctrl+Space"
             contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjcontentassist"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>           
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+    <key sequence="M1+M2+NUMPAD_DIVIDE"
+            contextId="sf.eclipse.javacc.JJEditorScope"
+            commandId="commands.jjfoldingcollapseall"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+    <key sequence="Ctrl+Shift+Numpad_Multiply"
+            contextId="sf.eclipse.javacc.JJEditorScope"
+            commandId="commands.jjfoldingexpandall"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+               
    </extension>
 <!-- New Wizard Extension -->
    <extension point="org.eclipse.ui.newWizards">

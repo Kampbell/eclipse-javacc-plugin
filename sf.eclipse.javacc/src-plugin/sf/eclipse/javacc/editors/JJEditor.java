@@ -118,6 +118,9 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
     fOverviewRuler= createOverviewRuler(getSharedColors());
     return viewer;
   }
+  public ISourceViewer getSourceViewer2() {
+    return getSourceViewer();
+  }
   /**
    * Tell the editor which regions are collapsible
    * @param positions
