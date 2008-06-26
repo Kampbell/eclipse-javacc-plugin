@@ -297,7 +297,8 @@ public class JJNewJJPage extends WizardPage {
     String packName = getPackage();
     
     if (packName.length() > 0) {
-      IStatus val = JavaConventions.validatePackageName(packName,null, null);
+      // IStatus val = JavaConventions.validatePackageName(packName,null, null); // Eclipse 3.3
+      IStatus val = JavaConventions.validatePackageName(packName); // Eclipse 3.2
       if (val.getSeverity() == IStatus.ERROR) {
         status.setError(MessageFormat.format(
             org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
