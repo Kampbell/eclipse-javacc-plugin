@@ -2,23 +2,13 @@ package sf.eclipse.javacc.editors;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
-import org.eclipse.jface.text.rules.EndOfLineRule;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.MultiLineRule;
-import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.jface.text.rules.WordRule;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.options.JJPreferences;
 
@@ -228,12 +218,11 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     rules.add(new MultiLineRule("/**", "*/", jdocComment)); //$NON-NLS-1$ //$NON-NLS-2$
     rules.add(new MultiLineRule("/*", "*/", comment)); //$NON-NLS-1$ //$NON-NLS-2$
 
-    // Add rule for strings and character constants.
+    // Add rules for strings and character constants.
     rules.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
     rules.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-    rules.add(new SingleLineRule("< #", ">", ptoken, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-    rules.add(new SingleLineRule("<#", ">", ptoken, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-    rules.add(new SingleLineRule("<", ">", token, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+    // Add rule for JavaCC TOKEN 
+    rules.add(new JJTokenRule(token, ptoken)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // Add word rule for JJKeywords and JavaKeywords.
     WordRule wordRule = new WordRule(new JJWordDetector(), other);
