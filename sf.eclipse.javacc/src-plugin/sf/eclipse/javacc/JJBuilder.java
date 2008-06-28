@@ -93,6 +93,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements
         clean(((IFolder)res).members(), monitor);
       else if (res.isDerived() && res.getPersistentProperty(QN_GENERATED_FILE) != null)
         res.delete(IResource.KEEP_HISTORY, monitor);
+      else 
+        res.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
     }
   }
 
