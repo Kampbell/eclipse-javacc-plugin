@@ -1,13 +1,11 @@
 package sf.eclipse.javacc;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -246,6 +244,24 @@ public class JJConsole extends ViewPart implements IJJConstants {
         offset = lineColumnMatcher.start();
         length = lineColumnMatcher.end() - offset;
 
+        // Replace .jj by .jjt eventually
+        try {
+          if (fFile.isDerived()) {
+            String from = fFile.getPersistentProperty(QN_GENERATED_FILE);
+            String dir = fFile.getParent().getLocation().toOSString();
+            from = dir+File.separatorChar+from;
+            IProject pro = fFile.getProject();
+            dir = pro.getLocation().toOSString();
+            from = from.substring(dir.length() + 1);
+            IResource resfrom = pro.findMember(from);
+            if (resfrom != null)
+              fFile = (IFile) resfrom;
+          }
+        }
+        catch (CoreException e) {
+          // Ignore
+        }
+        
         // Add the Error or Warning in the editor Problems
         markError(fFile, report, severity, line, col);
 
