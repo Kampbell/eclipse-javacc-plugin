@@ -48,7 +48,7 @@ public class JJPreferences extends AbstractPreferenceInitializer {
     PreferenceConverter.setDefault(store, P_JDOC_COMMENT, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_YELLOW);
     PreferenceConverter.setDefault(store, P_TOKEN, color.getRGB());
-    color = display.getSystemColor(SWT.COLOR_DARK_YELLOW);
+    color = display.getSystemColor(SWT.COLOR_DARK_RED);
     PreferenceConverter.setDefault(store, P_PTOKEN, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_BLACK);
     PreferenceConverter.setDefault(store, P_DEFAULT, color.getRGB());
