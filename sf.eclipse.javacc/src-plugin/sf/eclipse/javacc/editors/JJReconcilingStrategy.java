@@ -92,8 +92,10 @@ public class JJReconcilingStrategy implements IReconcilingStrategy,
   public void search(JJNode node) {
     // Add region if the node is one of these types
     int id = node.getId();
-    if ( id == JJTPARSER_BEGIN
+    if ( id == JJTJAVACC_OPTIONS
+        || id == JJTPARSER_BEGIN
         || id == JJTJAVACC_OPTIONS
+        || id == JJTJAVACODE_PRODUCTION
         || id == JJTBNF_PRODUCTION
         || id == JJTREGULAR_EXPR_PRODUCTION
         || id == JJTCLASSORINTERFACEDECLARATION
