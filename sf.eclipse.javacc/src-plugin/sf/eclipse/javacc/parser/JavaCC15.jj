@@ -4,8 +4,14 @@
  */
  
 options {
-  JAVA_UNICODE_ESCAPE = false;                                                                                                                                     
-  ERROR_REPORTING = false;                                            
+  JAVA_UNICODE_ESCAPE = false;                                    
+               
+                           
+                         
+                      
+  ERROR_REPORTING = false;
+                                           
+                       
   JDK_VERSION = "1.5";
 }
 
@@ -53,6 +59,8 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants/*
    * "org.javacc.parser.ParseException: Encountered "," at line 61, column 17."
    */
   public static int parseLine(String res){
+    if (res == null)
+      return 1;
     int l1=-1, l2=-1;
     l1 = res.indexOf("Line"); 
     l2 = res.indexOf("line"); 
@@ -86,6 +94,22 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants/*
 
 PARSER_END(JavaCCParser)
 
+// Error recovery
+JAVACODE
+void error_skipto(ParseException e, int kind, boolean isNext) throws ParseException {
+  Token t;
+  System.out.println(e.getMessage());
+  String im = JavaCCParserTokenManager.jjstrLiteralImages[kind];
+  System.out.println("Skipping to "+im);
+  int nbBrace = 0;
+  do {
+    t = getNextToken();
+    System.out.print(t.image);
+  } while (t.kind != kind && t.kind != EOF);
+  if (isNext) // if the token is from the next rule, that is should be pushed back
+    SimpleCharStream.backup(1);
+  System.out.println();
+}
 /**********************************************
  * THE JAVACC TOKEN SPECIFICATION STARTS HERE *
  **********************************************/
@@ -303,6 +327,7 @@ TOKEN :
 | < BIT_OR: "|" >
 | < XOR: "^" >
 | < REM: "%" >
+| < SHARP: "#">
 //| < LSHIFT: "<<" >
 //| < RSIGNEDSHIFT: ">>" >
 //| < RUNSIGNEDSHIFT: ">>>" >
@@ -332,7 +357,8 @@ JJNode javacc_getAST()       : {/*@bgen(jjtree) root */
 {/*@bgen(jjtree) root */
   try {
 /*@egen*/
-  javacc_options()/*@bgen(jjtree) #parser_begin( true) */
+  javacc_options()
+  try {/*@bgen(jjtree) #parser_begin( true) */
   {
     ASTparser_begin jjtn001 = new ASTparser_begin(JJTPARSER_BEGIN);
     boolean jjtc001 = true;
@@ -366,7 +392,10 @@ JJNode javacc_getAST()       : {/*@bgen(jjtree) root */
       jjtreeCloseNodeScope(jjtn001);
     }
   }
-/*@egen*/
+/*@egen*/                    
+  } catch (ParseException e) {
+    error_skipto(e, RBRACE, false);
+  }
   (( production() )+ )
   <EOF>/*@bgen(jjtree)*/
   {
@@ -402,11 +431,9 @@ JJNode javacc_getAST()       : {/*@bgen(jjtree) root */
 void javacc_input():{}
 {
   javacc_options()
-  (
-    "PARSER_BEGIN" "(" identifier() ")"
-    CompilationUnit()
-    "PARSER_END" "(" identifier() ")"
-  ) 
+  "PARSER_BEGIN" "(" identifier() ")"
+  CompilationUnit()
+  "PARSER_END" "(" identifier() ")"
   ((production())+)
   <EOF>
 }
@@ -420,7 +447,11 @@ void javacc_options()                    :{/*@bgen(jjtree) #javacc_options(> 1) 
 {/*@bgen(jjtree) #javacc_options(> 1) */
   try {
 /*@egen*/
-  [("options" "{" (option_binding() )+  "}") ]/*@bgen(jjtree)*/
+  try {
+	[("options" "{" (option_binding() )+  "}")]
+  } catch (ParseException e) {
+    error_skipto(e, RBRACE, false);
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -453,8 +484,12 @@ void option_binding()                 :{/*@bgen(jjtree) option_binding */
 {/*@bgen(jjtree) option_binding */
   try {
 /*@egen*/
-  ( <IDENTIFIER> | "LOOKAHEAD" | "IGNORE_CASE" | "static" )
-   "=" (IntegerLiteral()|BooleanLiteral()|StringLiteral()) ";"/*@bgen(jjtree)*/
+  try {
+    (( <IDENTIFIER> | "LOOKAHEAD" | "IGNORE_CASE" | "static"  )
+    "=" (IntegerLiteral() | BooleanLiteral() | StringLiteral()) ";")
+  } catch (ParseException e) {
+    error_skipto(e, SEMICOLON, false);
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -486,30 +521,24 @@ void production():{}
 | bnf_production()
 }
 
-void javacode_production():{}
-{
+void javacode_production()                      :{/*@bgen(jjtree) javacode_production */
+  ASTjavacode_production jjtn000 = new ASTjavacode_production(JJTJAVACODE_PRODUCTION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/} 
+{/*@bgen(jjtree) javacode_production */
+  try {
+/*@egen*/
   "JAVACODE"
+ try {
   ResultType() identifier() FormalParameters()
   ["throws" Name()("," Name())*]
   [ node_descriptor() ]
    "{"(( BlockStatement())*)"}"
-}
-
-void bnf_production()                 :{/*@bgen(jjtree) bnf_production */
-  ASTbnf_production jjtn000 = new ASTbnf_production(JJTBNF_PRODUCTION);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-  jjtreeOpenNodeScope(jjtn000);
-/*@egen*/}
-{/*@bgen(jjtree) bnf_production */
-  try {
-/*@egen*/
-  ResultType() (identifier()) FormalParameters()
-  [ "throws" Name() ( "," Name() )* ]
-  [ node_descriptor() ]
-  ":"
-  "{"((BlockStatement() )* ) "}"
-  "{"(expansion_choices())"}"/*@bgen(jjtree)*/
+ } catch (ParseException e) {
+  error_skipto(e, RBRACE, false);
+ }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -530,6 +559,48 @@ void bnf_production()                 :{/*@bgen(jjtree) bnf_production */
       jjtreeCloseNodeScope(jjtn000);
     }
   }
+/*@egen*/
+}
+
+void bnf_production()                 :{/*@bgen(jjtree) bnf_production */
+  ASTbnf_production jjtn000 = new ASTbnf_production(JJTBNF_PRODUCTION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) bnf_production */
+ try {
+/*@egen*/
+ try {
+  ResultType() (identifier()) FormalParameters()
+  [ "throws" Name() ( "," Name() )* ]
+  [ node_descriptor() ]
+  ":"
+  "{"((BlockStatement() )* ) "}"
+  "{"(expansion_choices())"}"
+ } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+ }/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtreeCloseNodeScope(jjtn000);
+   }
+ }
 /*@egen*/
 }
 
@@ -540,32 +611,36 @@ void regular_expr_production()                          :{/*@bgen(jjtree) regula
   jjtreeOpenNodeScope(jjtn000);
 /*@egen*/}
 {/*@bgen(jjtree) regular_expr_production */
-  try {
+ try {
 /*@egen*/
+ try {
   ([ LOOKAHEAD(2) "<" "*" ">"
    | "<" <IDENTIFIER> ( "," <IDENTIFIER> )* ">" ])
   regexpr_kind() [ "[" "IGNORE_CASE" "]" ] ":"
-  "{" regexpr_spec() ( "|" regexpr_spec() )* "}"/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtreeCloseNodeScope(jjtn000);
-    }
-  }
+  "{" regexpr_spec() ( "|" regexpr_spec() )* "}"
+ } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+ }/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtreeCloseNodeScope(jjtn000);
+   }
+ }
 /*@egen*/
 }
 
@@ -666,12 +741,16 @@ void expansion_unit():{}
 
 void regular_expression():{}
 {
+try {
   StringLiteral() 
 | LOOKAHEAD(3)
   ( "<" [ [ "#" ] identifier() ":" ] complex_regular_expression_choices() ">" )
 | LOOKAHEAD(2)
   ( "<" identifier() ">" )
 | ( "<" "EOF" ">" )
+ } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+ }
 }
 
 void complex_regular_expression_choices():{}
@@ -2157,3 +2236,4 @@ TOKEN :
   ]
   >
 }
+<*> TOKEN : { < ILLEGAL : ~[] > } 

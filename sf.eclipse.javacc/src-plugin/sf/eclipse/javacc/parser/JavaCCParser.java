@@ -3,7 +3,7 @@ package sf.eclipse.javacc.parser;
 
 import java.io.Reader;
 
-public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, JavaCCParserConstants {/*@bgen(jjtree)*/
+public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, JavaCCParserConstants {/*@bgen(jjtree)*/
   protected static JJTJavaCCParserState jjtree = new JJTJavaCCParserState();protected static JavaCCParser parser = null;
 
   public static JJNode parse(Reader in){
@@ -39,6 +39,8 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
    * "org.javacc.parser.ParseException: Encountered "," at line 61, column 17."
    */
   public static int parseLine(String res){
+    if (res == null)
+      return 1;
     int l1=-1, l2=-1;
     l1 = res.indexOf("Line");
     l2 = res.indexOf("line");
@@ -69,6 +71,21 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return true;
   }
 
+  static void error_skipto(ParseException e, int kind, boolean isNext) throws ParseException, ParseException {
+  Token t;
+  System.out.println(e.getMessage());
+  String im = JavaCCParserTokenManager.jjstrLiteralImages[kind];
+  System.out.println("Skipping to "+im);
+  int nbBrace = 0;
+  do {
+    t = getNextToken();
+    System.out.print(t.image);
+  } while (t.kind != kind && t.kind != EOF);
+  if (isNext) // if the token is from the next rule, that is should be pushed back
+    SimpleCharStream.backup(1);
+  System.out.println();
+  }
+
 /************************************************
  * THE JAVACC GRAMMAR SPECIFICATION STARTS HERE *
  ************************************************/
@@ -81,21 +98,22 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   jjtreeOpenNodeScope(jjtn000);
     try {
       javacc_options();
+      try {
     ASTparser_begin jjtn001 = new ASTparser_begin(JJTPARSER_BEGIN);
     boolean jjtc001 = true;
     jjtree.openNodeScope(jjtn001);
     jjtreeOpenNodeScope(jjtn001);
-      try {
-        jj_consume_token(_PARSER_BEGIN);
-        jj_consume_token(LPAREN);
-        identifier();
-        jj_consume_token(RPAREN);
-        CompilationUnit();
-        jj_consume_token(_PARSER_END);
-        jj_consume_token(LPAREN);
-        identifier();
-        jj_consume_token(RPAREN);
-      } catch (Throwable jjte001) {
+        try {
+          jj_consume_token(_PARSER_BEGIN);
+          jj_consume_token(LPAREN);
+          identifier();
+          jj_consume_token(RPAREN);
+          CompilationUnit();
+          jj_consume_token(_PARSER_END);
+          jj_consume_token(LPAREN);
+          identifier();
+          jj_consume_token(RPAREN);
+        } catch (Throwable jjte001) {
     if (jjtc001) {
       jjtree.clearNodeScope(jjtn001);
       jjtc001 = false;
@@ -109,11 +127,14 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
       {if (true) throw (ParseException)jjte001;}
     }
     {if (true) throw (Error)jjte001;}
-      } finally {
+        } finally {
     if (jjtc001) {
       jjtree.closeNodeScope(jjtn001,  true);
       jjtreeCloseNodeScope(jjtn001);
     }
+        }
+      } catch (ParseException e) {
+    error_skipto(e, RBRACE, false);
       }
       label_1:
       while (true) {
@@ -230,28 +251,32 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case _OPTIONS:
-        jj_consume_token(_OPTIONS);
-        jj_consume_token(LBRACE);
-        label_3:
-        while (true) {
-          option_binding();
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case _LOOKAHEAD:
-          case _IGNORE_CASE:
-          case STATIC:
-          case IDENTIFIER:
-            ;
-            break;
-          default:
-            break label_3;
+      try {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case _OPTIONS:
+          jj_consume_token(_OPTIONS);
+          jj_consume_token(LBRACE);
+          label_3:
+          while (true) {
+            option_binding();
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case _LOOKAHEAD:
+            case _IGNORE_CASE:
+            case STATIC:
+            case IDENTIFIER:
+              ;
+              break;
+            default:
+              break label_3;
+            }
           }
+          jj_consume_token(RBRACE);
+          break;
+        default:
+          ;
         }
-        jj_consume_token(RBRACE);
-        break;
-      default:
-        ;
+      } catch (ParseException e) {
+    error_skipto(e, RBRACE, false);
       }
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -282,40 +307,44 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case IDENTIFIER:
-        jj_consume_token(IDENTIFIER);
-        break;
-      case _LOOKAHEAD:
-        jj_consume_token(_LOOKAHEAD);
-        break;
-      case _IGNORE_CASE:
-        jj_consume_token(_IGNORE_CASE);
-        break;
-      case STATIC:
-        jj_consume_token(STATIC);
-        break;
-      default:
-        jj_consume_token(-1);
-        throw new ParseException();
+      try {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case IDENTIFIER:
+          jj_consume_token(IDENTIFIER);
+          break;
+        case _LOOKAHEAD:
+          jj_consume_token(_LOOKAHEAD);
+          break;
+        case _IGNORE_CASE:
+          jj_consume_token(_IGNORE_CASE);
+          break;
+        case STATIC:
+          jj_consume_token(STATIC);
+          break;
+        default:
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        jj_consume_token(ASSIGN);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case INTEGER_LITERAL:
+          IntegerLiteral();
+          break;
+        case FALSE:
+        case TRUE:
+          BooleanLiteral();
+          break;
+        case STRING_LITERAL:
+          StringLiteral();
+          break;
+        default:
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        jj_consume_token(SEMICOLON);
+      } catch (ParseException e) {
+    error_skipto(e, SEMICOLON, false);
       }
-      jj_consume_token(ASSIGN);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case INTEGER_LITERAL:
-        IntegerLiteral();
-        break;
-      case FALSE:
-      case TRUE:
-        BooleanLiteral();
-        break;
-      case STRING_LITERAL:
-        StringLiteral();
-        break;
-      default:
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-      jj_consume_token(SEMICOLON);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -378,208 +407,111 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   }
 
   static final public void javacode_production() throws ParseException {
-    jj_consume_token(_JAVACODE);
-    ResultType();
-    identifier();
-    FormalParameters();
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case THROWS:
-      jj_consume_token(THROWS);
-      Name();
-      label_4:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case COMMA:
-          ;
-          break;
-        default:
-          break label_4;
-        }
-        jj_consume_token(COMMA);
-        Name();
-      }
-      break;
-    default:
-      ;
-    }
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 123:
-      node_descriptor();
-      break;
-    default:
-      ;
-    }
-    jj_consume_token(LBRACE);
-    label_5:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case _OPTIONS:
-      case _LOOKAHEAD:
-      case _IGNORE_CASE:
-      case _PARSER_BEGIN:
-      case _PARSER_END:
-      case _JAVACODE:
-      case _TOKEN:
-      case _SPECIAL_TOKEN:
-      case _MORE:
-      case _SKIP:
-      case _TOKEN_MGR_DECLS:
-      case _EOF:
-      case BOOLEAN:
-      case BREAK:
-      case BYTE:
-      case CHAR:
-      case CLASS:
-      case CONTINUE:
-      case DO:
-      case DOUBLE:
-      case FALSE:
-      case FINAL:
-      case FLOAT:
-      case FOR:
-      case IF:
-      case INT:
-      case INTERFACE:
-      case LONG:
-      case NEW:
-      case NULL:
-      case RETURN:
-      case SHORT:
-      case SUPER:
-      case SWITCH:
-      case SYNCHRONIZED:
-      case THIS:
-      case THROW:
-      case TRUE:
-      case TRY:
-      case VOID:
-      case WHILE:
-      case INTEGER_LITERAL:
-      case FLOATING_POINT_LITERAL:
-      case CHARACTER_LITERAL:
-      case STRING_LITERAL:
-      case LPAREN:
-      case LBRACE:
-      case SEMICOLON:
-      case INCR:
-      case DECR:
-      case 130:
-      case IDENTIFIER:
-        ;
-        break;
-      default:
-        break label_5;
-      }
-      BlockStatement();
-    }
-    jj_consume_token(RBRACE);
-  }
-
-  static final public void bnf_production() throws ParseException {
-                                        /*@bgen(jjtree) bnf_production */
-  ASTbnf_production jjtn000 = new ASTbnf_production(JJTBNF_PRODUCTION);
+                                                  /*@bgen(jjtree) javacode_production */
+  ASTjavacode_production jjtn000 = new ASTjavacode_production(JJTJAVACODE_PRODUCTION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      ResultType();
-      identifier();
-      FormalParameters();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case THROWS:
-        jj_consume_token(THROWS);
-        Name();
-        label_6:
+      jj_consume_token(_JAVACODE);
+      try {
+        ResultType();
+        identifier();
+        FormalParameters();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case THROWS:
+          jj_consume_token(THROWS);
+          Name();
+          label_4:
+          while (true) {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case COMMA:
+              ;
+              break;
+            default:
+              break label_4;
+            }
+            jj_consume_token(COMMA);
+            Name();
+          }
+          break;
+        default:
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case SHARP:
+          node_descriptor();
+          break;
+        default:
+          ;
+        }
+        jj_consume_token(LBRACE);
+        label_5:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case COMMA:
+          case _OPTIONS:
+          case _LOOKAHEAD:
+          case _IGNORE_CASE:
+          case _PARSER_BEGIN:
+          case _PARSER_END:
+          case _JAVACODE:
+          case _TOKEN:
+          case _SPECIAL_TOKEN:
+          case _MORE:
+          case _SKIP:
+          case _TOKEN_MGR_DECLS:
+          case _EOF:
+          case BOOLEAN:
+          case BREAK:
+          case BYTE:
+          case CHAR:
+          case CLASS:
+          case CONTINUE:
+          case DO:
+          case DOUBLE:
+          case FALSE:
+          case FINAL:
+          case FLOAT:
+          case FOR:
+          case IF:
+          case INT:
+          case INTERFACE:
+          case LONG:
+          case NEW:
+          case NULL:
+          case RETURN:
+          case SHORT:
+          case SUPER:
+          case SWITCH:
+          case SYNCHRONIZED:
+          case THIS:
+          case THROW:
+          case TRUE:
+          case TRY:
+          case VOID:
+          case WHILE:
+          case INTEGER_LITERAL:
+          case FLOATING_POINT_LITERAL:
+          case CHARACTER_LITERAL:
+          case STRING_LITERAL:
+          case LPAREN:
+          case LBRACE:
+          case SEMICOLON:
+          case INCR:
+          case DECR:
+          case 130:
+          case IDENTIFIER:
             ;
             break;
           default:
-            break label_6;
+            break label_5;
           }
-          jj_consume_token(COMMA);
-          Name();
+          BlockStatement();
         }
-        break;
-      default:
-        ;
+        jj_consume_token(RBRACE);
+      } catch (ParseException e) {
+  error_skipto(e, RBRACE, false);
       }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 123:
-        node_descriptor();
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(COLON);
-      jj_consume_token(LBRACE);
-      label_7:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case _OPTIONS:
-        case _LOOKAHEAD:
-        case _IGNORE_CASE:
-        case _PARSER_BEGIN:
-        case _PARSER_END:
-        case _JAVACODE:
-        case _TOKEN:
-        case _SPECIAL_TOKEN:
-        case _MORE:
-        case _SKIP:
-        case _TOKEN_MGR_DECLS:
-        case _EOF:
-        case BOOLEAN:
-        case BREAK:
-        case BYTE:
-        case CHAR:
-        case CLASS:
-        case CONTINUE:
-        case DO:
-        case DOUBLE:
-        case FALSE:
-        case FINAL:
-        case FLOAT:
-        case FOR:
-        case IF:
-        case INT:
-        case INTERFACE:
-        case LONG:
-        case NEW:
-        case NULL:
-        case RETURN:
-        case SHORT:
-        case SUPER:
-        case SWITCH:
-        case SYNCHRONIZED:
-        case THIS:
-        case THROW:
-        case TRUE:
-        case TRY:
-        case VOID:
-        case WHILE:
-        case INTEGER_LITERAL:
-        case FLOATING_POINT_LITERAL:
-        case CHARACTER_LITERAL:
-        case STRING_LITERAL:
-        case LPAREN:
-        case LBRACE:
-        case SEMICOLON:
-        case INCR:
-        case DECR:
-        case 130:
-        case IDENTIFIER:
-          ;
-          break;
-        default:
-          break label_7;
-        }
-        BlockStatement();
-      }
-      jj_consume_token(RBRACE);
-      jj_consume_token(LBRACE);
-      expansion_choices();
-      jj_consume_token(RBRACE);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -599,6 +531,137 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
       jjtree.closeNodeScope(jjtn000, true);
       jjtreeCloseNodeScope(jjtn000);
     }
+    }
+  }
+
+  static final public void bnf_production() throws ParseException {
+                                        /*@bgen(jjtree) bnf_production */
+  ASTbnf_production jjtn000 = new ASTbnf_production(JJTBNF_PRODUCTION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      try {
+        ResultType();
+        identifier();
+        FormalParameters();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case THROWS:
+          jj_consume_token(THROWS);
+          Name();
+          label_6:
+          while (true) {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case COMMA:
+              ;
+              break;
+            default:
+              break label_6;
+            }
+            jj_consume_token(COMMA);
+            Name();
+          }
+          break;
+        default:
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case SHARP:
+          node_descriptor();
+          break;
+        default:
+          ;
+        }
+        jj_consume_token(COLON);
+        jj_consume_token(LBRACE);
+        label_7:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case _OPTIONS:
+          case _LOOKAHEAD:
+          case _IGNORE_CASE:
+          case _PARSER_BEGIN:
+          case _PARSER_END:
+          case _JAVACODE:
+          case _TOKEN:
+          case _SPECIAL_TOKEN:
+          case _MORE:
+          case _SKIP:
+          case _TOKEN_MGR_DECLS:
+          case _EOF:
+          case BOOLEAN:
+          case BREAK:
+          case BYTE:
+          case CHAR:
+          case CLASS:
+          case CONTINUE:
+          case DO:
+          case DOUBLE:
+          case FALSE:
+          case FINAL:
+          case FLOAT:
+          case FOR:
+          case IF:
+          case INT:
+          case INTERFACE:
+          case LONG:
+          case NEW:
+          case NULL:
+          case RETURN:
+          case SHORT:
+          case SUPER:
+          case SWITCH:
+          case SYNCHRONIZED:
+          case THIS:
+          case THROW:
+          case TRUE:
+          case TRY:
+          case VOID:
+          case WHILE:
+          case INTEGER_LITERAL:
+          case FLOATING_POINT_LITERAL:
+          case CHARACTER_LITERAL:
+          case STRING_LITERAL:
+          case LPAREN:
+          case LBRACE:
+          case SEMICOLON:
+          case INCR:
+          case DECR:
+          case 130:
+          case IDENTIFIER:
+            ;
+            break;
+          default:
+            break label_7;
+          }
+          BlockStatement();
+        }
+        jj_consume_token(RBRACE);
+        jj_consume_token(LBRACE);
+        expansion_choices();
+        jj_consume_token(RBRACE);
+      } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+      }
+    } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     {if (true) throw (RuntimeException)jjte000;}
+   }
+   if (jjte000 instanceof ParseException) {
+     {if (true) throw (ParseException)jjte000;}
+   }
+   {if (true) throw (Error)jjte000;}
+    } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtreeCloseNodeScope(jjtn000);
+   }
     }
   }
 
@@ -609,85 +672,89 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case LT:
-        if (jj_2_1(2)) {
-          jj_consume_token(LT);
-          jj_consume_token(STAR);
-          jj_consume_token(GT);
-        } else {
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case LT:
-            jj_consume_token(LT);
-            jj_consume_token(IDENTIFIER);
-            label_8:
-            while (true) {
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case COMMA:
-                ;
-                break;
-              default:
-                break label_8;
-              }
-              jj_consume_token(COMMA);
-              jj_consume_token(IDENTIFIER);
-            }
-            jj_consume_token(GT);
-            break;
-          default:
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-        }
-        break;
-      default:
-        ;
-      }
-      regexpr_kind();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case LBRACKET:
-        jj_consume_token(LBRACKET);
-        jj_consume_token(_IGNORE_CASE);
-        jj_consume_token(RBRACKET);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(COLON);
-      jj_consume_token(LBRACE);
-      regexpr_spec();
-      label_9:
-      while (true) {
+      try {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case BIT_OR:
-          ;
+        case LT:
+          if (jj_2_1(2)) {
+            jj_consume_token(LT);
+            jj_consume_token(STAR);
+            jj_consume_token(GT);
+          } else {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case LT:
+              jj_consume_token(LT);
+              jj_consume_token(IDENTIFIER);
+              label_8:
+              while (true) {
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case COMMA:
+                  ;
+                  break;
+                default:
+                  break label_8;
+                }
+                jj_consume_token(COMMA);
+                jj_consume_token(IDENTIFIER);
+              }
+              jj_consume_token(GT);
+              break;
+            default:
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
+          }
           break;
         default:
-          break label_9;
+          ;
         }
-        jj_consume_token(BIT_OR);
+        regexpr_kind();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case LBRACKET:
+          jj_consume_token(LBRACKET);
+          jj_consume_token(_IGNORE_CASE);
+          jj_consume_token(RBRACKET);
+          break;
+        default:
+          ;
+        }
+        jj_consume_token(COLON);
+        jj_consume_token(LBRACE);
         regexpr_spec();
+        label_9:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case BIT_OR:
+            ;
+            break;
+          default:
+            break label_9;
+          }
+          jj_consume_token(BIT_OR);
+          regexpr_spec();
+        }
+        jj_consume_token(RBRACE);
+      } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
       }
-      jj_consume_token(RBRACE);
     } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      {if (true) throw (RuntimeException)jjte000;}
-    }
-    if (jjte000 instanceof ParseException) {
-      {if (true) throw (ParseException)jjte000;}
-    }
-    {if (true) throw (Error)jjte000;}
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     {if (true) throw (RuntimeException)jjte000;}
+   }
+   if (jjte000 instanceof ParseException) {
+     {if (true) throw (ParseException)jjte000;}
+   }
+   {if (true) throw (Error)jjte000;}
     } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtreeCloseNodeScope(jjtn000);
-    }
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtreeCloseNodeScope(jjtn000);
+   }
     }
   }
 
@@ -793,7 +860,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     while (true) {
       expansion_unit();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 123:
+      case SHARP:
         node_descriptor();
         break;
       default:
@@ -948,47 +1015,51 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
   }
 
   static final public void regular_expression() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case STRING_LITERAL:
-      StringLiteral();
-      break;
-    default:
-      if (jj_2_4(3)) {
-        jj_consume_token(LT);
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 123:
-        case IDENTIFIER:
+    try {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case STRING_LITERAL:
+        StringLiteral();
+        break;
+      default:
+        if (jj_2_4(3)) {
+          jj_consume_token(LT);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 123:
-            jj_consume_token(123);
+          case SHARP:
+          case IDENTIFIER:
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case SHARP:
+              jj_consume_token(SHARP);
+              break;
+            default:
+              ;
+            }
+            identifier();
+            jj_consume_token(COLON);
             break;
           default:
             ;
           }
-          identifier();
-          jj_consume_token(COLON);
-          break;
-        default:
-          ;
-        }
-        complex_regular_expression_choices();
-        jj_consume_token(GT);
-      } else if (jj_2_5(2)) {
-        jj_consume_token(LT);
-        identifier();
-        jj_consume_token(GT);
-      } else {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case LT:
-          jj_consume_token(LT);
-          jj_consume_token(_EOF);
+          complex_regular_expression_choices();
           jj_consume_token(GT);
-          break;
-        default:
-          jj_consume_token(-1);
-          throw new ParseException();
+        } else if (jj_2_5(2)) {
+          jj_consume_token(LT);
+          identifier();
+          jj_consume_token(GT);
+        } else {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case LT:
+            jj_consume_token(LT);
+            jj_consume_token(_EOF);
+            jj_consume_token(GT);
+            break;
+          default:
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
         }
       }
+    } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
     }
   }
 
@@ -1134,7 +1205,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
  * THE JJTREE PRODUCTIONS START HERE          *
  **********************************************/
   static final public void node_descriptor() throws ParseException {
-    jj_consume_token(123);
+    jj_consume_token(SHARP);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
       identifier();
@@ -4673,502 +4744,299 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     MemberValue();
   }
 
-  static final private boolean jj_2_1(int xla) {
+  static private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_2(int xla) {
+  static private boolean jj_2_2(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_2(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_3(int xla) {
+  static private boolean jj_2_3(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_4(int xla) {
+  static private boolean jj_2_4(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_4(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_5(int xla) {
+  static private boolean jj_2_5(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_5(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_6(int xla) {
+  static private boolean jj_2_6(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_6(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_7(int xla) {
+  static private boolean jj_2_7(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_7(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_8(int xla) {
+  static private boolean jj_2_8(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_8(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_9(int xla) {
+  static private boolean jj_2_9(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_9(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_10(int xla) {
+  static private boolean jj_2_10(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_10(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_11(int xla) {
+  static private boolean jj_2_11(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_11(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_12(int xla) {
+  static private boolean jj_2_12(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_12(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_13(int xla) {
+  static private boolean jj_2_13(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_13(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_14(int xla) {
+  static private boolean jj_2_14(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_14(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_15(int xla) {
+  static private boolean jj_2_15(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_15(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_16(int xla) {
+  static private boolean jj_2_16(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_16(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_17(int xla) {
+  static private boolean jj_2_17(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_17(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_18(int xla) {
+  static private boolean jj_2_18(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_18(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_19(int xla) {
+  static private boolean jj_2_19(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_19(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_20(int xla) {
+  static private boolean jj_2_20(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_20(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_21(int xla) {
+  static private boolean jj_2_21(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_21(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_22(int xla) {
+  static private boolean jj_2_22(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_22(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_23(int xla) {
+  static private boolean jj_2_23(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_23(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_24(int xla) {
+  static private boolean jj_2_24(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_24(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_25(int xla) {
+  static private boolean jj_2_25(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_25(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_26(int xla) {
+  static private boolean jj_2_26(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_26(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_27(int xla) {
+  static private boolean jj_2_27(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_27(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_28(int xla) {
+  static private boolean jj_2_28(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_28(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_29(int xla) {
+  static private boolean jj_2_29(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_29(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_30(int xla) {
+  static private boolean jj_2_30(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_30(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_31(int xla) {
+  static private boolean jj_2_31(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_31(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_32(int xla) {
+  static private boolean jj_2_32(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_32(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_33(int xla) {
+  static private boolean jj_2_33(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_33(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_34(int xla) {
+  static private boolean jj_2_34(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_34(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_35(int xla) {
+  static private boolean jj_2_35(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_35(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_36(int xla) {
+  static private boolean jj_2_36(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_36(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_37(int xla) {
+  static private boolean jj_2_37(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_37(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_38(int xla) {
+  static private boolean jj_2_38(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_38(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_39(int xla) {
+  static private boolean jj_2_39(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_39(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_40(int xla) {
+  static private boolean jj_2_40(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_40(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_41(int xla) {
+  static private boolean jj_2_41(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_41(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_42(int xla) {
+  static private boolean jj_2_42(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_42(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_2_43(int xla) {
+  static private boolean jj_2_43(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_43(); }
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  static final private boolean jj_3R_104() {
-    if (jj_3R_135()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_16()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_103() {
-    if (jj_3R_82()) return true;
-    Token xsp;
-    if (jj_3_15()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_15()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_75() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_103()) {
-    jj_scanpos = xsp;
-    if (jj_3R_104()) return true;
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_96() {
-    if (jj_3R_82()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3_14() {
-    if (jj_3R_75()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_69() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_14()) {
-    jj_scanpos = xsp;
-    if (jj_3R_96()) return true;
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_280() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3_13() {
-    if (jj_scan_token(THIS)) return true;
-    if (jj_3R_74()) return true;
-    if (jj_scan_token(SEMICOLON)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3_11() {
-    if (jj_3R_73()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_71() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(62)) jj_scanpos = xsp;
+  static private boolean jj_3R_270() {
     if (jj_3R_97()) return true;
     return false;
   }
 
-  static final private boolean jj_3_12() {
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(DOT)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_101() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_12()) jj_scanpos = xsp;
-    if (jj_scan_token(SUPER)) return true;
-    if (jj_3R_74()) return true;
-    if (jj_scan_token(SEMICOLON)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_288() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_287()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_100() {
-    if (jj_scan_token(THIS)) return true;
-    if (jj_3R_74()) return true;
-    if (jj_scan_token(SEMICOLON)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_73() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_100()) {
-    jj_scanpos = xsp;
-    if (jj_3R_101()) return true;
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_264() {
-    if (jj_3R_149()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_263() {
-    if (jj_3R_73()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_260() {
-    if (jj_3R_95()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3_10() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_72()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_251() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_260()) jj_scanpos = xsp;
-    if (jj_3R_68()) return true;
-    if (jj_3R_261()) return true;
-    xsp = jj_scanpos;
-    if (jj_3R_262()) jj_scanpos = xsp;
-    if (jj_scan_token(LBRACE)) return true;
-    xsp = jj_scanpos;
-    if (jj_3R_263()) jj_scanpos = xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_264()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_scan_token(RBRACE)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_269() {
-    if (jj_scan_token(THROWS)) return true;
-    if (jj_3R_277()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_287() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(41)) jj_scanpos = xsp;
-    if (jj_3R_69()) return true;
-    xsp = jj_scanpos;
-    if (jj_scan_token(126)) jj_scanpos = xsp;
-    if (jj_3R_278()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_276() {
-    if (jj_3R_287()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_288()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_261() {
-    if (jj_scan_token(LPAREN)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_276()) jj_scanpos = xsp;
-    if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_268() {
-    if (jj_3R_68()) return true;
-    if (jj_3R_261()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_280()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static final private boolean jj_3R_270() {
-    if (jj_3R_97()) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_279() {
+  static private boolean jj_3R_279() {
     if (jj_scan_token(ASSIGN)) return true;
     if (jj_3R_72()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_70() {
+  static private boolean jj_3R_70() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_266() {
+  static private boolean jj_3R_266() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_265()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_290() {
+  static private boolean jj_3R_290() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_267() {
+  static private boolean jj_3R_267() {
     if (jj_3R_95()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_226() {
+  static private boolean jj_3R_226() {
     if (jj_3R_72()) return true;
     Token xsp;
     while (true) {
@@ -5178,7 +5046,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_253() {
+  static private boolean jj_3R_253() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_267()) jj_scanpos = xsp;
@@ -5194,7 +5062,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_133() {
+  static private boolean jj_3R_133() {
     if (jj_scan_token(LBRACE)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -5205,17 +5073,17 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_99() {
+  static private boolean jj_3R_99() {
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_98() {
+  static private boolean jj_3R_98() {
     if (jj_3R_133()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_72() {
+  static private boolean jj_3R_72() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_98()) {
@@ -5225,7 +5093,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_278() {
+  static private boolean jj_3R_278() {
     if (jj_3R_68()) return true;
     Token xsp;
     while (true) {
@@ -5235,13 +5103,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_175() {
+  static private boolean jj_3R_175() {
     if (jj_scan_token(BIT_AND)) return true;
     if (jj_3R_135()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_265() {
+  static private boolean jj_3R_265() {
     if (jj_3R_278()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -5249,7 +5117,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_8() {
+  static private boolean jj_3_8() {
     if (jj_3R_69()) return true;
     if (jj_3R_68()) return true;
     Token xsp;
@@ -5268,12 +5136,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_67() {
+  static private boolean jj_3R_67() {
     if (jj_3R_95()) return true;
     return false;
   }
 
-  static final private boolean jj_3_7() {
+  static private boolean jj_3_7() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_67()) jj_scanpos = xsp;
@@ -5282,7 +5150,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_252() {
+  static private boolean jj_3R_252() {
     if (jj_3R_69()) return true;
     if (jj_3R_265()) return true;
     Token xsp;
@@ -5294,48 +5162,48 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_248() {
+  static private boolean jj_3R_248() {
     if (jj_3R_253()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_285() {
+  static private boolean jj_3R_285() {
     if (jj_3R_207()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_247() {
+  static private boolean jj_3R_247() {
     if (jj_3R_252()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_246() {
+  static private boolean jj_3R_246() {
     if (jj_3R_251()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_245() {
+  static private boolean jj_3R_245() {
     if (jj_3R_250()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_148() {
+  static private boolean jj_3R_148() {
     if (jj_3R_160()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_244() {
+  static private boolean jj_3R_244() {
     if (jj_3R_178()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_131() {
+  static private boolean jj_3R_131() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_130()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_238() {
+  static private boolean jj_3R_238() {
     if (jj_3R_243()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -5355,17 +5223,17 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_227() {
+  static private boolean jj_3R_227() {
     if (jj_3R_234()) return true;
     return false;
   }
 
-  static final private boolean jj_3_9() {
+  static private boolean jj_3_9() {
     if (jj_3R_71()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_234() {
+  static private boolean jj_3R_234() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_9()) {
@@ -5378,7 +5246,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_207() {
+  static private boolean jj_3R_207() {
     if (jj_scan_token(LBRACE)) return true;
     Token xsp;
     while (true) {
@@ -5389,12 +5257,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_284() {
+  static private boolean jj_3R_284() {
     if (jj_3R_74()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_160() {
+  static private boolean jj_3R_160() {
     if (jj_scan_token(EXTENDS)) return true;
     if (jj_3R_135()) return true;
     Token xsp;
@@ -5405,13 +5273,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_274() {
+  static private boolean jj_3R_274() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_273()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_130() {
+  static private boolean jj_3R_130() {
     if (jj_3R_68()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -5419,7 +5287,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_95() {
+  static private boolean jj_3R_95() {
     if (jj_scan_token(LT)) return true;
     if (jj_3R_130()) return true;
     Token xsp;
@@ -5431,12 +5299,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_286() {
+  static private boolean jj_3R_286() {
     if (jj_3R_234()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_273() {
+  static private boolean jj_3R_273() {
     if (jj_3R_68()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -5446,7 +5314,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_275() {
+  static private boolean jj_3R_275() {
     if (jj_scan_token(SEMICOLON)) return true;
     Token xsp;
     while (true) {
@@ -5456,7 +5324,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_259() {
+  static private boolean jj_3R_259() {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_3R_273()) return true;
     Token xsp;
@@ -5470,12 +5338,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_258() {
+  static private boolean jj_3R_258() {
     if (jj_3R_272()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_250() {
+  static private boolean jj_3R_250() {
     if (jj_scan_token(125)) return true;
     if (jj_3R_68()) return true;
     Token xsp;
@@ -5485,13 +5353,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_283() {
+  static private boolean jj_3R_283() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_135()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_272() {
+  static private boolean jj_3R_272() {
     if (jj_scan_token(IMPLEMENTS)) return true;
     if (jj_3R_135()) return true;
     Token xsp;
@@ -5502,13 +5370,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_282() {
+  static private boolean jj_3R_282() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_135()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_271() {
+  static private boolean jj_3R_271() {
     if (jj_scan_token(EXTENDS)) return true;
     if (jj_3R_135()) return true;
     Token xsp;
@@ -5519,22 +5387,22 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_257() {
+  static private boolean jj_3R_257() {
     if (jj_3R_272()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_256() {
+  static private boolean jj_3R_256() {
     if (jj_3R_271()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_255() {
+  static private boolean jj_3R_255() {
     if (jj_3R_95()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_178() {
+  static private boolean jj_3R_178() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(32)) {
@@ -5552,12 +5420,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_66() {
+  static private boolean jj_3R_66() {
     if (jj_3R_94()) return true;
     return false;
   }
 
-  static final private boolean jj_3_6() {
+  static private boolean jj_3_6() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(59)) {
@@ -5597,7 +5465,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_243() {
+  static private boolean jj_3R_243() {
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
@@ -5606,7 +5474,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_108() {
+  static private boolean jj_3R_108() {
     if (jj_scan_token(GT)) return true;
     if (jj_scan_token(GT)) return true;
     Token xsp;
@@ -5615,13 +5483,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_107() {
+  static private boolean jj_3R_107() {
     if (jj_scan_token(LT)) return true;
     if (jj_scan_token(LT)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_79() {
+  static private boolean jj_3R_79() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_107()) {
@@ -5631,7 +5499,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_68() {
+  static private boolean jj_3R_68() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(132)) {
@@ -5674,28 +5542,28 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_93() {
+  static private boolean jj_3R_93() {
     if (jj_scan_token(BIT_OR)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_187() {
+  static private boolean jj_3R_187() {
     if (jj_3R_208()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_63() {
+  static private boolean jj_3R_208() {
+    if (jj_scan_token(82)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_63() {
     if (jj_3R_62()) return true;
     if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_208() {
-    if (jj_scan_token(82)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_174() {
+  static private boolean jj_3R_174() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(96)) jj_scanpos = xsp;
@@ -5706,24 +5574,24 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_159() {
+  static private boolean jj_3R_159() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_65()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_158() {
+  static private boolean jj_3R_158() {
     if (jj_3R_174()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_157() {
+  static private boolean jj_3R_157() {
     if (jj_scan_token(LT)) return true;
     if (jj_scan_token(132)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_144() {
+  static private boolean jj_3R_144() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(82)) {
@@ -5739,12 +5607,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_126() {
+  static private boolean jj_3R_126() {
     if (jj_3R_144()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_92() {
+  static private boolean jj_3R_92() {
     Token xsp;
     if (jj_3R_126()) return true;
     while (true) {
@@ -5754,23 +5622,14 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_43() {
+  static private boolean jj_3_43() {
     if (jj_3R_69()) return true;
     if (jj_3R_68()) return true;
     if (jj_scan_token(LPAREN)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_64() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(123)) jj_scanpos = xsp;
-    if (jj_scan_token(132)) return true;
-    if (jj_scan_token(COLON)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_65() {
+  static private boolean jj_3R_65() {
     if (jj_3R_92()) return true;
     Token xsp;
     while (true) {
@@ -5780,25 +5639,34 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_42() {
+  static private boolean jj_3R_64() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(115)) jj_scanpos = xsp;
+    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(COLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_42() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_90()) return true;
     return false;
   }
 
-  static final private boolean jj_3_2() {
+  static private boolean jj_3_2() {
     if (jj_3R_62()) return true;
     if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
-  static final private boolean jj_3_5() {
+  static private boolean jj_3_5() {
     if (jj_scan_token(LT)) return true;
     if (jj_scan_token(132)) return true;
     return false;
   }
 
-  static final private boolean jj_3_4() {
+  static private boolean jj_3_4() {
     if (jj_scan_token(LT)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -5808,7 +5676,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_3() {
+  static private boolean jj_3_3() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(132)) {
@@ -5824,13 +5692,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_306() {
+  static private boolean jj_3R_306() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_305()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_142() {
+  static private boolean jj_3R_142() {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_3R_90()) return true;
     Token xsp;
@@ -5844,22 +5712,22 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_119() {
+  static private boolean jj_3R_119() {
     if (jj_3R_106()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_118() {
+  static private boolean jj_3R_118() {
     if (jj_3R_142()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_117() {
+  static private boolean jj_3R_117() {
     if (jj_3R_94()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_90() {
+  static private boolean jj_3R_90() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_117()) {
@@ -5872,25 +5740,25 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_305() {
+  static private boolean jj_3R_305() {
     if (jj_3R_68()) return true;
     if (jj_scan_token(ASSIGN)) return true;
     if (jj_3R_90()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_89() {
+  static private boolean jj_3R_89() {
     if (jj_3R_68()) return true;
     if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_293() {
+  static private boolean jj_3R_293() {
     if (jj_3R_294()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_294() {
+  static private boolean jj_3R_294() {
     if (jj_3R_305()) return true;
     Token xsp;
     while (true) {
@@ -5900,7 +5768,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_146() {
+  static private boolean jj_3R_146() {
     if (jj_scan_token(131)) return true;
     if (jj_3R_88()) return true;
     if (jj_scan_token(LPAREN)) return true;
@@ -5909,20 +5777,20 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_147() {
+  static private boolean jj_3R_147() {
     if (jj_scan_token(131)) return true;
     if (jj_3R_88()) return true;
     return false;
   }
 
-  static final private boolean jj_3_41() {
+  static private boolean jj_3_41() {
     if (jj_scan_token(131)) return true;
     if (jj_3R_88()) return true;
     if (jj_scan_token(LPAREN)) return true;
     return false;
   }
 
-  static final private boolean jj_3_40() {
+  static private boolean jj_3_40() {
     if (jj_scan_token(131)) return true;
     if (jj_3R_88()) return true;
     if (jj_scan_token(LPAREN)) return true;
@@ -5935,7 +5803,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_145() {
+  static private boolean jj_3R_145() {
     if (jj_scan_token(131)) return true;
     if (jj_3R_88()) return true;
     if (jj_scan_token(LPAREN)) return true;
@@ -5946,22 +5814,22 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_129() {
+  static private boolean jj_3R_129() {
     if (jj_3R_147()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_128() {
+  static private boolean jj_3R_128() {
     if (jj_3R_146()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_127() {
+  static private boolean jj_3R_127() {
     if (jj_3R_145()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_94() {
+  static private boolean jj_3R_94() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_127()) {
@@ -5974,13 +5842,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_304() {
+  static private boolean jj_3R_304() {
     if (jj_scan_token(FINALLY)) return true;
     if (jj_3R_97()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_303() {
+  static private boolean jj_3R_303() {
     if (jj_scan_token(CATCH)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_287()) return true;
@@ -5989,7 +5857,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_221() {
+  static private boolean jj_3R_221() {
     if (jj_scan_token(TRY)) return true;
     if (jj_3R_97()) return true;
     Token xsp;
@@ -6002,17 +5870,17 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_312() {
+  static private boolean jj_3R_312() {
     if (jj_3R_318()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_302() {
+  static private boolean jj_3R_302() {
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_220() {
+  static private boolean jj_3R_220() {
     if (jj_scan_token(SYNCHRONIZED)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_78()) return true;
@@ -6021,36 +5889,30 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_301() {
+  static private boolean jj_3R_301() {
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_219() {
+  static private boolean jj_3R_219() {
     if (jj_scan_token(THROW)) return true;
     if (jj_3R_78()) return true;
     if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_322() {
+  static private boolean jj_3R_322() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_210()) return true;
     return false;
   }
 
-  static final private boolean jj_3_1() {
-    if (jj_scan_token(LT)) return true;
-    if (jj_scan_token(STAR)) return true;
-    return false;
-  }
-
-  static final private boolean jj_3R_300() {
+  static private boolean jj_3R_300() {
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_218() {
+  static private boolean jj_3R_218() {
     if (jj_scan_token(RETURN)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6059,7 +5921,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_217() {
+  static private boolean jj_3_1() {
+    if (jj_scan_token(LT)) return true;
+    if (jj_scan_token(STAR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_217() {
     if (jj_scan_token(CONTINUE)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6068,12 +5936,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_311() {
+  static private boolean jj_3R_311() {
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_216() {
+  static private boolean jj_3R_216() {
     if (jj_scan_token(BREAK)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6082,18 +5950,18 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_297() {
+  static private boolean jj_3R_297() {
     if (jj_scan_token(ELSE)) return true;
     if (jj_3R_177()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_318() {
+  static private boolean jj_3R_318() {
     if (jj_3R_321()) return true;
     return false;
   }
 
-  static final private boolean jj_3_39() {
+  static private boolean jj_3_39() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(41)) jj_scanpos = xsp;
@@ -6102,7 +5970,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_321() {
+  static private boolean jj_3R_321() {
     if (jj_3R_210()) return true;
     Token xsp;
     while (true) {
@@ -6112,24 +5980,24 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_38() {
+  static private boolean jj_3_38() {
     if (jj_3R_69()) return true;
     if (jj_3R_68()) return true;
     if (jj_scan_token(COLON)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_320() {
+  static private boolean jj_3R_320() {
     if (jj_3R_321()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_319() {
+  static private boolean jj_3R_319() {
     if (jj_3R_176()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_317() {
+  static private boolean jj_3R_317() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_319()) {
@@ -6139,12 +6007,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_310() {
+  static private boolean jj_3R_310() {
     if (jj_3R_317()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_299() {
+  static private boolean jj_3R_299() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_310()) jj_scanpos = xsp;
@@ -6157,7 +6025,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_298() {
+  static private boolean jj_3R_298() {
     if (jj_3R_69()) return true;
     if (jj_3R_68()) return true;
     if (jj_scan_token(COLON)) return true;
@@ -6165,7 +6033,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_215() {
+  static private boolean jj_3R_215() {
     if (jj_scan_token(FOR)) return true;
     if (jj_scan_token(LPAREN)) return true;
     Token xsp;
@@ -6179,13 +6047,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_292() {
+  static private boolean jj_3R_292() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_265()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_214() {
+  static private boolean jj_3R_214() {
     if (jj_scan_token(DO)) return true;
     if (jj_3R_177()) return true;
     if (jj_scan_token(WHILE)) return true;
@@ -6196,12 +6064,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_309() {
+  static private boolean jj_3R_309() {
     if (jj_3R_149()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_213() {
+  static private boolean jj_3R_213() {
     if (jj_scan_token(WHILE)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_78()) return true;
@@ -6210,7 +6078,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_212() {
+  static private boolean jj_3R_212() {
     if (jj_scan_token(IF)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_78()) return true;
@@ -6222,26 +6090,26 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_314() {
+  static private boolean jj_3R_314() {
     if (jj_3R_77()) return true;
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_316() {
+  static private boolean jj_3R_316() {
     if (jj_scan_token(_DEFAULT)) return true;
     if (jj_scan_token(COLON)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_315() {
+  static private boolean jj_3R_315() {
     if (jj_scan_token(CASE)) return true;
     if (jj_3R_78()) return true;
     if (jj_scan_token(COLON)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_308() {
+  static private boolean jj_3R_308() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_315()) {
@@ -6251,7 +6119,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_296() {
+  static private boolean jj_3R_296() {
     if (jj_3R_308()) return true;
     Token xsp;
     while (true) {
@@ -6261,7 +6129,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_211() {
+  static private boolean jj_3R_211() {
     if (jj_scan_token(SWITCH)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_78()) return true;
@@ -6276,7 +6144,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_307() {
+  static private boolean jj_3R_307() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(105)) {
@@ -6289,7 +6157,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_231() {
+  static private boolean jj_3R_231() {
     if (jj_3R_62()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6297,12 +6165,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_230() {
+  static private boolean jj_3R_230() {
     if (jj_3R_166()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_210() {
+  static private boolean jj_3R_210() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_229()) {
@@ -6315,12 +6183,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_229() {
+  static private boolean jj_3R_229() {
     if (jj_3R_165()) return true;
     return false;
   }
 
-  static final private boolean jj_3_37() {
+  static private boolean jj_3_37() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(41)) jj_scanpos = xsp;
@@ -6329,13 +6197,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_295() {
+  static private boolean jj_3R_295() {
     if (jj_scan_token(COLON)) return true;
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_176() {
+  static private boolean jj_3R_176() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(41)) jj_scanpos = xsp;
@@ -6348,22 +6216,22 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_163() {
+  static private boolean jj_3R_163() {
     if (jj_3R_178()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_162() {
+  static private boolean jj_3R_162() {
     if (jj_3R_177()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_132() {
+  static private boolean jj_3R_132() {
     if (jj_3R_149()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_149() {
+  static private boolean jj_3R_149() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_161()) {
@@ -6376,19 +6244,19 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_161() {
+  static private boolean jj_3R_161() {
     if (jj_3R_176()) return true;
     if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
-  static final private boolean jj_3_34() {
+  static private boolean jj_3_34() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_97() {
+  static private boolean jj_3R_97() {
     if (jj_scan_token(LBRACE)) return true;
     Token xsp;
     while (true) {
@@ -6399,19 +6267,19 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_87() {
+  static private boolean jj_3R_87() {
     if (jj_3R_68()) return true;
     if (jj_scan_token(COLON)) return true;
     if (jj_3R_177()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_185() {
+  static private boolean jj_3R_185() {
     if (jj_3R_207()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_209() {
+  static private boolean jj_3R_209() {
     if (jj_scan_token(130)) return true;
     if (jj_3R_78()) return true;
     Token xsp;
@@ -6421,32 +6289,32 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_171() {
+  static private boolean jj_3R_171() {
     if (jj_3R_76()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_201() {
+  static private boolean jj_3R_201() {
     if (jj_3R_221()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_200() {
+  static private boolean jj_3R_200() {
     if (jj_3R_220()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_199() {
+  static private boolean jj_3R_199() {
     if (jj_3R_219()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_198() {
+  static private boolean jj_3R_198() {
     if (jj_3R_218()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_173() {
+  static private boolean jj_3R_173() {
     if (jj_3R_74()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6454,63 +6322,63 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_197() {
+  static private boolean jj_3R_197() {
     if (jj_3R_217()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_196() {
+  static private boolean jj_3R_196() {
     if (jj_3R_216()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_195() {
+  static private boolean jj_3R_195() {
     if (jj_3R_215()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_194() {
+  static private boolean jj_3R_194() {
     if (jj_3R_214()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_193() {
+  static private boolean jj_3R_193() {
     if (jj_3R_213()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_192() {
+  static private boolean jj_3R_192() {
     if (jj_3R_212()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_191() {
+  static private boolean jj_3R_191() {
     if (jj_3R_211()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_190() {
+  static private boolean jj_3R_190() {
     if (jj_3R_210()) return true;
     if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_189() {
+  static private boolean jj_3R_189() {
     if (jj_3R_97()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_188() {
+  static private boolean jj_3R_188() {
     if (jj_3R_209()) return true;
     return false;
   }
 
-  static final private boolean jj_3_36() {
+  static private boolean jj_3_36() {
     if (jj_3R_87()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_177() {
+  static private boolean jj_3R_177() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_36()) {
@@ -6562,26 +6430,26 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_206() {
+  static private boolean jj_3R_206() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3_33() {
+  static private boolean jj_3_33() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_3R_78()) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_150() {
+  static private boolean jj_3R_150() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_184() {
+  static private boolean jj_3R_184() {
     Token xsp;
     if (jj_3R_206()) return true;
     while (true) {
@@ -6592,7 +6460,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_35() {
+  static private boolean jj_3_35() {
     Token xsp;
     if (jj_3_33()) return true;
     while (true) {
@@ -6606,7 +6474,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_170() {
+  static private boolean jj_3R_170() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_35()) {
@@ -6616,12 +6484,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_172() {
+  static private boolean jj_3R_172() {
     if (jj_3R_170()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_116() {
+  static private boolean jj_3R_116() {
     if (jj_scan_token(NEW)) return true;
     if (jj_3R_135()) return true;
     Token xsp;
@@ -6635,14 +6503,14 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_32() {
+  static private boolean jj_3_32() {
     if (jj_scan_token(NEW)) return true;
     if (jj_3R_82()) return true;
     if (jj_3R_170()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_85() {
+  static private boolean jj_3R_85() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_32()) {
@@ -6652,7 +6520,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_134() {
+  static private boolean jj_3R_134() {
     if (jj_3R_78()) return true;
     Token xsp;
     while (true) {
@@ -6662,12 +6530,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_102() {
+  static private boolean jj_3R_102() {
     if (jj_3R_134()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_74() {
+  static private boolean jj_3R_74() {
     if (jj_scan_token(LPAREN)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6676,12 +6544,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_141() {
+  static private boolean jj_3R_141() {
     if (jj_3R_143()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_168() {
+  static private boolean jj_3R_168() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(70)) {
@@ -6691,12 +6559,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_156() {
+  static private boolean jj_3R_156() {
     if (jj_3R_168()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_143() {
+  static private boolean jj_3R_143() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(75)) {
@@ -6718,49 +6586,49 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_114() {
+  static private boolean jj_3R_114() {
     if (jj_3R_74()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_113() {
+  static private boolean jj_3R_113() {
     if (jj_scan_token(DOT)) return true;
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_112() {
+  static private boolean jj_3R_112() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_3R_78()) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3_31() {
+  static private boolean jj_3_31() {
     if (jj_3R_86()) return true;
     return false;
   }
 
-  static final private boolean jj_3_28() {
+  static private boolean jj_3_28() {
     if (jj_3R_84()) return true;
     if (jj_scan_token(DOT)) return true;
     if (jj_scan_token(CLASS)) return true;
     return false;
   }
 
-  static final private boolean jj_3_30() {
+  static private boolean jj_3_30() {
     if (jj_scan_token(DOT)) return true;
     if (jj_3R_85()) return true;
     return false;
   }
 
-  static final private boolean jj_3_29() {
+  static private boolean jj_3_29() {
     if (jj_scan_token(DOT)) return true;
     if (jj_scan_token(THIS)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_83() {
+  static private boolean jj_3R_83() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_29()) {
@@ -6782,48 +6650,48 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_140() {
+  static private boolean jj_3R_140() {
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3_27() {
+  static private boolean jj_3_27() {
     if (jj_3R_83()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_125() {
+  static private boolean jj_3R_125() {
     if (jj_3R_88()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_124() {
+  static private boolean jj_3R_124() {
     if (jj_3R_84()) return true;
     if (jj_scan_token(DOT)) return true;
     if (jj_scan_token(CLASS)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_123() {
+  static private boolean jj_3R_123() {
     if (jj_3R_85()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_122() {
+  static private boolean jj_3R_122() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_78()) return true;
     if (jj_scan_token(RPAREN)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_121() {
+  static private boolean jj_3R_121() {
     if (jj_scan_token(SUPER)) return true;
     if (jj_scan_token(DOT)) return true;
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_313() {
+  static private boolean jj_3R_313() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(105)) {
@@ -6833,12 +6701,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_120() {
+  static private boolean jj_3R_120() {
     if (jj_3R_143()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_91() {
+  static private boolean jj_3R_91() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_120()) {
@@ -6863,20 +6731,20 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_86() {
+  static private boolean jj_3R_86() {
     if (jj_scan_token(DOT)) return true;
     if (jj_3R_76()) return true;
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3_26() {
+  static private boolean jj_3_26() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_82()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_62() {
+  static private boolean jj_3R_62() {
     if (jj_3R_91()) return true;
     Token xsp;
     while (true) {
@@ -6886,7 +6754,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_224() {
+  static private boolean jj_3R_224() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_69()) return true;
     if (jj_scan_token(RPAREN)) return true;
@@ -6894,7 +6762,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_203() {
+  static private boolean jj_3R_203() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_223()) {
@@ -6904,7 +6772,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_223() {
+  static private boolean jj_3R_223() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_69()) return true;
     if (jj_scan_token(RPAREN)) return true;
@@ -6912,14 +6780,14 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_25() {
+  static private boolean jj_3_25() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_69()) return true;
     if (jj_scan_token(LBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_204() {
+  static private boolean jj_3R_204() {
     if (jj_3R_62()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -6927,7 +6795,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_111() {
+  static private boolean jj_3R_111() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_69()) return true;
     if (jj_scan_token(RPAREN)) return true;
@@ -6958,7 +6826,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_110() {
+  static private boolean jj_3R_110() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_69()) return true;
     if (jj_scan_token(LBRACKET)) return true;
@@ -6966,18 +6834,18 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_23() {
+  static private boolean jj_3_23() {
     if (jj_3R_81()) return true;
     return false;
   }
 
-  static final private boolean jj_3_24() {
+  static private boolean jj_3_24() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_82()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_81() {
+  static private boolean jj_3R_81() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_24()) {
@@ -6990,12 +6858,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_182() {
+  static private boolean jj_3R_182() {
     if (jj_3R_204()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_281() {
+  static private boolean jj_3R_281() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(107)) {
@@ -7006,12 +6874,12 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_181() {
+  static private boolean jj_3R_181() {
     if (jj_3R_203()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_167() {
+  static private boolean jj_3R_167() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_180()) {
@@ -7024,7 +6892,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_180() {
+  static private boolean jj_3R_180() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(96)) {
@@ -7035,7 +6903,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_291() {
+  static private boolean jj_3R_291() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(109)) {
@@ -7049,40 +6917,40 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_166() {
+  static private boolean jj_3R_166() {
     if (jj_scan_token(DECR)) return true;
     if (jj_3R_62()) return true;
     return false;
   }
 
-  static final private boolean jj_3_22() {
+  static private boolean jj_3_22() {
     if (jj_3R_79()) return true;
     if (jj_3R_80()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_165() {
+  static private boolean jj_3R_165() {
     if (jj_scan_token(INCR)) return true;
     if (jj_3R_62()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_155() {
+  static private boolean jj_3R_155() {
     if (jj_3R_167()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_154() {
+  static private boolean jj_3R_154() {
     if (jj_3R_166()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_153() {
+  static private boolean jj_3R_153() {
     if (jj_3R_165()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_152() {
+  static private boolean jj_3R_152() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(107)) {
@@ -7093,7 +6961,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_139() {
+  static private boolean jj_3R_139() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_152()) {
@@ -7109,13 +6977,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_249() {
+  static private boolean jj_3R_249() {
     if (jj_scan_token(INSTANCEOF)) return true;
     if (jj_3R_69()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_254() {
+  static private boolean jj_3R_254() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(94)) {
@@ -7132,7 +7000,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_109() {
+  static private boolean jj_3R_109() {
     if (jj_3R_139()) return true;
     Token xsp;
     while (true) {
@@ -7142,7 +7010,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_242() {
+  static private boolean jj_3R_242() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(99)) {
@@ -7153,7 +7021,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_80() {
+  static private boolean jj_3R_80() {
     if (jj_3R_109()) return true;
     Token xsp;
     while (true) {
@@ -7163,13 +7031,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_237() {
+  static private boolean jj_3R_237() {
     if (jj_scan_token(BIT_AND)) return true;
     if (jj_3R_222()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_241() {
+  static private boolean jj_3R_241() {
     if (jj_3R_80()) return true;
     Token xsp;
     while (true) {
@@ -7179,13 +7047,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_225() {
+  static private boolean jj_3R_225() {
     if (jj_scan_token(BIT_OR)) return true;
     if (jj_3R_179()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_236() {
+  static private boolean jj_3R_236() {
     if (jj_3R_241()) return true;
     Token xsp;
     while (true) {
@@ -7195,19 +7063,19 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_233() {
+  static private boolean jj_3R_233() {
     if (jj_scan_token(XOR)) return true;
     if (jj_3R_202()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_205() {
+  static private boolean jj_3R_205() {
     if (jj_scan_token(SC_AND)) return true;
     if (jj_3R_164()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_232() {
+  static private boolean jj_3R_232() {
     if (jj_3R_236()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -7215,13 +7083,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_183() {
+  static private boolean jj_3R_183() {
     if (jj_scan_token(SC_OR)) return true;
     if (jj_3R_151()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_222() {
+  static private boolean jj_3R_222() {
     if (jj_3R_232()) return true;
     Token xsp;
     while (true) {
@@ -7231,7 +7099,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_169() {
+  static private boolean jj_3R_169() {
     if (jj_scan_token(HOOK)) return true;
     if (jj_3R_78()) return true;
     if (jj_scan_token(COLON)) return true;
@@ -7239,7 +7107,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_202() {
+  static private boolean jj_3R_202() {
     if (jj_3R_222()) return true;
     Token xsp;
     while (true) {
@@ -7249,7 +7117,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_179() {
+  static private boolean jj_3R_179() {
     if (jj_3R_202()) return true;
     Token xsp;
     while (true) {
@@ -7259,7 +7127,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_164() {
+  static private boolean jj_3R_164() {
     if (jj_3R_179()) return true;
     Token xsp;
     while (true) {
@@ -7269,7 +7137,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_151() {
+  static private boolean jj_3R_151() {
     if (jj_3R_164()) return true;
     Token xsp;
     while (true) {
@@ -7279,7 +7147,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_138() {
+  static private boolean jj_3R_138() {
     if (jj_3R_151()) return true;
     Token xsp;
     while (true) {
@@ -7289,7 +7157,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_106() {
+  static private boolean jj_3R_106() {
     if (jj_3R_138()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -7297,20 +7165,20 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_77() {
+  static private boolean jj_3R_77() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(92)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(117)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(118)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(122)) {
+    if (jj_scan_token(119)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(115)) {
+    if (jj_scan_token(123)) {
     jj_scanpos = xsp;
     if (jj_scan_token(116)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(117)) {
     jj_scanpos = xsp;
     if (jj_scan_token(127)) {
     jj_scanpos = xsp;
@@ -7318,11 +7186,11 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jj_scanpos = xsp;
     if (jj_scan_token(129)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(119)) {
+    if (jj_scan_token(120)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(121)) {
+    if (jj_scan_token(122)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(120)) return true;
+    if (jj_scan_token(121)) return true;
     }
     }
     }
@@ -7337,19 +7205,19 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_289() {
+  static private boolean jj_3R_289() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_88()) return true;
     return false;
   }
 
-  static final private boolean jj_3_21() {
+  static private boolean jj_3_21() {
     if (jj_3R_77()) return true;
     if (jj_3R_78()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_78() {
+  static private boolean jj_3R_78() {
     if (jj_3R_106()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -7357,7 +7225,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_277() {
+  static private boolean jj_3R_277() {
     if (jj_3R_88()) return true;
     Token xsp;
     while (true) {
@@ -7367,23 +7235,23 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_115() {
+  static private boolean jj_3R_115() {
     if (jj_3R_69()) return true;
     return false;
   }
 
-  static final private boolean jj_3_19() {
+  static private boolean jj_3_19() {
     if (jj_3R_76()) return true;
     return false;
   }
 
-  static final private boolean jj_3_20() {
+  static private boolean jj_3_20() {
     if (jj_scan_token(DOT)) return true;
     if (jj_3R_68()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_88() {
+  static private boolean jj_3R_88() {
     if (jj_3R_68()) return true;
     Token xsp;
     while (true) {
@@ -7393,7 +7261,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_84() {
+  static private boolean jj_3R_84() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(72)) {
@@ -7403,19 +7271,19 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_186() {
+  static private boolean jj_3R_186() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_105()) return true;
     return false;
   }
 
-  static final private boolean jj_3_16() {
+  static private boolean jj_3_16() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_82() {
+  static private boolean jj_3R_82() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(26)) {
@@ -7443,23 +7311,23 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_17() {
+  static private boolean jj_3_17() {
     if (jj_3R_76()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_228() {
+  static private boolean jj_3R_228() {
     if (jj_3R_235()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_240() {
+  static private boolean jj_3R_240() {
     if (jj_scan_token(SUPER)) return true;
     if (jj_3R_75()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_235() {
+  static private boolean jj_3R_235() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_239()) {
@@ -7469,13 +7337,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_239() {
+  static private boolean jj_3R_239() {
     if (jj_scan_token(EXTENDS)) return true;
     if (jj_3R_75()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_137() {
+  static private boolean jj_3R_137() {
     if (jj_scan_token(HOOK)) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -7483,18 +7351,18 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_15() {
+  static private boolean jj_3_15() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_136() {
+  static private boolean jj_3R_136() {
     if (jj_3R_75()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_105() {
+  static private boolean jj_3R_105() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_136()) {
@@ -7504,7 +7372,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_76() {
+  static private boolean jj_3R_76() {
     if (jj_scan_token(LT)) return true;
     if (jj_3R_105()) return true;
     Token xsp;
@@ -7516,7 +7384,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3_18() {
+  static private boolean jj_3_18() {
     if (jj_scan_token(DOT)) return true;
     if (jj_3R_68()) return true;
     Token xsp;
@@ -7525,13 +7393,13 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
-  static final private boolean jj_3R_262() {
+  static private boolean jj_3R_262() {
     if (jj_scan_token(THROWS)) return true;
     if (jj_3R_277()) return true;
     return false;
   }
 
-  static final private boolean jj_3R_135() {
+  static private boolean jj_3R_135() {
     if (jj_3R_68()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -7543,19 +7411,226 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
+  static private boolean jj_3R_104() {
+    if (jj_3R_135()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_16()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_103() {
+    if (jj_3R_82()) return true;
+    Token xsp;
+    if (jj_3_15()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_15()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_75() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_103()) {
+    jj_scanpos = xsp;
+    if (jj_3R_104()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_96() {
+    if (jj_3R_82()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_14() {
+    if (jj_3R_75()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_69() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_14()) {
+    jj_scanpos = xsp;
+    if (jj_3R_96()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_280() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_13() {
+    if (jj_scan_token(THIS)) return true;
+    if (jj_3R_74()) return true;
+    if (jj_scan_token(SEMICOLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_11() {
+    if (jj_3R_73()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_71() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(62)) jj_scanpos = xsp;
+    if (jj_3R_97()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_12() {
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(DOT)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_101() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_12()) jj_scanpos = xsp;
+    if (jj_scan_token(SUPER)) return true;
+    if (jj_3R_74()) return true;
+    if (jj_scan_token(SEMICOLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_288() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_287()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_100() {
+    if (jj_scan_token(THIS)) return true;
+    if (jj_3R_74()) return true;
+    if (jj_scan_token(SEMICOLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_73() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_100()) {
+    jj_scanpos = xsp;
+    if (jj_3R_101()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_264() {
+    if (jj_3R_149()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_263() {
+    if (jj_3R_73()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_260() {
+    if (jj_3R_95()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_10() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_72()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_251() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_260()) jj_scanpos = xsp;
+    if (jj_3R_68()) return true;
+    if (jj_3R_261()) return true;
+    xsp = jj_scanpos;
+    if (jj_3R_262()) jj_scanpos = xsp;
+    if (jj_scan_token(LBRACE)) return true;
+    xsp = jj_scanpos;
+    if (jj_3R_263()) jj_scanpos = xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_264()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(RBRACE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_269() {
+    if (jj_scan_token(THROWS)) return true;
+    if (jj_3R_277()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_287() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(41)) jj_scanpos = xsp;
+    if (jj_3R_69()) return true;
+    xsp = jj_scanpos;
+    if (jj_scan_token(126)) jj_scanpos = xsp;
+    if (jj_3R_278()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_276() {
+    if (jj_3R_287()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_288()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_261() {
+    if (jj_scan_token(LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_276()) jj_scanpos = xsp;
+    if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_268() {
+    if (jj_3R_68()) return true;
+    if (jj_3R_261()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_280()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   static private boolean jj_initialized_once = false;
+  /** Generated Token Manager. */
   static public JavaCCParserTokenManager token_source;
   static SimpleCharStream jj_input_stream;
-  static public Token token, jj_nt;
+  /** Current token. */
+  static public Token token;
+  /** Next token. */
+  static public Token jj_nt;
   static private int jj_ntk;
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
-  static public boolean lookingAhead = false;
-  static private boolean jj_semLA;
 
+  /** Constructor with InputStream. */
   public JavaCCParser(java.io.InputStream stream) {
      this(stream, null);
   }
+  /** Constructor with InputStream and supplied encoding */
   public JavaCCParser(java.io.InputStream stream, String encoding) {
     if (jj_initialized_once) {
       System.out.println("ERROR: Second call to constructor of static parser.  ");
@@ -7570,9 +7645,11 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jj_ntk = -1;
   }
 
+  /** Reinitialise. */
   static public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
+  /** Reinitialise. */
   static public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
@@ -7581,6 +7658,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jjtree.reset();
   }
 
+  /** Constructor. */
   public JavaCCParser(java.io.Reader stream) {
     if (jj_initialized_once) {
       System.out.println("ERROR: Second call to constructor of static parser. ");
@@ -7595,6 +7673,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jj_ntk = -1;
   }
 
+  /** Reinitialise. */
   static public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
@@ -7603,6 +7682,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jjtree.reset();
   }
 
+  /** Constructor with generated Token Manager. */
   public JavaCCParser(JavaCCParserTokenManager tm) {
     if (jj_initialized_once) {
       System.out.println("ERROR: Second call to constructor of static parser. ");
@@ -7616,6 +7696,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jj_ntk = -1;
   }
 
+  /** Reinitialise. */
   public void ReInit(JavaCCParserTokenManager tm) {
     token_source = tm;
     token = new Token();
@@ -7623,7 +7704,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     jjtree.reset();
   }
 
-  static final private Token jj_consume_token(int kind) throws ParseException {
+  static private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -7637,7 +7718,7 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
 
   static private final class LookaheadSuccess extends java.lang.Error { }
   static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  static final private boolean jj_scan_token(int kind) {
+  static private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
@@ -7653,6 +7734,8 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return false;
   }
 
+
+/** Get the next Token. */
   static final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -7660,8 +7743,9 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return token;
   }
 
+/** Get the specific Token. */
   static final public Token getToken(int index) {
-    Token t = lookingAhead ? jj_scanpos : token;
+    Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
       else t = t.next = token_source.getNextToken();
@@ -7669,13 +7753,14 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return t;
   }
 
-  static final private int jj_ntk() {
+  static private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
+  /** Generate ParseException. */
   static public ParseException generateParseException() {
     Token errortok = token.next;
     int line = errortok.beginLine, column = errortok.beginColumn;
@@ -7683,9 +7768,11 @@ public @SuppressWarnings("all") class JavaCCParser/*@bgen(jjtree)*/implements Ja
     return new ParseException("Parse error at line " + line + ", column " + column + ".  Encountered: " + mess);
   }
 
+  /** Enable tracing. */
   static final public void enable_tracing() {
   }
 
+  /** Disable tracing. */
   static final public void disable_tracing() {
   }
 

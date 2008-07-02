@@ -9,7 +9,8 @@ options {
   NODE_SCOPE_HOOK = true;
   NODE_PREFIX = "AST";
   ERROR_REPORTING = false;
-  NODE_PACKAGE="sf.eclipse.javacc.parser";
+  NODE_PACKAGE ="sf.eclipse.javacc.parser";
+  NODE_CLASS ="JJNode";
   JDK_VERSION = "1.5";
 }
 
@@ -54,6 +55,8 @@ public class JavaCCParser {
    * "org.javacc.parser.ParseException: Encountered "," at line 61, column 17."
    */
   public static int parseLine(String res){
+    if (res == null)
+      return 1;
     int l1=-1, l2=-1;
     l1 = res.indexOf("Line"); 
     l2 = res.indexOf("line"); 
@@ -87,6 +90,22 @@ public class JavaCCParser {
 
 PARSER_END(JavaCCParser)
 
+// Error recovery
+JAVACODE
+void error_skipto(ParseException e, int kind, boolean isNext) throws ParseException {
+  Token t;
+  System.out.println(e.getMessage());
+  String im = JavaCCParserTokenManager.jjstrLiteralImages[kind];
+  System.out.println("Skipping to "+im);
+  int nbBrace = 0;
+  do {
+    t = getNextToken();
+    System.out.print(t.image);
+  } while (t.kind != kind && t.kind != EOF);
+  if (isNext) // if the token is from the next rule, that is should be pushed back
+    SimpleCharStream.backup(1);
+  System.out.println();
+}
 /**********************************************
  * THE JAVACC TOKEN SPECIFICATION STARTS HERE *
  **********************************************/
@@ -304,6 +323,7 @@ TOKEN :
 | < BIT_OR: "|" >
 | < XOR: "^" >
 | < REM: "%" >
+| < SHARP: "#">
 //| < LSHIFT: "<<" >
 //| < RSIGNEDSHIFT: ">>" >
 //| < RUNSIGNEDSHIFT: ">>>" >
@@ -327,11 +347,15 @@ TOKEN :
 JJNode javacc_getAST() #root : {}
 {
   javacc_options()
+  try {
   (
     "PARSER_BEGIN" "(" identifier() ")"
     CompilationUnit()
     "PARSER_END" "(" identifier() ")"
   ) #parser_begin(true)
+  } catch (ParseException e) {
+    error_skipto(e, RBRACE, false);
+  }
   (( production() )+ )
   <EOF>
   { return jjtThis; }
@@ -340,24 +364,30 @@ JJNode javacc_getAST() #root : {}
 void javacc_input():{}
 {
   javacc_options()
-  (
-    "PARSER_BEGIN" "(" identifier() ")"
-    CompilationUnit()
-    "PARSER_END" "(" identifier() ")"
-  ) 
+  "PARSER_BEGIN" "(" identifier() ")"
+  CompilationUnit()
+  "PARSER_END" "(" identifier() ")"
   ((production())+)
   <EOF>
 }
 
 void javacc_options() #javacc_options(>1):{}
 {
-  [("options" "{" (option_binding() )+  "}") ]
+  try {
+	[("options" "{" (option_binding() )+  "}")]
+  } catch (ParseException e) {
+    error_skipto(e, RBRACE, false);
+  }
 }
 
 void option_binding() #option_binding :{}
 {
-  ( <IDENTIFIER> | "LOOKAHEAD" | "IGNORE_CASE" | "static" )
-   "=" (IntegerLiteral()|BooleanLiteral()|StringLiteral()) ";"
+  try {
+    (( <IDENTIFIER> | "LOOKAHEAD" | "IGNORE_CASE" | "static"  )
+    "=" (IntegerLiteral() | BooleanLiteral() | StringLiteral()) ";")
+  } catch (ParseException e) {
+    error_skipto(e, SEMICOLON, false);
+  }
 }
 
 void production():{}
@@ -368,31 +398,43 @@ void production():{}
 | bnf_production()
 }
 
-void javacode_production():{}
+void javacode_production() #javacode_production :{} 
 {
   "JAVACODE"
+ try {
   ResultType() identifier() FormalParameters()
   ["throws" Name()("," Name())*]
   [ node_descriptor() ]
    "{"(( BlockStatement())*)"}"
+ } catch (ParseException e) {
+  error_skipto(e, RBRACE, false);
+ }
 }
 
 void bnf_production() #bnf_production :{}
 {
+ try {
   ResultType() (identifier()) FormalParameters()
   [ "throws" Name() ( "," Name() )* ]
   [ node_descriptor() ]
   ":"
   "{"((BlockStatement() )* ) "}"
   "{"(expansion_choices())"}"
+ } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+ }
 }
 
 void regular_expr_production() #regular_expr_production :{}
 {
+ try {
   ([ LOOKAHEAD(2) "<" "*" ">"
    | "<" <IDENTIFIER> ( "," <IDENTIFIER> )* ">" ])
   regexpr_kind() [ "[" "IGNORE_CASE" "]" ] ":"
   "{" regexpr_spec() ( "|" regexpr_spec() )* "}"
+ } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+ }
 }
 
 void token_manager_decls():{}
@@ -464,12 +506,16 @@ void expansion_unit():{}
 
 void regular_expression():{}
 {
+try {
   StringLiteral() 
 | LOOKAHEAD(3)
   ( "<" [ [ "#" ] identifier() ":" ] complex_regular_expression_choices() ">" )
 | LOOKAHEAD(2)
   ( "<" identifier() ">" )
 | ( "<" "EOF" ">" )
+ } catch (ParseException e) {
+   error_skipto(e, RBRACE, false);
+ }
 }
 
 void complex_regular_expression_choices():{}
@@ -1899,3 +1945,4 @@ TOKEN :
   ]
   >
 }
+<*> TOKEN : { < ILLEGAL : ~[] > } 

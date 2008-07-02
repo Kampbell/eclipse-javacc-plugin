@@ -10,7 +10,7 @@ package sf.eclipse.javacc.parser;
 
 import sf.eclipse.javacc.editors.JJElements;
 
-public class JJNode implements Node, JavaCCParserTreeConstants {
+public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserConstants {
   protected Node parent;
   protected JavaCCParser parser;
   protected Node[] children;
@@ -130,7 +130,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants {
       while(f != last && f.kind == JavaCCParserConstants.LT )
         f = f.next;
       name = f.image;
-      if ( f.kind == 129)
+      if ( f.kind == SHARP)
         name += f.next.image;
     }
     if (name != null)
