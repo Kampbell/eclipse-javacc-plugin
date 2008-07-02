@@ -40,7 +40,7 @@ class JJTextHover  implements ITextHover {
       info = doc.get(start, length);
     }
     catch (BadLocationException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
     }
     return info;
   }
