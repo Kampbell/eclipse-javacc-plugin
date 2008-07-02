@@ -86,7 +86,6 @@ public class JJNature implements IProjectNature, IJJConstants {
   /**
    * Static help method.
    * Adds a JavaCC Nature to the project.
-   * Used only in sf.eclipse.javacc.options.JJPropertyPage.
    * @param boolean isJJNature adds if true, removes if false
    * @param IProject project to change
    */
