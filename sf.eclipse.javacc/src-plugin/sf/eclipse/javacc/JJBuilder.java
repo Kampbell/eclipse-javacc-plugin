@@ -34,7 +34,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * Look at org.eclipse.core.internal.events.InternalBuilder#build(int,
    * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   protected IProject[] build(int kind, Map args, IProgressMonitor mon)
       throws CoreException {
     // These are Contants on the build
@@ -43,8 +43,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements
 
     if (kind == IncrementalProjectBuilder.FULL_BUILD) {
       fullBuild(mon);
-    } else {
+    } else if (kind == IncrementalProjectBuilder.INCREMENTAL_BUILD
+        || kind == IncrementalProjectBuilder.AUTO_BUILD) {
       incrementalBuild(mon);
+    } else if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
+      clean(mon);
     }
     // Refresh the whole project
     getProject().refreshLocal(IResource.DEPTH_INFINITE, mon);
