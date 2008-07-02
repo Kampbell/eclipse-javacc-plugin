@@ -1,13 +1,10 @@
 package sf.eclipse.javacc.options;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -86,9 +83,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText("JJRuntimeOptions.Select_jtb_jar_file"); //$NON-NLS-1$
     new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJRuntimeOptions.Give_an_absolute_path")); //$NON-NLS-1$
     new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    jtbjarFile = new FileFieldEditor(RUNTIME_JAR,
-      Activator.getString("JJRuntimeOptions.Set_the_jtb_jar_file"), subGroup); //$NON-NLS-1$
-//    jtbjarFile.setFileExtensions(new String[] {"*.jar", "*.zip"}); //$NON-NLS-1$ //$NON-NLS-2$
+    jtbjarFile = new FileFieldEditor(RUNTIME_JTBJAR,
+    Activator.getString("JJRuntimeOptions.Set_the_jtb_jar_file"), subGroup); //$NON-NLS-1$
 
     // Reads and sets values
     if (res != null) {
@@ -117,7 +113,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     jarFile.setStringValue("");  //$NON-NLS-1$
     jtbjarFile.setStringValue("");  //$NON-NLS-1$
     checkShowConsole.setBooleanValue(true); 
-    checkClearConsole.setBooleanValue(false);
+    checkClearConsole.setBooleanValue(true);
     checkSuppressWarnings.setBooleanValue(false);
     checkJJNature.setBooleanValue(true);
   }
@@ -146,21 +142,18 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         try
         {
     	   prefs.flush();
+          proj.build(IncrementalProjectBuilder.CLEAN_BUILD, JJ_BUILDER_ID, null, null);
         }
         catch (BackingStoreException e1)
         {
         	e1.printStackTrace();
         	return false;
         }
+        catch (CoreException e) {
+          e.printStackTrace();
+          return false;
+        }
     }
     return true;
-  }
-  
-  /**
-   * Sets a PropertyChangeListener to CheckBox "Add Nature" 
-   * and "Exclude from build" to handle immediately
-   */
-  public void setPropertyChangeListener(IPropertyChangeListener listener) {
-      checkJJNature.setPropertyChangeListener(listener);
   }
 }
