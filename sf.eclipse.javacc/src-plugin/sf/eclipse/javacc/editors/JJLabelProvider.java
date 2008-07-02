@@ -28,6 +28,7 @@ public class JJLabelProvider extends LabelProvider {
   ImageDescriptor desc_expr;
   ImageDescriptor desc_class;
   ImageDescriptor desc_method;
+  ImageDescriptor desc_javacode;
 
   /**
    * To Decorate the Outline View, simply Text and Image
@@ -41,6 +42,7 @@ public class JJLabelProvider extends LabelProvider {
     desc_expr = Activator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
     desc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
     desc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
+    desc_javacode = Activator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
   }
 
   /**
@@ -65,6 +67,8 @@ public class JJLabelProvider extends LabelProvider {
       desc = desc_class;
     else if(node.getId() == JavaCCParserTreeConstants.JJTMETHODDECLARATION)
       desc = desc_method;
+    else if(node.getId() == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION)
+      desc = desc_javacode;
     else {
 //      System.out.println("JJLabelProvider Id "+node.getId());
       return null;
