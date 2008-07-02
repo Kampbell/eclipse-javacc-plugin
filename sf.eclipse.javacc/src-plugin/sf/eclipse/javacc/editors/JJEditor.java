@@ -176,7 +176,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Returns ContentOutlinePage Method declared on IAdaptable
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   public Object getAdapter(Class key) {
     if (key.equals(IContentOutlinePage.class)) {
       if (outlinePage == null) {
@@ -240,6 +240,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
         if (start > end)
           end = start;
         int length = end - start;
+        selectAndReveal(start, length);
         resetHighlightRange();
         setHighlightRange(start, length, true);
         markInNavigationHistory();
