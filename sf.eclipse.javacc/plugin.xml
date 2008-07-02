@@ -288,15 +288,15 @@
             definitionId="commands.jjcontentassist"
             id="javacc.jjcontentassist"/>  
      <action
-            label="%JavaCC_FoldingCollapse"
+            label="%JavaCC_FoldingCollapseAll"
             class="sf.eclipse.javacc.actions.JJFoldingCollapse"
             definitionId="commands.jjfoldingcollapseall"
             id="javacc.jjfoldingcollapseall"/>    
      <action
             label="%JavaCC_FoldingExpandAll"
-            class="sf.eclipse.javacc.actions.JJFoldingExpandAll"
+            class="sf.eclipse.javacc.actions.JJFoldingExpand"
             definitionId="commands.jjfoldingexpandall"
-            id="javacc.jjfoldingcollapseall"/>     
+            id="javacc.jjfoldingexpandall"/>     
       </editorContribution>
 <!-- For JTB -->
       <editorContribution
@@ -389,14 +389,14 @@
             name="%JavaCC_ContentAssist"
             id="commands.jjcontentassist"/>
       <command
-            description="%JavaCC_FoldingCollapse"
+            description="%JavaCC_FoldingCollapseAll"
             categoryId="JavaCC.category"
-            name="%JavaCC_FoldingCollapse"
+            name="%JavaCC_FoldingCollapseAll"
             id="commands.jjfoldingcollapseall"/>
      <command
-            description="%JavaCC_FoldingCollapse"
+            description="%JavaCC_FoldingExpandAll"
             categoryId="JavaCC.category"
-            name="%JavaCC_FoldingCollapse"
+            name="%JavaCC_FoldingExpandAll"
             id="commands.jjfoldingexpandall"/>
    </extension>
 <!-- Keyboard shortcuts -->
@@ -417,15 +417,14 @@
             contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjcontentassist"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-    <key sequence="M1+M2+NUMPAD_DIVIDE"
+    <key sequence="Ctrl+Shift+NUMPAD_DIVIDE"
             contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjfoldingcollapseall"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-    <key sequence="Ctrl+Shift+Numpad_Multiply"
+    <key sequence="Ctrl+Shift+NUMPAD_MULTIPLY"
             contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjfoldingexpandall"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-               
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/> 
    </extension>
 <!-- New Wizard Extension -->
    <extension point="org.eclipse.ui.newWizards">
@@ -443,7 +442,7 @@
       <filter
             class="sf.eclipse.javacc.filters.FilterGeneratedJavaCCFiles"
             description="%Filters_JavaCC_Generated_Files"
-            enabled="false"
+            enabled="true"
             id="sf.eclipse.javacc.filters.FilterGeneratedJavaCCFiles"
             name="%JavaCC_Generated_Files"/>
    </extension>
