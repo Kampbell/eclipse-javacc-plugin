@@ -39,13 +39,13 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     for (String s : JJElements.getMap().keySet()){
       // nodes
       if (s.toUpperCase().startsWith(prefix.toUpperCase()))
-        suggestions.add(s+"()");
+        suggestions.add(s+"()"); //$NON-NLS-1$
       // tokens
-      if (prefix.startsWith("<")) {
+      if (prefix.startsWith("<")) { //$NON-NLS-1$
         String token = prefix.substring(1);
         if (s.toUpperCase().startsWith(token.toUpperCase())) {
           if (JJElements.getNode(s).getId() == JJTREGEXPR_SPEC)
-            suggestions.add("<"+s+">");
+            suggestions.add("<"+s+">"); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
     }

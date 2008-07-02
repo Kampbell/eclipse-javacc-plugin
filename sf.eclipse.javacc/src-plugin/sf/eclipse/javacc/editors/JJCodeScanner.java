@@ -79,12 +79,12 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
 	  "OUTPUT_FILE", //$NON-NLS-1$
       "JDK_VERSION", //$NON-NLS-1$
       "NODE_EXTENDS", //$NON-NLS-1$
-      "NODE_CLASS",
-      "VISITOR_DATA_TYPE",
-      "VISITOR_RETURN_TYPE",
+      "NODE_CLASS", //$NON-NLS-1$
+      "VISITOR_DATA_TYPE", //$NON-NLS-1$
+      "VISITOR_RETURN_TYPE", //$NON-NLS-1$
       "TOKEN_MANAGER_USES_PARSER", //$NON-NLS-1$
-      "TRACK_TOKENS",
-      "JJTREE_OUTPUT_DIRECTORY", 
+      "TRACK_TOKENS", //$NON-NLS-1$
+      "JJTREE_OUTPUT_DIRECTORY",  //$NON-NLS-1$
       "ONE_TABLE", //$NON-NLS-1$
       "TEXT", //$NON-NLS-1$
       "JJDOC_OUTPUT_FILE", //$NON-NLS-1$ 
