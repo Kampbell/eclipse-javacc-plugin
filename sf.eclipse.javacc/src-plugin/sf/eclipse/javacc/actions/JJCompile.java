@@ -84,9 +84,9 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
       // Force Compile if not triggered
       IScopeContext projectScope = new ProjectScope(res.getProject());
       IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-
       if (!("true").equals(prefs.get(JJ_NATURE, "false"))  //$NON-NLS-1$ //$NON-NLS-2$
-          || !isOnClasspath(res) )
+          || !isOnClasspath(res) 
+          || !res.getWorkspace().isAutoBuilding())
         JJBuilder.CompileResource(res);
       
       // Refresh the whole project to trigger compilation of Java files
