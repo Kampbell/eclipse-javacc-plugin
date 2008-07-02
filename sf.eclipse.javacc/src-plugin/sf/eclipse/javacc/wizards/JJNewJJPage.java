@@ -353,7 +353,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the filename field.
    */
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings("deprecation") //$NON-NLS-1$
   private IStatus fileNameChanged() {
     String fileName = getFileName();
     if (fileName.length() == 0) {
@@ -441,7 +441,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Open a dialog to let user choose Source Container
    */
-  @SuppressWarnings({ "restriction", "unchecked", "deprecation" }) //$NON-NLS-1$
+  @SuppressWarnings({ "restriction", "unchecked", "deprecation" }) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   private IPackageFragmentRoot chooseSourceContainer() {
     Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
     org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator validator= new org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator(acceptedClasses, false) {
