@@ -58,7 +58,7 @@ public class MarkAndCorrect implements IJJConstants{
       String source = FileUtils.getFileContents(filename); // Direct access
 
         Matcher filematcher = filepattern.matcher(source);
-        if (filematcher.find() && !filematcher.group().startsWith("@")) {
+        if (filematcher.find() && !filematcher.group().startsWith("@")) { //$NON-NLS-1$
           String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1$2"); //$NON-NLS-1$
 //        cu.getBuffer().setContents(newsource);
 //        cu.getBuffer().save(null, true);
