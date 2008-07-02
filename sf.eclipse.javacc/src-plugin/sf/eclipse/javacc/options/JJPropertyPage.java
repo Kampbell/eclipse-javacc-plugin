@@ -137,10 +137,10 @@ public class JJPropertyPage extends PropertyPage
    */
   public boolean performOk() {
     jjRun.performOk();
-    if (jjCC != null) jjCC.performOk();
-    if (jjTree != null) jjTree.performOk();
-    if (jjDoc != null) jjDoc.performOk();
-    if (jtb != null) jtb.performOk();
+    jjCC.performOk();
+    jjTree.performOk();
+    jjDoc.performOk();
+    jtb.performOk();
     return super.performOk();    
   }
 
