@@ -94,17 +94,17 @@ PARSER_END(JavaCCParser)
 JAVACODE
 void error_skipto(ParseException e, int kind, boolean isNext) throws ParseException {
   Token t;
-  System.out.println(e.getMessage());
-  String im = JavaCCParserTokenManager.jjstrLiteralImages[kind];
-  System.out.println("Skipping to "+im);
+//  System.out.println(e.getMessage());
+//  String im = JavaCCParserTokenManager.jjstrLiteralImages[kind];
+//  System.out.println("Skipping to "+im);
   int nbBrace = 0;
   do {
     t = getNextToken();
-    System.out.print(t.image);
+//    System.out.print(t.image);
   } while (t.kind != kind && t.kind != EOF);
   if (isNext) // if the token is from the next rule, that is should be pushed back
     SimpleCharStream.backup(1);
-  System.out.println();
+//  System.out.println();
 }
 /**********************************************
  * THE JAVACC TOKEN SPECIFICATION STARTS HERE *
