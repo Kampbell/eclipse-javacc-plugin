@@ -118,6 +118,9 @@ public class ParentMatcher implements ICharacterPairMatcher {
       while (true) {
         while (fPos < fDocument.getLength()) {
           fChar = fDocument.getChar(fPos);
+          if (fChar =='"')
+            while (fDocument.getChar(++fPos) !='"')
+              ;
           if (fChar == opening || fChar == closing)
             break;
           fPos++;
@@ -148,6 +151,9 @@ public class ParentMatcher implements ICharacterPairMatcher {
       while (true) {
         while (fPos > -1) {
           fChar = fDocument.getChar(fPos);
+          if (fChar =='"')
+            while (fDocument.getChar(--fPos) !='"')
+              ;
           if (fChar == opening || fChar == closing)
             break;
           fPos--;
