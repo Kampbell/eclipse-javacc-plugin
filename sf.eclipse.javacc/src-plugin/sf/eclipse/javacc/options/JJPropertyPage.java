@@ -1,12 +1,12 @@
 package sf.eclipse.javacc.options;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-//import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -63,7 +63,7 @@ public class JJPropertyPage extends PropertyPage
     GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
     folder.setLayoutData(gd);
     
-    // Reads config from IResource
+    // Reads configuration from IResource
     IAdaptable ia = getElement();
     res = (IResource) ia.getAdapter(IResource.class);
     if (res != null) 
@@ -141,6 +141,32 @@ public class JJPropertyPage extends PropertyPage
     jjTree.performOk();
     jjDoc.performOk();
     jtb.performOk();
+    
+    // Ask for rebuild (should check if an option has changed)
+    try
+    {
+      IProject proj = res.getProject();
+      MessageDialog dialog= new MessageDialog(getShell(), 
+          "JavaCC options may have changed",
+          null, 
+          "Do you want to rebuild the project for changes to take effect ?", 
+          MessageDialog.QUESTION, 
+          new String[] {
+           IDialogConstants.YES_LABEL,
+           IDialogConstants.NO_LABEL, 
+           IDialogConstants.CANCEL_LABEL },
+           2);
+      int res= dialog.open();
+      if (res == MessageDialog.OK) {
+        proj.build(IncrementalProjectBuilder.CLEAN_BUILD, JJ_BUILDER_ID, null, null);
+      } else if (res != 1) {
+        return false; // cancel pressed
+      }
+    }
+    catch (CoreException e) {
+      e.printStackTrace();
+      return false;
+    }
     return super.performOk();    
   }
 
