@@ -92,20 +92,32 @@ PARSER_END(JavaCCParser)
 
 // Error recovery
 JAVACODE
-void error_skipto(ParseException e, int kind, boolean isNext) throws ParseException {
-  Token t;
-//  System.out.println(e.getMessage());
-//  String im = JavaCCParserTokenManager.jjstrLiteralImages[kind];
-//  System.out.println("Skipping to "+im);
-  int nbBrace = 0;
-  do {
-    t = getNextToken();
-//    System.out.print(t.image);
-  } while (t.kind != kind && t.kind != EOF);
-  if (isNext) // if the token is from the next rule, that is should be pushed back
-    SimpleCharStream.backup(1);
-//  System.out.println();
-}
+void error_skip() throws ParseException {
+  Token tok= getNextToken(); // Skip current  int nestingBrace = 1;
+  int nestingParent = 1;
+  int nestingBracket = 1;
+  int nestingThan = 1;  while (true) {    tok = getToken(1);    if (tok.kind == LBRACE) nestingBrace++;    if (tok.kind == RBRACE){      nestingBrace--;      if (nestingBrace == 0)
+       break ;    }
+    if (tok.kind == LT) nestingBrace++;
+    if (tok.kind == GT){
+      nestingThan--;
+      if (nestingThan == 0)
+       break ;
+    }
+    if (tok.kind == LPAREN) nestingBrace++;
+    if (tok.kind == RPAREN){
+      nestingParent--;
+      if (nestingParent == 0)
+       break ;
+    }
+    if (tok.kind == LBRACKET) nestingBrace++;
+    if (tok.kind == RBRACKET){
+      nestingBracket--;
+      if (nestingBracket == 0)
+       break ;
+    }
+    if (tok.kind == EOF)
+      break;    tok = getNextToken();  }}
 /**********************************************
  * THE JAVACC TOKEN SPECIFICATION STARTS HERE *
  **********************************************/
@@ -354,7 +366,7 @@ JJNode javacc_getAST() #root : {}
     "PARSER_END" "(" identifier() ")"
   ) #parser_begin(true)
   } catch (ParseException e) {
-    error_skipto(e, RBRACE, false);
+    error_skip();
   }
   (( production() )+ )
   <EOF>
@@ -371,12 +383,12 @@ void javacc_input():{}
   <EOF>
 }
 
-void javacc_options() #javacc_options(>1):{}
+void javacc_options() #javacc_options(>0) :{}
 {
   try {
-	[("options" "{" (option_binding() )+  "}")]
+	[("options" "{" (option_binding() )*  "}")]
   } catch (ParseException e) {
-    error_skipto(e, RBRACE, false);
+    error_skip();
   }
 }
 
@@ -386,7 +398,7 @@ void option_binding() #option_binding :{}
     (( <IDENTIFIER> | "LOOKAHEAD" | "IGNORE_CASE" | "static"  )
     "=" (IntegerLiteral() | BooleanLiteral() | StringLiteral()) ";")
   } catch (ParseException e) {
-    error_skipto(e, SEMICOLON, false);
+    error_skip();
   }
 }
 
@@ -402,12 +414,9 @@ void javacode_production() #javacode_production :{}
 {
   "JAVACODE"
  try {
-  ResultType() identifier() FormalParameters()
-  ["throws" Name()("," Name())*]
-  [ node_descriptor() ]
-   "{"(( BlockStatement())*)"}"
+  (MethodDeclaration())
  } catch (ParseException e) {
-  error_skipto(e, RBRACE, false);
+  error_skip();
  }
 }
 
@@ -421,7 +430,7 @@ void bnf_production() #bnf_production :{}
   "{"((BlockStatement() )* ) "}"
   "{"(expansion_choices())"}"
  } catch (ParseException e) {
-   error_skipto(e, RBRACE, false);
+   error_skip();
  }
 }
 
@@ -433,7 +442,7 @@ void regular_expr_production() #regular_expr_production :{}
   regexpr_kind() [ "[" "IGNORE_CASE" "]" ] ":"
   "{" regexpr_spec() ( "|" regexpr_spec() )* "}"
  } catch (ParseException e) {
-   error_skipto(e, RBRACE, false);
+   error_skip();
  }
 }
 
@@ -514,7 +523,7 @@ try {
   ( "<" identifier() ">" )
 | ( "<" "EOF" ">" )
  } catch (ParseException e) {
-   error_skipto(e, RBRACE, false);
+   error_skip();
  }
 }
 
@@ -753,7 +762,7 @@ void ArrayInitializer(): {}
   "{" [ VariableInitializer() ( LOOKAHEAD(2) "," VariableInitializer() )* ] [ "," ] "}"
 }
 
-void MethodDeclaration() #MethodDeclaration : {}
+void MethodDeclaration() #MethodDeclaration : {} 
 {
   [ TypeParameters() ]
   ResultType()
