@@ -99,7 +99,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     // Parser ClassDeclaration => Class name
     if (id == JJTCLASSORINTERFACEDECLARATION){
       Token f = first;
-      while(f != last && f.next.kind != JavaCCParserConstants.LPAREN)
+      while(f != last && f.next.kind != JavaCCParserConstants.LBRACE)
         f = f.next;
       name = f.image;
     }      
@@ -174,7 +174,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   public void setLastToken(Token t) { last = t; }
   
   /**
-   * Search children corresponding to txt
+   * Search children corresponding to text
    */
   public JJNode search(String txt) {
     if (txt.equals(this.toString()))
@@ -192,7 +192,6 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
         }
       }
     }
-    //System.out.println("not found:"+txt);
     return null;
   }
   

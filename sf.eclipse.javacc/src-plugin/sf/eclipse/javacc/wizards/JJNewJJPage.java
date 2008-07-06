@@ -291,14 +291,14 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the package field.
    */
-  @SuppressWarnings("restriction") //$NON-NLS-1$
+  @SuppressWarnings({ "restriction", "deprecation" }) //$NON-NLS-1$
   private IStatus packageChanged() {
     Status status = new Status();
     String packName = getPackage();
     
     if (packName.length() > 0) {
       // IStatus val = JavaConventions.validatePackageName(packName,null, null); // Eclipse 3.3
-      IStatus val = JavaConventions.validatePackageName(packName); // Eclipse 3.2
+      IStatus val = JavaConventions.validatePackageName(packName); // Keep for Eclipse 3.2
       if (val.getSeverity() == IStatus.ERROR) {
         status.setError(MessageFormat.format(
             org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
