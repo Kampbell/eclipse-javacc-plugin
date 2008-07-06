@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 
+import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.parser.JJNode;
@@ -115,8 +116,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       IWorkbench workbench = PlatformUI.getWorkbench();
       Shell shell = workbench.getDisplay().getActiveShell();
       MessageDialog dialog= new MessageDialog(shell, 
-          "Format will do nothing", null, 
-          "Format will do nothing. Please correct the errors first", 
+          Activator.getString("JJFormat.0"), null,  //$NON-NLS-1$
+          Activator.getString("JJFormat.1"),  //$NON-NLS-1$
           MessageDialog.QUESTION, 
           new String[] {IDialogConstants.OK_LABEL},
           0);

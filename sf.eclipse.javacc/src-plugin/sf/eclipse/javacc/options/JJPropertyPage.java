@@ -147,9 +147,9 @@ public class JJPropertyPage extends PropertyPage
     {
       IProject proj = res.getProject();
       MessageDialog dialog= new MessageDialog(getShell(), 
-          "JavaCC options may have changed",
+          Activator.getString("JJPropertyPage.0"), //$NON-NLS-1$
           null, 
-          "Do you want to rebuild the project for changes to take effect ?", 
+          Activator.getString("JJPropertyPage.1"),  //$NON-NLS-1$
           MessageDialog.QUESTION, 
           new String[] {
            IDialogConstants.YES_LABEL,
