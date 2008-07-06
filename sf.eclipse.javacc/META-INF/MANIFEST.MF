@@ -30,4 +30,5 @@ Export-Package: sf.eclipse.javacc,
  sf.eclipse.javacc.options,
  sf.eclipse.javacc.parser,
  sf.eclipse.javacc.wizards
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 
