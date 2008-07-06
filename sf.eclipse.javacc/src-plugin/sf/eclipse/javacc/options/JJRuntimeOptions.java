@@ -139,19 +139,12 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         // Sets the nature directly
         JJNature.setJJNature(checkJJNature.getBooleanValue(), proj);
         
-        try
+        try 
         {
-    	   prefs.flush();
-          proj.build(IncrementalProjectBuilder.CLEAN_BUILD, JJ_BUILDER_ID, null, null);
-        }
-        catch (BackingStoreException e1)
-        {
-        	e1.printStackTrace();
-        	return false;
-        }
-        catch (CoreException e) {
-          e.printStackTrace();
-          return false;
+              prefs.flush();
+        } catch (BackingStoreException e) {
+              e.printStackTrace();
+              return false;
         }
     }
     return true;
