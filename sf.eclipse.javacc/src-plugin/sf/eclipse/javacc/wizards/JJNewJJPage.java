@@ -291,7 +291,7 @@ public class JJNewJJPage extends WizardPage {
   /**
    * Verifies the input for the package field.
    */
-  @SuppressWarnings({ "restriction", "deprecation" }) //$NON-NLS-1$
+  @SuppressWarnings({ "restriction", "deprecation" }) //$NON-NLS-1$ //$NON-NLS-2$
   private IStatus packageChanged() {
     Status status = new Status();
     String packName = getPackage();
