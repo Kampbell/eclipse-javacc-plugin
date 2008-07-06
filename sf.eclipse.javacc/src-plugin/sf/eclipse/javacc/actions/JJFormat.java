@@ -1,19 +1,19 @@
 package sf.eclipse.javacc.actions;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.StringReader;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.*;
 
+import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
@@ -32,7 +32,7 @@ import sf.eclipse.javacc.parser.Token;
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 
-public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
+public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, IJJConstants {
   static JJEditor editor;
   static IDocument doc;
   
@@ -110,7 +110,17 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
     StringReader in = new StringReader(txt);
     JJNode node = JavaCCParser.parse(in);
     in.close();
-    if (node.getFirstToken().kind == 0) {
+    if (node.getFirstToken().next == null) {
+      // Warn Nothing shall be done if parsing failed.
+      IWorkbench workbench = PlatformUI.getWorkbench();
+      Shell shell = workbench.getDisplay().getActiveShell();
+      MessageDialog dialog= new MessageDialog(shell, 
+          "Format will do nothing", null, 
+          "Format will do nothing. Please correct the errors first", 
+          MessageDialog.QUESTION, 
+          new String[] {IDialogConstants.OK_LABEL},
+          0);
+      dialog.open();
       return false;
     }
     Token f = node.getFirstToken();
@@ -214,38 +224,38 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants {
     }
     return true;
   }
-  
-  /**
-   * Unit test
-   * @param args
-   * @throws IOException
-   */
-  public static void main(String[] args) throws IOException {
-    String testFile = new File(".").getCanonicalPath()+"/Divers/test.jjt"; //$NON-NLS-1$ //$NON-NLS-2$
-    StringBuffer sb = new StringBuffer();
-    
-    // Read the test file to format
-    File f = new File(testFile);
-    FileInputStream reader = new FileInputStream(f);
-    int c;
-    int nLines = 0;
-    while ((c = reader.read()) != -1) {
-      sb.append((char) c);
-      if ((char) c == '\n')
-	nLines++;
-    }
-    
-    // Here are the arguments
-    String txt = sb.toString();
-    sb = new StringBuffer();
-    String endline = "\n"; //$NON-NLS-1$
-    String identString = "~"; //$NON-NLS-1$
-
-    // Do format
-    JJFormat jjf = new JJFormat();
-    jjf.formatSelection(txt, endline, identString, 0, nLines , sb); // nLines
-    
-    // See what we got
-    System.out.println("after>"+sb.toString()); //$NON-NLS-1$
-  }
+//  
+//  /**
+//   * Unit test
+//   * @param args
+//   * @throws IOException
+//   */
+//  public static void main(String[] args) throws IOException {
+//    String testFile = new File(".").getCanonicalPath()+"/Divers/test.jjt"; //$NON-NLS-1$ //$NON-NLS-2$
+//    StringBuffer sb = new StringBuffer();
+//    
+//    // Read the test file to format
+//    File f = new File(testFile);
+//    FileInputStream reader = new FileInputStream(f);
+//    int c;
+//    int nLines = 0;
+//    while ((c = reader.read()) != -1) {
+//      sb.append((char) c);
+//      if ((char) c == '\n')
+//	nLines++;
+//    }
+//    
+//    // Here are the arguments
+//    String txt = sb.toString();
+//    sb = new StringBuffer();
+//    String endline = "\n"; //$NON-NLS-1$
+//    String identString = "~"; //$NON-NLS-1$
+//
+//    // Do format
+//    JJFormat jjf = new JJFormat();
+//    jjf.formatSelection(txt, endline, identString, 0, nLines , sb); // nLines
+//    
+//    // See what we got
+//    System.out.println("after>"+sb.toString()); //$NON-NLS-1$
+//  }
 }
