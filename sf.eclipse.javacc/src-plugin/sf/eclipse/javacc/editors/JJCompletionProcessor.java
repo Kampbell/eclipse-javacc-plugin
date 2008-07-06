@@ -37,14 +37,17 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
         suggestions.add(s);
     }
     for (String s : JJElements.getMap().keySet()){
-      // nodes
-      if (s.toUpperCase().startsWith(prefix.toUpperCase()))
-        suggestions.add(s+"()"); //$NON-NLS-1$
+      int id = JJElements.getNode(s).getId();
+      // nodes and methods
+      if (s.toUpperCase().startsWith(prefix.toUpperCase())){
+        if (id == JJTBNF_PRODUCTION || id == JJTMETHODDECLARATION)
+          suggestions.add(s+"()"); //$NON-NLS-1$ 
+      }
       // tokens
       if (prefix.startsWith("<")) { //$NON-NLS-1$
         String token = prefix.substring(1);
         if (s.toUpperCase().startsWith(token.toUpperCase())) {
-          if (JJElements.getNode(s).getId() == JJTREGEXPR_SPEC)
+          if (id == JJTREGEXPR_SPEC)
             suggestions.add("<"+s+">"); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
