@@ -215,7 +215,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
       node = contentProvider.getAST();
     }
     
-    // Fill the JJElements HashMap
+    // Clear and Fill the JJElements HashMap
+    JJElements.clear();
     node.buildHashMap();
   }
   

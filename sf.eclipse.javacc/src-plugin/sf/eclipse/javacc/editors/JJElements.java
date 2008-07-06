@@ -18,15 +18,15 @@ public class JJElements {
   public static final Object put(String arg0, JJNode arg1) {
     return map.put(arg0, arg1);
   }
-
+  public static final void clear() {
+    map.clear();
+  }
   public static final boolean isElement(String key) {
     return map.containsKey(key);
   }
-
   public static final HashMap<String, JJNode> getMap() {
     return map;
   }
-
   public static JJNode getNode(String key) {
     return map.get(key);
   }
