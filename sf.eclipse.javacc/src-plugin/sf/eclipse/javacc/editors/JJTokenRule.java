@@ -32,6 +32,11 @@ public class JJTokenRule implements IRule {
         // End token
         else if (c == '>' || c == ':')
           return privateToken ? ptoken : token;
+        // Avoid coloring Strings
+        else if (c == '\"'){
+          scanner.unread();
+          return privateToken ? ptoken : token;
+        }
         // Try to avoid coloring java expressions like : if(a < b...)
         else if (c == '=' || c == '&' || c == '|' || c == ')')
           return Token.UNDEFINED;
