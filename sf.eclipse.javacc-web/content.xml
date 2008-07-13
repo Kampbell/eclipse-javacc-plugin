@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository class='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'?>
-<repository name='file:/C:/workspace/sf.eclipse.javacc-web/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+<repository name='file:/C:/workspace/sf.eclipse.javacc-web/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1215858485622'/>
+    <property name='p2.timestamp' value='1215957678348'/>
   </properties>
   <references size='8'>
     <repository url='http://eclipse-javacc.sourceforge.net/updates/' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/updates/' type='0' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net' type='1' options='0'/>
-    <repository url='http://eclipse-javacc.sourceforge.net' type='0' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/' type='1' options='0'/>
+    <repository url='http://eclipse-javacc.sourceforge.net' type='0' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/' type='0' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/updates' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/updates' type='0' options='0'/>
@@ -93,7 +93,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Bundle-Version: 1.5.9&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Export-Package: sf.eclipse.javacc,sf.eclipse.javacc.actions,sf.eclipse.javacc.editors,sf.eclipse.javacc.filters,sf.eclipse.javacc.options,sf.eclipse.javacc.parser,sf.eclipse.javacc.wizards&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin&#xA;
+            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Bundle-Version: 1.5.9&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Export-Package: sf.eclipse.javacc,sf.eclipse.javacc.actions,sf.eclipse.javacc.editors,sf.eclipse.javacc.filters,sf.eclipse.javacc.options,sf.eclipse.javacc.parser,sf.eclipse.javacc.wizards&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin
           </instruction>
           <instruction key='zipped'>
             true
@@ -240,7 +240,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.4&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.4&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -324,7 +324,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-ClassPath: plugin.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Localization: plugin&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-Version: 1.5.5&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-ClassPath: plugin.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Localization: plugin&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-Version: 1.5.5&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -437,7 +437,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.0&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.0&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -522,7 +522,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Export-Package: sf.eclipse.javacc,sf.eclipse.javacc.actions,sf.eclipse.javacc.editors,sf.eclipse.javacc.filters,sf.eclipse.javacc.options,sf.eclipse.javacc.parser,sf.eclipse.javacc.wizards&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.10&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-ManifestVersion: 2&#xA;Export-Package: sf.eclipse.javacc,sf.eclipse.javacc.actions,sf.eclipse.javacc.editors,sf.eclipse.javacc.filters,sf.eclipse.javacc.options,sf.eclipse.javacc.parser,sf.eclipse.javacc.wizards&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.10&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -729,7 +729,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Eclipse-AutoStart: true&#xA;Bundle-Version: 1.5.6&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin&#xA;
+            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Eclipse-AutoStart: true&#xA;Bundle-Version: 1.5.6&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin
           </instruction>
           <instruction key='zipped'>
             true
@@ -930,7 +930,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.2&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.2&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -1120,7 +1120,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Eclipse-AutoStart: true&#xA;Bundle-Version: 1.5.7&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin&#xA;
+            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Eclipse-AutoStart: true&#xA;Bundle-Version: 1.5.7&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin
           </instruction>
           <instruction key='zipped'>
             true
@@ -1350,7 +1350,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.1&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-Version: 1.5.1&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Bundle-ClassPath: plugin.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -1376,7 +1376,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: false&#xA;Bundle-Version: 1.5.0&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: sf.eclipse.javacc.help; singleton:=true&#xA;Bundle-Name: JavaCC plug-in Help&#xA;Bundle-Localization: plugin&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;
+            Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: false&#xA;Bundle-Version: 1.5.0&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: sf.eclipse.javacc.help; singleton:=true&#xA;Bundle-Name: JavaCC plug-in Help&#xA;Bundle-Localization: plugin&#xA;Bundle-Vendor: Remi Koutcherawy
           </instruction>
           <instruction key='zipped'>
             true
@@ -1547,7 +1547,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: JavaSE-1.6&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.12&#xA;Comment: For Eclipse 3.1&#xA;Bundle-Localization: plugin&#xA;Eclipse-AutoStart: true&#xA;Export-Package: sf.eclipse.javacc,sf.eclipse.javacc.actions,sf.eclipse.javacc.editors,sf.eclipse.javacc.filters,sf.eclipse.javacc.options,sf.eclipse.javacc.parser,sf.eclipse.javacc.wizards&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Eclipse-LazyStart: true&#xA;
+            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: JavaSE-1.6&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.12&#xA;Comment: For Eclipse 3.1&#xA;Bundle-Localization: plugin&#xA;Eclipse-AutoStart: true&#xA;Export-Package: sf.eclipse.javacc,sf.eclipse.javacc.actions,sf.eclipse.javacc.editors,sf.eclipse.javacc.filters,sf.eclipse.javacc.options,sf.eclipse.javacc.parser,sf.eclipse.javacc.wizards&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Eclipse-LazyStart: true
           </instruction>
           <instruction key='zipped'>
             true
@@ -1684,7 +1684,7 @@
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Eclipse-AutoStart: true&#xA;Bundle-Version: 1.5.8&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin&#xA;
+            Comment_One: For Eclipse 3.2&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Eclipse-AutoStart: true&#xA;Bundle-Version: 1.5.8&#xA;Eclipse-LazyStart: true&#xA;Comment_Two: For Eclipse 3.1&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-SymbolicName: sf.eclipse.javacc; singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Localization: plugin
           </instruction>
         </instructions>
       </touchpointData>
