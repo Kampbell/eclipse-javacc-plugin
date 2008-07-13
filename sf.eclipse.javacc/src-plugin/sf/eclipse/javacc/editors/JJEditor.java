@@ -18,6 +18,7 @@ import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.options.JJPreferences;
 import sf.eclipse.javacc.parser.JJNode;
+import sf.eclipse.javacc.parser.JavaCCParser;
 
 /**
  * Editor designed for JavaCC files Referenced by plugin.xml <extension
@@ -40,6 +41,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   
   /** The editor's peer character painter */
   private MatchingCharacterPainter fMatchingCharacterPainter;
+  private JJElements jjElements;
 
   /**
    * Constructor
@@ -64,6 +66,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
     setSourceViewerConfiguration(jjSourceViewerConfiguration);
     // Used to synchronize Outline and Editor
     reconcilingStrategy = new JJReconcilingStrategy(this);
+    // Used to retrieve JJElements (methods, tokens, class) updated at each document parsing
+    jjElements = new JJElements();
     
     // Actions are declared in plugin.xml
   }
@@ -206,7 +210,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
     if (outlinePage == null)
       outlinePage = (JJOutlinePage) getAdapter(IContentOutlinePage.class);
     outlinePage.setInput(getDocument());
-    // get root node to build JJElement Hashmap
+    // get root node to build JJElement HashMap
     JJContentProvider contentProvider = (JJContentProvider) outlinePage.getContentProvider();
     JJNode node = contentProvider.getAST();
     // If the outline is not up, then use the ContentProvider directly
@@ -214,10 +218,19 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
       contentProvider.inputChanged(null, null, getDocument());
       node = contentProvider.getAST();
     }
-    
-    // Clear and Fill the JJElements HashMap
-    JJElements.clear();
+    // If parsing failed don't touch JJElements used for navigating and completion 
+    if (node.getFirstToken().next == null)
+      return;
+    // Clear and Fill the JJElements HashMap for this Editor
+    jjElements.clear();
+    node.setJJElementsToUpdate(jjElements);
     node.buildHashMap();
+  }
+  /**
+   * @return jjElements
+   */
+  public JJElements getJJElements() {
+    return jjElements;
   }
   
   /**
