@@ -442,7 +442,7 @@
       <filter
             class="sf.eclipse.javacc.filters.FilterGeneratedJavaCCFiles"
             description="%Filters_JavaCC_Generated_Files"
-            enabled="true"
+            enabled="false"
             id="sf.eclipse.javacc.filters.FilterGeneratedJavaCCFiles"
             name="%JavaCC_Generated_Files"/>
    </extension>
