@@ -65,7 +65,7 @@ public class JJDocCompile implements IEditorActionDelegate, IJJConstants {
     JJBuilder.GenDocForJJResource(res);
     
     // Refreshing the whole project (just to show the generated .html)
-    // has the side effect to clears the Console if autobuild 
+    // has the side effect to clears the Console if autobuild is on
     try {
       res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
     } catch (CoreException e) {
