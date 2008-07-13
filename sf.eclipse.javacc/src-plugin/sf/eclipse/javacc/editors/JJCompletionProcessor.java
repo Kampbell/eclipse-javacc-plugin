@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.ui.*;
+
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 
 public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCParserTreeConstants{
@@ -17,27 +20,66 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
    * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
    */
   public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
+    // List of Completion proposals to be added
     List<CompletionProposal> proposals= new ArrayList<CompletionProposal>();
-
+    
+    // Compute place (start, length) of the completion proposal
     String text= viewer.getDocument().get();
     int start = documentOffset-1;
     while (!Character.isWhitespace(text.charAt(start)))
       start--;
     start++;
-    
     int end = documentOffset;
     String prefix = text.substring(start, end);
     int length = end - start;
     
+    // Build list of suggestions
     List<String> suggestions = new ArrayList<String>();
+    int cursorPosition = 0;
     // TODO choose the keyword from the context
     // TODO alphabetic sort
+    // Add Keywords
     for (String s : JJCodeScanner.fgJJkeywords){
-      if (s.toUpperCase().startsWith(prefix.toUpperCase()))
-        suggestions.add(s);
+      if (s.toUpperCase().startsWith(prefix.toUpperCase())){
+        if (s.equals("options")) {
+          suggestions.add("options{\n  \n}");
+          cursorPosition = 11;
+        }
+        else if (s.equals("TOKEN")) {
+          suggestions.add("TOKEN:{\n  \n}");
+          cursorPosition = 10;
+        }
+        else if (s.equals("MORE")) {
+          suggestions.add("MORE:{\n  \"\"\n}");
+          cursorPosition = 10;
+        }
+        else if (s.equals("SPECIAL_TOKEN")) {
+          suggestions.add("SPECIAL_TOKEN:{\n  \"\"\n}");
+          cursorPosition = 19;
+        }        
+        else
+          suggestions.add(s);
+      }
     }
-    for (String s : JJElements.getMap().keySet()){
-      int id = JJElements.getNode(s).getId();
+    // Get the JJEditor showing the active document
+    JJEditor jjeditor = null;
+    IDocument currentDocument= viewer.getDocument();
+    IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    IEditorReference editorReferences[]= window.getActivePage().getEditorReferences();
+    for (int i= 0; i < editorReferences.length; i++) {
+      IEditorPart editor= editorReferences[i].getEditor(false); // don't create!
+      if (editor instanceof JJEditor) {
+        jjeditor = (JJEditor) editor;
+        IEditorInput input = jjeditor.getEditorInput();
+        IDocument doc = jjeditor.getDocumentProvider().getDocument(input);
+        if (currentDocument.equals(doc))
+          break; // We got the current JJEditor for the current Document
+      }
+    }
+    // Add Elements (method, token)
+    JJElements jjElements = jjeditor.getJJElements();
+    for (String s : jjElements.getMap().keySet()){
+      int id = jjElements.getNode(s).getId();
       // nodes and methods
       if (s.toUpperCase().startsWith(prefix.toUpperCase())){
         if (id == JJTBNF_PRODUCTION || id == JJTMETHODDECLARATION)
@@ -52,10 +94,15 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
         }
       }
     }
-    for (Iterator<String> it= suggestions.iterator(); it.hasNext();) {
+    // Add all suggestions to proposals
+    for (Iterator<String> it = suggestions.iterator(); it.hasNext();) {
       String txt = it.next();
-      if (txt.length() > 0)
-        proposals.add(new CompletionProposal(txt, start, length, txt.length()));
+      if (txt.length() > 0) {
+        if (cursorPosition !=0 )
+          proposals.add(new CompletionProposal(txt, start, length, cursorPosition));
+        else
+          proposals.add(new CompletionProposal(txt, start, length, txt.length()));
+      }
     }
     return proposals.toArray(new ICompletionProposal[proposals.size()]);
   }
