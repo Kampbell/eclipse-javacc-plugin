@@ -37,9 +37,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements
   @SuppressWarnings("unchecked") //$NON-NLS-1$
   protected IProject[] build(int kind, Map args, IProgressMonitor mon)
       throws CoreException {
-    // These are Contants on the build
+    // These are Constants on the build
     javaProject = JavaCore.create(getProject());
     outputFolder = javaProject.getOutputLocation().removeFirstSegments(1);
+    // Clear only once
+    clearConsole();
 
     if (kind == IncrementalProjectBuilder.FULL_BUILD) {
       fullBuild(mon);
@@ -60,7 +62,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @throws CoreException
    */
   protected void fullBuild(IProgressMonitor mon) throws CoreException {
-    clearConsole();
     getProject().accept(this);
   }
 
@@ -70,7 +71,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements
    * @throws CoreException
    */
   public void incrementalBuild(IProgressMonitor mon) throws CoreException {
-    clearConsole();
     IResourceDelta delta = getDelta(getProject());
     if (delta != null)
       delta.accept(this);
@@ -87,7 +87,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     clean(members, monitor);
   }
   /**
-   * Delete recursivelly generated AND derived files
+   * Delete recursively generated AND derived files
    * A modified generated file, marked as not derived, shall not be deleted.
    */
   private void clean(IResource[] members, IProgressMonitor monitor) throws CoreException {
