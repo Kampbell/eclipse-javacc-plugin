@@ -5,7 +5,7 @@ import java.util.HashMap;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
- * A map of JavaCC elements.
+ * A map of JavaCC elements for one Editor
  * Used to navigate between declarations.
  * 
  * @author Remi Koutcherawy 2003-2006
@@ -13,21 +13,26 @@ import sf.eclipse.javacc.parser.JJNode;
  */
 public class JJElements {
   private static final long serialVersionUID = 1L;
-  private static final HashMap<String, JJNode> map = new HashMap<String, JJNode>();
+  private final HashMap<String, JJNode> map = new HashMap<String, JJNode>();
 
-  public static final Object put(String arg0, JJNode arg1) {
+  /**
+   * The JJElements should be constructed for one Editor.
+   */
+  public JJElements() {}
+  
+  public final Object put(String arg0, JJNode arg1) {
     return map.put(arg0, arg1);
   }
-  public static final void clear() {
+  public final void clear() {
     map.clear();
   }
-  public static final boolean isElement(String key) {
+  public final boolean isElement(String key) {
     return map.containsKey(key);
   }
-  public static final HashMap<String, JJNode> getMap() {
+  public final HashMap<String, JJNode> getMap() {
     return map;
   }
-  public static JJNode getNode(String key) {
+  public final JJNode getNode(String key) {
     return map.get(key);
   }
 }
