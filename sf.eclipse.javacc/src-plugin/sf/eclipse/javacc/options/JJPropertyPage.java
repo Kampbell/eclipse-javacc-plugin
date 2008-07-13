@@ -17,8 +17,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.*;
 
 /**
  * The Property page class for JavaCC projects or files
@@ -143,25 +142,28 @@ public class JJPropertyPage extends PropertyPage
     jtb.performOk();
     
     // Ask for rebuild (should check if an option has changed)
-    try
-    {
+    try {
       IProject proj = res.getProject();
-      MessageDialog dialog= new MessageDialog(getShell(), 
-          Activator.getString("JJPropertyPage.0"), //$NON-NLS-1$
+      MessageDialog dialog = new MessageDialog(getShell(), 
+          Activator.getString("JJPropertyPage.Ask_for_rebuild_title"), //$NON-NLS-1$
           null, 
-          Activator.getString("JJPropertyPage.1"),  //$NON-NLS-1$
+          Activator.getString("JJPropertyPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
           MessageDialog.QUESTION, 
-          new String[] {
-           IDialogConstants.YES_LABEL,
-           IDialogConstants.NO_LABEL, 
-           IDialogConstants.CANCEL_LABEL },
-           2);
-      int res= dialog.open();
+          new String[] { 
+            IDialogConstants.YES_LABEL,
+            IDialogConstants.NO_LABEL,
+            IDialogConstants.CANCEL_LABEL },
+          2);
+      int res = dialog.open();
       if (res == MessageDialog.OK) {
-        proj.build(IncrementalProjectBuilder.CLEAN_BUILD, JJ_BUILDER_ID, null, null);
-      } else if (res != 1) {
-        return false; // cancel pressed
+        // OK Clean build
+        proj.build(JJBuilder.CLEAN_BUILD, JJ_BUILDER_ID, null, null);
       }
+      else if (res != 1) { 
+        // Cancel abort
+        return false; 
+      }
+      // "OK" or "NO clean" proceeds to set options
     }
     catch (CoreException e) {
       e.printStackTrace();
