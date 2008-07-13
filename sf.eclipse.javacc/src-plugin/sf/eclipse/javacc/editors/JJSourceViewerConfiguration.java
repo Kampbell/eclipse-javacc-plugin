@@ -161,7 +161,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * @see org.eclipse.jface.text.source.TextSourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer)
    */
   public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-    return new JJTextHover(); // editor.getSourceViewer()
+    return new JJTextHover(editor); // editor.getSourceViewer()
   }
    
   /**

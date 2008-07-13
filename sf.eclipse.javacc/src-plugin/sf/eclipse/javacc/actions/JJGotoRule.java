@@ -11,7 +11,6 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
 import sf.eclipse.javacc.editors.JJEditor;
-import sf.eclipse.javacc.editors.JJElements;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
@@ -56,7 +55,7 @@ public class JJGotoRule implements IEditorActionDelegate {
     if (!selection.isEmpty()) {
       String text = selection.getText();
       // Search matching node in AST
-      JJNode node = JJElements.getNode(text);
+      JJNode node = editor.getJJElements().getNode(text);
       if (node != null) {
         editor.setSelection(node);
       }

@@ -17,25 +17,18 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   protected int id;
   protected String name;
   protected Token first, last;
+  private JJElements jjElements;
 
-  public JJNode(int i) {
-    id = i;
-  }
+  public JJNode(int i) { id = i; }
+  public int getId() { return id; }
   
-  public int getId() {
-    return id;
-  }
   public JJNode(JavaCCParser p, int i) {
     this(i);
     parser = p;
   }
 
-  public void jjtOpen() {
-  }
-
-  public void jjtClose() {
-  }
-  
+  public void jjtOpen() {}
+  public void jjtClose() {}
   public void jjtSetParent(Node n) { parent = n; }
   public Node jjtGetParent() { return parent; }
 
@@ -49,43 +42,23 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     }
     children[i] = n;
   }
-
-  public Node jjtGetChild(int i) {
-    return children[i];
-  }
-
-  public int jjtGetNumChildren() {
-    return (children == null) ? 0 : children.length;
-  }
-
-  /* You can override these two methods in subclasses of JJNode to
-     customize the way the node appears when the tree is dumped.  If
-     your output uses more than one line you should override
-     toString(String), otherwise overriding toString() is probably all
-     you need to do. */
-  public String toString(String prefix) { return prefix + toString(); }
-
-  /* Override this method if you want to customize how the node dumps
-     out its children. */
-
-  public void dump(String prefix) {
-    System.out.println(toString(prefix));
-    if (children != null) {
-      for (int i = 0; i < children.length; ++i) {
-	JJNode n = (JJNode)children[i];
-	if (n != null) {
-	  n.dump(prefix + " "); //$NON-NLS-1$
-	}
-      }
-    }
-  }
+  public Node jjtGetChild(int i) { return children[i];  }
+  public int jjtGetNumChildren() { return (children == null) ? 0 : children.length; }
+  public Node[] getChildren() { return children; }
+  public int getBeginLine() { return first.beginLine; }  
+  public int getEndLine() { return last.endLine; }  
+  public Token getFirstToken() { return first; }
+  public void setFirstToken(Token t) { first = t; }
+  public void setLastToken(Token t) { last = t; }
+//  public Token getLastToken() { return last;  }
+//  public String getName() { return first.image; }
   
   /** 
    * Show correct names 
    */
   public String toString() {
     // default name
-    name = getName();
+    name = first.image;
     
     // Options option_binding => Option name
     if (id == JJTOPTION_BINDING){
@@ -141,39 +114,6 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   }
 
   /**
-   * Returns the child elements of this element.
-   */
-  public Node[] getChildren() {
-    return children;
-  }
-
-  /**
-   * @param string
-   */
-  public String getName() {
-    return first.image;
-  }
-
-  /**
-   * @return
-   */
-  public int getBeginLine() {
-    return first.beginLine;
-  }  
-  
-  /**
-   * @return
-   */
-  public int getEndLine() {
-    return last.endLine;
-  }  
-  
-  public Token getFirstToken() { return first; }
-  public void setFirstToken(Token t) { first = t; }
-  public Token getLastToken() { return last;  }
-  public void setLastToken(Token t) { last = t; }
-  
-  /**
    * Search children corresponding to text
    */
   public JJNode search(String txt) {
@@ -196,20 +136,31 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   }
   
   /**
+   * To buildHashMap each JJNode needs to know where to put Name / Node associations
+   * @param jjElements
+   */
+  public void setJJElementsToUpdate(JJElements jjElements) {
+    this.jjElements = jjElements;
+    if (children != null) {
+      for (int i = 0; i < children.length; ++i) {
+        JJNode n = (JJNode) children[i];
+        n.setJJElementsToUpdate(jjElements);
+      }
+    }
+  }
+  /**
    * Build recursively a HashMap of JavaCC Elements
    * given JJnode at the root of parse tree.
    */
   public void buildHashMap() {
     if (this.toString().startsWith("#")) //$NON-NLS-1$
-      JJElements.put(this.toString().substring(1), this);
+      jjElements.put(this.toString().substring(1), this);
     else
-      JJElements.put(this.toString(), this);
+      jjElements.put(this.toString(), this);
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         JJNode n = (JJNode) children[i];
-        if (n != null) {
-          n.buildHashMap();
-        }
+        n.buildHashMap();
       }
     }
     return;

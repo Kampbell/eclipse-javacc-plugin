@@ -10,8 +10,11 @@ import sf.eclipse.javacc.parser.JJNode;
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 class JJTextHover  implements ITextHover {
+  private final JJEditor editor;
   
-  public JJTextHover() {}
+  public JJTextHover(JJEditor editor) {
+    this.editor = editor;
+  }
 
   /* (non-Javadoc)
    * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
@@ -22,10 +25,11 @@ class JJTextHover  implements ITextHover {
     try {
       String word;
       word = doc.get(region.getOffset(), region.getLength());
-      if (!JJElements.isElement(word))
+      JJElements jjElements = editor.getJJElements();
+      if (!jjElements.isElement(word))
         return null;
 
-      JJNode node = JJElements.getNode(word);
+      JJNode node = jjElements.getNode(word);
       // If the  node is on the same line as the word under the mouse
       // Definition is over itself : do not show it
       if (node.getBeginLine()-1 == doc.getLineOfOffset(region.getOffset()))

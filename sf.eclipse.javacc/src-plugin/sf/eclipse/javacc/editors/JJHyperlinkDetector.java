@@ -50,15 +50,16 @@ public class JJHyperlinkDetector implements IHyperlinkDetector {
     
     String word = textSel.getText();
     // If not in JJElements don't go further
-    if (!JJElements.isElement(word))
+    JJElements jjElements = editor.getJJElements();
+    if (!jjElements.isElement(word))
       return null;
     // If JavaCC keyword don't go further
     for (int i = 0; i < JJCodeScanner.fgJJkeywords.length; i++)
       if(word.equals(JJCodeScanner.fgJJkeywords[i]))
           return null;
-    
+    // Add hyper link for the word associated with the node and the editor
     IRegion linkRegion = new Region(textSel.getOffset(), textSel.getLength());
-    JJNode node = JJElements.getNode(word);
+    JJNode node = jjElements.getNode(word);
     JJHyperlink link = new JJHyperlink(linkRegion, editor, node);
     return new IHyperlink[] { link };
   }
