@@ -116,8 +116,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       IWorkbench workbench = PlatformUI.getWorkbench();
       Shell shell = workbench.getDisplay().getActiveShell();
       MessageDialog dialog= new MessageDialog(shell, 
-          Activator.getString("JJFormat.0"), null,  //$NON-NLS-1$
-          Activator.getString("JJFormat.1"),  //$NON-NLS-1$
+          Activator.getString("JJFormat.FormatWillDoNothingTitle"), null,  //$NON-NLS-1$
+          Activator.getString("JJFormat.FormatWillDoNothing"),  //$NON-NLS-1$
           MessageDialog.QUESTION, 
           new String[] {IDialogConstants.OK_LABEL},
           0);
