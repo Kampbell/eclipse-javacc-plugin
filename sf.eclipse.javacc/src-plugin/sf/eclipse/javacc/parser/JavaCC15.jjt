@@ -20,7 +20,9 @@ package sf.eclipse.javacc.parser;
 import java.io.Reader;
 
 public class JavaCCParser {
+
   protected static JavaCCParser parser = null;
+  protected static JJNode lastGoodJJNode = null;
 	
   public static JJNode parse(Reader in){
     JJNode n = null;
@@ -30,6 +32,7 @@ public class JavaCCParser {
       else
         JavaCCParser.ReInit(in);
       n = JavaCCParser.javacc_getAST();
+      lastGoodJJNode = n;
     } catch (Throwable e) {
     // The TreeViewer expect something
     // This will give a basic error based on the Exception
@@ -48,6 +51,9 @@ public class JavaCCParser {
       n.jjtAddChild(child, 0);
     }
     return n;
+  }
+  public static JJNode lastGoodJJNode() {
+    return lastGoodJJNode;
   }
    /**
    * Looks for Errors reported by JavaCC the form is more or less standard
@@ -412,28 +418,22 @@ void production():{}
 
 void javacode_production() #javacode_production :{} 
 {
-  "JAVACODE"
- try {
-  (MethodDeclaration())
- } catch (ParseException e) {
-  error_skip();
- }
+  "JAVACODE" AccessModifier() MethodDeclaration()
 }
 
 void bnf_production() #bnf_production :{}
 {
- try {
-  ResultType() (identifier()) FormalParameters()
+  AccessModifier() ResultType() identifier() FormalParameters()
   [ "throws" Name() ( "," Name() )* ]
   [ node_descriptor() ]
   ":"
   "{"((BlockStatement() )* ) "}"
   "{"(expansion_choices())"}"
- } catch (ParseException e) {
-   error_skip();
- }
 }
-
+void AccessModifier() : {}
+{
+    ( "public" | "protected" | "private" )?
+}
 void regular_expr_production() #regular_expr_production :{}
 {
  try {
@@ -697,7 +697,7 @@ void EnumBody(): {}
 
 void EnumConstant(): {}
 {
-  JavaIdentifier() [ Arguments() ] [ ClassOrInterfaceBody() ]
+  Modifiers() JavaIdentifier() [ Arguments() ] [ ClassOrInterfaceBody() ]
 }
 
 void TypeParameters(): {}
@@ -764,9 +764,11 @@ void ArrayInitializer(): {}
 
 void MethodDeclaration() #MethodDeclaration : {} 
 {
+  // Modifiers already matched in the caller!
   [ TypeParameters() ]
   ResultType()
   MethodDeclarator() [ "throws" NameList() ]
+  [ node_descriptor() ] // Javacode can have a node descriptor
   ( Block() | ";" )
 }
 
@@ -775,7 +777,7 @@ void MethodDeclarator(): {}
   JavaIdentifier() FormalParameters() ( "[" "]" )*
 }
 
-void FormalParameters():{}
+void FormalParameters(): {}
 {
   "("
   [ FormalParameter() ( "," FormalParameter() )* ]
@@ -784,12 +786,13 @@ void FormalParameters():{}
 
 void FormalParameter(): {}
 {
-  [ "final" ] Type() [ "..." ] VariableDeclaratorId()
+  Modifiers() Type() [ "..." ] VariableDeclaratorId()
 }
 
 void ConstructorDeclaration(): {}
 {
   [ TypeParameters() ]
+  // Modifiers matched in the caller
   JavaIdentifier() FormalParameters() [ "throws" NameList() ]
   "{"
     [ LOOKAHEAD(ExplicitConstructorInvocation()) ExplicitConstructorInvocation() ]
@@ -823,7 +826,7 @@ void ReferenceType(): {}
 | ( ClassOrInterfaceType() ) ( LOOKAHEAD(2) "[" "]" )*
 }
 
-void ClassOrInterfaceType():{}
+void ClassOrInterfaceType(): {}
 {
   JavaIdentifier() [ LOOKAHEAD(2) TypeArguments() ]
   ( LOOKAHEAD(2) "." JavaIdentifier() [ LOOKAHEAD(2) TypeArguments() ] )*
@@ -1033,12 +1036,12 @@ void Literal():{}
 | NullLiteral()
 }
 
-void IntegerLiteral():{}
+void IntegerLiteral(): {}
 {
   <INTEGER_LITERAL>
 }
 
-void BooleanLiteral():{}
+void BooleanLiteral(): {}
 {
   "true"
 | "false"
@@ -1112,14 +1115,14 @@ void LabeledStatement():{}
   JavaIdentifier() ":" Statement()
 }
 
-void Block() :{}
+void Block():{}
 {
   "{" ( BlockStatement() )* "}"
 }
 
 void BlockStatement():{}
 {
-  LOOKAHEAD([ "final" ] Type() JavaIdentifier())
+  LOOKAHEAD( Modifiers() Type() JavaIdentifier() )
   LocalVariableDeclaration() ";"
 | Statement()
 | ClassOrInterfaceDeclaration( )
@@ -1127,7 +1130,7 @@ void BlockStatement():{}
 
 void LocalVariableDeclaration():{}
 {
-  [ "final" ] Type() VariableDeclarator() ( "," VariableDeclarator() )*
+  Modifiers() Type() VariableDeclarator() ( "," VariableDeclarator() )*
 }
 
 void EmptyStatement():{}
@@ -1183,7 +1186,7 @@ void ForStatement():{}
 
 void ForInit():{}
 {
-  LOOKAHEAD( [ "final" ] Type() JavaIdentifier() )
+  LOOKAHEAD( Modifiers() Type() JavaIdentifier() )
   LocalVariableDeclaration()
 | StatementExpressionList()
 }
@@ -1304,14 +1307,12 @@ void DefaultValue():{}
   <_DEFAULT> MemberValue()
 }
 
+/* IDENTIFIERS */
+
 TOKEN : 
 {
-  <IDENTIFIER: 
-  <LETTER> (<PART_LETTER>)* >
-}
-TOKEN :
-{
- <#LETTER:
+  < IDENTIFIER: <LETTER> (<PART_LETTER>)* >
+| <#LETTER:
   [  // all chars for which Character.isIdentifierStart is true
          "$",
          "A"-"Z",
