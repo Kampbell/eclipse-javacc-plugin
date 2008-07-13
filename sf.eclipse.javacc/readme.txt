@@ -37,7 +37,7 @@ Features
    use Workbench "Back" to go back.
 
 History
-06/07/08 - version 1.5.12
+13/07/08 - version 1.5.12
 - Folding rfe 1786801 Collapse/Expand
 - Hovering rfe 1888744 Quick Outline
 - AutoCompletion rfe 1769382 Auto-Completion for both the defined tokens and nodes ignoring case
@@ -51,6 +51,10 @@ History
 - bug 1891111  Alt + left arrow should jump back to correct position
 - bug 1816600  Outline lists return type instead of method name
 - bug 1889637  Incorrect pair matching with Strings
+- correcting navigation which took the last opened grammar
+- correcting javacode which allows node descriptor (#)
+- correcting return type from rules which broke outline
+- keep last good parsing for folding, hover and Completion proposals
 
 08/07/07 - version 1.5.11
 - bug 1682259 JJTREE_OUTPUT_DIRECTORY
