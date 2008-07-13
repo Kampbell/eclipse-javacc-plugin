@@ -81,6 +81,10 @@ public class JJReconcilingStrategy implements IReconcilingStrategy,
     StringReader in = new StringReader(editor.getDocument().get());
     JJNode node = JavaCCParser.parse(in);
     in.close();
+    
+    // If parsing failed get the last good one 
+    if (node.getFirstToken().next == null)
+      node = JavaCCParser.lastGoodJJNode();
 
     // Search recursively and add folding positions for selected nodes
     search( node);
