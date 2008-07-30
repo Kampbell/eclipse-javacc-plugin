@@ -83,5 +83,4 @@ Export-Package: sf.eclipse.javacc;
    org.eclipse.jface.viewers,
    org.eclipse.swt.widgets,
    org.eclipse.jdt.internal.ui.wizards"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 
