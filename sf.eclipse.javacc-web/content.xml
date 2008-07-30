@@ -3,14 +3,14 @@
 <repository name='file:/C:/workspace/sf.eclipse.javacc-web/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1215957678348'/>
+    <property name='p2.timestamp' value='1217450899440'/>
   </properties>
   <references size='8'>
     <repository url='http://eclipse-javacc.sourceforge.net/updates/' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/updates/' type='0' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net' type='1' options='0'/>
-    <repository url='http://eclipse-javacc.sourceforge.net/' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net' type='0' options='0'/>
+    <repository url='http://eclipse-javacc.sourceforge.net/' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/' type='0' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/updates' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/updates' type='0' options='0'/>
