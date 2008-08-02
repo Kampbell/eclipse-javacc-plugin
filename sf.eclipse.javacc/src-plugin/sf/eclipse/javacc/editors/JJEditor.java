@@ -18,7 +18,6 @@ import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.options.JJPreferences;
 import sf.eclipse.javacc.parser.JJNode;
-import sf.eclipse.javacc.parser.JavaCCParser;
 
 /**
  * Editor designed for JavaCC files Referenced by plugin.xml <extension
