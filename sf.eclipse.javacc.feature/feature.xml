@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="JavaCC Feature"
-      version="1.5.12"
+      version="1.5.13"
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
@@ -430,6 +430,6 @@ Version 2.0 dated 2005-05-21.
          id="sf.eclipse.javacc"
          download-size="1119"
          install-size="1119"
-         version="1.5.12"/>
+         version="1.5.13"/>
 
 </feature>
