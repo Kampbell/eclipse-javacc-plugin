@@ -7,8 +7,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -25,11 +23,11 @@ import sf.eclipse.javacc.*;
  * Referenced by plugin.xml
  *  <extension point="org.eclipse.ui.propertyPages">
  *  
- * @author Remi Koutcherawy 2003-2006
+ * @author Remi Koutcherawy 2003-2009
  * CeCILL Licence http://www.cecill.info/index.en.html
  */
 public class JJPropertyPage extends PropertyPage
-  implements IPropertyChangeListener, IJJConstants {
+  implements IJJConstants {
     
   protected TabFolder folder;
   protected TabItem jjRunItem;
@@ -91,15 +89,6 @@ public class JJPropertyPage extends PropertyPage
     if (prefs.get(RUNTIME_JAR, null) == null)
       performDefaults();
     return parent;
-  }
-  
-  /**
-   * Listens to CheckBox "Project Override"
-   * and to CheckBox "Set JavaCC Nature"
-   * and sets tab in coherence
-   */
-  public void propertyChange(PropertyChangeEvent event) {
-
   }
   
   /**
