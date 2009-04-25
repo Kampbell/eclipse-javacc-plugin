@@ -11,35 +11,68 @@ import sf.eclipse.javacc.Activator;
 
 /**
  * Class used to initialize default preference values.
+ * 
+ * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
+// ModMMa : added / renamed colors and indentation preferences
 public class JJPreferences extends AbstractPreferenceInitializer {
-  public static final String P_JJKEYWORD = "JavaCCKeyWordColorPref";  //$NON-NLS-1$
-  public static final String P_JAVAKEYWORD = "JavaKeyWordColorPref";  //$NON-NLS-1$
-  public static final String P_BACKGROUND = "BackgroundColorPref";  //$NON-NLS-1$
-  public static final String P_STRING = "StringColorPref";  //$NON-NLS-1$
-  public static final String P_COMMENT = "CommentColorPref";  //$NON-NLS-1$
-  public static final String P_JDOC_COMMENT = "JavaDocCommentColorPref";  //$NON-NLS-1$
-  public static final String P_TOKEN = "TokenColorPref";  //$NON-NLS-1$
-  public static final String P_PTOKEN = "PrivateTokenColorPref";  //$NON-NLS-1$
-  public static final String P_DEFAULT = "DefaultTextColorPref";  //$NON-NLS-1$
-  public static final String P_MATCHING_CHAR = "MatchingCharColorPref";  //$NON-NLS-1$
-  public static final String P_CONSOLE_COMMAND = "ConsoleCommandColorPref";  //$NON-NLS-1$
-  
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
-	public void initializeDefaultPreferences() {
-    Display display = Display.getCurrent();
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-    
+  /** JavaCC non automatic identation preference */
+  public static final String P_NO_ADV_AUTO_INDENT  = "JavaCCNoAutoIndentPref"; //$NON-NLS-1$
+  /** JavaCC identation character preference */
+  public static final String P_INDENT_CHAR     = "JavaCCIndentCharPref";   //$NON-NLS-1$
+  /** JavaCC number of identation character preference */
+  public static final String P_INDENT_CHAR_NB  = "JavaCCIndentCharNbPref"; //$NON-NLS-1$
+  /** JavaCC keyword color preference */
+  public static final String P_JJKEYWORD       = "JavaCCKeyWordColorPref"; //$NON-NLS-1$
+  /** Java keyword color preference */
+  public static final String P_JAVAKEYWORD     = "JavaKeyWordColorPref";   //$NON-NLS-1$
+  /** Background color preference */
+  public static final String P_BACKGROUND      = "BackgroundColorPref";    //$NON-NLS-1$
+  /** String color preference */
+  public static final String P_STRING          = "StringColorPref";        //$NON-NLS-1$
+  /** Comment color preference */
+  public static final String P_COMMENT         = "CommentColorPref";       //$NON-NLS-1$
+  /** Javadoc comment color preference */
+  public static final String P_JDOC_COMMENT    = "JavaDocCommentColorPref"; //$NON-NLS-1$
+  /** Normal label identifier color preference */
+  public static final String P_NORMALLABEL     = "TokenColorPref";         //$NON-NLS-1$
+  /** Private label identifier color preference */
+  public static final String P_PRIVATELABEL    = "PrivateTokenColorPref";  //$NON-NLS-1$
+  /** Lexical state list or lexical state identifier color preference */
+  public static final String P_LEXICALSTATE    = "LexicalStateColorPref";  //$NON-NLS-1$
+  /** Regular_expression punctuation color preference */
+  public static final String P_REGEXPUNCT      = "RegExPunctColorPref";    //$NON-NLS-1$
+  /** Choices enclosing punctuation color preference */
+  public static final String P_CHOICESPUNCT    = "ChoicesPunctColorPref";  //$NON-NLS-1$
+  /** Default color preference */
+  public static final String P_DEFAULT         = "DefaultTextColorPref";   //$NON-NLS-1$
+  /** Matching opening/closing character color preference */
+  public static final String P_MATCHING_CHAR   = "MatchingCharColorPref";  //$NON-NLS-1$
+  /** Console command color preference */
+  public static final String P_CONSOLE_COMMAND = "ConsoleCommandColorPref"; //$NON-NLS-1$
+
+  /**
+   * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+   */
+  public void initializeDefaultPreferences() {
+    final Display display = Display.getCurrent();
+    final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+    /*
+     * Indentation
+     */
+    store.setDefault(JJPreferences.P_NO_ADV_AUTO_INDENT, false);
+    store.setDefault(JJPreferences.P_INDENT_CHAR, false);
+    store.setDefault(JJPreferences.P_INDENT_CHAR_NB, 2);
+    /*
+     * Colors
+     */
     Color color = display.getSystemColor(SWT.COLOR_DARK_GREEN);
     PreferenceConverter.setDefault(store, P_JJKEYWORD, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_RED);
     PreferenceConverter.setDefault(store, P_JAVAKEYWORD, color.getRGB());
-//    color = display.getSystemColor(SWT.COLOR_WHITE);
-//    PreferenceConverter.setDefault(store, P_BACKGROUND,  color.getRGB());
+    // color = display.getSystemColor(SWT.COLOR_WHITE);
+    // PreferenceConverter.setDefault(store, P_BACKGROUND, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_BLUE);
     PreferenceConverter.setDefault(store, P_STRING, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_GREEN);
@@ -47,15 +80,20 @@ public class JJPreferences extends AbstractPreferenceInitializer {
     color = display.getSystemColor(SWT.COLOR_DARK_BLUE);
     PreferenceConverter.setDefault(store, P_JDOC_COMMENT, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_YELLOW);
-    PreferenceConverter.setDefault(store, P_TOKEN, color.getRGB());
+    PreferenceConverter.setDefault(store, P_NORMALLABEL, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_RED);
-    PreferenceConverter.setDefault(store, P_PTOKEN, color.getRGB());
+    PreferenceConverter.setDefault(store, P_PRIVATELABEL, color.getRGB());
+    color = display.getSystemColor(SWT.COLOR_DARK_RED);
+    PreferenceConverter.setDefault(store, P_LEXICALSTATE, color.getRGB());
+    color = display.getSystemColor(SWT.COLOR_MAGENTA);
+    PreferenceConverter.setDefault(store, P_REGEXPUNCT, color.getRGB());
+    color = display.getSystemColor(SWT.COLOR_RED);
+    PreferenceConverter.setDefault(store, P_CHOICESPUNCT, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_BLACK);
     PreferenceConverter.setDefault(store, P_DEFAULT, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_GREEN);
     PreferenceConverter.setDefault(store, P_MATCHING_CHAR, color.getRGB());
     color = display.getSystemColor(SWT.COLOR_DARK_RED);
     PreferenceConverter.setDefault(store, P_CONSOLE_COMMAND, color.getRGB());
-	}
-
+  }
 }

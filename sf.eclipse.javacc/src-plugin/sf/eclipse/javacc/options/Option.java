@@ -3,68 +3,95 @@ package sf.eclipse.javacc.options;
 /**
  * An option is a name + type + value + default value
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
+// ModMMa : added description related field and method (for JTB cryptic options)
 public class Option {
+  /** Integer option type */
   public static final int INT = 1;
+  /** Bolean option type */
   public static final int BOOLEAN = 2;
+  /** String option type */
   public static final int STRING = 3;
+  /** File option type */
   public static final int FILE = 4;
+  /** Path option type */
   public static final int PATH = 5;
+  /** Target option type */
   public static final int TARGET = 6;
+  /** Void option type */
   public static final int VOID = 7;
 
   protected int type;
   protected String name;
+  protected String description;
   protected String value;
   protected String defaultValue;
 
   /**
-   * A String Option 
-   * @param name
-   * @param default
-   * @param type Option.STRING, BOOLEAN, FILE, PATH, TARGET
+   * Constructor with a name, default value and type
    */
-  Option(String name, String defaultValue, int type) {
-    this.name = name;
-    this.defaultValue = defaultValue;
-    this.type = type;
+  Option(String aName, String aDefaultValue, int aType) {
+    name = aName;
+    description = "";
+    defaultValue = aDefaultValue;
+    type = aType;
+  }
+
+  /**
+   * Constructor with a name, description, default value and type
+   */
+  Option(String aName, String aDescription, String aDefaultValue, int aType) {
+    name = aName;
+    description = aDescription;
+    defaultValue = aDefaultValue;
+    type = aType;
   }
 
  /**
-  * Returns type Option.STRING, INT, BOOLEAN, FILE, PATH, TARGET
+  * Returns the type.
   */
   int getType() {
     return type;
   }
 
- /**
-  * Returns name
-  */
-  String getName() {
-    return name;
-  }
+  /**
+   * Returns the name.
+   */
+   String getName() {
+     return name;
+   }
+
+   /**
+    * Returns the name and the description.
+    */
+    String getNameAndDescription() {
+      if (description.length() == 0) {
+        return name;
+      }
+      return name + " - " + description;
+    }
 
  /**
-  * Returns value
+  * Returns the value.
   */
   String getValue() {
     return value;
   }
 
  /**
-  * Sets value
+  * Sets the value.
   */
-  void setValue(String value) {
-    if (value == null) // || value.equals("")
-      this.value = defaultValue;
+  void setValue(String aValue) {
+    if (aValue == null) // || value.equals("")
+      value = defaultValue;
     else
-      this.value = value;
+      value = aValue;
   }
 
  /**
-  * Returns default value
+  * Returns the default value.
   */
   String getDefaultValue() {
     return defaultValue;

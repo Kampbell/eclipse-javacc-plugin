@@ -6,11 +6,12 @@ import org.eclipse.swt.widgets.Composite;
 import sf.eclipse.javacc.IJJConstants;
 
 /**
- * The Tab for JJTB options
+ * The Tab for JJTB options.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
+// ModMMa : added description field (for JTB cryptic options)
 public class JTBOptions extends JJAbstractTab implements IJJConstants {
   // Memo 
   // Usage: jtb [OPTIONS] [inputfile]
@@ -33,47 +34,45 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
   // -printer    Generate a syntax tree dumping visitor.
 
   /**
-   * Initialize with JTB known options
+   * Standard constructor : initializes with known JTB options.
+   * 
+   * @param parent the parent
+   * @param res the ressource
    */
   public JTBOptions(Composite parent, IResource res) {
     super(parent, res);
- 
     // All options are saved in a single property
     preferenceName = JTB_OPTIONS;
     optionSet = new OptionSet();
-
-    // int options    
-    // void options
-    optionSet.add(new Option("h", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("w", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("e", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("jd", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("f", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("pp", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("tk", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("scheme", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("printer", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    
+    // int options
+    // void options, reordered on two columns
+//    optionSet.add(new Option("h - displays this help", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("pp", "generate parent pointers in all node classes", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("e", "suppress semantic error checking", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("tk", "stores special tokens in the parse tree", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("w", "do not overwrite existing files", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("jd", "generate javadoc comments in nodes and visitor", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("scheme", "generatee for the Scheme language", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("f", "generate descriptive node class field names", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("printer", "generate TreeDumper & TreeFormatter visitors ", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
     // string options
-    optionSet.add(new Option("o", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("np", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("vp", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("p", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("ns", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-
+    optionSet.add(new Option("o", "generated file name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("np", "generated syntax tree classes path", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("vp", "generated visitor classes path", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("p", "np + vp", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("ns", "generated nodes classes super class name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     // Fix values to default values
     optionSet.resetToDefaultValues();
-    
     // Super class fills the content from property and optionSet
-    createContents();    
+    createContents();
   }
-  
+
   /**
    * Set defaults in Eclipse
    */
   public void performDefaults() {
     super.performDefaults();
     // No pathField yet for JTB
-//    pathField[0].setStringValue(Activator.getString("JTBOptions.outputdir")); //$NON-NLS-1$
-  }  
+    //    pathField[0].setStringValue(Activator.getString("JTBOptions.outputdir")); //$NON-NLS-1$
+  }
 }

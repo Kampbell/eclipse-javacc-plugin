@@ -9,8 +9,11 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 /**
  * Helper class to match pairs of characters.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
+ */
+/*
+ *  ModMMa : fixed "\"" strings
  */
 public class ParentMatcher implements ICharacterPairMatcher {
   protected IDocument fDocument;
@@ -20,33 +23,37 @@ public class ParentMatcher implements ICharacterPairMatcher {
   protected int fAnchor;
   protected static char[] fPairs = { '{', '}', '<', '>', '[', ']', '(', ')' };
 
+  /**
+   * Standard constructor
+   */
   public ParentMatcher() {
+    // does nothing
   }
 
-  /*
+  /**
    * @see org.eclipse.jface.text.source.ICharacterPairMatcher#match(org.eclipse.jface.text.IDocument,
    *      int)
    */
   public IRegion match(IDocument document, int offset) {
     fOffset = offset;
-    if (fOffset < 0)
+    if (fOffset < 0) {
       return null;
+    }
     fDocument = document;
-    if (fDocument != null && matchPairsAt() && fStartPos != fEndPos)
+    if (fDocument != null && matchPairsAt() && fStartPos != fEndPos) {
       return new Region(fStartPos, fEndPos - fStartPos + 1);
+    }
     return null;
   }
 
-  /*
+  /**
    * @see org.eclipse.jface.text.source.ICharacterPairMatcher#getAnchor()
    */
   public int getAnchor() {
     return fAnchor;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
+  /** 
    * @see org.eclipse.jface.text.source.ICharacterPairMatcher#dispose()
    */
   public void dispose() {
@@ -54,10 +61,11 @@ public class ParentMatcher implements ICharacterPairMatcher {
     fDocument = null;
   }
 
-  /*
+  /**
    * @see org.eclipse.jface.text.source.ICharacterPairMatcher#clear()
    */
   public void clear() {
+    // does nothing
   }
 
   protected boolean matchPairsAt() {
@@ -88,21 +96,22 @@ public class ParentMatcher implements ICharacterPairMatcher {
         fAnchor = RIGHT;
         fStartPos = searchForOpeningPeer(fEndPos, fPairs[pairIndex2 - 1],
             fPairs[pairIndex2]);
-        if (fStartPos > -1)
+        if (fStartPos > -1) {
           return true;
-        else
-          fEndPos = -1;
+        }
+        fEndPos = -1;
       } else if (fStartPos > -1) {
         fAnchor = LEFT;
         fEndPos = searchForClosingPeer(fStartPos, fPairs[pairIndex1],
             fPairs[pairIndex1 + 1]);
-        if (fEndPos > -1)
+        if (fEndPos > -1) {
           return true;
-        else
-          fStartPos = -1;
+        }
+        fStartPos = -1;
       }
 
     } catch (BadLocationException x) {
+      // swallowed
     }
     return false;
   }
@@ -118,21 +127,35 @@ public class ParentMatcher implements ICharacterPairMatcher {
       while (true) {
         while (fPos < fDocument.getLength()) {
           fChar = fDocument.getChar(fPos);
-          if (fChar =='"')
-            while (fDocument.getChar(++fPos) !='"')
-              ;
-          if (fChar == opening || fChar == closing)
+          if (fChar =='"') {
+            boolean found = false;
+            char old = '"';
+            while (!found) {
+              final char curr = fDocument.getChar(++fPos);
+              if (curr == '"' && old != '\\') {
+                found = true;
+              } else {
+                // take care of "\\" strings ...
+                old = (old == '\\' ? ' ' : curr);
+              }
+            }
+          }
+          if (fChar == opening || fChar == closing) {
             break;
+          }
           fPos++;
         }
-        if (fPos == fDocument.getLength())
+        if (fPos == fDocument.getLength()) {
           return -1;
-        if (fChar == opening)
+        }
+        if (fChar == opening) {
           depth++;
-        else
+        } else {
           depth--;        
-        if (depth == 0)
+        }
+        if (depth == 0) {
           return fPos;
+        }
         fPos++;        
       }
     } catch (BadLocationException e) {
@@ -151,21 +174,31 @@ public class ParentMatcher implements ICharacterPairMatcher {
       while (true) {
         while (fPos > -1) {
           fChar = fDocument.getChar(fPos);
-          if (fChar =='"')
-            while (fDocument.getChar(--fPos) !='"')
-              ;
-          if (fChar == opening || fChar == closing)
+          if (fChar == '"') {
+            while (true) {
+              if (fDocument.getChar(--fPos) == '"') {
+                if (fDocument.getChar(fPos - 1) != '\\') {
+                  break;
+                }
+              }
+            }
+          }
+          if (fChar == opening || fChar == closing) {
             break;
+          }
           fPos--;
         }
-        if (fPos == -1)
+        if (fPos == -1) {
           return -1;
-        if (fChar == closing)
+        }
+        if (fChar == closing) {
           depth++;
-        else
+        } else {
           depth--;
-        if (depth == 0)
+        }
+        if (depth == 0) {
           return fPos;
+        }
         fPos--;
       }
 

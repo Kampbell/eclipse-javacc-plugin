@@ -5,33 +5,573 @@ import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.actions.JJFormat;
+import sf.eclipse.javacc.options.JJPreferences;
 
 /**
- * Auto indent strategy sensitive to brackets.
- * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
+ * Auto indent strategy sensitive to newlines, braces, parenthesis, vertical bar, angle brackets and colons.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy
+ * @author Remi Koutcherawy 2003-2006 CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009 (refactoring and adaptation to JJFormat indentation rules)
  */
-public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
-implements IAutoEditStrategy {
-
-  /**
-   * Method declared on IAutoIndentStrategy
+public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
+/**
+   * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
+   * 
+   * @see IAutoEditStrategy
+   * @param doc the document
+   * @param cmd the document command (the last character)
    */
-  public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
-    if (c.length == 0 && c.text != null && endsWithDelimiter(d, c.text))
-      smartIndentAfterNewLine(d, c);
-    else if ("}".equals(c.text)) { //$NON-NLS-1$
-      smartInsertAfterBracket(d, c);
+  public void customizeDocumentCommand(final IDocument doc, final DocumentCommand cmd) {
+    final boolean noAdvancedAutoInd = Activator.getDefault().getPreferenceStore().getBoolean(JJPreferences.P_NO_ADV_AUTO_INDENT);
+    if (noAdvancedAutoInd) {
+      if (cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text)) {
+        basicIndentAfterNewLine(doc, cmd);
+      }
+    } else {
+      if (cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text)) {
+        smartIndentAfterNewLine(doc, cmd);
+      } else if ("{".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterLeftBrace(doc, cmd);
+      } else if ("}".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterRightBrace(doc, cmd);
+      } else if ("(".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterLeftPar(doc, cmd);
+      } else if (")".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterRightPar(doc, cmd);
+      } else if ("|".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterVertBar(doc, cmd);
+      } else if ("<".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterLeftAngleBracket(doc, cmd);
+      } else if (">".equals(cmd.text)) { //$NON-NLS-1$
+        smartInsertAfterRightAngleBracket(doc, cmd);
+      }
     }
   }
 
   /**
-   * Returns whether or not the text ends with one of the given search strings.
+   * Sets the basic indentation of a new line based on the command provided in the document.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
    */
-  private boolean endsWithDelimiter(IDocument d, String txt) {
-    String[] delimiters = d.getLegalLineDelimiters();
+  void basicIndentAfterNewLine(final IDocument doc, final DocumentCommand cmd) {
+    final int docLength = doc.getLength();
+    if (cmd.offset == -1 || docLength == 0)
+      return;
+    try {
+      // line is the line number of the newline character
+      final int line = doc.getLineOfOffset(cmd.offset);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, cmd.offset);
+      // currIndent is the current line indentation string
+      final String currIndent = doc.get(startPos, firstNonWS - startPos);
+      // keep current identation and add it to the command
+      // set the replacement document command text
+      cmd.text += currIndent;
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Sets the indentation of a new line based on the command provided in the document.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartIndentAfterNewLine(final IDocument doc, final DocumentCommand cmd) {
+    final int docLength = doc.getLength();
+    if (cmd.offset == -1 || docLength == 0)
+      return;
+    try {
+      // p is the position of the newline character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the newline character
+      final int line = doc.getLineOfOffset(cmd.offset);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, cmd.offset);
+      // currIndent is the current line indentation string
+      final String currIndent = doc.get(startPos, firstNonWS - startPos);
+      // replacement buffer
+      final StringBuffer sb = new StringBuffer(32);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the newline
+        // find last non space not tab character
+        char c;
+        while (true) {
+          c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            break;
+          }
+        }
+        if (c == '{' || c == '(') {
+          // last character was a left brace or parenthesis, so we must increment indentation and
+          // add it to the command
+          sb.append(cmd.text).append(currIndent).append(JJCodeScanner.getIndentString());
+        } else {
+          // otherwise keep current indentation and add it to the command
+          sb.append(cmd.text).append(currIndent);
+        }
+      } else {
+        // case newline at the beginning of a line (after whitespaces)
+        // we assume current indentation is ok
+        // just add the current indentation to the command
+        sb.append(cmd.text).append(currIndent);
+      }
+      // remove trailing whitespaces
+      p = cmd.offset;
+      while (true) {
+        final char c = doc.getChar(--p);
+        if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          ++p;
+          break;
+        }
+      }
+      // modify the document command length and offset
+      cmd.length += (cmd.offset - p);
+      cmd.offset = p;
+      // set the replacement document command text
+      cmd.text = sb.toString();
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a left brace according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterLeftBrace(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the '{' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the '{' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      // currIndent is the current line indentation string
+      final String currIndent = doc.get(startPos, firstNonWS - startPos);
+      // eol is the newline string
+      final String eol = doc.getLegalLineDelimiters()[0];
+      // replacement buffer
+      final StringBuffer sb = new StringBuffer(32);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the '{'
+        // add a new line, the previous indentation, the left brace, a new line and an incremented indentation
+        sb.append(eol).append(currIndent).append('{');
+        sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
+        // "remove" trailing whitespaces
+        while (true) {
+          final char c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            ++p;
+            break;
+          }
+        }
+        // modify the document command length and offset
+        cmd.length += (cmd.offset - p);
+        cmd.offset = p;
+      } else {
+        // case '{' at the beginning of a line (after whitespaces)
+        // we assume current indentation is ok
+        // add the left brace, a new line and an incremented indentation
+        sb.append('{'); //$NON-NLS-1$
+        sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
+      }
+      // set the replacement document command text
+      cmd.text = sb.toString();
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a right brace according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterRightBrace(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the '}' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the '}' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      // currIndent is the current line indentation string
+      final String currIndent = doc.get(startPos, firstNonWS - startPos);
+      // eol is the newline string
+      final String eol = doc.getLegalLineDelimiters()[0];
+      // indentString is the indentation string derived from the preferences
+      final String indentString = JJCodeScanner.getIndentString();
+      // nextIndent is the current and decremented indentation
+      final int indLen = indentString.length();
+      final int len = currIndent.length() - indLen;
+      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : "");
+      // replacement buffer
+      final StringBuffer sb = new StringBuffer(32);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the '}'
+        // add a new line, the current and decremented indentation, the right brace, a new line and
+        // the current and decremented indentation
+        sb.append(eol).append(nextIndent).append('}');
+        sb.append(eol).append(nextIndent);
+        // "remove" trailing whitespaces
+        while (true) {
+          final char c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            ++p;
+            break;
+          }
+        }
+        // modify the document command length and offset
+        cmd.length += (cmd.offset - p);
+        cmd.offset = p;
+        // set the replacement document command text
+        cmd.text = sb.toString();
+      } else {
+        // case '}' at the beginning of a line (after whitespaces)
+        // we must decrement the current indentation and keep the right brace
+        int k = 0;
+        while (k < indLen) {
+          final char c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') {
+            p++;
+            break;
+          }
+          k++;
+        }
+        // modify the document command length and offset
+        cmd.length += (cmd.offset - p);
+        cmd.offset = p;
+      }
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a left parenthesis according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterLeftPar(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the '(' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the '(' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      // currIndent is the current line indentation string
+      final String currIndent = doc.get(startPos, firstNonWS - startPos);
+      // eol is the newline string
+      final String eol = doc.getLegalLineDelimiters()[0];
+      // replacement buffer
+      final StringBuffer sb = new StringBuffer(32);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the '('
+        // "remove" trailing whitespaces
+        char c;
+        while (true) {
+          c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            ++p;
+            break;
+          }
+        }
+        if (Character.isJavaIdentifierPart(c)) {
+          // '(' is probably at the beginning of a parameter list, so do nothing
+        } else {
+          // otherwise '(' is probably at the beginning of a choice
+          // add a new line, the previous indentation, the left parenthesis, a new line and
+          // an incremented indentation
+          sb.append(eol).append(currIndent).append('(');
+          sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
+          // modify the document command length and offset
+          cmd.length += (cmd.offset - p);
+          cmd.offset = p;
+          // set the replacement document command text
+          cmd.text = sb.toString();
+        }
+      } else {
+        // case '(' at the beginning of a line (after whitespaces)
+        // assume current indentation is ok
+        // add the left parenthesis, a new line and an incremented indentation
+        sb.append('('); //$NON-NLS-1$
+        sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
+        // set the replacement document command text
+        cmd.text = sb.toString();
+      }
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a right parenthesis according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterRightPar(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the ')' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the ')' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      // currIndent is the current line indentation string
+      final String currIndent = doc.get(startPos, firstNonWS - startPos);
+      // eol is the newline string
+      final String eol = doc.getLegalLineDelimiters()[0];
+      // indentString is the indentation string derived from the preferences
+      final String indentString = JJCodeScanner.getIndentString();
+      // nextIndent is the current and decremented indentation
+      final int indLen = indentString.length();
+      final int len = currIndent.length() - indLen;
+      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : "");
+      // replacement buffer
+      final StringBuffer sb = new StringBuffer(32);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the ')'
+        // "remove" trailing whitespaces
+        char c;
+        while (true) {
+          c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            ++p;
+            break;
+          }
+        }
+        if (c == '(' || Character.isJavaIdentifierPart(c)) {
+          // ')' is probably at the end of a parameter list, so do nothing
+        } else {
+          // add a new line, the current and decremented indentation, the right parenthesis
+          sb.append(eol).append(nextIndent).append(')');
+          // modify the document command length and offset
+          cmd.length += (cmd.offset - p);
+          cmd.offset = p;
+          // set the replacement document command text
+          cmd.text = sb.toString();
+        }
+      } else {
+        // case ')' at the beginning of a line (after whitespaces)
+        // we must decrement the current indentation and keep the right parenthesis
+        int k = 0;
+        while (k < indLen) {
+          final char c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') {
+            p++;
+            break;
+          }
+          k++;
+        }
+        // modify the document command length and offset
+        cmd.length += (cmd.offset - p);
+        cmd.offset = p;
+      }
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a vertical bar according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterVertBar(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the '|' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the '|' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      // indentString is the indentation string derived from the preferences
+      final String indentString = JJCodeScanner.getIndentString();
+      // nextIndent is the current and decremented indentation
+      final int indLen = indentString.length();
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the '|', do nothing
+      } else {
+        // case '|' at the beginning of a line (after whitespaces)
+        // look at previous line
+        final int sp = doc.getLineOffset(line - 1);
+        final int ws = findEndOfWhiteSpace(doc, sp, p);
+        if (doc.getChar(ws) == '|') {
+          // case '|' is probably aligned with the '|' of the previous line,
+          // so keep the vertical bar and add the special indentation
+          // set the replacement document command text
+          cmd.text += JJCodeScanner.getSpecIndentString();
+        } else {
+          // case '|' is not after a previous line with a '|', so must decrement the current indentation,
+          // keep the vertical bar and add the special indentation
+          int k = 0;
+          while (k < indLen) {
+            final char c = doc.getChar(--p);
+            if (c != ' ' && c != '\t') {
+              p++;
+              break;
+            }
+            k++;
+          }
+          // modify the document command length and offset
+          cmd.length += (cmd.offset - p);
+          cmd.offset = p;
+          // set the replacement document command text
+          cmd.text += JJCodeScanner.getSpecIndentString();
+        }
+      }
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a left angle bracket according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterLeftAngleBracket(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the '<' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the '<' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the '<'
+        // "remove" trailing whitespaces
+        char c;
+        while (true) {
+          c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            ++p;
+            break;
+          }
+        }
+        if (JJTokenRule.isChoicesPunct(c) || c == '|' || c == '"' || c == '=' || c == ':') {
+          // case after some JavaCC punctuation, so add a space
+          // set the replacement document command text
+          cmd.text = "< ";
+        } else {
+          // case probably in a Java expression, so do nothing
+        }
+      } else {
+        // case '<' at the beginning of a line (after whitespaces), so add a space
+        // set the replacement document command text
+        cmd.text = "< ";
+      }
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Inserts a right angle bracket according to line and indentation formatting rules.
+   * 
+   * @param doc - the document being parsed
+   * @param cmd - the command being performed
+   */
+  void smartInsertAfterRightAngleBracket(final IDocument doc, final DocumentCommand cmd) {
+    if (cmd.offset == -1 || doc.getLength() == 0)
+      return;
+    try {
+      // p is the position of the '>' character in the modified document
+      int p = cmd.offset;
+      // line is the line number of the '>' character
+      final int line = doc.getLineOfOffset(p);
+      // startPos is the offset of the first character of the line
+      final int startPos = doc.getLineOffset(line);
+      // firstNonWS is the offset of the next character after the last character of the line leading
+      // whitespaces
+      final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
+      if (firstNonWS < p) {
+        // case line has characters others than spaces and tabs before the '>'
+        // "remove" trailing whitespaces
+        char c;
+        while (true) {
+          c = doc.getChar(--p);
+          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+            ++p;
+            break;
+          }
+        }
+        if (c == '(') {
+          // case in a Greater-than node, so do nothing
+        } else {
+          // all other cases, so remove previous whitespaces and prepend a space
+          // modify the document command length and offset
+          cmd.length += (cmd.offset - p);
+          cmd.offset = p;
+          // set the replacement document command text
+          cmd.text = " >";
+        }
+      } else {
+        // case '>' at the beginning of a line (after whitespaces), so do nothing
+      }
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Returns whether or not the text ends with one of the document end of line delimiters.
+   * 
+   * @param doc the document
+   * @param txt the text
+   */
+  boolean endsWithDelimiter(final IDocument doc, final String txt) {
+    String[] delimiters = doc.getLegalLineDelimiters();
     for (int i = 0; i < delimiters.length; i++) {
       if (txt.endsWith(delimiters[i]))
         return true;
@@ -40,254 +580,151 @@ implements IAutoEditStrategy {
   }
 
   /**
-   * Returns the line number of the next bracket after end.
+   * Returns the line number of the corresponding left brace.
    * 
-   * @return the line number of the next matching bracket after end
-   * @param document - the document being parsed
-   * @param line - the line to start searching back from
-   * @param end - the end position to search back from
-   * @param closingBracketIncrease - the number of brackets to skip
+   * @param doc - the document being parsed
+   * @param startLine - the line to start searching back from (modified)
+   * @param endPos - the end position to search back from (modified)
+   * @param rightBracesCount - the number of braces to skip
+   * @return the line number of the next matching brace after end
    */
-  protected int findMatchingOpenBracket(
-    IDocument document,
-    int line,
-    int end,
-    int closingBracketIncrease)
-    throws BadLocationException {
-    int start = document.getLineOffset(line);
-    int brackcount =
-      getBracketCount(document, start, end, false) - closingBracketIncrease;
-
-    // Sums up the brackets counts of each line (closing brackets count negative, 
-    // opening positive) until we find a line the brings the count to zero
+  int findMatchingLeftBrace(final IDocument doc, int startLine, int endPos, final int rightBracesCount) throws BadLocationException {
+    int ln = startLine;
+    int startPos = doc.getLineOffset(ln);
+    int brackcount = getBracesCount(doc, startPos, endPos, false) - rightBracesCount;
+    // Sums up the braces counts of each line (right braces count negative,
+    // left positive) until we find a line the brings the count to zero
     while (brackcount < 0) {
-      line--;
-      if (line < 0) {
+      ln--;
+      if (ln < 0) {
         return -1;
       }
-      start = document.getLineOffset(line);
-      end = start + document.getLineLength(line) - 1;
-      brackcount += getBracketCount(document, start, end, false);
+      startPos = doc.getLineOffset(ln);
+      int ep = startPos + doc.getLineLength(ln) - 1;
+      brackcount += getBracesCount(doc, startPos, ep, false);
     }
-    return line;
+    return ln;
   }
 
   /**
-   * Returns the bracket value of a section of text. Closing brackets have a value of -1 and 
-   * open brackets have a value of 1.
+   * Returns the brace value of a section of text. Right braces have a value of -1 and left braces have a
+   * value of 1.
    * 
-   * @return the line number of the next matching bracket after end
-   * @param document - the document being parsed
-   * @param start - the start position for the search
-   * @param end - the end position for the search
-   * @param ignoreCloseBrackets - whether or not to ignore closing brackets in the count
+   * @param doc - the document being parsed
+   * @param startPos - the start position for the search
+   * @param endPos - the end position for the search
+   * @param ignoreRightBraces - whether or not to ignore right braces in the count
+   * @return the line number of the next matching brace after end
    */
-  private int getBracketCount(
-    IDocument document,
-    int start,
-    int end,
-    boolean ignoreCloseBrackets)
-    throws BadLocationException {
-    int begin = start;
-    int bracketcount = 0;
-    while (begin < end) {
-      char curr = document.getChar(begin);
-      begin++;
-      switch (curr) {
-        case '/' :
-          if (begin < end) {
-            char next = document.getChar(begin);
-            if (next == '*') {
+  int getBracesCount(final IDocument doc, final int startPos, final int endPos, final boolean ignoreRightBraces) throws BadLocationException {
+    int p = startPos;
+    int bracesCount = 0;
+    boolean ignore = ignoreRightBraces;
+    while (p < endPos) {
+      char c = doc.getChar(p);
+      p++;
+      switch (c) {
+        case '/': //$NON-NLS-1$
+          if (p < endPos) {
+            char n = doc.getChar(p);
+            if (n == '*') { //$NON-NLS-1$
               // a comment starts, advance to the comment end
-              begin = getCommentEnd(document, begin + 1, end);
-            } else if (next == '/') {
-              // '//'-comment: nothing to do anymore on this line 
-              begin = end;
+              p = getCommentEnd(doc, p + 1, endPos);
+            } else if (n == '/') { //$NON-NLS-1$
+              // '//'-comment: nothing to do anymore on this line
+              p = endPos;
             }
           }
           break;
-        case '*' :
-          if (begin < end) {
-            char next = document.getChar(begin);
-            if (next == '/') {
+        case '*':
+          if (p < endPos) {
+            char n = doc.getChar(p);
+            if (n == '/') { //$NON-NLS-1$
               // we have been in a comment: forget what we read before
-              bracketcount = 0;
-              begin++;
+              bracesCount = 0;
+              p++;
             }
           }
           break;
-        case '{' :
-          bracketcount++;
-          ignoreCloseBrackets = false;
+        case '{': //$NON-NLS-1$
+          bracesCount++;
+          ignore = false;
           break;
-        case '}' :
-          if (!ignoreCloseBrackets) {
-            bracketcount--;
+        case '}': //$NON-NLS-1$
+          if (!ignore) {
+            bracesCount--;
           }
           break;
-        case '"' :
-        case '\'' :
-          begin = getStringEnd(document, begin, end, curr);
+        case '"': //$NON-NLS-1$
+        case '\'': //$NON-NLS-1$
+          p = getStringEnd(doc, p, endPos, c);
           break;
-        default :
-          }
-    }
-    return bracketcount;
-  }
-
-  /**
-   * Returns the end position a comment starting at pos.
-   * 
-   * @return the end position a comment starting at pos
-   * @param document - the document being parsed
-   * @param position - the start position for the search
-   * @param end - the end position for the search
-   */
-  private int getCommentEnd(IDocument document, int position, int end)
-    throws BadLocationException {
-    int currentPosition = position;
-    while (currentPosition < end) {
-      char curr = document.getChar(currentPosition);
-      currentPosition++;
-      if (curr == '*') {
-        if (currentPosition < end
-          && document.getChar(currentPosition) == '/') {
-          return currentPosition + 1;
-        }
+        default:
       }
     }
-    return end;
+    return bracesCount;
   }
 
   /**
-   * Returns the String at line with the leading whitespace removed.
+   * Returns the given line indentation string (the first ' ' and '\t' of the line).
    * 
-   * @return the String at line with the leading whitespace removed.
-   * @param document - the document being parsed
+   * @param doc - the document being parsed
    * @param line - the line being searched
+   * @return the line indentation string.
    */
-  protected String getIndentOfLine(IDocument document, int line)
-    throws BadLocationException {
-    if (line > -1) {
-      int start = document.getLineOffset(line);
-      int end = start + document.getLineLength(line) - 1;
-      int whiteend = findEndOfWhiteSpace(document, start, end);
-      return document.get(start, whiteend - start);
-    } 
-    return ""; //$NON-NLS-1$
+  String getLineIndent(final IDocument doc, final int line) throws BadLocationException {
+    if (line < 0) {
+      return ""; //$NON-NLS-1$
+    }
+    final int start = doc.getLineOffset(line);
+    final int end = start + doc.getLineLength(line) - 1;
+    final int wsEnd = findEndOfWhiteSpace(doc, start, end);
+    return doc.get(start, wsEnd - start);
   }
 
   /**
-   * Returns the position of the character in the document after position.
+   * Returns the end position of a comment starting at a given position.
    * 
-   * @return the next location of character.
-   * @param document - the document being parsed
-   * @param position - the position to start searching from
-   * @param end - the end of the document
-   * @param character - the character you are trying to match
+   * @param doc - the document being parsed
+   * @param startPos - the start position for the search
+   * @param endPos - the end position for the search
+   * @return the end position of a comment starting at the start position
    */
-  private int getStringEnd(
-    IDocument document,
-    int position,
-    int end,
-    char character)
-    throws BadLocationException {
-    int currentPosition = position;
-    while (currentPosition < end) {
-      char currentCharacter = document.getChar(currentPosition);
-      currentPosition++;
-      if (currentCharacter == '\\') {
+  int getCommentEnd(final IDocument doc, final int startPos, final int endPos) throws BadLocationException {
+    int p = startPos;
+    while (p < endPos) {
+      char c = doc.getChar(p);
+      p++;
+      if (c == '*') { //$NON-NLS-1$
+        if (p < endPos && doc.getChar(p) == '/') { //$NON-NLS-1$
+          return p + 1;
+        }
+      }
+    }
+    return endPos;
+  }
+
+  /**
+   * Returns the first position of a given non escaped character in a given document range.
+   * 
+   * @param doc - the document being parsed
+   * @param startPos - the position to start searching from
+   * @param endPos - the position to end searching to
+   * @param ch - the character to try to find
+   * @return the first location of the character searched
+   */
+  int getStringEnd(final IDocument doc, final int startPos, final int endPos, final char ch) throws BadLocationException {
+    int p = startPos;
+    while (p < endPos) {
+      char c = doc.getChar(p);
+      p++;
+      if (c == '\\') { //$NON-NLS-1$
         // ignore escaped characters
-        currentPosition++;
-      } else if (currentCharacter == character) {
-        return currentPosition;
+        p++;
+      } else if (c == ch) {
+        return p;
       }
     }
-    return end;
-  }
-
-  /**
-   * Sets the indent of a new line based on the command provided in the supplied document.
-   * @param document - the document being parsed
-   * @param command - the command being performed
-   */
-  protected void smartIndentAfterNewLine(
-    IDocument document,
-    DocumentCommand command) {
-    int docLength = document.getLength();
-    if (command.offset == -1 || docLength == 0)
-      return;
-
-    try {
-      int p =
-        (command.offset == docLength ? command.offset - 1 : command.offset);
-      int line = document.getLineOfOffset(p);
-
-      StringBuffer buf = new StringBuffer(command.text);
-      if (command.offset < docLength
-        && document.getChar(command.offset) == '}') {
-        int indLine =
-          findMatchingOpenBracket(document, line, command.offset, 0);
-        if (indLine == -1) {
-          indLine = line;
-        }
-        buf.append(getIndentOfLine(document, indLine));
-      } else {
-        int start = document.getLineOffset(line);
-        int whiteend = findEndOfWhiteSpace(document, start, command.offset);
-        buf.append(document.get(start, whiteend - start));
-        if (getBracketCount(document, start, command.offset, true) > 0) {
-          buf.append('\t');
-        }
-      }
-      command.text = buf.toString();
-
-    } catch (BadLocationException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Sets the indent of a bracket based on the command provided in the supplied document.
-   * 
-   * @param document - the document being parsed
-   * @param command - the command being performed
-   */
-  protected void smartInsertAfterBracket(
-    IDocument document,
-    DocumentCommand command) {
-    if (command.offset == -1 || document.getLength() == 0)
-      return;
-
-    try {
-      int p =
-        (command.offset == document.getLength()
-          ? command.offset - 1
-          : command.offset);
-      int line = document.getLineOfOffset(p);
-      int start = document.getLineOffset(line);
-      int whiteend = findEndOfWhiteSpace(document, start, command.offset);
-
-      // shifts only when line does not contain any text up to the closing bracket
-      if (whiteend == command.offset) {
-        // evaluate the line with the opening bracket that matches out closing bracket
-        int indLine =
-          findMatchingOpenBracket(document, line, command.offset, 1);
-        if (indLine != -1 && indLine != line) {
-          // takes the indent of the found line
-          StringBuffer replaceText =
-            new StringBuffer(getIndentOfLine(document, indLine));
-          // adds the rest of the current line including the just added close bracket
-          replaceText.append(document.get(whiteend, command.offset - whiteend));
-          replaceText.append(command.text);
-          // modifies document command
-          command.length = command.offset - start;
-          command.offset = start;
-          command.text = replaceText.toString();
-        }
-      }
-    } catch (BadLocationException e) {
-      e.printStackTrace();
-    }
+    return endPos;
   }
 }

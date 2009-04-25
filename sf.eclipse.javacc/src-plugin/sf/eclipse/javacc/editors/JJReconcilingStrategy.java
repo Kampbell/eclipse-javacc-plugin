@@ -14,37 +14,51 @@ import sf.eclipse.javacc.parser.*;
  * Reconciler strategy which updates the Outline View
  * on a document change.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
 public class JJReconcilingStrategy implements IReconcilingStrategy, 
   IReconcilingStrategyExtension, JavaCCParserTreeConstants {
   
-  private JJEditor editor;
-  private ArrayList<Position> fPositions = new ArrayList<Position>();
+  JJEditor editor;
+  ArrayList<Position> fPositions = new ArrayList<Position>();
   
   /**
    * Reconciling strategy updates the Outline View
+   * @param anEditor the current editor
    */
   public JJReconcilingStrategy(JJEditor anEditor) {
     editor = anEditor;
   }
 
+  /** 
+   * Calls the update() method
+   * @see IReconcilingStrategy#setDocument(IDocument)
+   */
   public void setDocument(IDocument aDoc) {
     update();
   }
 
   /**
+   * Calls the update() method
    * @see IReconcilingStrategyExtension#initialReconcile()
    */
   public void initialReconcile() {
     update();
   }
 
+  /** 
+   * Calls the update() method
+   * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
+   */
   public void reconcile(DirtyRegion aDirtyRegion, IRegion aRegion) {
     update();
   }
 
+  /** 
+   * Calls the update() method
+   * @see IReconcilingStrategy#reconcile(IRegion)
+   */
   public void reconcile(IRegion region) {
     update();
   }
@@ -63,7 +77,8 @@ public class JJReconcilingStrategy implements IReconcilingStrategy,
   }
 
   /**
-   * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
+   * Does nothing
+   * @see IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
    */
   public void setProgressMonitor(IProgressMonitor monitor) {
       // Needed by implementing IReconcilingStrategyExtension
@@ -71,7 +86,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy,
   }
 
   /**
-   * Calculate and add positions of folding
+   * Calculate and add folding positions
    */
   private void calculatePositions() {
     // Clean old positions
@@ -81,24 +96,21 @@ public class JJReconcilingStrategy implements IReconcilingStrategy,
     StringReader in = new StringReader(editor.getDocument().get());
     JJNode node = JavaCCParser.parse(in);
     in.close();
-    
-    // If parsing failed get the last good one 
-    if (node.getFirstToken().next == null)
-      node = JavaCCParser.lastGoodJJNode();
 
     // Search recursively and add folding positions for selected nodes
     search( node);
   }
 
   /**
-   * Search children
+   * Search a node's children
+   * 
+   * @param node the node
    */
   public void search(JJNode node) {
     // Add region if the node is one of these types
     int id = node.getId();
     if ( id == JJTJAVACC_OPTIONS
         || id == JJTPARSER_BEGIN
-        || id == JJTJAVACC_OPTIONS
         || id == JJTJAVACODE_PRODUCTION
         || id == JJTBNF_PRODUCTION
         || id == JJTREGULAR_EXPR_PRODUCTION
