@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * This class is only used by JJBuilder
  * Direct access was tested because of JDT cached copy, but didn't work as expected. 
  * 
- * @author Remi Koutcherawy 2003-2007 CeCILL Licence
+ * @author Remi Koutcherawy 2003-2007 CeCILL license
  *         http://www.cecill.info/index.en.html
  */
 public class MarkAndCorrect implements IJJConstants{

@@ -1,5 +1,10 @@
 /*
  * Rewritten for Java 1.5 and JJTree
+ * The declaration nodes are identified with a node_descriptor # :
+ * #parser_begin #javacc_options #option_binding #javacode_production 
+ * #bnf_production #regular_expr_production #regexpr_spec
+ * #ClassOrInterfaceDeclaration #MethodDeclaration
+ * #identifier // Added for CallHierarchy
  */
  
 options {
@@ -34,8 +39,8 @@ public class JavaCCParser {
       n = JavaCCParser.javacc_getAST();
       lastGoodJJNode = n;
     } catch (Throwable e) {
-    // The TreeViewer expect something
-    // This will give a basic error based on the Exception
+    // The TreeViewer expects something
+    // This will give a basic error message based on the Exception
     // e.getMessage() = "Parse error at line 315, column 3."
       int line = parseLine(e.getMessage());
       n = new ASTroot(0);
@@ -555,8 +560,8 @@ void character_descriptor():{}
 {
   StringLiteral() [ "-" StringLiteral() ]
 }
-
-void identifier():{}
+// Added for Call Hierarchy
+void identifier() #identifier : {}
 {
   <IDENTIFIER>
 }

@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.CoreException;
  *  <extension point="org.eclipse.core.resources.natures">
  *  
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJNature implements IProjectNature, IJJConstants {
   private IProject project;

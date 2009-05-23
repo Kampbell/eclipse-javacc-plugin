@@ -1,6 +1,6 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.5.12.zip into Eclipse directory. 
+1) Unzip JavaCC_Feature_1.5.14.zip into Eclipse directory. 
 2) Launch Eclipse.
 
 or
@@ -37,11 +37,22 @@ Features
    use Workbench "Back" to go back.
 
 History
-13/07/08 - version 1.5.12
+23/05/09 - version 1.5.14
+- rfe 2589910 added call hierarchy
+
+25/04/09 - modifications on version 1.5.12 (Marc Mazas)
+- Updated / cleaned list of JavaCC / JJTree options in JJCCOptions & JJTreeOptions
+  according to JavaCC v4.2
+- Fix in ParentMatcher to take in account '\"' characters in strings
+- Added new preferences and a listener in JJPreferences, JJPreferencesPage, JJCodeScanner,
+  messages.properties and messages_fr.properties
+- Rewrote and enhanced formatting and indentation in JJFormat, JJTokenRule and JJAutoIndentStrategy
+- Modified Option, OptionSet, JJAbstractTab and JTBOption to improve JTB preferences tab readability
+
+22/06/08 - version 1.5.12
 - Folding rfe 1786801 Collapse/Expand
 - Hovering rfe 1888744 Quick Outline
 - AutoCompletion rfe 1769382 Auto-Completion for both the defined tokens and nodes ignoring case
-- Format Warning rfe 1681329 "Format" could warn if grammar is invalid
 - bug 1986438 JavaCC options don't save state in the project directory
   now saved in \.settings\sf.eclipse.javacc.prefs
 - bug 1986443  Project->Clean doesn't clean the generated files

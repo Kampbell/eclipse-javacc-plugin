@@ -27,29 +27,29 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
  * Content outline page for the JJ editor.
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJOutlinePage extends ContentOutlinePage {
   protected IDocument doc;
   protected JJEditor ed;
   private   JJLabelProvider labelProvider;
-  private   JJContentProvider contentProvider;
+  private   JJOutlinePageContentProvider contentProvider;
   
   /**
    * Inner class to compact the tree
    */
   public class CollapseAllAction extends Action {
-    private TreeViewer fViewer;
+    private TreeViewer fTreeViewer;
 
     public CollapseAllAction(TreeViewer aViewer) {
       super(Activator.getString("JJOutlinePage.Collapse_all_Action")); //$NON-NLS-1$
-      fViewer = aViewer;
+      fTreeViewer = aViewer;
       ImageDescriptor desc = Activator.getImageDescriptor("jj_collapse.gif"); //$NON-NLS-1$
       setImageDescriptor(desc);
       setToolTipText(Activator.getString("JJOutlinePage.Collapse_all_Tooltip")); //$NON-NLS-1$
     }
     public void run() {
-      fViewer.collapseAll();
+      fTreeViewer.collapseAll();
     }
   }
   /**
@@ -126,7 +126,7 @@ public class JJOutlinePage extends ContentOutlinePage {
   public JJOutlinePage(ITextEditor ed) {
     super();
     this.ed = (JJEditor) ed;
-    contentProvider = new JJContentProvider();    
+    contentProvider = new JJOutlinePageContentProvider();    
   }
 
   /* (non-Javadoc)
@@ -172,7 +172,7 @@ public class JJOutlinePage extends ContentOutlinePage {
   
   /**
    * Sets the input of the outline page
-   * The TreeViewer calls JJContentProvider.inputChanged(doc)
+   * The TreeViewer calls JJOutlinePageContentProvider.inputChanged(doc)
    * which parse the Document to get the AST
    */
   public void setInput(IDocument doc) {

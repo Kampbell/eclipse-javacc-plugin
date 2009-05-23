@@ -23,12 +23,12 @@ import sf.eclipse.javacc.JJBuilder;
 import sf.eclipse.javacc.editors.JJEditor;
 
 /**
- * Compile action
- * Referenced by plugin.xml 
+ * Compile action referenced by plugin.xml 
+ * For popup menu on Editor 
  * <extension point="org.eclipse.ui.popupMenus"> 
  *  
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JTBCompile implements IObjectActionDelegate, IEditorActionDelegate, IJJConstants{
   private JJEditor editor;

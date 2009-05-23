@@ -24,7 +24,7 @@ import sf.eclipse.javacc.*;
  *  <extension point="org.eclipse.ui.propertyPages">
  *  
  * @author Remi Koutcherawy 2003-2009
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL License http://www.cecill.info/index.en.html
  */
 public class JJPropertyPage extends PropertyPage
   implements IJJConstants {

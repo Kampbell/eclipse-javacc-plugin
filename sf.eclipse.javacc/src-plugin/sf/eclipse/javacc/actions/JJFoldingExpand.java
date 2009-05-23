@@ -7,7 +7,15 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import sf.eclipse.javacc.editors.JJEditor;
-
+/**
+ * Expand all folding Action referenced by plugin.xml
+ * <extension point="org.eclipse.ui.editorActions">
+ * <action  label="%JavaCC_FoldingExpandAll"
+ *          class="sf.eclipse.javacc.actions.JJFoldingExpand"
+ * 
+ * @author Remi Koutcherawy 2003-2009
+ * CeCILL license http://www.cecill.info/index.en.html
+ */
 public class JJFoldingExpand implements IEditorActionDelegate {
   static JJEditor editor;
   

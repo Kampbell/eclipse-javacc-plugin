@@ -13,7 +13,7 @@ import sf.eclipse.javacc.options.JJPreferences;
  * Auto indent strategy sensitive to newlines, braces, parenthesis, vertical bar, angle brackets and colons.
  * 
  * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy
- * @author Remi Koutcherawy 2003-2006 CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009 (refactoring and adaptation to JJFormat indentation rules)
  */
 public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
@@ -229,7 +229,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       // nextIndent is the current and decremented indentation
       final int indLen = indentString.length();
       final int len = currIndent.length() - indLen;
-      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : "");
+      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : ""); //$NON-NLS-1$
       // replacement buffer
       final StringBuffer sb = new StringBuffer(32);
       if (firstNonWS < p) {
@@ -364,7 +364,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       // nextIndent is the current and decremented indentation
       final int indLen = indentString.length();
       final int len = currIndent.length() - indLen;
-      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : "");
+      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : ""); //$NON-NLS-1$
       // replacement buffer
       final StringBuffer sb = new StringBuffer(32);
       if (firstNonWS < p) {
@@ -502,14 +502,14 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         if (JJTokenRule.isChoicesPunct(c) || c == '|' || c == '"' || c == '=' || c == ':') {
           // case after some JavaCC punctuation, so add a space
           // set the replacement document command text
-          cmd.text = "< ";
+          cmd.text = "< "; //$NON-NLS-1$
         } else {
           // case probably in a Java expression, so do nothing
         }
       } else {
         // case '<' at the beginning of a line (after whitespaces), so add a space
         // set the replacement document command text
-        cmd.text = "< ";
+        cmd.text = "< "; //$NON-NLS-1$
       }
     } catch (final BadLocationException e) {
       e.printStackTrace();
@@ -554,7 +554,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           cmd.length += (cmd.offset - p);
           cmd.offset = p;
           // set the replacement document command text
-          cmd.text = " >";
+          cmd.text = " >"; //$NON-NLS-1$
         }
       } else {
         // case '>' at the beginning of a line (after whitespaces), so do nothing

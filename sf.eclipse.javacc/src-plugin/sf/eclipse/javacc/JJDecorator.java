@@ -21,7 +21,7 @@ import org.eclipse.ui.IDecoratorManager;
  *  <extension point="org.eclipse.ui.decorators">
  *  
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJConstants {
   

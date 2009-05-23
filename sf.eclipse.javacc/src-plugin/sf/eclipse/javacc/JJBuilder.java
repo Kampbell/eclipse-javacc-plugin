@@ -19,7 +19,7 @@ import sf.eclipse.javacc.options.OptionSet;
  * point="org.eclipse.core.resources.builders"> It is also used to compile files
  * via static methods.
  * 
- * @author Remi Koutcherawy 2003-2006 CeCILL Licence
+ * @author Remi Koutcherawy 2003-2006 CeCILL license
  *         http://www.cecill.info/index.en.html
  */
 public class JJBuilder extends IncrementalProjectBuilder implements

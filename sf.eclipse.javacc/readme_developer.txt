@@ -1,13 +1,16 @@
-If you want to hack the source, it's very simple:
-- from Eclipse menu choose: File / Import... / External plug-ins and Fragments
-- choose Projets with source folders
-- select sf.eclipse.javacc.1.4.0 on the left
-- clic Add--> in the middle
-- clic Finish on the bottom right
+If you want to hack the source get the source from CVS on sourceforge :
+basic setting for Javacc-plugin : http://sourceforge.net/scm/?type=cvs&group_id=56876
+complete tutorial : https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html 
 
-You have now a project sf.eclipse.javacc you can modify.
+You can get 5 projects (take the HEAD)
+1/ sf.eclipse.javacc         to hack the plugin
+2/ sf.eclipse.javacc.feature to make a release
+3/ sf.eclipse.javacc.-web    to generate an update site
+4/ sf.eclipse.javacc.help    to correct the help (you'll are welcome) 
+5/ sf.eclipse.javacc.help.feature to make a release of the help
 
-eg. 
+Suppose you only get 1/ sf.eclipse.javacc
+You can make modifications and test them eg. 
 - open sf.eclipse.javacc.action.JJFormat.java
 - add 2 lines afer  public void run(IAction action) {
     IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -166,7 +169,6 @@ This plug-in uses 14 extensions:
    class="sf.eclipse.javacc.options.JJPreferencesPage"
    class="sf.eclipse.javacc.options.JJPreferences"
 
-   Provides a basic customisation of colors.
-   Well, not fully terminated, don't know how to change colors in Editor
-   without closing and reopening it.
+   Provides a basic customisation of colors and indentation.
+   They are visible on the next action (inserting, reformatting).
    

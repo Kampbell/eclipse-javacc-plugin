@@ -21,19 +21,27 @@
          </run>
       </builder>
    </extension>
-<!-- Console View - org.eclipse.ui.console -->
+<!-- JavaCC Views -->
    <extension point="org.eclipse.ui.views">
       <category
-            name="%JavaCC_Console"
-            id="sf.eclipse.javacc">
+        name="%JavaCC_Views"
+        id="sf.eclipse.javacc">
       </category>
+      <view           
+       name="%JavaCC_Console"
+       allowMultiple="false"
+       class="sf.eclipse.javacc.JJConsole"
+       icon="icons/jj_console.gif"
+       category="sf.eclipse.javacc"
+       id="sf.eclipse.javacc.Console">
+      </view>
       <view
-            allowMultiple="false"
-            class="sf.eclipse.javacc.JJConsole"
-            icon="icons/jj_console.gif"
-            category="sf.eclipse.javacc"
-            name="%JavaCC_Console"
-            id="sf.eclipse.javacc.Console">
+        name="%JavaCC_CallHierarchy"
+        allowMultiple="false"
+        class="sf.eclipse.javacc.editors.JJCallHierarchy"
+        icon="icons/jj_call_hierarchy.gif"
+        category="sf.eclipse.javacc"
+        id="sf.eclipse.javacc.CallHierarchy">
       </view>
    </extension>
    
@@ -154,36 +162,38 @@
             id="javacc.comment"
             definitionId="commands.comment"
             label="%Toggle_Comment"
-            menubarPath="JJGroup">
-      </action>      
+            menubarPath="JJGroup"/>      
       <action
             class="sf.eclipse.javacc.actions.JJDocCompile"
             id="javacc.jjdoccompile"
             definitionId="commands.jjdoccompile"
             label="%Compile_with_JJDoc"
-            menubarPath="JJGroup">
-      </action>
+            menubarPath="JJGroup"/>
       <action
             class="sf.eclipse.javacc.actions.JJGotoRule"
             id="javacc.jjgotorule"
             definitionId="commands.jjgotorule"
             label="%Open_declaration"
-            menubarPath="JJGroup">
-      </action>
+            menubarPath="JJGroup"/>
       <action
             class="sf.eclipse.javacc.actions.JJCompile"
             id="javacc.compile"
             definitionId="commands.jjcompile"
             label="%Compile_with_JavaCC"
             menubarPath="JJGroup" 
-            icon="icons/jj_file.gif">
-      </action>
+            icon="icons/jj_file.gif"/>
       <action
             class="sf.eclipse.javacc.actions.JJFormat"
             id="javacc.jjformat"
             definitionId="commands.jjformat"
             label="%JavaCC_Format"
             menubarPath="JJGroup"/>
+      <action
+        class="sf.eclipse.javacc.actions.JJOpenCallHierarchy"
+        id="javacc.jjcallhierarchy"
+        definitionId="commands.jjcallhierarchy"
+        label="%JavaCC_openCallHierarchy"
+        menubarPath="JJGroup"/>
       </viewerContribution>
    </extension> 
 <!-- Editor Popup Menu Extensions for JTB -->
@@ -202,36 +212,39 @@
             id="javacc.comment"
             definitionId="commands.comment"
             label="%Toggle_Comment"
-            menubarPath="JTBGroup">
-      </action>      
+            menubarPath="JTBGroup"/>      
       <action
             class="sf.eclipse.javacc.actions.JJDocCompile"
             id="javacc.jjdoccompile"
             definitionId="commands.jjdoccompile"
             label="%Compile_with_JJDoc"
-            menubarPath="JTBGroup">
-      </action>
+            menubarPath="JTBGroup"/>
       <action
             class="sf.eclipse.javacc.actions.JJGotoRule"
             id="javacc.jjgotorule"
             definitionId="commands.jjgotorule"
             label="%Open_declaration"
-            menubarPath="JTBGroup">
-      </action>
+            menubarPath="JTBGroup"/>
       <action
             class="sf.eclipse.javacc.actions.JTBCompile"
             id="jtb.compile"
             definitionId="commands.jtbcompile"
             label="%Compile_with_JTB"
             menubarPath="JTBGroup" 
-            icon="icons/jtb_file.gif">
-      </action>
+            icon="icons/jtb_file.gif"/>
       <action
             class="sf.eclipse.javacc.actions.JJFormat"
             id="javacc.jjformat"
             definitionId="commands.jjformat"
             label="%JavaCC_Format"
             menubarPath="JTBGroup"/>
+      <action
+        class="sf.eclipse.javacc.actions.JJOpenCallHierarchy"
+        id="javacc.jjcallhierarchy"
+        definitionId="commands.jjcallhierarchy"
+        label="%JavaCC_openCallHierarchy"
+        menubarPath="JJGroup"
+        icon="icons/jj_call_hierarchy.gif"/>
       </viewerContribution>
    </extension>   
 <!-- Editor Actions for commands binding -->
@@ -289,7 +302,12 @@
             label="%JavaCC_FoldingExpandAll"
             class="sf.eclipse.javacc.actions.JJFoldingExpand"
             definitionId="commands.jjfoldingexpandall"
-            id="javacc.jjfoldingexpandall"/>     
+            id="javacc.jjfoldingexpandall"/>    
+     <action
+        label="%JavaCC_openCallHierarchy"
+        class="sf.eclipse.javacc.actions.JJOpenCallHierarchy"
+        definitionId="commands.jjcallhierarchy"
+        id="javacc.jjcallhierarchy"/> 
       </editorContribution>
 <!-- For JTB -->
       <editorContribution
@@ -299,26 +317,22 @@
             label="%Toggle_Comment"
             class="sf.eclipse.javacc.actions.JJComment"
             definitionId="commands.comment"
-            id="javacc.comment">
-      </action>
+            id="javacc.comment"/>
       <action
             label="%Compile_with_JJDoc"
             class="sf.eclipse.javacc.actions.JJDocCompile"
             definitionId="commands.jjdoccompile"
-            id="javacc.jjdoccompile">
-      </action>
+            id="javacc.jjdoccompile"/>
       <action
             label="%Open_declaration"
             class="sf.eclipse.javacc.actions.JJGotoRule"
             definitionId="commands.jjgotorule"
-            id="javacc.jjgotorule">
-      </action>
+            id="javacc.jjgotorule"/>
       <action
             label="%Compile_with_JTB"
             class="sf.eclipse.javacc.actions.JTBCompile"
             definitionId="commands.jtbcompile"
-            id="javacc.jtbcompile">
-      </action>
+            id="javacc.jtbcompile"/>
       <action
             label="%JavaCC_Format"
             class="sf.eclipse.javacc.actions.JJFormat"
@@ -391,6 +405,11 @@
             categoryId="JavaCC.category"
             name="%JavaCC_FoldingExpandAll"
             id="commands.jjfoldingexpandall"/>
+     <command
+            description="%JavaCC_openCallHierarchy"
+            categoryId="JavaCC.category"
+            name="%JavaCC_openCallHierarchy"
+            id="commands.jjcallhierarchy"/>
    </extension>
 <!-- Keyboard shortcuts -->
    	<extension point="org.eclipse.ui.bindings">
@@ -417,6 +436,10 @@
     <key sequence="Ctrl+Shift+NUMPAD_MULTIPLY"
             contextId="sf.eclipse.javacc.JJEditorScope"
             commandId="commands.jjfoldingexpandall"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/> 
+    <key sequence="Ctrl+Alt+H"
+            contextId="sf.eclipse.javacc.JJEditorScope"
+            commandId="commands.jjcallhierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/> 
    </extension>
 <!-- New Wizard Extension -->

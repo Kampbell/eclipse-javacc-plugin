@@ -5,8 +5,8 @@ import org.eclipse.core.runtime.QualifiedName;
 /**
  * Defines all the Properties names and Qualified Names
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2009
+ * CeCILL License http://www.cecill.info/index.en.html
  */
 public interface IJJConstants {
   public static final boolean DEBUG = false;
@@ -42,8 +42,9 @@ public interface IJJConstants {
   public static final String P_CHOICE = "choicePreference"; //$NON-NLS-1$
   public static final String P_STRING = "stringPreference"; //$NON-NLS-1$
 
-  // JJConsole
+  // JJConsole and JJCallHierarchy
   public static final String CONSOLE_ID = "sf.eclipse.javacc.Console"; //$NON-NLS-1$
+  public static final String CALLHIERARCHY_ID = "sf.eclipse.javacc.CallHierarchy"; //$NON-NLS-1$
   
   // JJEditor
   public static final String EDITOR_ID = "sf.eclipse.javacc.editors.JJEditor"; //$NON-NLS-1$

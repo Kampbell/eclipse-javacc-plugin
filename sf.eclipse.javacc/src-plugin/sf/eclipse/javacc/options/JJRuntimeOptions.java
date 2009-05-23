@@ -21,7 +21,7 @@ import sf.eclipse.javacc.JJNature;
  * The Tab for JavaCC runtime options
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL License http://www.cecill.info/index.en.html
  */
 public class JJRuntimeOptions extends Composite implements IJJConstants {
   

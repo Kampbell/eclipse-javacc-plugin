@@ -19,7 +19,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  * The Preferences page class for JavaCC Referenced by plugin.xml <extension
  * point="org.eclipse.ui.preferencePages">
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 // ModMMa : added some colors and indentation preferences

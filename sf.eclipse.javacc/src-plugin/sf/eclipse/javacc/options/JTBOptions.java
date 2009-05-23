@@ -8,7 +8,7 @@ import sf.eclipse.javacc.IJJConstants;
 /**
  * The Tab for JJTB options.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 // ModMMa : added description field (for JTB cryptic options)

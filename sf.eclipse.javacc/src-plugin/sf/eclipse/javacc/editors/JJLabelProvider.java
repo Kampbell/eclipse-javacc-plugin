@@ -17,7 +17,7 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
  * LabelProvider for JJOutline
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJLabelProvider extends LabelProvider {
   private HashMap<ImageDescriptor, Image> imgHashMap = new HashMap<ImageDescriptor, Image>();

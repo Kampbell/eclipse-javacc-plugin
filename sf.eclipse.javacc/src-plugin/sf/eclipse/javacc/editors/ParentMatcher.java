@@ -9,7 +9,7 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 /**
  * Helper class to match pairs of characters.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 /*

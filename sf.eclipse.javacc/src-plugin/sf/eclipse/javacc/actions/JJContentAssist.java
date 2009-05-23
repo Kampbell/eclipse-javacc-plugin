@@ -18,7 +18,7 @@ import sf.eclipse.javacc.parser.JavaCCParserConstants;
  * <extension point="org.eclipse.ui.bindings">       as a key binding
  *  
  * @author Remi Koutcherawy 2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 
 public class JJContentAssist implements IEditorActionDelegate, JavaCCParserConstants {

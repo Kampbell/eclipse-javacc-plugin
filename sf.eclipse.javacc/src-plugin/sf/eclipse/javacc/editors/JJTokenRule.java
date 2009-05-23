@@ -15,7 +15,7 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * A special IRule for JavaCC syntax.
  * 
- * @author Remi Koutcherawy 2003-2008 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2008 - CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 /*

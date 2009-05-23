@@ -8,7 +8,7 @@ import sf.eclipse.javacc.IJJConstants;
 /**
  * The JJTree options Tab that enables setting the JJTree options for project or jjt file
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 /*

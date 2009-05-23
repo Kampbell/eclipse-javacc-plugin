@@ -24,7 +24,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  * ViewerConfiguration for JavaCC code.
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
   protected PresentationReconciler reconciler = null;

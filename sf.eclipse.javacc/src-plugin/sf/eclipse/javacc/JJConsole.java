@@ -31,7 +31,7 @@ import org.eclipse.ui.part.ViewPart;
  * Since 1.3 this console is used for reporting errors, so must be.
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJConsole extends ViewPart implements IJJConstants {
   // viewer control

@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Event;
  * I Found no way but subclass to allow setting of CheckBox state
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL License http://www.cecill.info/index.en.html
  */
 public class BooleanFieldEditor
   extends org.eclipse.jface.preference.BooleanFieldEditor {

@@ -9,7 +9,7 @@ import sf.eclipse.javacc.IJJConstants;
  * The Tab for JJDoc options
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL License http://www.cecill.info/index.en.html
  */
 public class JJDocOptions extends JJAbstractTab implements IJJConstants {
   // Memo beware JJDoc uses ":" instead of "="

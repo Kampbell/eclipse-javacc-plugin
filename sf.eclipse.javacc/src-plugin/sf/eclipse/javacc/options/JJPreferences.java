@@ -12,7 +12,7 @@ import sf.eclipse.javacc.Activator;
 /**
  * Class used to initialize default preference values.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 // ModMMa : added / renamed colors and indentation preferences

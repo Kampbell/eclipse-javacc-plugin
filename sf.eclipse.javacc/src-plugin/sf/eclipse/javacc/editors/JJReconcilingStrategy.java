@@ -14,7 +14,7 @@ import sf.eclipse.javacc.parser.*;
  * Reconciler strategy which updates the Outline View
  * on a document change.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 public class JJReconcilingStrategy implements IReconcilingStrategy, 

@@ -31,7 +31,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  *  for popup menu on Editor
  *  
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, IJJConstants{
   private JJEditor editor;

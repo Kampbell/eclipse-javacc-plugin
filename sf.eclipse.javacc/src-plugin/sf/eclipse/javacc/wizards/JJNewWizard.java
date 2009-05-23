@@ -40,7 +40,7 @@ import sf.eclipse.javacc.JJNature;
  * Referenced by plugin.xml <extension point="org.eclipse.ui.newWizards">
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 @SuppressWarnings("restriction") //$NON-NLS-1$
 public class JJNewWizard extends NewElementWizard implements IJJConstants {

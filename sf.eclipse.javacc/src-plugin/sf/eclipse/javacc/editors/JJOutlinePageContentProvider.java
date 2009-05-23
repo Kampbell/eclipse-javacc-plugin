@@ -9,16 +9,18 @@ import org.eclipse.jface.viewers.Viewer;
 
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
+import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
+import sf.eclipse.javacc.parser.Node;
 
 /**
  * Content provider for outline page.
  * Uses JavaCCParser to build the AST used in the Outline
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2009
+ * CeCILL license http://www.cecill.info/index.en.html
  */
-public class JJContentProvider
-  implements IContentProvider, ITreeContentProvider {
+public class JJOutlinePageContentProvider
+  implements IContentProvider, ITreeContentProvider, JavaCCParserTreeConstants {
 
   protected JJNode node;
 
@@ -26,7 +28,7 @@ public class JJContentProvider
    * @see org.eclipse.jface.viewers.IContentProvider#dispose()
    */
   public void dispose() {
-    node=null;
+    node = null;
   }
 
   /* (non-Javadoc)
@@ -46,35 +48,39 @@ public class JJContentProvider
     if (obj == null)
       return null;
     JJNode node = (JJNode) obj;
-    return node.getChildren();
+    // Remove JJTIDENTIFIER nodes
+    int n = 0;
+    Node[] children = node.getChildren();
+    if (children == null)
+      return null;
+    for (int i = 0; i < children.length; i++)
+      if (((JJNode)children[i]).getId() != JJTIDENTIFIER)
+        n++;
+    JJNode[] filteredChildren = new JJNode[n];
+    for (int i = 0, j = 0; i < children.length; i++)
+      if (((JJNode)children[i]).getId() != JJTIDENTIFIER)
+        filteredChildren[j++] = (JJNode)children[i];
+    return filteredChildren;
   }
   
   /* (non-Javadoc)
    * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
    */
   public Object getParent(Object obj) {
-    if (obj == null)
-      return obj;
-    JJNode node = (JJNode) obj;
-    return node.jjtGetParent();
+    return obj == null ? null : ((JJNode)obj).jjtGetParent();
   }
   
   /* (non-Javadoc)
    * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
    */
   public boolean hasChildren(Object obj) {
-    if (obj == null)
-      return false;
-    JJNode node = (JJNode) obj;
-    return node.jjtGetNumChildren() != 0;
+    return getChildren(obj) ==  null ? false : getChildren(obj).length != 0;
   }
 
   /* (non-Javadoc)
    * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
    */
   public Object[] getElements(Object obj) {
-    if (obj == null)
-      return null;
     return getChildren(node);
   }
   

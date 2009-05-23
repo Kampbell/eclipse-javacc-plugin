@@ -8,7 +8,7 @@ import sf.eclipse.javacc.IJJConstants;
 /**
  * The Tab for JavaCC options
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 /*
@@ -18,7 +18,7 @@ public class JJCCOptions extends JJAbstractTab implements IJJConstants {
   /**
    * Initialize with JavaCC known options
    * @param parent the parent
-   * @param res the ressource
+   * @param res the resource
    */
   public JJCCOptions(Composite parent, IResource res) {
     super(parent, res);

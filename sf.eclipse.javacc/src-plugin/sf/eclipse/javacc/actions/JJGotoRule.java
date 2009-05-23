@@ -14,15 +14,12 @@ import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
- * Action to jump to rule declaration
- * Referenced by plugin.xml 
- * <extension point="org.eclipse.ui.popupMenus">
- *  for popup menu on Editor
- * <extension point="org.eclipse.ui.editorActions"> 
- *  for key binding
+ * Action to jump to rule declaration Referenced by plugin.xml 
+ * <extension point="org.eclipse.ui.popupMenus"> for popup menu on Editor
+ * <extension point="org.eclipse.ui.editorActions"> for key binding
  *  
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 
 public class JJGotoRule implements IEditorActionDelegate {
@@ -64,8 +61,9 @@ public class JJGotoRule implements IEditorActionDelegate {
 
   /**
    * Extend Selection to a whole Word
+   * static because also used by JJOpenCallHierarchy
    */
-  public ITextSelection selectWord(ITextSelection sel) {
+  static public ITextSelection selectWord(ITextSelection sel) {
     int caretPos = sel.getOffset();
     IDocument doc = editor.getDocument();
     int startPos, endPos;

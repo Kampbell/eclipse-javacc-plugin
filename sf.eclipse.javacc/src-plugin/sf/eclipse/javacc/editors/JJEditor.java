@@ -20,10 +20,10 @@ import sf.eclipse.javacc.options.JJPreferences;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
- * Editor designed for JavaCC files Referenced by plugin.xml <extension
- * point="org.eclipse.ui.editors">
+ * Editor designed for JavaCC files Referenced by plugin.xml 
+ * <extension point="org.eclipse.ui.editors">
  * 
- * @author Remi Koutcherawy 2003-2006 CeCILL Licence
+ * @author Remi Koutcherawy 2003-2006 CeCILL license
  *         http://www.cecill.info/index.en.html
  */
 public class JJEditor extends TextEditor implements IJJConstants, INavigationLocationProvider {
@@ -203,27 +203,29 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Called by JJReconcilingStrategy Takes the current Document and
    * setInput() on JJOutlinePage which leads to
-   * JJContentProvider.setInput() which parse the document.
+   * JJOutlinePageContentProvider.setInput() which parse the document.
    */
   protected void updateOutlinePage() {
     if (outlinePage == null)
       outlinePage = (JJOutlinePage) getAdapter(IContentOutlinePage.class);
     outlinePage.setInput(getDocument());
-    // get root node to build JJElement HashMap
-    JJContentProvider contentProvider = (JJContentProvider) outlinePage.getContentProvider();
-    JJNode node = contentProvider.getAST();
+    // Get root node to build JJElement HashMap
+    JJOutlinePageContentProvider contentProvider = 
+      (JJOutlinePageContentProvider) outlinePage.getContentProvider();
+    JJNode rootNode = contentProvider.getAST();
     // If the outline is not up, then use the ContentProvider directly
     if (outlinePage.getControl() == null) {
       contentProvider.inputChanged(null, null, getDocument());
-      node = contentProvider.getAST();
+      rootNode = contentProvider.getAST();
     }
-    // If parsing failed don't touch JJElements used for navigating and completion 
-    if (node.getFirstToken().next == null)
+    // If parsing failed we don't touch JJElements used for navigation and completion 
+    if (rootNode.getFirstToken().next == null)
       return;
+    
     // Clear and Fill the JJElements HashMap for this Editor
     jjElements.clear();
-    node.setJJElementsToUpdate(jjElements);
-    node.buildHashMap();
+    rootNode.setJJElementsToUpdate(jjElements);
+    rootNode.buildHashMap();
   }
   /**
    * @return jjElements

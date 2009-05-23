@@ -3,14 +3,14 @@ package sf.eclipse.javacc.options;
 /**
  * An option is a name + type + value + default value
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 // ModMMa : added description related field and method (for JTB cryptic options)
 public class Option {
   /** Integer option type */
   public static final int INT = 1;
-  /** Bolean option type */
+  /** Boolean option type */
   public static final int BOOLEAN = 2;
   /** String option type */
   public static final int STRING = 3;
@@ -34,7 +34,7 @@ public class Option {
    */
   Option(String aName, String aDefaultValue, int aType) {
     name = aName;
-    description = "";
+    description = ""; //$NON-NLS-1$
     defaultValue = aDefaultValue;
     type = aType;
   }
@@ -70,7 +70,7 @@ public class Option {
       if (description.length() == 0) {
         return name;
       }
-      return name + " - " + description;
+      return name + " - " + description; //$NON-NLS-1$
     }
 
  /**

@@ -34,7 +34,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * which are underlined but... too complex, for me at least.
  * 
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 public class JJConsoleHyperlink implements IJJConstants { 
   private int fOffset;

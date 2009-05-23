@@ -15,7 +15,7 @@ import org.eclipse.ui.*;
 
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 
-public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCParserTreeConstants{
+public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCParserTreeConstants {
   /*
    * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
    */
@@ -41,20 +41,20 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     // Add Keywords
     for (String s : JJCodeScanner.fgJJkeywords){
       if (s.toUpperCase().startsWith(prefix.toUpperCase())){
-        if (s.equals("options")) {
-          suggestions.add("options{\n  \n}");
+        if (s.equals("options")) { //$NON-NLS-1$
+          suggestions.add("options{\n  \n}"); //$NON-NLS-1$
           cursorPosition = 11;
         }
-        else if (s.equals("TOKEN")) {
-          suggestions.add("TOKEN:{\n  \n}");
+        else if (s.equals("TOKEN")) { //$NON-NLS-1$
+          suggestions.add("TOKEN:{\n  \n}"); //$NON-NLS-1$
           cursorPosition = 10;
         }
-        else if (s.equals("MORE")) {
-          suggestions.add("MORE:{\n  \"\"\n}");
+        else if (s.equals("MORE")) { //$NON-NLS-1$
+          suggestions.add("MORE:{\n  \"\"\n}"); //$NON-NLS-1$
           cursorPosition = 10;
         }
-        else if (s.equals("SPECIAL_TOKEN")) {
-          suggestions.add("SPECIAL_TOKEN:{\n  \"\"\n}");
+        else if (s.equals("SPECIAL_TOKEN")) { //$NON-NLS-1$
+          suggestions.add("SPECIAL_TOKEN:{\n  \"\"\n}"); //$NON-NLS-1$
           cursorPosition = 19;
         }        
         else

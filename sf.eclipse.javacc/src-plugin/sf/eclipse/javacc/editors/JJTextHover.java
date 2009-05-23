@@ -7,7 +7,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * Annotation hover for text in JJEditor
  * 
  * @author Remi Koutcherawy 2003-2008
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL License http://www.cecill.info/index.en.html
  */
 class JJTextHover  implements ITextHover {
   private final JJEditor editor;

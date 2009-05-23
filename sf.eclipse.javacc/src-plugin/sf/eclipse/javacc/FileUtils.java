@@ -7,7 +7,7 @@ import java.io.*;
  * point="org.eclipse.core.resources.builders"> It is also used to compile files
  * via static methods.
  * 
- * @author Tim Hanson 2007 CeCILL Licence
+ * @author Tim Hanson 2007 CeCILL license
  *         http://www.cecill.info/index.en.html
  */
 public class FileUtils {

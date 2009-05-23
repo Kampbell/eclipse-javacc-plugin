@@ -21,7 +21,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  *  for popup menu on Editor (only)
  *  
  * @author Remi Koutcherawy 2003-2006
- * CeCILL Licence http://www.cecill.info/index.en.html
+ * CeCILL license http://www.cecill.info/index.en.html
  */
 
 public class JJDocCompile implements IEditorActionDelegate, IJJConstants {

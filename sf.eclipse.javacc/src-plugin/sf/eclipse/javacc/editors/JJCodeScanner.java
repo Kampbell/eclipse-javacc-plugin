@@ -26,7 +26,7 @@ import sf.eclipse.javacc.options.JJPreferences;
  * A (not anymore so rudimentary) JavaCC code scanner coloring words and comments.
  * 
  * @look org.eclipse.jdt.internal.ui.text.java.JavaCodeScanner
- * @author Remi Koutcherawy 2003-2008 - CeCILL Licence http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2008 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
 /*
@@ -373,7 +373,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
   public static void setSpecIndentString() {
     final String idstr = (store.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
     int nbch = store.getInt(JJPreferences.P_INDENT_CHAR_NB);
-    if (" ".equals(idstr)) {
+    if (" ".equals(idstr)) { //$NON-NLS-1$
       nbch--;
     }
     final StringBuffer sb = new StringBuffer(nbch);
