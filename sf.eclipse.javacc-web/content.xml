@@ -20,7 +20,7 @@
       <update id='sf.eclipse.javacc.feature.feature.jar' range='[0.0.0,1.5.12)' severity='0'/>
       <properties size='5'>
         <property name='org.eclipse.equinox.p2.name' value='JavaCC Feature'/>
-        <property name='org.eclipse.equinox.p2.description' value='This Feature is designed to make JavaCC Eclipse Plugin available for installation via Eclipse Update manager.'/>
+        <property name='org.eclipse.equinox.p2.description' value='This will install JavaCC Eclipse Plugin via Eclipse Update manager.'/>
         <property name='org.eclipse.equinox.p2.description.url' value='http://eclipse-javacc.sourceforge.net/'/>
         <property name='org.eclipse.equinox.p2.provider' value='Remi Koutcherawy'/>
         <property name='org.eclipse.update.feature.plugin' value='sf.eclipse.javacc'/>
