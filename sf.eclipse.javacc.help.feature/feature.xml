@@ -7,7 +7,7 @@
       plugin="sf.eclipse.javacc.help">
 
    <description url="http://eclipse-javacc.sourceforge.net/">
-      This Feature provide Help for JavaCC Eclipse Plugin.
+      This Feature provides Help for JavaCC Eclipse Plugin.
    </description>
 
    <copyright>
