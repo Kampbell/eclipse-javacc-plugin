@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.editors;
 
-import java.lang.Character;
 import java.util.Stack;
 
 import org.eclipse.jface.text.ITypedRegion;
@@ -14,7 +13,7 @@ import org.eclipse.jface.text.rules.Token;
 
 /**
  * A special IRule for JavaCC syntax.
- * 
+ *
  * @author Remi Koutcherawy 2003-2008 - CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
@@ -54,14 +53,14 @@ public class JJTokenRule implements IRule {
 
   /**
    * Standard constructor
-   * 
+   *
    * @param aNormalLabel the normal token rule token
    * @param aPrivateLabel the special token rule token
    * @param aLexicalState the lexical state rule token
    * @param aRegexPunct the regular_expression punctuation rule token
    * @param aChoicesPunct the choices enclosing punctuation rule token
    */
-  public JJTokenRule(IToken aNormalLabel, IToken aPrivateLabel, IToken aLexicalState, IToken aRegexPunct, IToken aChoicesPunct) {
+  public JJTokenRule(final IToken aNormalLabel, final IToken aPrivateLabel, final IToken aLexicalState, final IToken aRegexPunct, final IToken aChoicesPunct) {
     normalLabel = aNormalLabel;
     privateLabel = aPrivateLabel;
     lexicalState = aLexicalState;
@@ -105,12 +104,12 @@ public class JJTokenRule implements IRule {
    * We memorize some internal state information between each call through class fields.<br>
    * We must return whitespaces and punctuation (word separators) as soon as they are encountered (and without
    * consuming them) in order for the other rules to process the comments anywhereby they may appear.
-   * 
+   *
    * @see IRule#evaluate(ICharacterScanner)
    * @param scanner the character scanner
    * @return the rule token
    */
-  public IToken evaluate(ICharacterScanner scanner) {
+  public IToken evaluate(final ICharacterScanner scanner) {
     /** found a normal label identifier */
     boolean isNoLa = false;
     /** found a private label identifier */
@@ -138,6 +137,7 @@ public class JJTokenRule implements IRule {
       return Token.UNDEFINED;
     }
     // process first character if no initial whitespaces
+    // TODO for generics syntax in java code parts, we should not show a regexPunct
     if (ic == '<') {
       incrementAngleBrackets();
       foundCOLON = false;
@@ -184,6 +184,8 @@ public class JJTokenRule implements IRule {
       }
       isAfterJavaIdentifier = false;
       // choices enclosing punctuation
+      // TODO after a try { in an expansion_unit, which leads to bracesLevel == 2,
+      // we should show a choicesPunct (ex : JavaCC15.jjt, javacc_getAST())
       if (foundLT || (bracesLevel == 1 && !oldIsAfterJavaIdentifier)) {
         return choicesPunct;
       }
@@ -303,6 +305,7 @@ public class JJTokenRule implements IRule {
   /**
    * Returns whether the given character is a whitespace:<br>
    * ' ', '\t', '\n', '\r', '\f'.
+   *
    * @param ic the character
    * @return true if the caracter is a whitespace, false otherwise
    */
@@ -313,6 +316,7 @@ public class JJTokenRule implements IRule {
   /**
    * Returns whether the given character is a whitespace or the beginning of a comment:<br>
    * ' ', '\t', '\n', '\r', '\f', '/'.
+   *
    * @param ic the character
    * @return true if the character is a whitespace or the beginning of a comment, false otherwise
    */
@@ -323,6 +327,7 @@ public class JJTokenRule implements IRule {
   /**
    * Returns whether the given character is a choices enclosing punctuation:<br>
    * '(', ')', '*', '+', '?'.
+   *
    * @param ic the character
    * @return true if the caracter is a choices enclosing punctuation, false otherwise
    */
