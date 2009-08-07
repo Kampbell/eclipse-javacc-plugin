@@ -1,6 +1,8 @@
 package sf.eclipse.javacc.options;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -19,12 +21,12 @@ import sf.eclipse.javacc.JJNature;
 
 /**
  * The Tab for JavaCC runtime options
- * 
+ *
  * @author Remi Koutcherawy 2003-2006
  * CeCILL License http://www.cecill.info/index.en.html
  */
 public class JJRuntimeOptions extends Composite implements IJJConstants {
-  
+
   // Controls
   protected FileFieldEditor jarFile;
   protected BooleanFieldEditor checkSuppressWarnings;
@@ -32,7 +34,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   protected BooleanFieldEditor checkClearConsole;
   protected BooleanFieldEditor checkJJNature;
   protected FileFieldEditor jtbjarFile;
-  
+
   // The Resource to work on.
   protected IResource resource;
   protected boolean isFile;
@@ -42,32 +44,40 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
    * @param parent
    * @param style
    */
-  public JJRuntimeOptions(Composite parent, IResource res, boolean isFile) {
+  public JJRuntimeOptions(final Composite parent, final IResource res, final boolean isFile) {
     super(parent, SWT.NONE);
     this.isFile = isFile;
     this.resource = res;
-    GridLayout layout = new GridLayout();
+    final GridLayout layout = new GridLayout();
     setLayout(layout);
     setLayoutData(new GridData(GridData.FILL_BOTH));
     layout.marginWidth = 10;
     layout.marginHeight = 10;
 
     // Adds Project options
-    Group groupProject = new Group(this, SWT.NONE);
+    final Group groupProject = new Group(this, SWT.NONE);
     groupProject.setText(Activator.getString("JJRuntimeOptions.Shared_project_options_Group")); //$NON-NLS-1$
     groupProject.setLayout (new GridLayout());
     groupProject.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     // Adds runtime_jar selection control
-    Composite subGroup = new Composite(groupProject, SWT.NONE);
+    final Composite subGroup = new Composite(groupProject, SWT.NONE);
     new Label(subGroup,SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJRuntimeOptions.Select_jar_file")); //$NON-NLS-1$
     new Label(subGroup,SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJRuntimeOptions.Give_an_absolute_path")); //$NON-NLS-1$
     new Label(subGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     jarFile = new FileFieldEditor(RUNTIME_JAR,
       Activator.getString("JJRuntimeOptions.Set_the_JavaCC_jar_file"), subGroup); //$NON-NLS-1$
-    
+
+    // Adds jtb runtime_jar selection control
+    final Composite jtbGroup = new Composite(groupProject, SWT.NONE);
+    new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJRuntimeOptions.Select_jtb_jar_file")); //$NON-NLS-1$
+    new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJRuntimeOptions.Give_an_absolute_path")); //$NON-NLS-1$
+    new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
+    jtbjarFile = new FileFieldEditor(RUNTIME_JTBJAR,
+      Activator.getString("JJRuntimeOptions.Set_the_jtb_jar_file"), subGroup); //$NON-NLS-1$
+
     // Add Checkboxes for boolean values
-    Composite checkGroup = new Composite(groupProject, SWT.NONE);
+    final Composite checkGroup = new Composite(groupProject, SWT.NONE);
     checkGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
     checkShowConsole = new BooleanFieldEditor(SHOW_CONSOLE,
 	Activator.getString("JJRuntimeOptions.Show_JavaCC_output_in_console"), checkGroup); //$NON-NLS-1$
@@ -77,30 +87,22 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
 	Activator.getString("JJRuntimeOptions.Build_automatically_on_save"), checkGroup);           //$NON-NLS-1$
     checkSuppressWarnings = new BooleanFieldEditor(SUPPRESS_WARNINGS,
 	Activator.getString("JJRuntimeOptions.Automatically_suppress_warnings"), checkGroup); //$NON-NLS-1$
-   
-    // Adds jtb runtime_jar selection control
-    Composite jtbGroup = new Composite(groupProject, SWT.NONE);
-    new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText("JJRuntimeOptions.Select_jtb_jar_file"); //$NON-NLS-1$
-    new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJRuntimeOptions.Give_an_absolute_path")); //$NON-NLS-1$
-    new Label(jtbGroup,SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    jtbjarFile = new FileFieldEditor(RUNTIME_JTBJAR,
-    Activator.getString("JJRuntimeOptions.Set_the_jtb_jar_file"), subGroup); //$NON-NLS-1$
 
     // Reads and sets values
     if (res != null) {
-      IProject proj = res.getProject();
-      IScopeContext projectScope = new ProjectScope(proj);
-      IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+      final IProject proj = res.getProject();
+      final IScopeContext projectScope = new ProjectScope(proj);
+      final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
       try {
         // Sets according to PersistentProperties
         jarFile.setStringValue(prefs.get(RUNTIME_JAR, "")); //$NON-NLS-1$
+        jtbjarFile.setStringValue(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
         checkShowConsole.setBooleanValue("true".equals((prefs.get(SHOW_CONSOLE, "true")))); //$NON-NLS-1$ //$NON-NLS-2$
         checkClearConsole.setBooleanValue("true".equals((prefs.get(CLEAR_CONSOLE, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
-        boolean hasJavaccNature = proj.getDescription().hasNature(JJ_NATURE_ID);
+        final boolean hasJavaccNature = proj.getDescription().hasNature(JJ_NATURE_ID);
         checkJJNature.setBooleanValue(hasJavaccNature);
         checkSuppressWarnings.setBooleanValue("true".equals((prefs.get(SUPPRESS_WARNINGS, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
-        jtbjarFile.setStringValue(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
-       } catch (CoreException e) {
+       } catch (final CoreException e) {
         e.printStackTrace();
       }
     }
@@ -112,7 +114,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   public void performDefaults() {
     jarFile.setStringValue("");  //$NON-NLS-1$
     jtbjarFile.setStringValue("");  //$NON-NLS-1$
-    checkShowConsole.setBooleanValue(true); 
+    checkShowConsole.setBooleanValue(true);
     checkClearConsole.setBooleanValue(true);
     checkSuppressWarnings.setBooleanValue(false);
     checkJJNature.setBooleanValue(true);
