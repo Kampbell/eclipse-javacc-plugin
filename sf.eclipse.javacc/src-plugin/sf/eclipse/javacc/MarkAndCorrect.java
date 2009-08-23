@@ -23,17 +23,14 @@ import org.eclipse.jdt.core.JavaModelException;
  */
 public class MarkAndCorrect implements IJJConstants{
   
-  // The pattern has 2 groups and a non-capturing group
-  // to identify even already treated files
+  // The pattern captures the class declaration 
+  // including eventual @SuppressWarnings prefix
+  // Only one group is non capturing (not prefixed by ?:)
+  // This group $1 will by prefixed and put back replacing the whole match $0
+  // ^(?:@SuppressWarnings\(\"(?:all|serial)\"\)..?)?((?:public )?(?:final )?(?:class|interface|enum))
   private final static String 
-  reg = "^((?:@SuppressWarnings.+[\\n\\r]*)?(?:public\\s+)?(?:final\\s+)?)(?:@SuppressWarnings\\(\\\"all\\\"\\)\\s+)?(class|interface|enum)"; //$NON-NLS-1$
-  private final static Pattern filepattern = Pattern.compile(reg, Pattern.MULTILINE); //$NON-NLS-1$
-
-  // 4.1 generates this
-  // @SuppressWarnings("serial") @SuppressWarnings({"all","serial"})
-  //  public class TokenMgrError extends Error
-  // The RegExp is adapted to grab the added SuppressWarnings
-  // ^((?:@SuppressWarnings.+[\n\r]*)?(?:public\s+)?(?:final\s+)?)(?:@SuppressWarnings\(\"all\"\)\s+)?(class|interface|enum)
+  reg = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?((?:public )?(?:final )?(?:class|interface|enum))"; //$NON-NLS-1$
+  private final static Pattern filepattern = Pattern.compile(reg, Pattern.MULTILINE|Pattern.DOTALL); //$NON-NLS-1$
   
   /**
    * Mark generated files
@@ -57,9 +54,11 @@ public class MarkAndCorrect implements IJJConstants{
       String filename = ((IFile) res).getLocation().toOSString();
       String source = FileUtils.getFileContents(filename); // Direct access
 
-        Matcher filematcher = filepattern.matcher(source);
-        if (filematcher.find() && !filematcher.group().startsWith("@")) { //$NON-NLS-1$
-          String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1$2"); //$NON-NLS-1$
+      Matcher filematcher = filepattern.matcher(source);
+      if (filematcher.find()) { 
+//        System.out.print("Replace :["+filematcher.group(0)+ "] By :[");
+//        System.out.println("@SuppressWarnings(\"all\")\n" + filematcher.group(1)+"]");
+        String newsource = filematcher.replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
 //        cu.getBuffer().setContents(newsource);
 //        cu.getBuffer().save(null, true);
           FileUtils.saveFileContents(filename, newsource);
