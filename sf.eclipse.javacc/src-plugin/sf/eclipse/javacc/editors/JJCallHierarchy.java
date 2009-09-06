@@ -3,7 +3,6 @@ package sf.eclipse.javacc.editors;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
-import org.eclipse.jdt.internal.ui.actions.IWorkbenchCommandIds;
 import org.eclipse.jdt.internal.ui.callhierarchy.CallHierarchyMessages;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -122,7 +121,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
       setText(CallHierarchyMessages.RefreshAction_text);
       setToolTipText(CallHierarchyMessages.RefreshAction_tooltip);
       JavaPluginImages.setLocalImageDescriptors(this, "refresh_nav.gif");//$NON-NLS-1$
-      setActionDefinitionId(IWorkbenchCommandIds.REFRESH);
+      setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
       PlatformUI.getWorkbench().getHelpSystem().setHelp(this, 
           IJavaHelpContextIds.CALL_HIERARCHY_REFRESH_ACTION);
     }
@@ -144,7 +143,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
         setText(CallHierarchyMessages.ToggleCallModeAction_callers_label);
         setDescription(CallHierarchyMessages.ToggleCallModeAction_callers_description);
         setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callers_tooltip);
-        JavaPluginImages.setLocalImageDescriptors(this, "ch_callers.gif"); //$NON-NLS-1
+        JavaPluginImages.setLocalImageDescriptors(this, "ch_callers.gif"); //$NON-NLS-1$
       } else if (mode == CALLEES) {
         setText(CallHierarchyMessages.ToggleCallModeAction_callees_label);
         setDescription(CallHierarchyMessages.ToggleCallModeAction_callees_description);
