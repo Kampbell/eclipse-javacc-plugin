@@ -5,17 +5,17 @@ complete tutorial : https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2
 You can get 5 projects (take the HEAD)
 1/ sf.eclipse.javacc         to hack the plugin
 2/ sf.eclipse.javacc.feature to make a release
-3/ sf.eclipse.javacc.-web    to generate an update site
+3/ sf.eclipse.javacc-web     to generate an update site
 4/ sf.eclipse.javacc.help    to correct the help (you'll are welcome) 
 5/ sf.eclipse.javacc.help.feature to make a release of the help
 
 Suppose you only get 1/ sf.eclipse.javacc
 You can make modifications and test them eg. 
 - open sf.eclipse.javacc.action.JJFormat.java
-- add 2 lines afer  public void run(IAction action) {
+- add 2 lines after  public void run(IAction action) {
     IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     MessageDialog.openInformation(w.getShell()," My Hack "," Format action"); 
-- open plugin.xml and on the "Overview" tab clic "Launch an Eclipse application"
+- open plugin.xml and on the "Overview" tab click "Launch an Eclipse application"
 - now test on a .jj file Ctrl+shift+F you should see a Message window " My Hack "
 
 Now that you have a plug-in to hack 
