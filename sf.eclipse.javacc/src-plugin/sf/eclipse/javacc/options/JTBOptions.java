@@ -47,20 +47,20 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
     // int options
     // void options, reordered on two columns
 //    optionSet.add(new Option("h - displays this help", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("pp", "generate parent pointers in all node classes", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("e", "suppress semantic error checking", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("tk", "stores special tokens in the parse tree", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("w", "do not overwrite existing files", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("jd", "generate javadoc comments in nodes and visitor", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("scheme", "generatee for the Scheme language", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("f", "generate descriptive node class field names", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("printer", "generate TreeDumper & TreeFormatter visitors ", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("pp", "generate parent pointers in all node classes", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("e", "suppress semantic error checking", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("tk", "stores special tokens in the parse tree", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("w", "do not overwrite existing files", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("jd", "generate javadoc comments in nodes and visitor", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("scheme", "generatee for the Scheme language", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("f", "generate descriptive node class field names", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("printer", "generate TreeDumper & TreeFormatter visitors ", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     // string options
-    optionSet.add(new Option("o", "generated file name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("np", "generated syntax tree classes path", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("vp", "generated visitor classes path", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("p", "np + vp", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("ns", "generated nodes classes super class name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("o", "generated file name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("np", "generated syntax tree classes path", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("vp", "generated visitor classes path", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("p", "np + vp", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    optionSet.add(new Option("ns", "generated nodes classes super class name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     // Fix values to default values
     optionSet.resetToDefaultValues();
     // Super class fills the content from property and optionSet
