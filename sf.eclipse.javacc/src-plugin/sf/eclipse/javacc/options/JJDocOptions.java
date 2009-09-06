@@ -12,22 +12,16 @@ import sf.eclipse.javacc.IJJConstants;
  * CeCILL License http://www.cecill.info/index.en.html
  */
 public class JJDocOptions extends JJAbstractTab implements IJJConstants {
-  // Memo beware JJDoc uses ":" instead of "="
   // TEXT (default false) 
   //     Setting TEXT to true causes JJDoc to generate a plain text.
+  // BNF (default false)
+  //     Setting BNF to true causes JJDoc to generate a pure BNF document.
   // ONE_TABLE (default true) 
   //     The default value of ONE_TABLE is used to generate a single HTML table.
   // OUTPUT_FILE 
-  // or JJDOC_OUTPUT_FILE (Proposed for a future version)
-  //     The default behavior is to put the JJDoc output into
-  //     a file with either .html or .txt added as a suffix to
-  //     the input file's base name.
-  // OUTPUT_DIRECTORY
-  //     Added in javaCC 3.1
-  // JJDOC_OUTPUT_DIRECTORY (default: current directory)
-  //     Proposed for a future version
+  //     You can supply a different file name with this option. 
   // CSS (default "")
-  //     Proposed for javaCC 4.1
+  //     This option allows you to specify a CSS file name. 
 
   /**
    * Initialize with JJDoc known options
@@ -42,12 +36,10 @@ public class JJDocOptions extends JJAbstractTab implements IJJConstants {
     // int options
     // boolean options
     optionSet.add(new Option("TEXT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("BNF", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("ONE_TABLE", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-
     // string options    
     // path options
-    optionSet.add(new Option("JJDOC_OUTPUT_DIRECTORY", "", Option.PATH)); //$NON-NLS-1$ //$NON-NLS-2$
-
     // file options
     optionSet.add(new Option("CSS", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("OUTPUT_FILE", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
