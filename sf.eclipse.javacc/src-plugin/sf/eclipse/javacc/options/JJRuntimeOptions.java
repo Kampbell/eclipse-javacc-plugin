@@ -30,7 +30,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   // Controls
   protected FileFieldEditor jarFile;
   protected BooleanFieldEditor checkSuppressWarnings;
-  protected BooleanFieldEditor checkShowConsole;
   protected BooleanFieldEditor checkClearConsole;
   protected BooleanFieldEditor checkJJNature;
   protected FileFieldEditor jtbjarFile;
@@ -79,8 +78,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     // Add Checkboxes for boolean values
     final Composite checkGroup = new Composite(groupProject, SWT.NONE);
     checkGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-    checkShowConsole = new BooleanFieldEditor(SHOW_CONSOLE,
-	Activator.getString("JJRuntimeOptions.Show_JavaCC_output_in_console"), checkGroup); //$NON-NLS-1$
     checkClearConsole = new BooleanFieldEditor(CLEAR_CONSOLE,
 	Activator.getString("JJRuntimeOptions.Clear_JavaCC_console_before_build"), checkGroup); //$NON-NLS-1$
     checkJJNature = new BooleanFieldEditor(JJ_NATURE_NAME,
@@ -97,7 +94,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         // Sets according to PersistentProperties
         jarFile.setStringValue(prefs.get(RUNTIME_JAR, "")); //$NON-NLS-1$
         jtbjarFile.setStringValue(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
-        checkShowConsole.setBooleanValue("true".equals((prefs.get(SHOW_CONSOLE, "true")))); //$NON-NLS-1$ //$NON-NLS-2$
         checkClearConsole.setBooleanValue("true".equals((prefs.get(CLEAR_CONSOLE, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
         final boolean hasJavaccNature = proj.getDescription().hasNature(JJ_NATURE_ID);
         checkJJNature.setBooleanValue(hasJavaccNature);
@@ -114,7 +110,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   public void performDefaults() {
     jarFile.setStringValue("");  //$NON-NLS-1$
     jtbjarFile.setStringValue("");  //$NON-NLS-1$
-    checkShowConsole.setBooleanValue(true);
     checkClearConsole.setBooleanValue(true);
     checkSuppressWarnings.setBooleanValue(false);
     checkJJNature.setBooleanValue(true);
@@ -133,7 +128,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
 
         prefs.put(RUNTIME_JAR, jarFile.getStringValue());
-        prefs.put(SHOW_CONSOLE, checkShowConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         prefs.put(CLEAR_CONSOLE, checkClearConsole.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         prefs.put(SUPPRESS_WARNINGS, checkSuppressWarnings.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
         prefs.put(JJ_NATURE, checkJJNature.getBooleanValue() ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
