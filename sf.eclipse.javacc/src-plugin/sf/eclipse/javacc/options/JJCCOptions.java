@@ -15,8 +15,42 @@ import sf.eclipse.javacc.IJJConstants;
  * ModMMa : cleanup, additions, reordering
  */
 public class JJCCOptions extends JJAbstractTab implements IJJConstants {
+//	The integer valued options are:
+//	    LOOKAHEAD              (default 1)
+//	    CHOICE_AMBIGUITY_CHECK (default 2)
+//	    OTHER_AMBIGUITY_CHECK  (default 1)
+//	The boolean valued options are:
+//	    STATIC                 (default true)
+//	    SUPPORT_CLASS_VISIBILITY_PUBLIC (default true)
+//	    DEBUG_PARSER           (default false)
+//	    DEBUG_LOOKAHEAD        (default false)
+//	    DEBUG_TOKEN_MANAGER    (default false)
+//	    ERROR_REPORTING        (default true)
+//	    JAVA_UNICODE_ESCAPE    (default false)
+//	    UNICODE_INPUT          (default false)
+//	    IGNORE_CASE            (default false)
+//	    COMMON_TOKEN_ACTION    (default false)
+//	    USER_TOKEN_MANAGER     (default false)
+//	    USER_CHAR_STREAM       (default false)
+//	    BUILD_PARSER           (default true)
+//	    BUILD_TOKEN_MANAGER    (default true)
+//	    TOKEN_MANAGER_USES_PARSER (default false)
+//	    SANITY_CHECK           (default true)
+//	    FORCE_LA_CHECK         (default false)
+//	    CACHE_TOKENS           (default false)
+//	    KEEP_LINE_COLUMN       (default true)
+//	GENERATE_CHAINED_EXCEPTION (default false)
+//	GENERATE_GENERICS          (default false)
+//	The string valued options are:
+//	    OUTPUT_DIRECTORY       (default Current Directory)
+//	    TOKEN_EXTENDS          (java.lang.Object)
+//	    TOKEN_FACTORY          (java.lang.Object)
+//	JDK_VERSION            (1.5)
+//	GRAMMAR_ENCODING       (default file.encoding)
+
+
   /**
-   * Initialize with JavaCC known options
+   * Initialize with JavaCC documented options
    * @param parent the parent
    * @param res the resource
    */
@@ -59,9 +93,10 @@ public class JJCCOptions extends JJAbstractTab implements IJJConstants {
     optionSet.add(new Option("GENERATE_GENERICS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     
     // string options
-    optionSet.add(new Option("JDK_VERSION", "1.4", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("JDK_VERSION", "1.5", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("TOKEN_EXTENDS", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("TOKEN_FACTORY", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    optionSet.add(new Option("GRAMMAR_ENCODING", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // path option
     optionSet.add(new Option("OUTPUT_DIRECTORY", "", Option.PATH)); //$NON-NLS-1$ //$NON-NLS-2$
