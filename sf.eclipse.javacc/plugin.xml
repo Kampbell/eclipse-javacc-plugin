@@ -63,6 +63,11 @@
             name="%JavaCC_Options"
             class="sf.eclipse.javacc.options.JJPropertyPage"
             id="sf.eclipse.javacc.options.JJPropertyPage">
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature"/>
+		     </adapt>         
+         </enabledWhen>
       </page>
    </extension>
 <!-- Popup Menus extension on Package Explorer -->
