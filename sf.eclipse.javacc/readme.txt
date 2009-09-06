@@ -1,15 +1,15 @@
 Installation 
 
-1) Unzip JavaCC_Feature_1.5.14.zip into Eclipse directory. 
-2) Launch Eclipse.
-
-or
-
+Use the update site
 1) Menu Help / Software Updates / Find and Install... / Search for new features to install
 2) Next > / New remote site...
  Name : SF Eclipse JavaCC 
  URL : http://eclipse-javacc.sourceforge.net/
 3) Check "SF Eclipse JavaCC" and click Finish
+
+Or use the zip which is the archive of the update site
+1) Menu Help / Install new software... / Add... / Archive...
+   and select the zip file
 
 Features
 
@@ -37,8 +37,14 @@ Features
    use Workbench "Back" to go back.
 
 History
+07/09/09 - version 1.5.15
+- Bug 2848368 support Galileo 
+- Bug 2848673 support Mac OS X Leopard (compiled with java 1.5 instead of 1.6)
+- Change the zip to be a zipped update site.
+- Added JavaCC 5.0 new options
+
 23/05/09 - version 1.5.14
-- rfe 2589910 added call hierarchy
+- Rfe 2589910 added call hierarchy
 
 25/04/09 - modifications on version 1.5.12 (Marc Mazas)
 - Updated / cleaned list of JavaCC / JJTree options in JJCCOptions & JJTreeOptions
@@ -169,41 +175,15 @@ Bug correction
 
 25/07/03 - 1.0 First release for Eclipse 2.1
 
-Next
-- group options (no more file and project options) under Preferences...
-- correct the coloring : < LT : "<" > => '>' is in wrong color
-  if ( i < 10 && i > 3 ) or < #BRACKET: [">","<"] > ill colored
-- traduction en français
-- refactoring (pas grand chose, juste renommer une méthode)
+Caveats
 
-Bugs and caveats.
+1) Warning: Token.java: File is obsolete. 
+Mark Token.java as derived (a small G appears top right of the icon)
+Project / Clean... will delete and regenerate all files
+Of course if you trigger the compilation manually by a right click Compile with JavaCC
+afterward the warning will reappear.
 
-1) The option OUTPUT_DIR doesn't work for JJDoc.
-This is a bug in JJDOC.
-Try directly from the console :
->jjdoc -OUTPUT_DIRECTORY:doc new_file.jj
-Java Compiler Compiler Version 3.2 (Documentation Generator Version 0.1.4)
-(type "jjdoc" with no arguments for help)
-Reading from file new_file.jj . . .
-Grammar documentation generated successfully in new_file.html
-
-The "new_file.html" has not been generated in "doc" directory !
-We should have read : "generated successfully in doc/new_file.html"
-
-Workaround : you can use the -OUTPUT_FILE option :
->jjdoc -OUTPUT_FILE:doc/doc.html new_file.jj
-Java Compiler Compiler Version 3.2 (Documentation Generator Version 0.1.4)
-(type "jjdoc" with no arguments for help)
-Reading from file new_file.jj . . .
-Grammar documentation generated successfully in doc/doc.html
-
-Unfortunately then you have to specify this option for each file
-you compile with JJDoc.
-
-The plugin is ready for the correction; it passes both options
-when invoking JJDoc.
-
-2) *.jj files are copied in bin directory
+2) *.jj files are copied into bin directory
 It is a feature of Eclipse which copies all files which are not *.java.
 You have the choice to make Eclipse copy or not copy these files.
 You can disable copy of .jj and .jjt files with :
