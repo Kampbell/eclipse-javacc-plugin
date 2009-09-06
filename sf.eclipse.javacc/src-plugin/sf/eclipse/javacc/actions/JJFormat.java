@@ -178,8 +178,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // Warn Nothing shall be done if parsing failed.
       final IWorkbench workbench = PlatformUI.getWorkbench();
       final Shell shell = workbench.getDisplay().getActiveShell();
-      final MessageDialog dialog = new MessageDialog(shell, Activator.getString("JJFormat.0"), //$NON-NLS-1$
-                                                     null, Activator.getString("JJFormat.1"), //$NON-NLS-1$
+      final MessageDialog dialog = new MessageDialog(shell, Activator.getString("JJFormat.Title"), //$NON-NLS-1$
+                                                     null, Activator.getString("JJFormat.Message"), //$NON-NLS-1$
                                                      MessageDialog.QUESTION, new String[] {
                                                        IDialogConstants.OK_LABEL }, 0);
       dialog.open();
@@ -619,9 +619,6 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // output the one or two newlines
       if (lastKind == RPAREN) {
         if (willNeedOneNewline && parLevelInLAC < 0) {
-          if (debugNL && !skipOutput) {
-            sb.append("\t\t/* rp, W n 1 n l A */"); // $NON-NLS-1$
-          }
           if (!skipOutput) {
             sb.append(endLineDelim);
           }
@@ -629,8 +626,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           newlineJustWritten = true;
         }
         if (willNeedTwoNewlines && parLevelInLAC < 0) {
-          if (debugNL && !skipOutput) {
-            sb.append("\t\t/* rp,  W n 2 n l A */"); // $NON-NLS-1$
+          if (debugNL) {
+            sb.append("\t\t/* rp,  W n 2 n l A */"); // $NON-NLS-1$ //$NON-NLS-1$
           }
           if (!skipOutput) {
             sb.append(endLineDelim);
@@ -663,14 +660,6 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
                   sb.append(SPACE);
                 }
               } else {
-                // output indentation
-                if (debugInd && !skipOutput) {
-                  final int len = sb.length() - endLineDelim.length();
-                  if (len >= 0 && sb.substring(len).equals(endLineDelim)) {
-                    sb.setLength(len);
-                  }
-                  sb.append("\t\t/* stcu */").append(endLineDelim); // $NON-NLS-1$
-                }
                 if (!skipOutput) {
                   sb.append(currLineIndent);
                 }
@@ -688,9 +677,6 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
               }
             } else if ((CR.equals(specImage) || LF.equals(specImage) || FF.equals(specImage))
                        && !afterNewline) {
-              if (debugNL && !skipOutput) {
-                sb.append("\t\t/* p s t */"); // $NON-NLS-1$
-              }
               if (!skipOutput) {
                 sb.append(endLineDelim);
               }
@@ -708,8 +694,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       }
       // for a previous ';', if memorized, output the newline
       if (lastKind == SEMICOLON && willNeedOneNewline) {
-        if (debugNL && !skipOutput) {
-          sb.append("\t\t/* sc, W n 1 n l A */"); // $NON-NLS-1$
+        if (debugNL) {
+          sb.append("\t\t/* sc, W n 1 n l A */"); // $NON-NLS-1$ //$NON-NLS-1$
         }
         if (!skipOutput) {
           sb.append(endLineDelim);
@@ -719,7 +705,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       }
       // update (if necessary) and output indentation if a newline has been written
       if (newlineJustWritten) {
-        if (debugInd && !skipOutput) {
+        if (debugInd) {
           final int len = sb.length() - endLineDelim.length();
           if (len >= 0 && sb.substring(len).equals(endLineDelim)) {
             sb.setLength(len);
@@ -727,20 +713,10 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         }
         if (currKind == LBRACE || currKind == LPAREN || currKind == LBRACKET || currKind == LT
             || currKind == GT) {
-          if (debugInd && !skipOutput) {
-            sb.append("\t\t/* cunl, ").append(currLineIndent.length()); // $NON-NLS-1$
-            sb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$
-            sb.append(" */").append(endLineDelim); // $NON-NLS-1$
-          }
           if (!skipOutput) {
             sb.append(currLineIndent);
           }
         } else if (currKind == BIT_OR) {
-          if (debugInd && !skipOutput) {
-            sb.append("\t\t/* boun, ").append(currLineIndent.length()); // $NON-NLS-1$
-            sb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$
-            sb.append(" */").append(endLineDelim); // $NON-NLS-1$
-          }
           if (!skipOutput) {
             final int len = currLineIndent.length() - JJCodeScanner.getIndentString().length();
             if (len > 0) {
@@ -748,10 +724,10 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
             }
           }
         } else {
-          if (debugInd && !skipOutput) {
-            sb.append("\t\t/* nenl, ").append(currLineIndent.length()); // $NON-NLS-1$
-            sb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$
-            sb.append(" */").append(endLineDelim); // $NON-NLS-1$
+          if (debugInd) {
+            sb.append("\t\t/* nenl, ").append(currLineIndent.length()); // $NON-NLS-1$ //$NON-NLS-1$
+            sb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$ //$NON-NLS-1$
+            sb.append(" */").append(endLineDelim); // $NON-NLS-1$ //$NON-NLS-1$
           }
           if (!skipOutput) {
             sb.append(nextLineIndent);
@@ -836,9 +812,6 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       }
       // output the one or two newlines after
       if (needTwoNewlines) {
-        if (debugNL && !skipOutput) {
-          sb.append("\t\t/* n 2 n l A */"); // $NON-NLS-1$
-        }
         if (!skipOutput) {
           sb.append(endLineDelim);
         }
@@ -846,9 +819,6 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         newlineJustWritten = true;
       }
       if (needOneNewline) {
-        if (debugNL && !skipOutput) {
-          sb.append("\t\t/* n 1 n l A */"); // $NON-NLS-1$
-        }
         if (!skipOutput) {
           sb.append(endLineDelim);
         }
