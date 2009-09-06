@@ -30,13 +30,11 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
     optionSet.add(new Option("BUILD_NODE_FILES", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_USES_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("MULTI", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("TOKEN_MANAGER_USES_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_DEFAULT_VOID", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("TRACK_TOKENS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_SCOPE_HOOK", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("VISITOR", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     // string options, in alphabetic order
-    optionSet.add(new Option("JDK_VERSION", "1.4", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_CLASS", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_PACKAGE", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
     optionSet.add(new Option("NODE_EXTENDS", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
