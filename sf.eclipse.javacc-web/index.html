@@ -4,183 +4,81 @@
   <title>Eclipse JavaCC Plugin Home</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <style>@import url("web/site.css");</style></head>
 
-<body onload="init();">
+<a href="http://sourceforge.net"> <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo" border="0" height="62" width="210"></a>
+<h1>JavaCC Eclipse Plug-in for Eclipse 3.2 - 3.3 - 3.4 - 3.5 with JavaCC 5.0</h1>
 
-<script type="text/javascript">
-	var returnval = 0;
-	var stylesheet, xmlFile, cache, doc;
-	function init(){
-		// NSCP 7.1+ / Mozilla 1.4.1+ / Safari
-		// Use the standard DOM Level 2 technique, if it is supported
-		if (document.implementation && document.implementation.createDocument) {
-			xmlFile = document.implementation.createDocument("", "", null);
-			stylesheet = document.implementation.createDocument("", "", null);
-			if (xmlFile.load){
-				xmlFile.load("site.xml");
-				stylesheet.load("web/site.xsl");
-			} else {
-				alert("Document could not be loaded by browser.");
-			}
-			xmlFile.addEventListener("load", transform, false);
-			stylesheet.addEventListener("load", transform, false);
-		}
-		//IE 6.0+ solution
-		else if (window.ActiveXObject) {
-			xmlFile = new ActiveXObject("msxml2.DOMDocument.3.0");
-			xmlFile.async = false;
-			xmlFile.load("site.xml");
-			stylesheet = new ActiveXObject("msxml2.FreeThreadedDOMDocument.3.0");
-			stylesheet.async = false;
-			stylesheet.load("web/site.xsl");
-			cache = new ActiveXObject("msxml2.XSLTemplate.3.0");
-			cache.stylesheet = stylesheet;
-			transformData();
-		}
-	}
-	// separate transformation function for IE 6.0+
-	function transformData(){
-		var processor = cache.createProcessor();
-		processor.input = xmlFile;
-		processor.transform();
-		data.innerHTML = processor.output;
-	}
-	// separate transformation function for NSCP 7.1+ and Mozilla 1.4.1+ 
-	function transform(){
-		returnval+=1;
-		if (returnval==2){
-			var processor = new XSLTProcessor();
-			processor.importStylesheet(stylesheet); 
-			doc = processor.transformToDocument(xmlFile);
-			document.getElementById("data").innerHTML = doc.documentElement.innerHTML;
-		}
-	}
-</script><a href="http://sourceforge.net"> <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo" border="0" height="62" width="210"></a>
-<h1>JavaCC Eclipse Plug-in for Eclipse 3.2 - 3.3 - 3.4</h1>
-
-<h2>Last update 7 august 2009 </h2>
+<h2>Last update 6 september 2009 </h2>
 
 JavaCC plug-in is designed to help development of JavaCC applications.<br>
 
 License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a href="http://www.cecill.info/">Cecill</a> <br>
 
-You can download the last version from sourceforge : <a href="http://sourceforge.net/projects/eclipse-javacc">sourceforge site</a><br>
-
-Or use this site as an update site in Eclipse :
+You can use this site as an update site in Eclipse :
 http://eclipse-javacc.sourceforge.net/<br>
-(add the software update site, follow the instructions, restart eclipse,done.)
+(add the software update site, follow the instructions, restart eclipse,done.)<br/>
+Or you can download the zipped update site from sourceforge : 
+<a href="http://sourceforge.net/projects/eclipse-javacc">sourceforge site</a><br/>
 
-The plugin needs Java 1.6 to run, sources contain Java 5.0 templates
-and Eclipse 3.2.2 or 3.3.3 or 3.4.2<br>
+Or you can get the source from cvs repository and recompile the plugin.<br/>
+See <a href="http://sourceforge.net/scm/?type=cvs&group_id=56876">http://sourceforge.net/scm/?type=cvs&group_id=56876</a> for javacc-plugin cvs location.<br/>
+Complete tutorial : <a href="https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html">https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html</a> may be of some help.<br/>
+<br/>
+The plugin needs Java 1.5 to run, sources contain Java 5.0 templates
+and Eclipse 3.4.2 or 3.5 <br>
 
 <br>
 
-The sources are bundled with the plugin and at sourceforge CVS.<br>
-
 See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if
-you want to hack the sources.<br>
+you want a quick introduction to the sources.<br>
 <br>
 Tom Copeland wrote a very nice book on JavaCC&nbsp;: &nbsp;<a href="http://generatingparserswithjavacc.com/">http://generatingparserswithjavacc.com/</a><br>
 A really good book, clear, well written, and full of ready to use examples.<br>
 If you need to parse a complex file format and choose JavaCC to generate the parser, this is definitly the best book.
 <h2>This plug-in provides : </h2>
-
 <ul>
-
   <li>Editor </li>
-
   <li>Outline </li>
-
   <li>Format&nbsp;</li><li>Call hierarchy view</li>
-
   <li>JavaCC JJTree JJDoc compilation, (see <a href="https://javacc.dev.java.net/">https://javacc.dev.java.net/</a>) </li>
-
-  <li>JTB compilation, (see <a href="http://compilers.cs.ucla.edu/jtb/">http://compilers.cs.ucla.edu/jtb/</a>)
-  </li>
-
-  <li>JavaCC, JJTree, JJDoc, JTB options setting<br>
-
-  </li>
-
+  <li>JTB compilation, (see <a href="http://compilers.cs.ucla.edu/jtb/">http://compilers.cs.ucla.edu/jtb/</a>)</li>
+  <li>JavaCC, JJTree, JJDoc, JTB options setting</li>
   <li>Problems reporting </li>
-
-  <li>Console for JavaCC outputs with hyperlinks to Errors and Warnings
-  </li>
-
+  <li>Console for JavaCC outputs with hyperlinks to Errors and Warnings</li>
   <li>Decoration of generated files </li>
-
   <li>Navigation into rules definitions (open declaration and back) </li>
-
-  <li>Support Eclipse 3.2.2 Java 1.5, JavaCC4.0, JTB132 </li>
-
+  <li>Support Eclipse 3.5, Java 1.5, JavaCC5.0, JTB132 </li>
   <li>Matching bracket highlight </li>
-
-  <li>Keyboard shortcuts : Comment lines Ctrl+/, Open declaration
-Ctrl+clic, Format Ctrl+Shift+F </li>
-
-  <li>JavaCC is launched in the same directory as the grammar files (to
-facilitate package handling) </li>
-
-  <li>More help is available with the plug-in via Eclipse menu Help /
-Help Contents. </li>
-
-</ul><span style="font-weight: bold;">History</span><br>23/05/09 - New in 1.5.14 Added call hierarchy view<br>25/04/09
-- New in 1.5.14 (Marc Mazas)&nbsp;Updated&nbsp;JavaCC / JJTree / JTB
-options, New preferences , Enhanced formatting&nbsp;<br>13/07/08 New in 1.5.12 : Updated with JavaCC 4.1, Added Folding, Hover, Completion proposals, and project Cleaning.<br>
-
+  <li>Keyboard shortcuts : Comment lines Ctrl+/, Open declaration Ctrl+clic, Format Ctrl+Shift+F </li>
+  <li>JavaCC is launched in the same directory as the grammar files (to facilitate package handling) </li>
+  <li>More help is available with the plug-in via Eclipse menu Help / Help Contents. </li>
+</ul>
+<b>History</b><br>
+07/09/09 New in 1.5.15 : JavaCC 5.0 new options, Galileo fix, Compiled with Java1.5 to support Mac OS X<br/>
+Change the released zip to be a zipped update site.<br/>
+23/05/09 New in 1.5.14 Call hierarchy view<br>25/04/09
+25/04/09 New in 1.5.14 (Marc Mazas)&nbsp;Updated&nbsp;JavaCC / JJTree / JTB
+options, New preferences , Enhanced formatting&nbsp;<br>
+13/07/08 New in 1.5.12 : Updated with JavaCC 4.1, Added Folding, Hover, Completion proposals, and project Cleaning.<br>
 08/07/07 New in 1.5.10 : Correct JJTREE_OUTPUT_DIRECTORY, NullPointerException<br>
-
-10/06/07 New in 1.5.9 : Correct javacc.jar to handle output directory
-for JJDoc<br>
-
-11/03/07 New in 1.5.7 : Correct suppress warnings and preserve unicode
-escape when formatting<br>
-
-26/11/06 New in 1.5.6 : Restore compatibility with Eclipse 3.1 and
-handle case where no src/bin dir are defined.<br>
-
-05/11/06 New in 1.5.5 : Java 1.5 and Eclipse 3.2.1, correct bug in
-console hyperlinks, basic content assistant<br>
-
-01/10/06 New in 1.5.4 : Suppress warnings in generated files, global
-preferences for colors<br>
-
+10/06/07 New in 1.5.9 : Correct javacc.jar to handle output directory for JJDoc<br>
+11/03/07 New in 1.5.7 : Correct suppress warnings and preserve unicode escape when formatting<br>
+26/11/06 New in 1.5.6 : Restore compatibility with Eclipse 3.1 and handle case where no src/bin dir are defined.<br>
+05/11/06 New in 1.5.5 : Java 1.5 and Eclipse 3.2.1, correct bug in console hyperlinks, basic content assistant<br>
+01/10/06 New in 1.5.4 : Suppress warnings in generated files, global preferences for colors<br>
 24/05/06 New in 1.5.3 : Correct plugin key conflict F3 <br>
-
-27/03/06 New in 1.5.2 : Removed "exclude from build" and adopted
-Eclipse way, ie Build Path.
-New in 1.5.2 : bug correction <br>
-
-24/02/06 New in 1.5.1 : French version, sauf que je n'ai pas
-encore
-traduit l'aide en français.<br>
-
-13/11/05 New in 1.4.0 : Update site, automatic format, java 1.4 .class
-files compatibility<br>
-
-31/10/05 New in 1.3.0 : JTB, Ctrl+clic, Wizard<br>
-
+27/03/06 New in 1.5.2 : Removed "exclude from build" and adopted Eclipse way, ie Build Path.<br>
+24/02/06 New in 1.5.1 : French version, sauf que je n'ai pas encore traduit l'aide en français.<br>
+13/11/05 New in 1.4.0 : Update site, automatic format, java 1.4 .class files compatibility<br>
+31/10/05 New in 1.3.0 : JTB, Ctrl+click to open declaration, Wizard<br>
 <h2>Quick Start</h2>
-
 <strong>
 1) Create a new Java project and a package "foo"<br>
-
 <br>
-
 2) Select package "foo" and create a new JavaCC file.
 Just accept all default settings.<br>
-
 <br>
-
 <img src="new_project.png" alt="new project"><br>
-
 <br>
-
-Beware templates files are for Java 1.5 (you must change in generated
-file
-to JDK_VERSION = 1.4 if you use java 1.4)<br>
-
-<br>
-
 3) You have now a new JavaCC file, compiled with JavaCC and all
 generated java files in you project.<br>
 
