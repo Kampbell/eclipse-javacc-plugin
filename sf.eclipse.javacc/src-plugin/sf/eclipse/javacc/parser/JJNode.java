@@ -8,8 +8,8 @@
  */
 package sf.eclipse.javacc.parser;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import sf.eclipse.javacc.editors.JJElements;
 
@@ -210,11 +210,11 @@ public class JJNode implements Node, JavaCCParserTreeConstants,
     while (root.parent != null)
       root = (JJNode) root.parent;
     // Search all tree for this identifier
-    Deque<JJNode> stack = new ArrayDeque<JJNode>();
-    stack.push(root);
+    Queue<JJNode> stack = new LinkedList<JJNode>();
+    stack.offer(root);
     // Examine each element of the stack, and if it has children push children
     while (!stack.isEmpty()) {
-      JJNode n = stack.pop();
+      JJNode n = stack.remove();
       if (n.getId() == JJTIDENTIFIER && this.toString().equals(n.toString())) {
         // Add caller to this identifier, not to declaration node
         // Get the node where this identifier appears
@@ -226,7 +226,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants,
       }
       if (n.children != null)
         for (int i = 0; i < n.children.length; ++i)
-          stack.push((JJNode) n.children[i]);
+          stack.offer((JJNode) n.children[i]);
     }
   }
   /**
@@ -254,14 +254,14 @@ public class JJNode implements Node, JavaCCParserTreeConstants,
     // Get the declaration node with jjElements.getNode()
     JJNode declarationNode = jjElements.getNode(this.toString());
     // Search callees in declaration node
-    Deque<JJNode> stack = new ArrayDeque<JJNode>();
+    Queue<JJNode> stack = new LinkedList<JJNode>();
     // Push all children of declaration node
     if (declarationNode.children != null)
       for (int i = 0; i < declarationNode.children.length; ++i)
-        stack.push((JJNode) declarationNode.children[i]);
+        stack.offer((JJNode) declarationNode.children[i]);
     // Examine stack and push children of children
     while (!stack.isEmpty()) {
-      JJNode n = stack.pop();
+      JJNode n = stack.remove();
       if (n.getId() == JJTIDENTIFIER) {
         // Add callee to this identifier, not to declaration node
         // Except if this identifier is the name of the declaration node
@@ -275,7 +275,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants,
       }
       if (n.children != null)
         for (int i = 0; i < n.children.length; ++i)
-          stack.push((JJNode) n.children[i]);
+          stack.offer((JJNode) n.children[i]);
     }
     return;
   }
