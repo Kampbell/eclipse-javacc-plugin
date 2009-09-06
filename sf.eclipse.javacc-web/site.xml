@@ -6,8 +6,12 @@
    <feature url="features/sf.eclipse.javacc.help.feature_1.5.0.jar" id="sf.eclipse.javacc.help.feature" version="1.5.0">
       <category name="Eclipse JavaCC Plugin"/>
    </feature>
-   <feature url="features/sf.eclipse.javacc.feature_1.5.14.jar" id="sf.eclipse.javacc.feature" version="1.5.14">
+   <feature url="features/sf.eclipse.javacc.feature_1.5.15.jar" id="sf.eclipse.javacc.feature" version="1.5.15">
       <category name="Eclipse JavaCC Plugin"/>
    </feature>
-   <category-def name="Eclipse JavaCC Plugin" label="Eclipse JavaCC Plugin"/>
+   <category-def name="Eclipse JavaCC Plugin" label="Eclipse JavaCC Plugin">
+      <description>
+         Eclipse JavaCC Plugin
+      </description>
+   </category-def>
 </site>
