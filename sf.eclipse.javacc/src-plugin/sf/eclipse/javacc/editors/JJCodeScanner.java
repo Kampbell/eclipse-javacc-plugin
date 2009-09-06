@@ -137,6 +137,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       "SUPPORT_CLASS_VISIBILITY_PUBLIC", //$NON-NLS-1$
       "TOKEN_EXTENDS", //$NON-NLS-1$
       "TOKEN_FACTORY", //$NON-NLS-1$
+      "GRAMMAR_ENCODING", //$NON-NLS-1$
       "ERROR_REPORTING", //$NON-NLS-1$
       "JAVA_UNICODE_ESCAPE", //$NON-NLS-1$
       "UNICODE_INPUT", //$NON-NLS-1$
@@ -169,10 +170,10 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       "TOKEN_MANAGER_USES_PARSER", //$NON-NLS-1$
       "TRACK_TOKENS", //$NON-NLS-1$
       "JJTREE_OUTPUT_DIRECTORY", //$NON-NLS-1$
-      "ONE_TABLE", //$NON-NLS-1$
       "TEXT", //$NON-NLS-1$
-      "JJDOC_OUTPUT_FILE", //$NON-NLS-1$ 
-      "JJDOC_OUTPUT_DIRECTORY"};//$NON-NLS-1$
+      "BNF", //$NON-NLS-1$
+      "ONE_TABLE", //$NON-NLS-1$
+      "CSS"};//$NON-NLS-1$
   /**
    * The java keywords
    */
