@@ -24,14 +24,12 @@ import sf.eclipse.javacc.parser.JJNode;
 public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants {
   static JJEditor editor;
 
-  @Override
   public void setActiveEditor(IAction action, IEditorPart targetEditor) {
     if (targetEditor == null)
       return;
     editor = (JJEditor) targetEditor;
   }
 
-  @Override
   public void run(IAction action) {
     IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
     IWorkbenchPage page = windows[0].getActivePage();
@@ -66,7 +64,6 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
     }
   }
 
-  @Override
   public void selectionChanged(IAction action, ISelection selection) {
     // not used. The selection is got inside run()
   }
