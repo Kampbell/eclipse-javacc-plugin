@@ -5,7 +5,7 @@ complete tutorial : https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2
 You can get 5 projects (take the HEAD)
 1/ sf.eclipse.javacc         to hack the plugin
 2/ sf.eclipse.javacc.feature to make a release
-3/ sf.eclipse.javacc.-web    to generate an update site
+3/ sf.eclipse.javacc-web     to generate an update site
 4/ sf.eclipse.javacc.help    to correct the help (you'll are welcome) 
 5/ sf.eclipse.javacc.help.feature to make a release of the help
 
