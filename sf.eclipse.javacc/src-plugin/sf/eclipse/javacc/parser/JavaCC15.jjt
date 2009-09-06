@@ -17,6 +17,7 @@ options {
   NODE_PACKAGE ="sf.eclipse.javacc.parser";
   NODE_CLASS ="JJNode";
   JDK_VERSION = "1.5";
+  GENERATE_GENERICS = true;
 }
 
 PARSER_BEGIN(JavaCCParser)
@@ -1317,7 +1318,7 @@ void DefaultValue():{}
 TOKEN : 
 {
   < IDENTIFIER: <LETTER> (<PART_LETTER>)* >
-| <#LETTER:
+| < #LETTER:
   [  // all chars for which Character.isIdentifierStart is true
          "$",
          "A"-"Z",
