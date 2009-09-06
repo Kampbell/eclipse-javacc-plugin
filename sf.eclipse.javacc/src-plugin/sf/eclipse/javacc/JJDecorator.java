@@ -25,7 +25,7 @@ import org.eclipse.ui.IDecoratorManager;
  */
 public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJConstants {
   
-  // Images to add on the original if generated or exluded
+  // Images to add on the original if generated or excluded
   private Image imgGeneratedStamp;
   private Image imgExcludedJJ;
   
