@@ -59,7 +59,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   }
 
   /**
-   * Add the page to the wizard and initialise it with selection
+   * Add the page to the wizard and initialize it with selection
    */
   public void addPages() {
     fPage = new JJNewJJPage();
@@ -221,7 +221,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     // make a String str from buffer
     String str = new String(buffer);
     
-    // instanciate template
+    // Instantiate template
     if (packageName.equals("")){ //$NON-NLS-1$
       // default package ? remove all
       str = str.replaceAll("<\\?package.*\\?>", "");  //$NON-NLS-1$ //$NON-NLS-2$
