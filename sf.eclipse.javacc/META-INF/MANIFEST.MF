@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JavaCC Plug-in
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.14
+Bundle-Version: 1.5.15
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.Activator
 Bundle-Vendor: Remi Koutcherawy
@@ -83,5 +83,5 @@ Export-Package: sf.eclipse.javacc;
    org.eclipse.jface.viewers,
    org.eclipse.swt.widgets,
    org.eclipse.jdt.internal.ui.wizards"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 
