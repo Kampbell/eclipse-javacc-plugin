@@ -282,7 +282,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
    * Set the selection
    * 
    * @param IRegion
-   *                (the highligth), ITextSelection (the selection)
+   *                (the highlight), ITextSelection (the selection)
    */
   public void setSelection(IRegion range, ITextSelection sel) {
     if (range != null)
