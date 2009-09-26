@@ -1,6 +1,8 @@
 package sf.eclipse.javacc.editors;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.callhierarchy.CallHierarchyMessages;
@@ -10,10 +12,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
+import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
@@ -28,7 +40,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * CeCILL License http://www.cecill.info/index.en.html
  */
 @SuppressWarnings("restriction")
-public class JJCallHierarchy extends ViewPart implements ISelectionChangedListener {
+public class JJCallHierarchy extends ViewPart implements ISelectionChangedListener, IJJConstants {
   static final int CALLERS = 0;
   static final int CALLEES = 1;
   private Composite fParent;
@@ -36,6 +48,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
   private JJCallHierarchyContentProvider fContentProvider;
   private JJNode fNode;
   private JJEditor fJJEditor;
+  private IFile fFile;
 
   public void createPartControl(Composite parent) {
     fParent = parent;
@@ -78,11 +91,39 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
       fJJEditor.resetHighlightRange();
     else {
       JJNode node = (JJNode) ((IStructuredSelection) selection).getFirstElement();
-      fJJEditor.setSelection(node);
-      // This will add children to allow development
+      // fJJEditor.setSelection(node); // This is OK only if JJEditor is up
+      showInJJEditor(node); // Brings up JJEditor and select the node 
+      // Add children to allow development
       node.buildCalleeMap();
       node.buildCallerMap();
       fTreeViewer.refresh();
+    }
+  }
+  /**
+   * Bring back JJEditor if it was closed
+   * and select the node
+   */
+  public void showInJJEditor(JJNode node) {
+    IWorkbenchWindow window = Activator.getDefault().getWorkbench()
+        .getActiveWorkbenchWindow();
+    if (window != null) {
+      IWorkbenchPage page = window.getActivePage();
+      if (page != null) 
+        try {
+          // Open the editor on the file we got when this JJCallHierary was opened
+          IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), EDITOR_ID, true);
+          JJEditor jjEditor = (JJEditor) editorPart;
+          IEditorInput input = editorPart.getEditorInput();
+          IDocumentProvider provider = jjEditor.getDocumentProvider();
+          provider.connect(input);
+          // Select the node
+          jjEditor.setSelection(node);
+          provider.disconnect(input);
+        } catch (PartInitException e) {
+          e.printStackTrace();
+        } catch (CoreException e) {
+          e.printStackTrace();
+        }
     }
   }
   /**
@@ -92,6 +133,8 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
   public void setSelection(JJNode node, JJEditor editor) {
     fNode = node;
     fJJEditor = editor;
+    IEditorInput editorInput = editor.getEditorInput();
+    fFile = ((IFileEditorInput) editorInput).getFile();
     
     // Need a root which is not displayed
     JJNode root = new JJNode(0);
