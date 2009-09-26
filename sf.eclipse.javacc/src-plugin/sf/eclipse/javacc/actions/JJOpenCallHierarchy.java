@@ -35,13 +35,11 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
     IWorkbenchPage page = windows[0].getActivePage();
     // Find JJCallHierarchy View part
     JJCallHierarchy view = (JJCallHierarchy) page.findView(CALLHIERARCHY_ID);
-    // If JJCallHierarchy is not visible, show it
-    if (view == null) {
-      try {
-        view = (JJCallHierarchy) page.showView(CALLHIERARCHY_ID);
-      } catch (PartInitException e) {
-        e.printStackTrace();
-      }
+    // Bring JJCallHierarchy to front
+    try {
+      view = (JJCallHierarchy) page.showView(CALLHIERARCHY_ID);
+    } catch (PartInitException e) {
+      e.printStackTrace();
     }
     // Get text selection, extend it,  using eventually method in JJGotoRule
     ITextSelection sel = (ITextSelection)editor.getSelectionProvider().getSelection();
