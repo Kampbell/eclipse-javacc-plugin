@@ -2,14 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JavaCC Plug-in
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.15
+Bundle-Version: 1.5.16
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.Activator
 Bundle-Vendor: Remi Koutcherawy
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
  org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.core.variables,
+ org.eclipse.debug.ui,
  org.eclipse.swt,
  org.eclipse.jface.text,
  org.eclipse.ui.ide,
@@ -40,28 +42,31 @@ Export-Package: sf.eclipse.javacc;
    org.eclipse.jface.action,
    sf.eclipse.javacc.editors,
    org.eclipse.ui,
-   org.eclipse.core.resources,
    sf.eclipse.javacc,
+   org.eclipse.core.resources,
    org.eclipse.jface.viewers,
    sf.eclipse.javacc.parser",
  sf.eclipse.javacc.editors;
-  uses:="org.eclipse.jface.text.hyperlink,
-   org.eclipse.jface.text,
+  uses:="org.eclipse.jface.text,
+   org.eclipse.core.runtime,
+   sf.eclipse.javacc.parser,
+   org.eclipse.jface.text.rules,
+   org.eclipse.jface.action,
+   org.eclipse.ui.views.contentoutline,
+   org.eclipse.jface.viewers,
+   org.eclipse.jface.text.hyperlink,
    org.eclipse.ui.texteditor,
    org.eclipse.jface.text.reconciler,
-   org.eclipse.core.runtime,
    org.eclipse.jface.text.source,
    org.eclipse.jface.resource,
    org.eclipse.ui,
    sf.eclipse.javacc,
-   org.eclipse.jface.text.rules,
-   sf.eclipse.javacc.parser,
+   org.eclipse.ui.part,
    org.eclipse.jface.text.contentassist,
-   org.eclipse.jface.action,
-   org.eclipse.ui.views.contentoutline,
+   org.eclipse.jface.preference,
    org.eclipse.jface.text.presentation,
    org.eclipse.swt.graphics,
-   org.eclipse.jface.viewers,
+   org.eclipse.jface.util,
    org.eclipse.swt.widgets,
    org.eclipse.ui.editors.text",
  sf.eclipse.javacc.filters;uses:="sf.eclipse.javacc,org.eclipse.jface.viewers",
@@ -70,11 +75,11 @@ Export-Package: sf.eclipse.javacc;
    org.eclipse.ui,
    sf.eclipse.javacc,
    org.eclipse.core.resources,
-   org.eclipse.ui.dialogs,
    org.eclipse.jface.util,
+   org.eclipse.ui.dialogs,
    org.eclipse.core.runtime.preferences,
    org.eclipse.swt.widgets",
- sf.eclipse.javacc.parser,
+ sf.eclipse.javacc.parser;uses:="sf.eclipse.javacc.editors",
  sf.eclipse.javacc.wizards;
   uses:="org.eclipse.jface.wizard,
    org.eclipse.core.runtime,
