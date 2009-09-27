@@ -160,8 +160,22 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     
     // Initialize properties do get automatically a full build
     if (prefs.get(RUNTIME_JAR, null)== null) {
-      prefs.put(RUNTIME_JAR, Activator.getString("JJBuilder.defaultJar"));//$NON-NLS-1$
-      prefs.put(RUNTIME_JTBJAR, Activator.getString("JJBuilder.defaultJtbJar"));//$NON-NLS-1$
+      // Use the jar(s) in the plugin
+      String javaCCjarFile="", jtbjarFile="";
+      URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
+      try {
+        URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+        String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+        // Return is "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
+        if (home.startsWith("/") && home.startsWith(":", 2)) //$NON-NLS-1$ //$NON-NLS-2$
+          home = home.substring(1);
+        javaCCjarFile=home+"javacc.jar";  //$NON-NLS-1$
+        jtbjarFile=home+"jtb132.jar";  //$NON-NLS-1$
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      prefs.put(RUNTIME_JAR, javaCCjarFile);//$NON-NLS-1$
+      prefs.put(RUNTIME_JTBJAR, jtbjarFile);//$NON-NLS-1$
       prefs.put(SHOW_CONSOLE, "true"); //$NON-NLS-1$
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
       prefs.put(JJ_NATURE, "true");  //$NON-NLS-1$
