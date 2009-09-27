@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="JavaCC Feature"
-      version="1.5.15"
+      version="1.5.16"
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
@@ -421,15 +421,17 @@ Version 2.0 dated 2005-05-21.
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.jdt"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.debug.ui"/>
    </requires>
 
    <plugin
          id="sf.eclipse.javacc"
-         download-size="1119"
-         install-size="1119"
-         version="1.5.15"/>
+         download-size="894"
+         install-size="0"
+         version="1.5.16"/>
 
 </feature>

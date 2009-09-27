@@ -37,6 +37,11 @@ Features
    use Workbench "Back" to go back.
 
 History
+26/09/09 - version 1.5.16
+- Support Variables in Builder, and Options
+- Click in call hierarchy view reopen Editor if it was closed
+- Keep jtb jar in preferences
+
 07/09/09 - version 1.5.15
 - Bug 2848368 support Galileo 
 - Bug 2848673 support Mac OS X Leopard (compiled with java 1.5 instead of 1.6)
