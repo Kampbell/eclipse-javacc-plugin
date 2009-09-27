@@ -41,11 +41,6 @@ public class JJPropertyPage extends PropertyPage
   protected JJTreeOptions jjTree;
   protected JJDocOptions jjDoc;
   protected JTBOptions jtb;
-
-  protected boolean isFile;
-  protected boolean isJJ;
-  protected boolean isJJT;
-  protected boolean isJTB;
   
   protected IResource res;
   protected IProject project;
@@ -65,14 +60,9 @@ public class JJPropertyPage extends PropertyPage
     res = (IResource) ia.getAdapter(IResource.class);
     if (res != null) 
       project = res.getProject();
-
-    isFile = (res != null && res.getType() == IResource.FILE);
-    isJJ = (res != null && isFile && res.getName().endsWith("jj")); //$NON-NLS-1$
-    isJJT = (res != null && isFile && res.getName().endsWith("jjt")); //$NON-NLS-1$
-    isJTB = (res != null && isFile && res.getName().endsWith("jtb")); //$NON-NLS-1$
     
     // JJRuntime always present
-    jjRun = new JJRuntimeOptions(folder, res, isFile);
+    jjRun = new JJRuntimeOptions(folder, res);
     jjRunItem = new TabItem(folder, SWT.NONE);
     jjRunItem.setText(Activator.getString("JJPropertyPage.JavaCC_runtime_options_Tab")); //$NON-NLS-1$
     jjRunItem.setControl(jjRun);
