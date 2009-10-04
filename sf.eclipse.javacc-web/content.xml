@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository class='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'?>
-<repository name='file:/C:/workspace/sf.eclipse.javacc-web/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
+<repository name='file:/C:/workspace/sf.eclipse.javacc-web/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1254056668856'/>
+    <property name='p2.timestamp' value='1254657860301'/>
   </properties>
   <references size='4'>
-    <repository url='http://eclipse-javacc.sourceforge.net/' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net/' type='0' options='0'/>
-    <repository url='http://eclipse-javacc.sourceforge.net' type='0' options='0'/>
+    <repository url='http://eclipse-javacc.sourceforge.net/' type='1' options='0'/>
     <repository url='http://eclipse-javacc.sourceforge.net' type='1' options='0'/>
+    <repository url='http://eclipse-javacc.sourceforge.net' type='0' options='0'/>
   </references>
   <units size='9'>
     <unit id='sf.eclipse.javacc.feature.feature.group' version='1.5.16' singleton='false'>
@@ -359,8 +359,10 @@
       </provides>
       <requires size='15'>
         <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
         <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
         <required namespace='osgi.bundle' name='org.eclipse.swt' range='0.0.0'/>
         <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
         <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
@@ -371,8 +373,6 @@
         <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
         <required namespace='osgi.bundle' name='org.eclipse.jdt' range='0.0.0'/>
         <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
       </requires>
       <artifacts size='1'>
         <artifact classifier='osgi.bundle' id='sf.eclipse.javacc' version='1.5.16'/>
@@ -381,7 +381,7 @@
       <touchpointData size='1'>
         <instructions size='2'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core,org.eclipse.core.variables,org.eclipse.debug.ui&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.16&#xA;Comment: For Eclipse 3.1&#xA;Bundle-Localization: plugin&#xA;Export-Package: sf.eclipse.javacc; uses:=&quot;org.eclipse.core.runtime,  org.eclipse.jface.resource,  org.eclipse.swt.custom,  org.eclipse.ui.plugin,  org.eclipse.ui.part,  org.eclipse.jdt.core,  org.eclipse.core.resources,  org.eclipse.swt.graphics,  org.eclipse.jface.viewers,  org.osgi.framework,  org.eclipse.swt.widgets&quot;,sf.eclipse.javacc.actions; uses:=&quot;org.eclipse.jface.text,  org.eclipse.jface.action,  sf.eclipse.javacc.editors,  org.eclipse.ui,  sf.eclipse.javacc,  org.eclipse.core.resources,  org.eclipse.jface.viewers,  sf.eclipse.javacc.parser&quot;,sf.eclipse.javacc.editors; uses:=&quot;org.eclipse.jface.text,  org.eclipse.core.runtime,  sf.eclipse.javacc.parser,  org.eclipse.jface.text.rules,  org.eclipse.jface.action,  org.eclipse.ui.views.contentoutline,  org.eclipse.jface.viewers,  org.eclipse.jface.text.hyperlink,  org.eclipse.ui.texteditor,  org.eclipse.jface.text.reconciler,  org.eclipse.jface.text.source,  org.eclipse.jface.resource,  org.eclipse.ui,  sf.eclipse.javacc,  org.eclipse.ui.part,  org.eclipse.jface.text.contentassist,  org.eclipse.jface.preference,  org.eclipse.jface.text.presentation,  org.eclipse.swt.graphics,  org.eclipse.jface.util,  org.eclipse.swt.widgets,  org.eclipse.ui.editors.text&quot;,sf.eclipse.javacc.filters;uses:=&quot;sf.eclipse.javacc,org.eclipse.jface.viewers&quot;,sf.eclipse.javacc.options; uses:=&quot;org.eclipse.jface.preference,  org.eclipse.ui,  sf.eclipse.javacc,  org.eclipse.core.resources,  org.eclipse.jface.util,  org.eclipse.ui.dialogs,  org.eclipse.core.runtime.preferences,  org.eclipse.swt.widgets&quot;,sf.eclipse.javacc.parser;uses:=&quot;sf.eclipse.javacc.editors&quot;,sf.eclipse.javacc.wizards; uses:=&quot;org.eclipse.jface.wizard,  org.eclipse.core.runtime,  org.eclipse.jdt.core,  sf.eclipse.javacc,  org.eclipse.jface.viewers,  org.eclipse.swt.widgets,  org.eclipse.jdt.internal.ui.wizards&quot;&#xA;Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true&#xA;Eclipse-LazyStart: true
+            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: JavaCC Plug-in&#xA;Bundle-ClassPath: plugin.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.resources,org.eclipse.core.runtime,org.eclipse.core.variables,org.eclipse.debug.ui,org.eclipse.swt,org.eclipse.jface.text,org.eclipse.ui.ide,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.views,org.eclipse.jdt.ui,org.eclipse.help,org.eclipse.jdt,org.eclipse.jdt.core&#xA;Bundle-Activator: sf.eclipse.javacc.Activator&#xA;Bundle-Vendor: Remi Koutcherawy&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.16&#xA;Comment: For Eclipse 3.1&#xA;Bundle-Localization: plugin&#xA;Export-Package: sf.eclipse.javacc; uses:=&quot;org.eclipse.core.runtime,  org.eclipse.jface.resource,  org.eclipse.swt.custom,  org.eclipse.ui.plugin,  org.eclipse.ui.part,  org.eclipse.jdt.core,  org.eclipse.core.resources,  org.eclipse.swt.graphics,  org.eclipse.jface.viewers,  org.osgi.framework,  org.eclipse.swt.widgets&quot;,sf.eclipse.javacc.actions; uses:=&quot;org.eclipse.jface.text,  org.eclipse.jface.action,  sf.eclipse.javacc.editors,  org.eclipse.ui,  sf.eclipse.javacc,  org.eclipse.core.resources,  org.eclipse.jface.viewers,  sf.eclipse.javacc.parser&quot;,sf.eclipse.javacc.editors; uses:=&quot;org.eclipse.jface.text,  org.eclipse.core.runtime,  sf.eclipse.javacc.parser,  org.eclipse.jface.text.rules,  org.eclipse.jface.action,  org.eclipse.ui.views.contentoutline,  org.eclipse.jface.viewers,  org.eclipse.jface.text.hyperlink,  org.eclipse.ui.texteditor,  org.eclipse.jface.text.reconciler,  org.eclipse.jface.text.source,  org.eclipse.jface.resource,  org.eclipse.ui,  sf.eclipse.javacc,  org.eclipse.ui.part,  org.eclipse.jface.text.contentassist,  org.eclipse.jface.preference,  org.eclipse.jface.text.presentation,  org.eclipse.swt.graphics,  org.eclipse.jface.util,  org.eclipse.swt.widgets,  org.eclipse.ui.editors.text&quot;,sf.eclipse.javacc.filters;uses:=&quot;sf.eclipse.javacc,org.eclipse.jface.viewers&quot;,sf.eclipse.javacc.options; uses:=&quot;org.eclipse.jface.preference,  org.eclipse.ui,  sf.eclipse.javacc,  org.eclipse.core.resources,  org.eclipse.jface.util,  org.eclipse.ui.dialogs,  org.eclipse.core.runtime.preferences,  org.eclipse.swt.widgets&quot;,sf.eclipse.javacc.parser;uses:=&quot;sf.eclipse.javacc.editors&quot;,sf.eclipse.javacc.wizards; uses:=&quot;org.eclipse.jface.wizard,  org.eclipse.core.runtime,  org.eclipse.jdt.core,  sf.eclipse.javacc,  org.eclipse.jface.viewers,  org.eclipse.swt.widgets,  org.eclipse.jdt.internal.ui.wizards&quot;&#xA;Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true&#xA;Eclipse-LazyStart: true&#xA;
           </instruction>
           <instruction key='zipped'>
             true

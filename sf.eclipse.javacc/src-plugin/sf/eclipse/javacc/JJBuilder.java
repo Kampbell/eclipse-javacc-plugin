@@ -1,6 +1,7 @@
 package sf.eclipse.javacc;
 
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.resources.*;
@@ -360,6 +361,19 @@ public class JJBuilder extends IncrementalProjectBuilder implements
         jarfile = prefs.get(RUNTIME_JAR, ""); //$NON-NLS-1$
       else if (extension.equals("jtb")) //$NON-NLS-1$
         jarfile = prefs.get(RUNTIME_JTBJAR, ""); //$NON-NLS-1$
+      // Else we use the jar in the plugin
+      if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
+        URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
+        // Eclipse 3.2 way. Only available in Eclipse 3.2
+         URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+         String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+        
+        // Same for both
+        if (extension.equals("jj") || extension.equals("jjt")) //$NON-NLS-1$ //$NON-NLS-2$
+          jarfile = home + "javacc.jar"; //$NON-NLS-1$
+        else if (extension.equals("jtb")) //$NON-NLS-1$
+          jarfile = home + "jtb132.jar"; //$NON-NLS-1$
+      }
       try {
         jarfile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(jarfile, true);
         // On Windows this returns "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
@@ -375,7 +389,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements
     }
     return jarfile;
   }
-
   /**
    * Clear Console if a Console is available
    * @throws CoreException
