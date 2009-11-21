@@ -639,7 +639,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   }
 
   static final public void regular_expr_production() throws ParseException {
-                                                          /*@bgen(jjtree) regular_expr_production */
+                                                         /*@bgen(jjtree) regular_expr_production */
   ASTregular_expr_production jjtn000 = new ASTregular_expr_production(JJTREGULAR_EXPR_PRODUCTION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -732,9 +732,35 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   }
 
   static final public void token_manager_decls() throws ParseException {
-    jj_consume_token(_TOKEN_MGR_DECLS);
-    jj_consume_token(COLON);
-    ClassOrInterfaceBody();
+                                                 /*@bgen(jjtree) token_manager_decls */
+  ASTtoken_manager_decls jjtn000 = new ASTtoken_manager_decls(JJTTOKEN_MANAGER_DECLS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      jj_consume_token(_TOKEN_MGR_DECLS);
+      jj_consume_token(COLON);
+      ClassOrInterfaceBody();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtreeCloseNodeScope(jjtn000);
+    }
+    }
   }
 
   static final public void regexpr_kind() throws ParseException {
@@ -7736,7 +7762,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   /** Reinitialise. */
   static public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
-    JavaCCParserTokenManager.ReInit(jj_input_stream);
+    token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jjtree.reset();
@@ -7760,7 +7786,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   /** Reinitialise. */
   static public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
-    JavaCCParserTokenManager.ReInit(jj_input_stream);
+    token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jjtree.reset();
@@ -7791,7 +7817,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
   static private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
-    else token = token.next = JavaCCParserTokenManager.getNextToken();
+    else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     if (token.kind == kind) {
       return token;
@@ -7800,14 +7826,13 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error {
-	private static final long serialVersionUID = 1L; }
+  static private final class LookaheadSuccess extends java.lang.Error { }
   static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   static private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
-        jj_lastpos = jj_scanpos = jj_scanpos.next = JavaCCParserTokenManager.getNextToken();
+        jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
       } else {
         jj_lastpos = jj_scanpos = jj_scanpos.next;
       }
@@ -7823,7 +7848,7 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
 /** Get the next Token. */
   static final public Token getNextToken() {
     if (token.next != null) token = token.next;
-    else token = token.next = JavaCCParserTokenManager.getNextToken();
+    else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     return token;
   }
@@ -7833,14 +7858,14 @@ public class JavaCCParser/*@bgen(jjtree)*/implements JavaCCParserTreeConstants, 
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
-      else t = t.next = JavaCCParserTokenManager.getNextToken();
+      else t = t.next = token_source.getNextToken();
     }
     return t;
   }
 
   static private int jj_ntk() {
     if ((jj_nt=token.next) == null)
-      return (jj_ntk = (token.next=JavaCCParserTokenManager.getNextToken()).kind);
+      return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }

@@ -35,24 +35,25 @@ import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.JJNature;
 
 /**
- * This wizard creates one file with the extension "jj", "jjt" or "jtb" based on
- * files in templates directory 
+ * This wizard creates one file with the extension "jj", "jjt" or "jtb" based on files in templates directory
  * Referenced by plugin.xml <extension point="org.eclipse.ui.newWizards">
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
-@SuppressWarnings("restriction") //$NON-NLS-1$
+@SuppressWarnings("restriction")
 public class JJNewWizard extends NewElementWizard implements IJJConstants {
+
+  // MMa 04/09 : formatting revision ; changed jar names
+
   private JJNewJJPage fPage;
 
   /**
-   * Constructor for JJNewWizard. 
-   * Provides the image, DialogSetting, and title.
+   * Constructor for JJNewWizard. Provides the image, DialogSetting, and title.
    */
   public JJNewWizard() {
     super();
-    ImageDescriptor id = Activator.getImageDescriptor("jjnew_wiz.gif"); //$NON-NLS-1$
+    final ImageDescriptor id = Activator.getImageDescriptor("jjnew_wiz.gif"); //$NON-NLS-1$
     setDefaultPageImageDescriptor(id);
     setDialogSettings(Activator.getDefault().getDialogSettings());
     setWindowTitle(Activator.getString("JJNewWizard.creates_jj_example_file")); //$NON-NLS-1$
@@ -61,6 +62,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   /**
    * Add the page to the wizard and initialize it with selection
    */
+  @Override
   public void addPages() {
     fPage = new JJNewJJPage();
     addPage(fPage);
@@ -70,17 +72,19 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   /*(non-Javadoc) 
    * @see org.eclipse.jface.wizard.IWizard#performFinish()
    */
+  @Override
   public boolean performFinish() {
     final String srcdir = fPage.getSrcDir();
     final String packageName = fPage.getPackage();
     final String fileName = fPage.getFileNameWithoutExtension();
     final String extension = fPage.getExtension();
-    
-    IRunnableWithProgress op = new IRunnableWithProgress() {
-      public void run(IProgressMonitor monitor) throws InvocationTargetException {
+
+    final IRunnableWithProgress op = new IRunnableWithProgress() {
+
+      public void run(final IProgressMonitor monitor) throws InvocationTargetException {
         try {
           doFinish(srcdir, fileName, extension, packageName, monitor);
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
           e.printStackTrace();
           Activator.log(e.getMessage());
         } finally {
@@ -90,126 +94,131 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     };
     try {
       getContainer().run(true, false, op);
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       return false;
-    } catch (InvocationTargetException e) {
+    } catch (final InvocationTargetException e) {
       e.printStackTrace();
       Activator.log(e.getMessage());
       return false;
     }
     return true;
   }
+
   /**
-   * The worker method. 
-   * Create the file and open the editor on the file.
+   * The worker method. Create the file and open the editor on the file.
    */
-  void doFinish(String srcDir, String fileName, String extension,
-      String packageName, IProgressMonitor monitor) throws CoreException {
+  void doFinish(final String srcDir, final String fileName, final String extension, final String packageName,
+                final IProgressMonitor monitor) throws CoreException {
     monitor.beginTask(Activator.getString("JJNewWizard.Creating") + fileName, 2); //$NON-NLS-1$
-    
+
     // first look for the srcDir+package 
     String resName;
-    if (packageName.equals("")) //$NON-NLS-1$
+    if (packageName.equals("")) { //$NON-NLS-1$
       resName = srcDir;
-    else
-      resName = srcDir+"/"+packageName.replace('.','/'); //$NON-NLS-1$
-    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    IResource res = root.findMember(new Path(resName));
+    }
+    else {
+      resName = srcDir + "/" + packageName.replace('.', '/'); //$NON-NLS-1$
+    }
+    final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    final IResource res = root.findMember(new Path(resName));
     if (!res.exists() || !(res instanceof IContainer)) {
       Activator.log(Activator.getString("JJNewWizard.src_dir_doesnot_exist")); //$NON-NLS-1$
     }
-    
+
     // second create the file
-    IContainer container = (IContainer) res;
-    final IFile file = container.getFile(new Path(fileName+extension));
+    final IContainer container = (IContainer) res;
+    final IFile file = container.getFile(new Path(fileName + extension));
     try {
-      InputStream stream = openTemplateContentStream(extension, packageName);
+      final InputStream stream = openTemplateContentStream(extension, packageName);
       if (file.exists()) {
         file.setContents(stream, true, true, monitor);
-      } else {
+      }
+      else {
         file.create(stream, true, monitor);
       }
       stream.close();
-    } catch (IOException e) {
-      Activator.log(Activator.getString("JJNewWizard.Creation_of")+fileName+Activator.getString("JJNewWizard.failed")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+    } catch (final IOException e) {
+      Activator
+               .log(Activator.getString("JJNewWizard.Creation_of") + fileName + Activator.getString("JJNewWizard.failed") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
     }
     monitor.worked(1);
     monitor.setTaskName(Activator.getString("JJNewWizard.Opening_file_for_editing")); //$NON-NLS-1$
     getShell().getDisplay().asyncExec(new Runnable() {
+
       public void run() {
-        IWorkbenchPage wpage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        final IWorkbenchPage wpage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         try {
           IDE.openEditor(wpage, file, true);
-        } catch (PartInitException e) {
-          Activator.log(Activator.getString("JJNewWizard.opening_of")+file+Activator.getString("JJNewWizard.failed")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (final PartInitException e) {
+          Activator
+                   .log(Activator.getString("JJNewWizard.opening_of") + file + Activator.getString("JJNewWizard.failed") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
     });
     monitor.worked(1);
-    
+
     // Initialize properties do get automatically a full build
-    IProject pro = res.getProject();
-    IScopeContext projectScope = new ProjectScope(pro);
-    IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+    final IProject pro = res.getProject();
+    final IScopeContext projectScope = new ProjectScope(pro);
+    final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
 
     // Tricky part JTB needs -p packageName, only if there is a package name
     if (!packageName.equals("")) //$NON-NLS-1$
     {
-    	prefs.put(JTB_OPTIONS,"-p="+packageName); //$NON-NLS-1$
+      prefs.put(JTB_OPTIONS, "-p=" + packageName); //$NON-NLS-1$
     }
-    
+
     // Initialize properties do get automatically a full build
-    if (prefs.get(RUNTIME_JAR, null)== null) {
+    if (prefs.get(RUNTIME_JJJAR, null) == null) {
       // Use the jar(s) in the plugin
-      String javaCCjarFile="", jtbjarFile="";
-      URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
+      String javaCCjarFile = "", jtbjarFile = ""; //$NON-NLS-1$ //$NON-NLS-2$
+      final URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
       try {
-        URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
+        final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
         String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
         // Return is "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
-        if (home.startsWith("/") && home.startsWith(":", 2)) //$NON-NLS-1$ //$NON-NLS-2$
+        if (home.startsWith("/") && home.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
           home = home.substring(1);
-        javaCCjarFile=home+"javacc.jar";  //$NON-NLS-1$
-        jtbjarFile=home+"jtb132.jar";  //$NON-NLS-1$
-      } catch (IOException e) {
+        }
+        javaCCjarFile = home + JAVACC_JAR_NAME;
+        jtbjarFile = home + JTB_JAR_NAME;
+      } catch (final IOException e) {
         e.printStackTrace();
       }
-      prefs.put(RUNTIME_JAR, javaCCjarFile);//$NON-NLS-1$
-      prefs.put(RUNTIME_JTBJAR, jtbjarFile);//$NON-NLS-1$
+      prefs.put(RUNTIME_JJJAR, javaCCjarFile);
+      prefs.put(RUNTIME_JTBJAR, jtbjarFile);
       prefs.put(SHOW_CONSOLE, "true"); //$NON-NLS-1$
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
-      prefs.put(JJ_NATURE, "true");  //$NON-NLS-1$
-      prefs.put(SUPPRESS_WARNINGS, "true");  //$NON-NLS-1$
+      prefs.put(JJ_NATURE, "true"); //$NON-NLS-1$
+      prefs.put(SUPPRESS_WARNINGS, "true"); //$NON-NLS-1$
       // Sets the nature directly
       JJNature.setJJNature(true, pro);
-      
-      try
-      {
-    	  prefs.flush();
-      }
-      catch(BackingStoreException e)
-      {
-    	  e.printStackTrace();
+
+      try {
+        prefs.flush();
+      } catch (final BackingStoreException e) {
+        e.printStackTrace();
       }
     }
   }
 
   /**
    * Initialize file contents with a sample .jj or .jjt file.
+   * 
    * @param extension "jj" or "jjt"
    */
-  private InputStream openTemplateContentStream(String extension, String packageName) {
-    URL installURL = Activator.getDefault().getBundle().getEntry("/templates/"); //$NON-NLS-1$
+  private InputStream openTemplateContentStream(final String extension, final String packageName) {
+    final URL installURL = Activator.getDefault().getBundle().getEntry("/templates/"); //$NON-NLS-1$
     URL url;
     try {
       // the extension gives the right template
-      String filename = "new_file"+extension; //$NON-NLS-1$
+      final String filename = "new_file" + extension; //$NON-NLS-1$
       url = new URL(installURL, filename);
       // makeInputStream customize the template
       return makeInputStream(url.openStream(), packageName);
-    } catch (MalformedURLException e) {
+    } catch (final MalformedURLException e) {
       e.printStackTrace();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
     return null;
@@ -217,44 +226,47 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
 
   /**
    * This could have been a FilterInputStream
+   * 
    * @param stream
    * @param packageName
    * @return stream
    */
-  private InputStream makeInputStream(InputStream stream, String packageName) {
+  private InputStream makeInputStream(final InputStream stream, final String packageName) {
     // read InputStream into buffer
     byte buffer[];
     try {
       buffer = Util.getInputStreamAsByteArray(stream, -1);
-      stream.close();      
-    } catch (IOException e) {
-      Activator.log(Activator.getString("JJNewWizard.Reading_failed")+e.getMessage()); //$NON-NLS-1$
+      stream.close();
+    } catch (final IOException e) {
+      Activator.log(Activator.getString("JJNewWizard.Reading_failed") + e.getMessage()); //$NON-NLS-1$
       return null;
     }
-    
+
     // make a String str from buffer
     String str = new String(buffer);
-    
+
     // Instantiate template
-    if (packageName.equals("")){ //$NON-NLS-1$
+    if (packageName.equals("")) { //$NON-NLS-1$
       // default package ? remove all
-      str = str.replaceAll("<\\?package.*\\?>", "");  //$NON-NLS-1$ //$NON-NLS-2$
+      str = str.replaceAll("<\\?package.*\\?>", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
     else {
       // add lines
-      str = str.replaceAll("<\\?package_declare\\?>", "package "+packageName+";\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      str = str.replaceAll("<\\?package\\?>", packageName+"."); //$NON-NLS-1$ //$NON-NLS-2$
+      str = str.replaceAll("<\\?package_declare\\?>", "package " + packageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      str = str.replaceAll("<\\?package\\?>", packageName + "."); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
     // return InputStream made from str
     buffer = str.getBytes();
-    ByteArrayInputStream baif = new ByteArrayInputStream(buffer);
+    final ByteArrayInputStream baif = new ByteArrayInputStream(buffer);
     return baif;
   }
 
-  protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
+  @Override
+  protected void finishPage(final IProgressMonitor monitor) throws InterruptedException, CoreException {
   }
 
+  @Override
   public IJavaElement getCreatedElement() {
     return null;
   }

@@ -27,19 +27,18 @@ import sf.eclipse.javacc.parser.JavaCCParserConstants;
 import sf.eclipse.javacc.parser.Token;
 
 /**
- * Format action referenced by plugin.xml
- * For popup menu on Editor
- *  <extension point="org.eclipse.ui.popupMenus">
- * For key binding
- *  <extension point="org.eclipse.ui.editorActions">
- *
- * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
+ * Format action referenced by plugin.xml For popup menu on Editor <extension
+ * point="org.eclipse.ui.popupMenus"> For key binding <extension point="org.eclipse.ui.editorActions">
+ * 
+ * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
-/*
- * ModMMa : performance improvements and enhanced reformatting
- */
 public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, IJJConstants {
+
+  /*
+   * MMa 04/09 : performance improvements and enhanced reformatting
+   * MMa 11/09 : javadoc and formatting revision ; fixed formatting issues in java code
+   */
   /** The editor */
   static JJEditor  editor;
   /** The document */
@@ -48,9 +47,10 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(final IAction action, final IEditorPart targetEditor) {
-    if (targetEditor == null)
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
+    if (targetEditor == null) {
       return;
+    }
     editor = (JJEditor) targetEditor;
     doc = editor.getDocument();
   }
@@ -58,27 +58,31 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
   /**
    * @see IActionDelegate#selectionChanged(IAction, ISelection)
    */
-  public void selectionChanged(final IAction action, final ISelection selection) {
+  public void selectionChanged(@SuppressWarnings("unused") final IAction action,
+                               @SuppressWarnings("unused") final ISelection selection) {
     // not used
   }
 
   /**
    * Perform Formatting.
-   *
+   * 
    * @see IActionDelegate#run(IAction)
    */
-  public void run(final IAction action) {
-    if (editor == null)
+  public void run(@SuppressWarnings("unused") final IAction action) {
+    if (editor == null) {
       return;
+    }
     final ISelection selection = editor.getSelectionProvider().getSelection();
-    if (!(selection instanceof ITextSelection))
+    if (!(selection instanceof ITextSelection)) {
       return;
+    }
     ITextSelection ts = (ITextSelection) selection;
     int tssl = ts.getStartLine();
     int tsel = ts.getEndLine();
     int tslen = ts.getLength();
-    if (tssl < 0 || tsel < 0)
+    if (tssl < 0 || tsel < 0) {
       return;
+    }
     try {
       // if No selection, treat full text
       if (tslen == 0) {
@@ -90,7 +94,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // If partial lines are selected, extend selection
       final IRegion endLine = doc.getLineInformation(tsel);
       final IRegion startLine = doc.getLineInformation(tssl);
-      ts = new TextSelection(doc, startLine.getOffset(), endLine.getOffset() + endLine.getLength() - startLine.getOffset());
+      ts = new TextSelection(doc, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
+                                                         - startLine.getOffset());
       tssl = ts.getStartLine();
       tsel = ts.getEndLine();
       tslen = ts.getLength();
@@ -112,12 +117,9 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       final Shell shell = workbench.getDisplay().getActiveShell();
       final MessageDialog dialog = new MessageDialog(shell,
                                                      Activator.getString("JJFormat.Bug"), //$NON-NLS-1$
-                                                     null,
-                                                     fmtStackTrace(e, doc.getLegalLineDelimiters()[0]),
-                                                     MessageDialog.QUESTION,
-                                                     new String[] {
-                                                       IDialogConstants.OK_LABEL },
-                                                     0);
+                                                     null, fmtStackTrace(e, doc.getLegalLineDelimiters()[0]),
+                                                     MessageDialog.QUESTION, new String[] {
+                                                       IDialogConstants.OK_LABEL }, 0);
       dialog.open();
     }
     return;
@@ -125,7 +127,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
 
   /**
    * Formats the stacktrace in lines.
-   *
+   * 
    * @param ex the exception
    * @param eol the end of line string
    * @return the formatted stacktrace
@@ -160,13 +162,13 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
    * <p>
    * It reformats the indentation and spacing : it uses spaces to distinct constructs, and it tries to keep
    * comments and newlines (except around braces and parenthesis) as they are
-   *
+   * 
    * @param txt the text to format
    * @param endLineDelim the end of line delimiter string
    * @param firstLine the line number of the first character of the selected text
    * @param lastLine the line number of the last character of the selected text
    * @param sb the StringBuffer to receive the formatted text
-   * @return
+   * @return true if sucessful, false otherwise
    */
   protected boolean formatSelection(final String txt, final String endLineDelim, final int firstLine,
                                     final int lastLine, final StringBuffer sb) {
@@ -185,6 +187,21 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       dialog.open();
       return false;
     }
+    /*
+     * TODO : on est ou non dans du code java dans les cas suivants :
+     * dans options : non
+     * entre parser_begin et parser_end : oui
+     * dans javacode : oui
+     * dans token_mgr_decls : oui
+     * dans les regular_expression ou bnf_productions :
+     * - dans le premier {} : oui
+     * - dans le second {} :
+     *   * dans un expansion unit try :
+     *     dans le try : si bracesIndentLevel >= 3
+     *     dans le catch et finally : si bracesIndentLevel >= 2
+     *   * dans un conditional node : oui
+     *   * dans tout le reste : si bracesIndentLevel >= 2
+     */
     /** the current token */
     Token currToken = node.getFirstToken();
     /** the next token */
@@ -252,8 +269,12 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
      * and ')' included
      */
     int parLevelInLAC = -1;
-    /** last parenthesis is LPAREN, not RPAREN */
-    boolean lastParLPnotRP = false;
+    /** parenthesis level in for loops : 0 : outside ; 1, 2, ... : inside */
+    int parLevelInFL = 0;
+    /** parenthesis level in JJTree noddes : -1 : outside ; 0 : found a node ; 1, 2, ... : inside */
+    int parLevelInJN = 0;
+    /** true from the 'for' keywork to the enclosing parenthesis, false otherwise */
+    boolean inForLoop = false;
     /** last parenthesis is LPAREN, not RPAREN nor BIT_OR */
     boolean lastParLPnotRPnorBO = false;
     /** last straight bracket is LBRACKET, not RBRACKET nor BIT_OR not LOOKAHEAD nor 2 LPAREN */
@@ -271,27 +292,62 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         isAfterParserEnd = true;
       }
       if (isAfterParserEnd) {
-        // parenthesis level
-        if (currKind == LPAREN) {
-          lastParLPnotRP = true;
-        } else if (currKind == RPAREN) {
-          lastParLPnotRP = false;
-        }
         // parenthesis level in lookahead constraints
         if (currKind == _LOOKAHEAD) {
           parLevelInLAC = 0;
-        } else if (currKind == LPAREN && parLevelInLAC >= 0) {
+        }
+        else if (currKind == LPAREN && parLevelInLAC >= 0) {
           parLevelInLAC++;
-        } else if (currKind == RPAREN && parLevelInLAC >= 0) {
+        }
+        else if (currKind == RPAREN && parLevelInLAC >= 0) {
           parLevelInLAC--;
         }
         // braces level (not in lookahead constraints)
         if (currKind == LBRACE && parLevelInLAC < 0) {
           bracesIndentLevel++;
-        } else if (currKind == RBRACE && parLevelInLAC < 0) {
+        }
+        else if (currKind == RBRACE && parLevelInLAC < 0) {
           bracesIndentLevel--;
         }
       }
+
+      // parenthesis level for the for loops
+      if (!inForLoop) {
+        if ("for".equals(currImage)) { //$NON-NLS-1$
+          inForLoop = true;
+        }
+      }
+      if (inForLoop) {
+        if (currKind == LPAREN) {
+          parLevelInFL++;
+        }
+        else if (currKind == RPAREN) {
+          parLevelInFL--;
+          if (parLevelInFL == 0) {
+            inForLoop = false;
+          }
+        }
+      }
+
+      // parenthesis level for JJTree nodes
+      if (NB.equals(currImage) && parLevelInJN < 0) {
+        parLevelInJN++;
+      }
+      if (parLevelInJN >= 0) {
+        if (currKind == LPAREN) {
+          parLevelInJN++;
+        }
+        else if (currKind == RPAREN) {
+          parLevelInJN--;
+          if (parLevelInJN == 0) {
+            parLevelInJN--;
+          }
+        }
+        else if (currKind == COLON) {
+          parLevelInJN = -1;
+        }
+      }
+
       /*
        * compute the need for newline(s) and indentation
        */
@@ -299,7 +355,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       if (currKind == _PARSER_BEGIN || currKind == _LOOKAHEAD) {
         willNeedOneNewline = true;
         needNoSpace = true;
-      } else if (currKind == _PARSER_END) {
+      }
+      else if (currKind == _PARSER_END) {
         willNeedOneNewline = true;
         willNeedTwoNewlines = true;
         needNoSpace = true;
@@ -350,8 +407,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // before a '{', only if not after a '}' or
       // before a '}' only if not after a ';' or a '{'
       if (parLevelInLAC < 0
-          && ((currKind == SEMICOLON && !lastParLPnotRP) || (nextKind == LBRACE && currKind != RBRACE) || (nextKind == RBRACE
-                                                                                                           && currKind != SEMICOLON && currKind != LBRACE))) {
+          && ((currKind == SEMICOLON && !inForLoop) || (nextKind == LBRACE && currKind != RBRACE) || (nextKind == RBRACE
+                                                                                                      && currKind != SEMICOLON && currKind != LBRACE))) {
         needOneNewline = true;
       }
       /*
@@ -365,24 +422,28 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         // after a ':' and not before an identifier nor a '{',
         // if, within the regular_expr_production, followed by one or more '|',
         // or a parenthesis level of two or more, need for a newline
-        if (currKind == COLON && nextKind != IDENTIFIER && nextKind != LBRACE) {
+        if (currKind == COLON && bracesIndentLevel <= 1 && nextKind != IDENTIFIER && nextKind != LBRACE) {
           Token nt = nextToken;
           Token pt = currToken;
           int gtltLevel = 1;
-          int parLevel = 0;
+          int euParLevel = 0;
           while (nt != null) {
             if (nt.kind == GT && pt.kind != LPAREN) {
               if (--gtltLevel == 0) {
                 break;
               }
-            } else if (nt.kind == LT) {
+            }
+            else if (nt.kind == LT) {
               gtltLevel++;
-            } else if (nt.kind == RPAREN) {
-              parLevel--;
-            } else if (nt.kind == LPAREN && ++parLevel > 1) {
+            }
+            else if (nt.kind == RPAREN) {
+              euParLevel--;
+            }
+            else if (nt.kind == LPAREN && ++euParLevel > 1) {
               needOneNewline = true;
               break;
-            } else if (nt.kind == BIT_OR) {
+            }
+            else if (nt.kind == BIT_OR) {
               needOneNewline = true;
               break;
             }
@@ -390,16 +451,18 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
             nt = nt.next;
           }
         }
-        // after a '(' and not in lookahead constraints and at most at the first braces level,
+        // after a '(' and not in lookahead constraints nor in a conditional node
+        // and at most at the first braces level,
         // if not at the last enclosing level, or if at the last enclosing level with an inner '|',
         // need for a newline and increment indentation
-        if (currKind == LPAREN && parLevelInLAC < 0 && bracesIndentLevel <= 1) {
+        if (currKind == LPAREN && parLevelInLAC < 0 && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           lastParLPnotRPnorBO = true;
           Token nt = nextToken;
           while (nt != null) {
             if (nt.kind == RPAREN) {
               break;
-            } else if (nt.kind == LPAREN || nt.kind == BIT_OR) {
+            }
+            else if (nt.kind == LPAREN || nt.kind == BIT_OR) {
               needOneNewline = true;
               lastParLPnotRPnorBO = false;
               nextLineIndent.append(JJCodeScanner.getIndentString());
@@ -410,14 +473,16 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           }
         }
         // after a ')' and before a TRY (in expansion_unit), need for a newline,
-        // after a ')' and not in lookahead constraints and at most at the first braces level,
+        // after a ')' and not in lookahead constraints  nor in a conditional node
+        // and at most at the first braces level,
         // if not at the last enclosing level, or if at the last enclosing level with an inner '|',
         // need for a newline and decrement indentation,
         // and if followed by a '>', a '*', a '?' or a '+', postpone the need for a newline
-        if (currKind == RPAREN && parLevelInLAC < 0 && bracesIndentLevel <= 1) {
+        if (currKind == RPAREN && parLevelInLAC < 0 && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           if (nextKind == TRY) {
             needOneNewline = true;
-          } else if (!lastParLPnotRPnorBO) {
+          }
+          else if (!lastParLPnotRPnorBO) {
             needOneNewline = true;
             decrementIndent(nextLineIndent);
             // currLineIndent will be set at the end of the loop
@@ -425,7 +490,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           lastParLPnotRPnorBO = false;
           if (NB.equals(nextImage)) {
             needOneNewline = false;
-          } else if (nextKind == GT || nextKind == STAR || nextKind == HOOK || nextKind == PLUS) {
+          }
+          else if (nextKind == GT || nextKind == STAR || nextKind == HOOK || nextKind == PLUS) {
             newLinePostponed = true;
             prevNeedOneNewline = needOneNewline;
             needOneNewline = false;
@@ -438,10 +504,11 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           needOneNewline |= prevNeedOneNewline;
           newLinePostponed = false;
         }
-        // before a '(' and not in lookahead constraints and at most at the first braces level,
+        // before a '(' and not in lookahead constraints  nor in a conditional node
+        // and at most at the first braces level,
         // if not at the last enclosing level, or if at the last enclosing level with an inner '|',
         // need for a newline
-        if (nextKind == LPAREN && parLevelInLAC < 0 && bracesIndentLevel <= 1) {
+        if (nextKind == LPAREN && parLevelInLAC < 0 && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           boolean nextParenLeftNorRight = false;
           Token nt = nextToken;
           if (nt != null) {
@@ -450,7 +517,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
               if (nt.kind == RPAREN) {
                 nextParenLeftNorRight = false;
                 break;
-              } else if (nt.kind == LPAREN || nt.kind == BIT_OR) {
+              }
+              else if (nt.kind == LPAREN || nt.kind == BIT_OR) {
                 nextParenLeftNorRight = true;
                 break;
               }
@@ -461,10 +529,11 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
             needOneNewline = true;
           }
         }
-        // before a ')' and not in lookahead constraints and at most at the first braces level,
+        // before a ')' and not in lookahead constraints  nor in a conditional node
+        // and at most at the first braces level,
         // if not at the last enclosing level, or if at the last enclosing level with an inner '|',
         // need for a newline
-        if (nextKind == RPAREN && parLevelInLAC < 0 && bracesIndentLevel <= 1) {
+        if (nextKind == RPAREN && parLevelInLAC < 0 && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           if (!lastParLPnotRPnorBO) {
             needOneNewline = true;
           }
@@ -479,9 +548,11 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           while (nt != null) {
             if (nt.kind == LPAREN) {
               nbParen++;
-            } else if (nt.kind == RPAREN) {
+            }
+            else if (nt.kind == RPAREN) {
               nbParen--;
-            } else if (nt.kind == RBRACKET) {
+            }
+            else if (nt.kind == RBRACKET) {
               break;
             }
             if (nt.kind == LBRACE || nt.kind == _LOOKAHEAD || nt.kind == LBRACKET || nt.kind == BIT_OR
@@ -517,9 +588,11 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
             while (nt != null) {
               if (nt.kind == LPAREN) {
                 nbParen++;
-              } else if (nt.kind == RPAREN) {
+              }
+              else if (nt.kind == RPAREN) {
                 nbParen--;
-              } else if (nt.kind == RBRACKET) {
+              }
+              else if (nt.kind == RBRACKET) {
                 break;
               }
               if (nt.kind == LBRACE || nt.kind == _LOOKAHEAD || nt.kind == LBRACKET || nt.kind == BIT_OR
@@ -543,11 +616,12 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         if (nextKind == BIT_OR) {
           needOneNewline = true;
         }
-        // increment indentation for a '<', and decrement indentation for a '>'
-        if (currKind == LT) {
+        // increment indentation for a '<', and decrement indentation for a '>' in a regular expression
+        if (currKind == LT && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           nextLineIndent.append(JJCodeScanner.getIndentString());
           // currLineIndent will be set at the end of the loop
-        } else if (currKind == GT && lastKind != LPAREN) {
+        }
+        else if (currKind == GT && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           decrementIndent(nextLineIndent);
           // currLineIndent will be set at the end of the loop
         }
@@ -559,20 +633,19 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       /*
        * compute the exceptions to the (following) space due to the current or next token
        */
-      // if before a newline
-      // for a '{}' pair
+      // before a newline
+      // in a '{}' pair
       // after some operators or punctuation '(', '[' (unless in last sections), '.', '!', '~',
-      // '*' (unless in last sections), '/'
       // before some operators or punctuation ')', ']' (unless in last sections), ';', ',', '.',
-      // '++', '--', '*', '/'
+      // before and after '++' & '--' (unless before or after a java identifier),
       // before an argument list
-      // after some keywords
+      // after some JavaCC keywords
       // after a ':' if followed by a '{'
-      // after some javacc operators or punctuation '#', '^'
-      // before some javacc operators or punctuation '?', '*', '+'
-      // before and after a javacc '-'
-      // after the javacc construct '(>'
+      // after some javacc operators or punctuation or construct '#', '^','(>' in last sections
+      // before some javacc operators '?', '*', '+' in expansion units 
+      // before and after the javacc operator '-' in regular expression
       // TODO for generics syntax, boolean expressions with '<' or '>'
+      // TODO for the javacc operators '?', '*', '+' in expansion_unit try syntax : try { (prod)+ } catch : no space after the ')'
       if (needOneNewline
           || (currKind == LBRACE && nextKind == RBRACE)
           || currKind == LPAREN
@@ -580,25 +653,23 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           || currKind == DOT
           || currKind == BANG
           || currKind == TILDE
-          || (currKind == STAR && !isAfterParserEnd)
-          || currKind == SLASH
           || nextKind == RPAREN
           || (nextKind == RBRACKET && !isAfterParserEnd)
           || nextKind == SEMICOLON
           || nextKind == COMMA
           || nextKind == DOT
-          || nextKind == INCR
-          || nextKind == DECR
-          || nextKind == STAR
-          || nextKind == SLASH
+          || ((nextKind == INCR || nextKind == DECR) && Character.isJavaIdentifierStart(currImage.charAt(0)))
+          || ((currKind == INCR || currKind == DECR) && Character.isJavaIdentifierStart(nextImage.charAt(0)))
           || (nextKind == LPAREN && currKind == IDENTIFIER)
           || currKind == _PARSER_BEGIN
           || currKind == _PARSER_END
           || currKind == _LOOKAHEAD
           || (currKind == COLON && nextKind == LBRACE)
-          || (isAfterParserEnd && (NB.equals(currImage) || nextKind == XOR || nextKind == HOOK
-                                   || nextKind == STAR || nextKind == PLUS
-                                   || ((currKind == MINUS || nextKind == MINUS) && bracesIndentLevel <= 1) || (lastKind == LPAREN && currKind == GT)))) {
+          || ((NB.equals(currImage) || nextKind == XOR || (lastKind == LPAREN && currKind == GT)) && isAfterParserEnd)
+          || ((nextKind == HOOK || nextKind == STAR || nextKind == PLUS || currKind == MINUS || nextKind == MINUS)
+              && bracesIndentLevel <= 1 && parLevelInJN < 0 && isAfterParserEnd)
+
+      ) {
         needSpace = false;
       }
       /*
@@ -609,10 +680,12 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       if (currToken.beginLine >= firstLine && currToken.endLine <= lastLine) {
         if (careFirstLine) {
           skipOutput = true;
-        } else {
+        }
+        else {
           skipOutput = false;
         }
-      } else {
+      }
+      else {
         skipOutput = true;
       }
       // for a previous ')' not in lookahead constraints, if memorized,
@@ -640,15 +713,17 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       specToken = currToken.specialToken;
       if (specToken != null) {
         // rewind to the first
-        while (specToken.specialToken != null)
+        while (specToken.specialToken != null) {
           specToken = specToken.specialToken;
+        }
         boolean afterNewline = newlineJustWritten;
         // examine each
         while (specToken != null) {
           if (nbSpecialToken > 0) {
             // skip those already processed
             nbSpecialToken--;
-          } else {
+          }
+          else {
             // output others only if comments in the selection
             specKind = specToken.kind;
             specImage = specToken.image;
@@ -659,7 +734,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
                 if (!skipOutput) {
                   sb.append(SPACE);
                 }
-              } else {
+              }
+              else {
                 if (!skipOutput) {
                   sb.append(currLineIndent);
                 }
@@ -672,11 +748,12 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
               if (specKind == SINGLE_LINE_COMMENT) {
                 afterNewline = true;
                 newlineJustWritten = true;
-              } else {
+              }
+              else {
                 afterNewline = false;
               }
-            } else if ((CR.equals(specImage) || LF.equals(specImage) || FF.equals(specImage))
-                       && !afterNewline) {
+            }
+            else if ((CR.equals(specImage) || LF.equals(specImage) || FF.equals(specImage)) && !afterNewline) {
               if (!skipOutput) {
                 sb.append(endLineDelim);
               }
@@ -705,26 +782,32 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       }
       // update (if necessary) and output indentation if a newline has been written
       if (newlineJustWritten) {
-        if (debugInd) {
-          final int len = sb.length() - endLineDelim.length();
-          if (len >= 0 && sb.substring(len).equals(endLineDelim)) {
-            sb.setLength(len);
-          }
-        }
+        //        if (debugInd) {
+        //          final int len = sb.length() - endLineDelim.length();
+        //          if (len >= 0 && sb.substring(len).equals(endLineDelim)) {
+        //            sb.setLength(len);
+        //          }
+        //        }
         if (currKind == LBRACE || currKind == LPAREN || currKind == LBRACKET || currKind == LT
             || currKind == GT) {
           if (!skipOutput) {
             sb.append(currLineIndent);
           }
-        } else if (currKind == BIT_OR) {
+        }
+        else if (currKind == BIT_OR) {
           if (!skipOutput) {
             final int len = currLineIndent.length() - JJCodeScanner.getIndentString().length();
             if (len > 0) {
               sb.append(currLineIndent.substring(0, len));
             }
           }
-        } else {
+        }
+        else {
           if (debugInd) {
+            final int len = sb.length() - endLineDelim.length();
+            if (len >= 0 && sb.substring(len).equals(endLineDelim)) {
+              sb.setLength(len);
+            }
             sb.append("\t\t/* nenl, ").append(currLineIndent.length()); // $NON-NLS-1$ //$NON-NLS-1$
             sb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$ //$NON-NLS-1$
             sb.append(" */").append(endLineDelim); // $NON-NLS-1$ //$NON-NLS-1$
@@ -742,12 +825,14 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       if (needSpace) {
         if (needNoSpace && currKind == RPAREN && parLevelInLAC <= 0) {
           needNoSpace = false;
-        } else if (newlineJustWritten && currKind == BIT_OR) {
+        }
+        else if (newlineJustWritten && currKind == BIT_OR) {
           // case of an unindented '|' : reindent
           if (!skipOutput) {
             sb.append(JJCodeScanner.getSpecIndentString());
           }
-        } else {
+        }
+        else {
           // other normal cases
           if (!skipOutput) {
             sb.append(SPACE);
@@ -762,8 +847,9 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         specToken = nextToken.specialToken;
         if (specToken != null) {
           // rewind to the first
-          while (specToken.specialToken != null)
+          while (specToken.specialToken != null) {
             specToken = specToken.specialToken;
+          }
           // process them
           while (specToken != null) {
             nbSpecialToken++;
@@ -791,11 +877,14 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
               // skip one newline need for a single line comment which already includes one
               if (willNeedTwoNewlines) {
                 willNeedTwoNewlines = false;
-              } else if (willNeedOneNewline) {
+              }
+              else if (willNeedOneNewline) {
                 willNeedOneNewline = false;
-              } else if (needTwoNewlines) {
+              }
+              else if (needTwoNewlines) {
                 needTwoNewlines = false;
-              } else if (needOneNewline) {
+              }
+              else if (needOneNewline) {
                 needOneNewline = false;
               }
               newlineJustWritten = true;
@@ -840,7 +929,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       final int nlen = nextLineIndent.length();
       if (clen < nlen) {
         currLineIndent.append(JJCodeScanner.getIndentString());
-      } else if (nlen < clen) {
+      }
+      else if (nlen < clen) {
         currLineIndent.setLength(nlen);
       }
     } // end while (currToken != null && currToken.kind != EOF)
@@ -856,7 +946,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
    */
   void decrementIndent(final StringBuffer lineIndent) {
     final int len = lineIndent.length() - JJCodeScanner.getIndentString().length();
-    if (len >= 0)
+    if (len >= 0) {
       lineIndent.setLength(len);
+    }
   }
 }

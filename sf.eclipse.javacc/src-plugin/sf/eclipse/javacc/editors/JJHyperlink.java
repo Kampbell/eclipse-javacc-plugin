@@ -7,48 +7,60 @@ import sf.eclipse.javacc.parser.JJNode;
 
 /**
  * JavaCC element hyperlink.
- *  
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * 
+ * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
 class JJHyperlink implements IHyperlink {
 
-  private final IRegion fRegion;
+  // MMa 11/2009 : formating & javadoc revision
+
+  /** the region */
+  private final IRegion  fRegion;
+  /** the editor */
   private final JJEditor fEditor;
-  private final JJNode fNode;
+  /** the node */
+  private final JJNode   fNode;
 
   /**
    * Creates a new Java element hyperlink.
+   * 
+   * @param region the region
+   * @param editor the editor
+   * @param node the node
    */
-  public JJHyperlink(IRegion region, JJEditor editor, JJNode node) {
+  public JJHyperlink(final IRegion region, final JJEditor editor, final JJNode node) {
     fRegion = region;
     fEditor = editor;
     fNode = node;
   }
 
-  /*
-   * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkRegion()
+  /**
+   * @return the region
+   * @see IHyperlink#getHyperlinkRegion()
    */
   public IRegion getHyperlinkRegion() {
     return fRegion;
   }
 
-  /*
-   * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#open()
+  /**
+   * @see IHyperlink#open()
    */
   public void open() {
     fEditor.setSelection(fNode);
   }
 
-  /*
-   * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getTypeLabel()
+  /**
+   * @return the node label
+   * @see IHyperlink#getTypeLabel()
    */
   public String getTypeLabel() {
     return fNode.toString();
   }
 
-  /*
-   * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkText()
+  /**
+   * @return the node text
+   * @see IHyperlink#getHyperlinkText()
    */
   public String getHyperlinkText() {
     return fNode.toString();

@@ -13,87 +13,102 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
- * JavaCC hyperlink detector
- * Used in JJSourceViewerConfiguration 
- *  
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * JavaCC hyperlink detector Used in JJSourceViewerConfiguration
+ * 
+ * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
 public class JJHyperlinkDetector implements IHyperlinkDetector {
-  private JJEditor editor;
-  
+
+  // MMa 04/09 : formatting and javadoc revision
+
+  /** the editor */
+  private final JJEditor editor;
+
   /**
    * Creates a new JavaCC hyperlink detector.
    * 
-   * @param the editor in which to detect the hyperlink
+   * @param aEditor the editor in which to detect the hyperlink
    */
-  public JJHyperlinkDetector(JJEditor editor) {
-    this.editor = editor;
+  public JJHyperlinkDetector(final JJEditor aEditor) {
+    editor = aEditor;
   }
-  
-  /*
+
+  /**
    * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer,
    *      org.eclipse.jface.text.IRegion, boolean)
    */
-  public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region,
-      boolean canShowMultipleHyperlinks) {
-    if (region == null)
+  public IHyperlink[] detectHyperlinks(final ITextViewer aTextViewer, final IRegion aRegion,
+                                       @SuppressWarnings("unused") final boolean canShowMultipleHyperlinks) {
+    if (aRegion == null) {
       return null;
-    
-    IDocument document= textViewer.getDocument();
-    if (document == null)
+    }
+
+    final IDocument document = aTextViewer.getDocument();
+    if (document == null) {
       return null;
-    
-    ITextSelection textSel = selectWord(document, region);
-    if (textSel == null)
+    }
+
+    final ITextSelection textSel = selectWord(document, aRegion);
+    if (textSel == null) {
       return null;
-    
-    String word = textSel.getText();
+    }
+
+    final String word = textSel.getText();
     // If not in JJElements don't go further
-    JJElements jjElements = editor.getJJElements();
-    if (!jjElements.isElement(word))
+    final JJElements jjElements = editor.getJJElements();
+    if (!jjElements.isNonIdentifierElement(word)) {
       return null;
+    }
     // If JavaCC keyword don't go further
-    for (int i = 0; i < JJCodeScanner.fgJJkeywords.length; i++)
-      if(word.equals(JJCodeScanner.fgJJkeywords[i]))
-          return null;
+    for (int i = 0; i < JJCodeScanner.fgJJkeywords.length; i++) {
+      if (word.equals(JJCodeScanner.fgJJkeywords[i])) {
+        return null;
+      }
+    }
     // Add hyper link for the word associated with the node and the editor
-    IRegion linkRegion = new Region(textSel.getOffset(), textSel.getLength());
-    JJNode node = jjElements.getNode(word);
-    JJHyperlink link = new JJHyperlink(linkRegion, editor, node);
-    return new IHyperlink[] { link };
+    final IRegion linkRegion = new Region(textSel.getOffset(), textSel.getLength());
+    final JJNode node = jjElements.getNonIdentifierNode(word);
+    final JJHyperlink link = new JJHyperlink(linkRegion, editor, node);
+    return new IHyperlink[] {
+      link };
   }
-  
+
   /**
-   * Extend Selection to a whole Word
+   * Extens the selection to a whole word.
+   * 
+   * @param aDoc the document
+   * @param aSel the selected text
+   * @return the extended selection (up to a whole word)
    */
-  public static final ITextSelection selectWord(IDocument doc, IRegion sel) {
-    int caretPos = sel.getOffset();
+  public static final ITextSelection selectWord(final IDocument aDoc, final IRegion aSel) {
+    final int caretPos = aSel.getOffset();
     int startPos, endPos;
     try {
       int pos = caretPos;
       char c;
       while (pos >= 0) {
-        c = doc.getChar(pos);
-        if (!Character.isJavaIdentifierPart(c))
+        c = aDoc.getChar(pos);
+        if (!Character.isJavaIdentifierPart(c)) {
           break;
+        }
         pos--;
       }
       startPos = pos + 1;
       pos = caretPos;
-      int length = doc.getLength();
+      final int length = aDoc.getLength();
       while (pos < length) {
-        c = doc.getChar(pos);
-        if (!Character.isJavaIdentifierPart(c))
+        c = aDoc.getChar(pos);
+        if (!Character.isJavaIdentifierPart(c)) {
           break;
+        }
         pos++;
       }
       endPos = pos;
-      return new TextSelection(doc, startPos, endPos - startPos);
-    } catch (BadLocationException x) {
+      return new TextSelection(aDoc, startPos, endPos - startPos);
+    } catch (final BadLocationException x) {
       // Do nothing, except returning
     }
     return null;
   }
 }
-

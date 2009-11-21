@@ -76,7 +76,7 @@ public class JJPropertyPage extends PropertyPage
     // Test a property to see if in need of a first initialization
     IScopeContext projectScope = new ProjectScope(project);
     IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-    if (prefs.get(RUNTIME_JAR, null) == null)
+    if (prefs.get(RUNTIME_JJJAR, null) == null)
       performDefaults();
     return parent;
   }

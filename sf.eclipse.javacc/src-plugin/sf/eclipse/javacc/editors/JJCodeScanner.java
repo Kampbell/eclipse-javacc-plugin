@@ -18,6 +18,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.actions.JJFormat;
 import sf.eclipse.javacc.options.JJPreferences;
@@ -25,54 +26,57 @@ import sf.eclipse.javacc.options.JJPreferences;
 /**
  * A (not anymore so rudimentary) JavaCC code scanner coloring words and comments.
  * 
- * @look org.eclipse.jdt.internal.ui.text.java.JavaCodeScanner
- * @author Remi Koutcherawy 2003-2008 - CeCILL license http://www.cecill.info/index.en.html
+ * @see org.eclipse.jdt.internal.ui.text.java.JavaCodeScanner
+ * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
-/*
- * ModMMa : modified : added different coloring objects, renamed some, added some JavaCC / JJTree keywords,
- * removed some, and added indentations and color preferences changes management
- */
+@SuppressWarnings("restriction")
 public class JJCodeScanner extends BufferedRuleBasedScanner {
+
+  // MMa 04/2009 : added different coloring objects, renamed some, added some JavaCC / JJTree keywords,
+  // removed some, and added indentations and color preferences changes management
+  // MMa 11/2009 : formating & javadoc revision ; added JTB keywords
+
   /** The preference store */
-  static IPreferenceStore store;
+  static IPreferenceStore      store;
   /** The display */
-  static Display display;
+  static Display               display;
   /** The indentation string */
-  public static String           indentString;
+  public static String         indentString;
   /** The special indentation string */
-  public static String           specIndentString;
+  public static String         specIndentString;
   /** The preference change listener and its associated method */
-  IPropertyChangeListener        preferenceListener = new IPropertyChangeListener()  {
-    public void propertyChange(PropertyChangeEvent event) {
-      final String p = event.getProperty();
-      final Object ov = event.getOldValue();
-      final Object nv = event.getNewValue();
-      if ((p.equals(JJPreferences.P_INDENT_CHAR)
-           || p.equals(JJPreferences.P_INDENT_CHAR_NB)
-           || p.equals(JJPreferences.P_JJKEYWORD)
-           || p.equals(JJPreferences.P_JAVAKEYWORD)
-           || p.equals(JJPreferences.P_STRING)
-           || p.equals(JJPreferences.P_COMMENT)
-           || p.equals(JJPreferences.P_JDOC_COMMENT)
-           || p.equals(JJPreferences.P_NORMALLABEL)
-           || p.equals(JJPreferences.P_PRIVATELABEL)
-           || p.equals(JJPreferences.P_LEXICALSTATE)
-           || p.equals(JJPreferences.P_REGEXPUNCT)
-           || p.equals(JJPreferences.P_CHOICESPUNCT)
-           || p.equals(JJPreferences.P_DEFAULT))
-          && ov != nv) {
-        dispose();
-        loadPrefsAndInitRules();
-      }
-    }
-  };
+  IPropertyChangeListener      preferenceListener = new IPropertyChangeListener() {
+
+                                                    public void propertyChange(final PropertyChangeEvent event) {
+                                                      final String p = event.getProperty();
+                                                      final Object ov = event.getOldValue();
+                                                      final Object nv = event.getNewValue();
+                                                      if ((p.equals(JJPreferences.P_INDENT_CHAR)
+                                                           || p.equals(JJPreferences.P_INDENT_CHAR_NB)
+                                                           || p.equals(JJPreferences.P_JJKEYWORD)
+                                                           || p.equals(JJPreferences.P_JAVAKEYWORD)
+                                                           || p.equals(JJPreferences.P_STRING)
+                                                           || p.equals(JJPreferences.P_COMMENT)
+                                                           || p.equals(JJPreferences.P_JDOC_COMMENT)
+                                                           || p.equals(JJPreferences.P_NORMALLABEL)
+                                                           || p.equals(JJPreferences.P_PRIVATELABEL)
+                                                           || p.equals(JJPreferences.P_LEXICALSTATE)
+                                                           || p.equals(JJPreferences.P_REGEXPUNCT)
+                                                           || p.equals(JJPreferences.P_CHOICESPUNCT) || p
+                                                                                                         .equals(JJPreferences.P_DEFAULT))
+                                                          && ov != nv) {
+                                                        dispose();
+                                                        loadPrefsAndInitRules();
+                                                      }
+                                                    }
+                                                  };
   /** The JavaCC keywords coloring object */
   static Color                 cJJKEYWORD;
   /** The Java keywords coloring object */
   Color                        cJAVAKEYWORD;
-//  /** The Background coloring object */
-//  Color                        cBACKGROUND;
+  //  /** The Background coloring object */
+  //  Color                        cBACKGROUND;
   /** The Strings coloring object */
   Color                        cSTRING;
   /** The Java Comments coloring object */
@@ -93,91 +97,118 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
   Color                        cDEFAULT;
   /** The JJTokenRule object */
   JJTokenRule                  jjtr;
-  IToken jjKeyword;
-  IToken javaKeyword;
-//  IToken background;
-  IToken string;
-  IToken comment;
-  IToken jdocComment;
-  IToken normalLabel;
-  IToken privateLabel;
-  IToken lexicalState;
-  IToken regexPunct;
-  IToken choicesPunct;
-  IToken other;
+  /** Rule token for JavaCC / JTB keywords */
+  IToken                       jjKeyword;
+  /** Rule token for Java keywords */
+  IToken                       javaKeyword;
+  /** Rule token for Java strings */
+  IToken                       string;
+  /** Rule token for Java comments */
+  IToken                       comment;
+  /** Rule token for Javadoc comments */
+  IToken                       jdocComment;
+  /** Rule token for JavaCC normal label identifiers */
+  IToken                       normalLabel;
+  /** Rule token for JavaCC private label identifiers */
+  IToken                       privateLabel;
+  /** Rule token for JavaCC lexical states */
+  IToken                       lexicalState;
+  /** Rule token for JavaCC regular expression punctuation */
+  IToken                       regexPunct;
+  /** Rule token for JavaCC choices punctuation */
+  IToken                       choicesPunct;
+  /** Rule token for all other tokens */
+  IToken                       other;
   /**
-   * The javacc keywords
+   * The JavaCC and JTB keywords
    */
-  public static final String[] fgJJkeywords   = {
-      "options", //$NON-NLS-1$
-      "LOOKAHEAD", //$NON-NLS-1$
-      "IGNORE_CASE", //$NON-NLS-1$
-      "PARSER_BEGIN", //$NON-NLS-1$
-      "PARSER_END", //$NON-NLS-1$
-      "JAVACODE", //$NON-NLS-1$
-      "TOKEN", //$NON-NLS-1$
-      "SPECIAL_TOKEN", //$NON-NLS-1$
-      "MORE", //$NON-NLS-1$
-      "MULTI", //$NON-NLS-1$
-      "SKIP", //$NON-NLS-1$
-      "TOKEN_MGR_DECLS", //$NON-NLS-1$
+  public static final String[] fgJJkeywords       = {
+      "BNF", //$NON-NLS-1$
+      "BUILD_NODE_FILES", //$NON-NLS-1$
+      "BUILD_PARSER", //$NON-NLS-1$
+      "BUILD_TOKEN_MANAGER", //$NON-NLS-1$
+      "CACHE_TOKENS", //$NON-NLS-1$
+      "CHOICE_AMBIGUITY_CHECK", //$NON-NLS-1$
+      "COMMON_TOKEN_ACTION", //$NON-NLS-1$
+      "CSS", //$NON-NLS-1$
+      "DEBUG_LOOKAHEAD", //$NON-NLS-1$
+      "DEBUG_PARSER", //$NON-NLS-1$
+      "DEBUG_TOKEN_MANAGER", //$NON-NLS-1$
       "EOF", //$NON-NLS-1$
       "EOL", //$NON-NLS-1$
-      "CHOICE_AMBIGUITY_CHECK", //$NON-NLS-1$
-      "OTHER_AMBIGUITY_CHECK", //$NON-NLS-1$
-      "STATIC", //$NON-NLS-1$
-      "DEBUG_PARSER", //$NON-NLS-1$
-      "DEBUG_LOOKAHEAD", //$NON-NLS-1$
-      "DEBUG_TOKEN_MANAGER", //$NON-NLS-1$
-      "TOKEN_MANAGER_USES_PARSER", //$NON-NLS-1$
+      "ERROR_REPORTING", //$NON-NLS-1$
+      "FORCE_LA_CHECK", //$NON-NLS-1$
+      "GENERATE_ANNOTATIONS", //$NON-NLS-1$
       "GENERATE_CHAINED_EXCEPTION", //$NON-NLS-1$
       "GENERATE_GENERICS", //$NON-NLS-1$
       "GENERATE_STRING_BUILDER", //$NON-NLS-1$
-      "GENERATE_ANNOTATIONS", //$NON-NLS-1$
+      "GRAMMAR_ENCODING", //$NON-NLS-1$
+      "IGNORE_CASE", //$NON-NLS-1$
+      "JAVACODE", //$NON-NLS-1$
+      "JAVA_UNICODE_ESCAPE", //$NON-NLS-1$
+      "JDK_VERSION", //$NON-NLS-1$
+      "JJTREE_OUTPUT_DIRECTORY", //$NON-NLS-1$
+      "JTB_CL", //$NON-NLS-1$
+      "JTB_D", //$NON-NLS-1$
+      "JTB_DL", //$NON-NLS-1$
+      "JTB_E", //$NON-NLS-1$
+      "JTB_F", //$NON-NLS-1$
+      "JTB_IA", //$NON-NLS-1$
+      "JTB_JD", //$NON-NLS-1$
+      "JTB_ND", //$NON-NLS-1$
+      "JTB_NP", //$NON-NLS-1$
+      "JTB_NS", //$NON-NLS-1$
+      "JTB_O", //$NON-NLS-1$
+      "JTB_P", //$NON-NLS-1$
+      "JTB_PP", //$NON-NLS-1$
+      "JTB_PRINTER", //$NON-NLS-1$
+      "JTB_SCHEME", //$NON-NLS-1$
+      "JTB_TK", //$NON-NLS-1$
+      "JTB_VD", //$NON-NLS-1$
+      "JTB_VP", //$NON-NLS-1$
+      "JTB_W", //$NON-NLS-1$
+      "KEEP_LINE_COLUMN", //$NON-NLS-1$
+      "LOOKAHEAD", //$NON-NLS-1$
+      "MORE", //$NON-NLS-1$
+      "MULTI", //$NON-NLS-1$
+      "NODE_CLASS", //$NON-NLS-1$
+      "NODE_DEFAULT_VOID", //$NON-NLS-1$
+      "NODE_EXTENDS", //$NON-NLS-1$
+      "NODE_FACTORY", //$NON-NLS-1$
+      "NODE_PACKAGE", //$NON-NLS-1$
+      "NODE_PREFIX", //$NON-NLS-1$
+      "NODE_SCOPE_HOOK", //$NON-NLS-1$
+      "NODE_USES_PARSER", //$NON-NLS-1$
+      "ONE_TABLE", //$NON-NLS-1$
+      "OTHER_AMBIGUITY_CHECK", //$NON-NLS-1$
+      "OUTPUT_DIRECTORY", //$NON-NLS-1$
+      "OUTPUT_FILE", //$NON-NLS-1$
+      "PARSER_BEGIN", //$NON-NLS-1$
+      "PARSER_END", //$NON-NLS-1$
+      "SANITY_CHECK", //$NON-NLS-1$
+      "SKIP", //$NON-NLS-1$
+      "SPECIAL_TOKEN", //$NON-NLS-1$
+      "STATIC", //$NON-NLS-1$
       "SUPPORT_CLASS_VISIBILITY_PUBLIC", //$NON-NLS-1$
+      "TEXT", //$NON-NLS-1$
+      "TOKEN", //$NON-NLS-1$
       "TOKEN_EXTENDS", //$NON-NLS-1$
       "TOKEN_FACTORY", //$NON-NLS-1$
-      "GRAMMAR_ENCODING", //$NON-NLS-1$
-      "ERROR_REPORTING", //$NON-NLS-1$
-      "JAVA_UNICODE_ESCAPE", //$NON-NLS-1$
-      "UNICODE_INPUT", //$NON-NLS-1$
-      "IGNORE_CASE", //$NON-NLS-1$
-      "COMMON_TOKEN_ACTION", //$NON-NLS-1$
-      "USER_TOKEN_MANAGER", //$NON-NLS-1$
-      "USER_CHAR_STREAM", //$NON-NLS-1$
-      "BUILD_PARSER", //$NON-NLS-1$
-      "BUILD_TOKEN_MANAGER", //$NON-NLS-1$
-      "SANITY_CHECK", //$NON-NLS-1$
-      "FORCE_LA_CHECK", //$NON-NLS-1$
-      "CACHE_TOKENS", //$NON-NLS-1$
-      "KEEP_LINE_COLUMN", //$NON-NLS-1$
-      "OUTPUT_DIRECTORY", //$NON-NLS-1$
-      "NODE_DEFAULT_VOID", //$NON-NLS-1$
-      "NODE_PREFIX", //$NON-NLS-1$
-      "NODE_PACKAGE", //$NON-NLS-1$
-      "NODE_SCOPE_HOOK", //$NON-NLS-1$
-      "NODE_FACTORY", //$NON-NLS-1$
-      "NODE_USES_PARSER", //$NON-NLS-1$
-      "BUILD_NODE_FILES", //$NON-NLS-1$
-      "VISITOR", //$NON-NLS-1$
-      "VISITOR_EXCEPTION", //$NON-NLS-1$
-      "OUTPUT_FILE", //$NON-NLS-1$
-      "JDK_VERSION", //$NON-NLS-1$
-      "NODE_EXTENDS", //$NON-NLS-1$
-      "NODE_CLASS", //$NON-NLS-1$
-      "VISITOR_DATA_TYPE", //$NON-NLS-1$
-      "VISITOR_RETURN_TYPE", //$NON-NLS-1$
       "TOKEN_MANAGER_USES_PARSER", //$NON-NLS-1$
+      "TOKEN_MGR_DECLS", //$NON-NLS-1$
       "TRACK_TOKENS", //$NON-NLS-1$
-      "JJTREE_OUTPUT_DIRECTORY", //$NON-NLS-1$
-      "TEXT", //$NON-NLS-1$
-      "BNF", //$NON-NLS-1$
-      "ONE_TABLE", //$NON-NLS-1$
-      "CSS"};//$NON-NLS-1$
+      "UNICODE_INPUT", //$NON-NLS-1$
+      "USER_CHAR_STREAM", //$NON-NLS-1$
+      "USER_TOKEN_MANAGER", //$NON-NLS-1$
+      "VISITOR", //$NON-NLS-1$
+      "VISITOR_DATA_TYPE", //$NON-NLS-1$
+      "VISITOR_EXCEPTION", //$NON-NLS-1$
+      "VISITOR_RETURN_TYPE", //$NON-NLS-1$
+      "options"                                  }; //$NON-NLS-1$
   /**
    * The java keywords
    */
-  public static final String[] fgJavaKeywords = {
+  public static final String[] fgJavaKeywords     = {
       "abstract", //$NON-NLS-1$
       "boolean", //$NON-NLS-1$
       "break", //$NON-NLS-1$
@@ -240,7 +271,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       "double", //$NON-NLS-1$
       "false", //$NON-NLS-1$
       "null", //$NON-NLS-1$
-      "true"};//$NON-NLS-1$
+      "true"                                     }; //$NON-NLS-1$
+
   /**
    * Standard constructor, which initializes variables deriving from preferences and registers a listener.
    */
@@ -268,7 +300,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     if (cJJKEYWORD != null) {
       cJJKEYWORD.dispose();
       cJAVAKEYWORD.dispose();
-//      cBACKGROUND.dispose();
+      //      cBACKGROUND.dispose();
       cSTRING.dispose();
       cCOMMENT.dispose();
       cJDOC_COMMENT.dispose();
@@ -280,7 +312,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       cDEFAULT.dispose();
       cJJKEYWORD = null;
       cJAVAKEYWORD = null;
-//    cBACKGROUND = null;
+      //    cBACKGROUND = null;
       cSTRING = null;
       cCOMMENT = null;
       cJDOC_COMMENT = null;
@@ -305,7 +337,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     // get color preferences
     cJJKEYWORD = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
     cJAVAKEYWORD = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JAVAKEYWORD));
-//    cBACKGROUND = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND));
+    //    cBACKGROUND = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND));
     cSTRING = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_STRING));
     cCOMMENT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_COMMENT));
     cJDOC_COMMENT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JDOC_COMMENT));
@@ -318,7 +350,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     // create rules tokens
     jjKeyword = new Token(new TextAttribute(cJJKEYWORD, null, SWT.BOLD));
     javaKeyword = new Token(new TextAttribute(cJAVAKEYWORD, null, SWT.BOLD));
-//    background = new Token(new TextAttribute(cBACKGROUND, null, SWT.BOLD));
+    //    background = new Token(new TextAttribute(cBACKGROUND, null, SWT.BOLD));
     string = new Token(new TextAttribute(cSTRING, null, 0));
     comment = new Token(new TextAttribute(cCOMMENT, null, 0));
     jdocComment = new Token(new TextAttribute(cJDOC_COMMENT, null, 0));
@@ -343,7 +375,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     jjtr = new JJTokenRule(normalLabel, privateLabel, lexicalState, regexPunct, choicesPunct);
     rules[5] = jjtr;
     // word rule for JavaCC and Java keywords
-    WordRule wordRule = new WordRule(new JJWordDetector(), other);
+    final WordRule wordRule = new WordRule(new JJWordDetector(), other);
     // color JavaCC keywords
     for (int i = 0; i < fgJJkeywords.length; i++) {
       wordRule.addWord(fgJJkeywords[i], jjKeyword);
@@ -361,7 +393,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * 
    * @see BufferedRuleBasedScanner#setRange(IDocument, int, int)
    */
-  public void setRange(final IDocument document, int offset, int length) {
+  @Override
+  public void setRange(final IDocument document, final int offset, final int length) {
     jjtr.reinit();
     super.setRange(document, offset, length);
   }
@@ -427,12 +460,13 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * A JavaCC word detector.
    */
   class JJWordDetector implements IWordDetector {
+
     /**
      * @param c the character
      * @return true if c can be the first character of a java identifier, false otherwise
      * @see IWordDetector#isWordStart
      */
-    public boolean isWordStart(char c) {
+    public boolean isWordStart(final char c) {
       return Character.isJavaIdentifierStart(c);
     }
 
@@ -441,7 +475,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
      * @return true if c can be a character of a java identifier, false otherwise
      * @see IWordDetector#isWordPart
      */
-    public boolean isWordPart(char c) {
+    public boolean isWordPart(final char c) {
       return Character.isJavaIdentifierPart(c);
     }
   }

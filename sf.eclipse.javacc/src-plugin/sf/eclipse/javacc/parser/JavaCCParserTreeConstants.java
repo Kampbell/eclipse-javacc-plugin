@@ -11,10 +11,11 @@ public interface JavaCCParserTreeConstants
   public int JJTJAVACODE_PRODUCTION = 5;
   public int JJTBNF_PRODUCTION = 6;
   public int JJTREGULAR_EXPR_PRODUCTION = 7;
-  public int JJTREGEXPR_SPEC = 8;
-  public int JJTIDENTIFIER = 9;
-  public int JJTCLASSORINTERFACEDECLARATION = 10;
-  public int JJTMETHODDECLARATION = 11;
+  public int JJTTOKEN_MANAGER_DECLS = 8;
+  public int JJTREGEXPR_SPEC = 9;
+  public int JJTIDENTIFIER = 10;
+  public int JJTCLASSORINTERFACEDECLARATION = 11;
+  public int JJTMETHODDECLARATION = 12;
 
 
   public String[] jjtNodeName = {
@@ -26,10 +27,11 @@ public interface JavaCCParserTreeConstants
     "javacode_production",
     "bnf_production",
     "regular_expr_production",
+    "token_manager_decls",
     "regexpr_spec",
     "identifier",
     "ClassOrInterfaceDeclaration",
     "MethodDeclaration",
   };
 }
-/* JavaCC - OriginalChecksum=5b0e933155d4f58526122e3eaacb2311 (do not edit this line) */
+/* JavaCC - OriginalChecksum=c706ef2a549303d764186c6ffcd20c3e (do not edit this line) */

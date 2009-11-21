@@ -7,41 +7,47 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * The Project Nature for JavaCC projects
- * Referenced by plugin.xml
- *  <extension point="org.eclipse.core.resources.natures">
- *  
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * The Project Nature for JavaCC projects.<br>
+ * Referenced by plugin.xml <extension point="org.eclipse.core.resources.natures">
+ * 
+ * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
 public class JJNature implements IProjectNature, IJJConstants {
+
+  /*
+   * MMa 11/09 : javadoc and formatting revision
+   */
+  /** the project */
   private IProject project;
 
-  /** 
-   * Return the project.
+  /**
+   * Returns the project.
+   * 
    * @see org.eclipse.core.resources.IProjectNature#getProject()
    */
   public IProject getProject() {
     return project;
   }
-  
-  /** 
-   * Set the project.
+
+  /**
+   * Sets the project.
+   * 
    * @see org.eclipse.core.resources.IProjectNature#setProject(IProject)
    */
-  public void setProject(IProject project) {
-    this.project = project;
+  public void setProject(final IProject aProject) {
+    project = aProject;
   }
-  
-  /** 
-   * Configure this nature for the project.
-   * Called by the workspace when nature is added to the project
-   *  with <code>IProject.setDescription</code>
+
+  /**
+   * Configure this nature for the project. Called by the workspace when nature is added to the project with
+   * <code>IProject.setDescription</code>
+   * 
    * @see org.eclipse.core.resources.IProjectNature#configure()
    */
   public void configure() throws CoreException {
-    IProjectDescription desc = project.getDescription();
-    ICommand[] cmds = desc.getBuildSpec();
+    final IProjectDescription desc = project.getDescription();
+    final ICommand[] cmds = desc.getBuildSpec();
     ICommand command = null;
     for (int i = cmds.length - 1; i >= 0; i--) {
       if (cmds[i].getBuilderName().equals(JJ_BUILDER_ID)) {
@@ -53,7 +59,7 @@ public class JJNature implements IProjectNature, IJJConstants {
       // Add JavaCC JJBuilder (ID only)
       command = desc.newCommand();
       command.setBuilderName(JJ_BUILDER_ID);
-      ICommand[] newCommands = new ICommand[cmds.length + 1];
+      final ICommand[] newCommands = new ICommand[cmds.length + 1];
       newCommands[0] = command;
       System.arraycopy(cmds, 0, newCommands, 1, cmds.length);
       desc.setBuildSpec(newCommands);
@@ -62,18 +68,18 @@ public class JJNature implements IProjectNature, IJJConstants {
     }
   }
 
-  /** 
-   * Deconfigure this nature for the project.
-   * Called by the workspace when nature is removed from the project.
+  /**
+   * Deconfigure this nature for the project. Called by the workspace when nature is removed from the project.
+   * 
    * @see org.eclipse.core.resources.IProjectNature#deconfigure()
    */
   public void deconfigure() throws CoreException {
-    IProjectDescription desc = project.getDescription();
-    ICommand[] cmds = desc.getBuildSpec();
+    final IProjectDescription desc = project.getDescription();
+    final ICommand[] cmds = desc.getBuildSpec();
     for (int i = cmds.length - 1; i >= 0; i--) {
       if (cmds[i].getBuilderName().equals(JJ_BUILDER_ID)) {
         // Copy without JavaCC JJBuilder
-        ICommand[] newCommands = new ICommand[cmds.length - 1];
+        final ICommand[] newCommands = new ICommand[cmds.length - 1];
         System.arraycopy(cmds, 0, newCommands, 0, i);
         System.arraycopy(cmds, i + 1, newCommands, i, cmds.length - i - 1);
         desc.setBuildSpec(newCommands);
@@ -82,18 +88,20 @@ public class JJNature implements IProjectNature, IJJConstants {
       }
     }
   }
-  
+
   /**
-   * Static help method.
-   * Adds a JavaCC Nature to the project.
-   * @param boolean isJJNature adds if true, removes if false
-   * @param IProject project to change
+   * Static help method. Adds a JavaCC Nature to the project.
+   * 
+   * @param isJJNature adds if true, removes if false
+   * @param project to change
    */
-  static public void setJJNature(boolean isJJNature, IProject project) {
-    if (project == null) return;
-    try {   
-      IProjectDescription desc = project.getDescription();
-      String[] natures = desc.getNatureIds();
+  static public void setJJNature(final boolean isJJNature, final IProject project) {
+    if (project == null) {
+      return;
+    }
+    try {
+      final IProjectDescription desc = project.getDescription();
+      final String[] natures = desc.getNatureIds();
       boolean found = false;
       for (int i = 0; i < natures.length; ++i) {
         if (natures[i].equals(JJ_NATURE_ID)) {
@@ -103,7 +111,7 @@ public class JJNature implements IProjectNature, IJJConstants {
       }
       if (!found && isJJNature) {
         // Adds nature to the projet (only adds ID)
-        String[] newNatures = new String[natures.length + 1];
+        final String[] newNatures = new String[natures.length + 1];
         System.arraycopy(natures, 0, newNatures, 0, natures.length);
         newNatures[natures.length] = JJ_NATURE_ID;
         desc.setNatureIds(newNatures);
@@ -111,7 +119,7 @@ public class JJNature implements IProjectNature, IJJConstants {
       }
       if (found && !isJJNature) {
         // Remove the nature
-        String[] newNatures = new String[natures.length - 1];
+        final String[] newNatures = new String[natures.length - 1];
         for (int i = natures.length - 1; i >= 0; i--) {
           if (natures[i].equals(JJ_NATURE_ID)) {
             // Copy without JJNature
@@ -123,7 +131,7 @@ public class JJNature implements IProjectNature, IJJConstants {
           }
         }
       }
-    } catch (CoreException e) {
+    } catch (final CoreException e) {
       e.printStackTrace();
     }
   }

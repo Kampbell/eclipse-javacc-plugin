@@ -13,83 +13,96 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 import sf.eclipse.javacc.parser.Node;
 
 /**
- * Content provider for outline page.
- * Uses JavaCCParser to build the AST used in the Outline
+ * Content provider for outline page. Uses JavaCCParser to build the AST used in the Outline
  * 
- * @author Remi Koutcherawy 2003-2009
- * CeCILL license http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
-public class JJOutlinePageContentProvider
-  implements IContentProvider, ITreeContentProvider, JavaCCParserTreeConstants {
+public class JJOutlinePageContentProvider implements IContentProvider, ITreeContentProvider,
+                                         JavaCCParserTreeConstants {
 
+  /*
+   * MMa 11/09 : javadoc and formatting revision
+   */
+  /** the AST node built from the text */
   protected JJNode node;
 
-  /* (non-Javadoc)
+  /**
    * @see org.eclipse.jface.viewers.IContentProvider#dispose()
    */
   public void dispose() {
     node = null;
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+  /**
+   * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+   *      java.lang.Object, java.lang.Object)
    */
-  public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    if (newInput != null) {   
-      IDocument doc = (IDocument)newInput;
+  public void inputChanged(@SuppressWarnings("unused") final Viewer viewer,
+                           @SuppressWarnings("unused") final Object oldInput, final Object newInput) {
+    if (newInput != null) {
+      final IDocument doc = (IDocument) newInput;
       parse(doc.get());
     }
   }
 
-  /* (non-Javadoc)
+  /**
    * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
    */
-  public Object[] getChildren(Object obj) {
-    if (obj == null)
+  public Object[] getChildren(final Object aObj) {
+    if (aObj == null) {
       return null;
-    JJNode node = (JJNode) obj;
+    }
+    final JJNode nd = (JJNode) aObj;
     // Remove JJTIDENTIFIER nodes
     int n = 0;
-    Node[] children = node.getChildren();
-    if (children == null)
+    final Node[] children = nd.getChildren();
+    if (children == null) {
       return null;
-    for (int i = 0; i < children.length; i++)
-      if (((JJNode)children[i]).getId() != JJTIDENTIFIER)
+    }
+    for (final Node child : children) {
+      if (((JJNode) child).getId() != JJTIDENTIFIER) {
         n++;
-    JJNode[] filteredChildren = new JJNode[n];
-    for (int i = 0, j = 0; i < children.length; i++)
-      if (((JJNode)children[i]).getId() != JJTIDENTIFIER)
-        filteredChildren[j++] = (JJNode)children[i];
+      }
+    }
+    final JJNode[] filteredChildren = new JJNode[n];
+    int j = 0;
+    for (final Node child : children) {
+      if (((JJNode) child).getId() != JJTIDENTIFIER) {
+        filteredChildren[j++] = (JJNode) child;
+      }
+    }
     return filteredChildren;
   }
-  
-  /* (non-Javadoc)
+
+  /**
    * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
    */
-  public Object getParent(Object obj) {
-    return obj == null ? null : ((JJNode)obj).jjtGetParent();
-  }
-  
-  /* (non-Javadoc)
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-   */
-  public boolean hasChildren(Object obj) {
-    return getChildren(obj) ==  null ? false : getChildren(obj).length != 0;
+  public Object getParent(final Object obj) {
+    return obj == null ? null : ((JJNode) obj).jjtGetParent();
   }
 
-  /* (non-Javadoc)
+  /**
+   * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+   */
+  public boolean hasChildren(final Object obj) {
+    return getChildren(obj) == null ? false : getChildren(obj).length != 0;
+  }
+
+  /**
    * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
    */
-  public Object[] getElements(Object obj) {
+  public Object[] getElements(@SuppressWarnings("unused") final Object obj) {
     return getChildren(node);
   }
-  
+
   /**
-   * Parse a String to build the AST saved in JJNode
-   * @param String txt 
+   * Parse a String to build the AST node (saved in the class member).
+   * 
+   * @param txt the string to parse
    */
-  protected void parse(String txt) {
-    StringReader in = new StringReader(txt);
+  protected void parse(final String txt) {
+    final StringReader in = new StringReader(txt);
     node = JavaCCParser.parse(in);
     in.close();
   }

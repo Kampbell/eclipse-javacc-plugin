@@ -78,8 +78,8 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     }
     // Add Elements (method, token)
     JJElements jjElements = jjeditor.getJJElements();
-    for (String s : jjElements.getMap().keySet()){
-      int id = jjElements.getNode(s).getId();
+    for (String s : jjElements.getNonIdentifiersMap().keySet()){
+      int id = jjElements.getNonIdentifierNode(s).getId();
       // nodes and methods
       if (s.toUpperCase().startsWith(prefix.toUpperCase())){
         if (id == JJTBNF_PRODUCTION || id == JJTMETHODDECLARATION)

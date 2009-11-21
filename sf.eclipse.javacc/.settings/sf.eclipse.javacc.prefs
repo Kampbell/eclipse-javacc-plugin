@@ -1,12 +1,12 @@
-#Sun Sep 27 14:04:23 CEST 2009
+#Thu Nov 19 18:24:49 CET 2009
 CLEAR_CONSOLE=true
 JAVACC_OPTIONS=
 JJDOC_OPTIONS=
 JJTREE_OPTIONS=
 JJ_NATURE=false
 JTB_OPTIONS=
-RUNTIME_JAR=
-RUNTIME_JTBJAR=
+RUNTIME_JAR=G\:\\Java\\JavaCC-5.0\\bin\\lib\\javacc.jar
+RUNTIME_JTBJAR=D\:\\Devs\\JTB-1.4.0\\lib\\jtb-1.4.0.jar
 SHOW_CONSOLE=true
 SUPPRESS_WARNINGS=false
 eclipse.preferences.version=1

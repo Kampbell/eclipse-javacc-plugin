@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -23,95 +24,107 @@ import sf.eclipse.javacc.JJBuilder;
 import sf.eclipse.javacc.editors.JJEditor;
 
 /**
- * Compile action
- * Referenced by plugin.xml 
- * <extension point="org.eclipse.ui.popupMenus"> 
- *  for popup menu on Package Explorer 
- * AND
- *  for popup menu on Editor
- *  
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * Compile action. Referenced by plugin.xml<br>
+ * <extension point="org.eclipse.ui.popupMenus"><br>
+ * for popup menu in Package Explorer AND for popup menu in Editor
+ * 
+ * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
-public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, IJJConstants{
-  private JJEditor editor;
+public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, IJJConstants {
+
+  // MMa 04/09 : formatting and javadoc revision ; removed jtb files (managed in JTBCompile)
+
+  /** the current editor */
+  private JJEditor  editor;
+  /** the resource to compile */
   private IResource res;
-  
-  /* (non-Javadoc)
-   * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
+
+  /**
+   * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction,
+   *      org.eclipse.ui.IEditorPart)
    */
-  public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-    if (targetEditor == null)
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
+    if (targetEditor == null) {
       return;
+    }
     editor = (JJEditor) targetEditor;
-    IEditorInput input = editor.getEditorInput();
+    final IEditorInput input = editor.getEditorInput();
     res = (IResource) input.getAdapter(IResource.class);
   }
-  
-  /* (non-Javadoc)
-   * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-   */  
-  public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+
+  /**
+   * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
+   *      org.eclipse.ui.IWorkbenchPart)
+   */
+  public void setActivePart(@SuppressWarnings("unused") final IAction action,
+                            @SuppressWarnings("unused") final IWorkbenchPart targetPart) {
     // not used
   }
 
-  /* (non-Javadoc) 
+  /**
    * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction action, ISelection selection)
    */
-  public void selectionChanged(IAction action, ISelection selection) {
+  public void selectionChanged(@SuppressWarnings("unused") final IAction action, final ISelection selection) {
     if (selection instanceof IStructuredSelection) {
-      Object obj = ((IStructuredSelection) selection).getFirstElement();
+      final Object obj = ((IStructuredSelection) selection).getFirstElement();
       if (obj != null && obj instanceof IFile) {
         res = (IFile) obj;
       }
     }
   }
-  
+
   /**
-   * Compile the .jj or .jjt file
+   * Compile the .jj or .jjt file.
+   * 
+   * @see IActionDelegate#run(IAction)
+   * @param action the action proxy that handles the presentation portion of the action
    */
-  public void run(IAction action) {
-    if (res == null)
+  public void run(@SuppressWarnings("unused") final IAction action) {
+    if (res == null) {
       return;
-    
-    try {      
+    }
+
+    try {
       // Saving the file triggers a new Compilation if project has JJNature
-      if (editor != null) 
+      if (editor != null) {
         editor.doSave(null); // Called from Editor
-      else
-        res.touch(null);     // Called from Package explorer
-      
+      }
+      else {
+        res.touch(null); // Called from Package Explorer
+      }
+
       // Force Compile if not triggered
-      IScopeContext projectScope = new ProjectScope(res.getProject());
-      IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-      if (!("true").equals(prefs.get(JJ_NATURE, "false"))  //$NON-NLS-1$ //$NON-NLS-2$
-          || !isOnClasspath(res) 
-          || !res.getWorkspace().isAutoBuilding())
+      final IScopeContext projectScope = new ProjectScope(res.getProject());
+      final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+      if (!("true").equals(prefs.get(JJ_NATURE, "false")) //$NON-NLS-1$ //$NON-NLS-2$
+          || !isOnClasspath() || !res.getWorkspace().isAutoBuilding()) {
         JJBuilder.CompileResource(res);
-      
+      }
+
       // Refresh the whole project to trigger compilation of Java files
       res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-      
-    } catch (CoreException e) {
+
+    } catch (final CoreException e) {
       e.printStackTrace();
     }
     return;
   }
+
   /**
-   * Check if res is a .jj, .jjt, jtb file and is on classpath
-   * @param Object obj
+   * Check if the resource is a .jj, .jjt file and is on classpath.
+   * 
+   * @return true if all is ok, false otherwise
    */
-  protected boolean isOnClasspath(Object obj) {
+  protected boolean isOnClasspath() {
     boolean gen = true;
-    if (obj instanceof IResource) {
-      IResource res = (IResource)obj;
-      // Look only for jj, jjt and jtb files
-      String ext = res.getFullPath().getFileExtension();
-      if ("jj".equals(ext) || "jjt".equals(ext) || "jtb".equals(ext)){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        IProject project = res.getProject();
-        IJavaProject javaProject = JavaCore.create(project);
-        if (javaProject != null) 
-          gen = javaProject.isOnClasspath(res);
+    // Look only for jj, jjt and jtb files
+    final String ext = res.getFullPath().getFileExtension();
+    if ("jj".equals(ext) || "jjt".equals(ext)) { //$NON-NLS-1$ //$NON-NLS-2$
+      final IProject project = res.getProject();
+      final IJavaProject javaProject = JavaCore.create(project);
+      if (javaProject != null) {
+        gen = javaProject.isOnClasspath(res);
       }
     }
     return gen;

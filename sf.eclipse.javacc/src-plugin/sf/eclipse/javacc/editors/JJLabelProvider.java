@@ -14,21 +14,36 @@ import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 
 /**
- * LabelProvider for JJOutline
+ * LabelProvider for JJOutline.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2006 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
 public class JJLabelProvider extends LabelProvider {
-  private HashMap<ImageDescriptor, Image> imgHashMap = new HashMap<ImageDescriptor, Image>();
-  ImageDescriptor desc_option;
-  ImageDescriptor desc_parser;
-  ImageDescriptor desc_token;
-  ImageDescriptor desc_rule;
-  ImageDescriptor desc_expr;
-  ImageDescriptor desc_class;
-  ImageDescriptor desc_method;
-  ImageDescriptor desc_javacode;
+
+  /*
+   * MMa 11/09 : javadoc and formatting revision ; added javacode and token_mgr_decls entries
+   */
+  /** the images hashmap */
+  private final HashMap<ImageDescriptor, Image> imgHashMap = new HashMap<ImageDescriptor, Image>(16);
+  /** the option image descriptor */
+  ImageDescriptor                               desc_option;
+  /** the parser image descriptor */
+  ImageDescriptor                               desc_parser;
+  /** the token image descriptor */
+  ImageDescriptor                               desc_token;
+  /** the rule image descriptor */
+  ImageDescriptor                               desc_rule;
+  /** the expression image descriptor */
+  ImageDescriptor                               desc_expr;
+  /** the class image descriptor */
+  ImageDescriptor                               desc_class;
+  /** the method image descriptor */
+  ImageDescriptor                               desc_method;
+  /** the javacode image descriptor */
+  ImageDescriptor                               desc_javacode;
+  /** the token_mgr_decls image descriptor */
+  ImageDescriptor                               desc_tmdecl;
 
   /**
    * To Decorate the Outline View, simply Text and Image
@@ -43,34 +58,48 @@ public class JJLabelProvider extends LabelProvider {
     desc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
     desc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
     desc_javacode = Activator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
+    desc_tmdecl = Activator.getImageDescriptor("jj_tmd.gif"); //$NON-NLS-1$
   }
 
   /**
    * @see ILabelProvider#getImage(Object)
    */
-  public Image getImage(Object anElement) {
+  @Override
+  public Image getImage(final Object anElement) {
     ImageDescriptor desc = desc_expr;
-    JJNode node = (JJNode)anElement;
-    if (node.getId() == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS)
+    final JJNode node = (JJNode) anElement;
+    if (node.getId() == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS) {
       desc = desc_option;
-    else if (node.getId() == JavaCCParserTreeConstants.JJTOPTION_BINDING)
-      desc = desc_option;    
-    else if (node.getId() == JavaCCParserTreeConstants.JJTPARSER_BEGIN)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTOPTION_BINDING) {
+      desc = desc_option;
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTPARSER_BEGIN) {
       desc = desc_parser;
-    else if (node.getId() == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION) {
       desc = desc_token;
-    else if (node.getId() == JavaCCParserTreeConstants.JJTBNF_PRODUCTION)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTBNF_PRODUCTION) {
       desc = desc_rule;
-    else if(node.getId() == JavaCCParserTreeConstants.JJTREGEXPR_SPEC)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTREGEXPR_SPEC) {
       desc = desc_expr;
-    else if(node.getId() == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION) {
       desc = desc_class;
-    else if(node.getId() == JavaCCParserTreeConstants.JJTMETHODDECLARATION)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTMETHODDECLARATION) {
       desc = desc_method;
-    else if(node.getId() == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION)
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTTOKEN_MANAGER_DECLS) {
+      desc = desc_tmdecl;
+    }
+    else if (node.getId() == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION) {
       desc = desc_javacode;
+    }
     else {
-//      System.out.println("JJLabelProvider Id "+node.getId());
+      //      System.out.println("JJLabelProvider Id "+node.getId());
       return null;
     }
     // obtain the cached image corresponding to the descriptor
@@ -84,18 +113,24 @@ public class JJLabelProvider extends LabelProvider {
 
   /**
    * @see ILabelProvider#getText(Object)
-   * See also sf.eclipse.javacc.parser.JJNode#toString() !
+   * @see sf.eclipse.javacc.parser.JJNode#getLabeledName()
+   * @see sf.eclipse.javacc.parser.JJNode#addCaller(JJNode)
    */
-  public String getText(Object anElement) {
+  @Override
+  public String getText(final Object anElement) {
+    if (anElement instanceof JJNode) {
+      return ((JJNode) anElement).getLabeledName();
+    }
     return anElement.toString();
   }
 
   /**
    * @see IBaseLabelProvider#dispose()
    */
+  @Override
   public void dispose() {
     super.dispose();
-    for (Iterator<Image> it = imgHashMap.values().iterator(); it.hasNext();) {
+    for (final Iterator<Image> it = imgHashMap.values().iterator(); it.hasNext();) {
       it.next().dispose();
     }
     imgHashMap.clear();

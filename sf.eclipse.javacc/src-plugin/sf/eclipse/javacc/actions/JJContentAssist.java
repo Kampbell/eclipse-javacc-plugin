@@ -11,48 +11,58 @@ import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.parser.JavaCCParserConstants;
 
 /**
- * Content Assistant action
- * Referenced by plugin.xml 
- * <extension point="org.eclipse.ui.editorActions">  as an Action in Editor
- * <extension point="org.eclipse.ui.commands">       as a Command
- * <extension point="org.eclipse.ui.bindings">       as a key binding
- *  
- * @author Remi Koutcherawy 2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * Content Assistant action.<br>
+ * Referenced by plugin.xml<br>
+ * <extension point="org.eclipse.ui.editorActions"> as an Action in Editor<br>
+ * <extension point="org.eclipse.ui.commands"> as a Command<br>
+ * <extension point="org.eclipse.ui.bindings"> as a key binding<br>
+ * 
+ * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009
  */
-
 public class JJContentAssist implements IEditorActionDelegate, JavaCCParserConstants {
+
+  /*
+   * MMa 11/09 : javadoc and formatting revision
+   */
+  /** the current editor */
   static JJEditor editor;
-  
-  /* (non-Javadoc)
+
+  /**
    * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-    if (targetEditor == null)
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
+    if (targetEditor == null) {
       return;
+    }
     editor = (JJEditor) targetEditor;
   }
-  
-  /* (non-Javadoc)
+
+  /**
    * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
    */
-  public void selectionChanged(IAction action, ISelection selection) {
+  public void selectionChanged(@SuppressWarnings("unused") final IAction action,
+                               @SuppressWarnings("unused") final ISelection selection) {
     // not used
   }
-  
+
   /**
-   * Perform Content Assist
-   * The assistant is created by javacc.editors.JJSourceViewerConfiguration.getContentAssistant()
-   * The processor is defined by javacc.editors.JJCompletionProcessor
-   * @seee org.eclipse.jdt.internal.ui.text.java.JavaContentAssistHandler
-   * @seee org.eclipse.jdt.internal.ui.javaeditor.SpecificContentAssistExecutor
+   * Performs Content Assist.<br>
+   * The assistant is created by javacc.editors.JJSourceViewerConfiguration.getContentAssistant()<br>
+   * The processor is defined by javacc.editors.JJCompletionProcessor<br>
+   * 
+   * @param action the corresponding action
+   * @seee org.eclipse.jdt.internal.ui.text.java.JavaContentAssistHandler<br>
+   * @seee org.eclipse.jdt.internal.ui.javaeditor.SpecificContentAssistExecutor<br>
    */
-  public void run(IAction action) {
-    if (editor == null)
+  public void run(@SuppressWarnings("unused") final IAction action) {
+    if (editor == null) {
       return;
-    ITextOperationTarget target = (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-    if (target != null && target.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS))
+    }
+    final ITextOperationTarget target = (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+    if (target != null && target.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS)) {
       target.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+    }
     return;
   }
 }

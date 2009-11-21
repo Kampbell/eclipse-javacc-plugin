@@ -2,12 +2,13 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="JavaCC Feature"
-      version="1.5.16"
+      version="1.5.17"
       provider-name="Remi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
    <description url="http://eclipse-javacc.sourceforge.net/">
-      This Feature is designed to make JavaCC Eclipse Plugin available for installation via Eclipse Update manager.
+      This Feature is designed to make the JavaCC Eclipse Plug-in available
+for installation through the Eclipse Update manager.
    </description>
 
    <copyright>
@@ -406,32 +407,28 @@ Version 2.0 dated 2005-05-21.
    </license>
 
    <url>
-      <update label="SF JavaCC Eclipse plug-in" url="http://eclipse-javacc.sourceforge.net/"/>
-      <discovery label="Eclipse JavaCC" url="http://eclipse-javacc.sourceforge.net"/>
+      <update label="Sourceforge JavaCC Eclipse Plug-in Project site" url="http://eclipse-javacc.sourceforge.net/"/>
+      <discovery label="Sourceforge JavaCC Eclipse Plug-in Project site" url="http://eclipse-javacc.sourceforge.net"/>
    </url>
 
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.jdt"/>
       <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
    </requires>
 
    <plugin
          id="sf.eclipse.javacc"
-         download-size="894"
+         download-size="0"
          install-size="0"
-         version="1.5.16"/>
+         version="0.0.0"/>
 
 </feature>

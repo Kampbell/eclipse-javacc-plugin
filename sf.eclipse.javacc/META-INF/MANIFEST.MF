@@ -1,92 +1,88 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JavaCC Plug-in
+Bundle-Name: %Bundle_name
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.16
+Bundle-Version: 1.5.17
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.Activator
-Bundle-Vendor: Remi Koutcherawy
+Bundle-Vendor: %Bundle_Vendor_name
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.core.variables,
  org.eclipse.debug.ui,
- org.eclipse.swt,
  org.eclipse.jface.text,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.views,
  org.eclipse.jdt.ui,
- org.eclipse.help,
- org.eclipse.jdt,
  org.eclipse.jdt.core
 Eclipse-LazyStart: true
 Comment: For Eclipse 3.1
 Bundle-ActivationPolicy: lazy
 Export-Package: sf.eclipse.javacc;
-  uses:="org.eclipse.core.runtime,
-   org.eclipse.jface.resource,
+  uses:="org.eclipse.jdt.core,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.graphics,
+   org.osgi.framework,
+   org.eclipse.core.resources,
+   org.eclipse.ui.part,
    org.eclipse.swt.custom,
    org.eclipse.ui.plugin,
-   org.eclipse.ui.part,
-   org.eclipse.jdt.core,
-   org.eclipse.core.resources,
-   org.eclipse.swt.graphics,
-   org.eclipse.jface.viewers,
-   org.osgi.framework,
+   org.eclipse.jface.resource,
+   org.eclipse.core.runtime,
    org.eclipse.swt.widgets",
  sf.eclipse.javacc.actions;
-  uses:="org.eclipse.jface.text,
-   org.eclipse.jface.action,
+  uses:="org.eclipse.jface.viewers,
    sf.eclipse.javacc.editors,
-   org.eclipse.ui,
-   sf.eclipse.javacc,
-   org.eclipse.core.resources,
-   org.eclipse.jface.viewers,
-   sf.eclipse.javacc.parser",
- sf.eclipse.javacc.editors;
-  uses:="org.eclipse.jface.text,
-   org.eclipse.core.runtime,
+   org.eclipse.jface.text,
    sf.eclipse.javacc.parser,
-   org.eclipse.jface.text.rules,
-   org.eclipse.jface.action,
-   org.eclipse.ui.views.contentoutline,
-   org.eclipse.jface.viewers,
-   org.eclipse.jface.text.hyperlink,
-   org.eclipse.ui.texteditor,
-   org.eclipse.jface.text.reconciler,
-   org.eclipse.jface.text.source,
-   org.eclipse.jface.resource,
-   org.eclipse.ui,
-   sf.eclipse.javacc,
-   org.eclipse.ui.part,
-   org.eclipse.jface.text.contentassist,
-   org.eclipse.jface.preference,
-   org.eclipse.jface.text.presentation,
-   org.eclipse.swt.graphics,
-   org.eclipse.jface.util,
-   org.eclipse.swt.widgets,
-   org.eclipse.ui.editors.text",
- sf.eclipse.javacc.filters;uses:="sf.eclipse.javacc,org.eclipse.jface.viewers",
- sf.eclipse.javacc.options;
-  uses:="org.eclipse.jface.preference,
-   org.eclipse.ui,
-   sf.eclipse.javacc,
    org.eclipse.core.resources,
+   sf.eclipse.javacc,
+   org.eclipse.jface.action,
+   org.eclipse.ui",
+ sf.eclipse.javacc.editors;
+  uses:="org.eclipse.jface.viewers,
+   org.eclipse.jface.text,
+   org.eclipse.jface.action,
+   org.eclipse.ui.editors.text,
+   org.eclipse.jface.text.hyperlink,
+   org.eclipse.jface.text.rules,
+   org.eclipse.swt.widgets,
+   org.eclipse.core.runtime,
+   org.eclipse.jface.text.contentassist,
    org.eclipse.jface.util,
+   org.eclipse.swt.graphics,
+   org.eclipse.jface.text.presentation,
+   sf.eclipse.javacc.parser,
+   org.eclipse.jface.text.reconciler,
+   org.eclipse.ui,
+   org.eclipse.jface.text.source,
+   org.eclipse.ui.part,
+   org.eclipse.jface.preference,
+   org.eclipse.ui.views.contentoutline,
+   org.eclipse.ui.texteditor,
+   sf.eclipse.javacc,
+   org.eclipse.jface.resource",
+ sf.eclipse.javacc.filters;uses:="org.eclipse.jface.viewers,sf.eclipse.javacc",
+ sf.eclipse.javacc.options;
+  uses:="org.eclipse.jface.util,
+   org.eclipse.jface.preference,
    org.eclipse.ui.dialogs,
    org.eclipse.core.runtime.preferences,
-   org.eclipse.swt.widgets",
+   sf.eclipse.javacc,
+   org.eclipse.core.resources,
+   org.eclipse.swt.widgets,
+   org.eclipse.ui",
  sf.eclipse.javacc.parser;uses:="sf.eclipse.javacc.editors",
  sf.eclipse.javacc.wizards;
-  uses:="org.eclipse.jface.wizard,
-   org.eclipse.core.runtime,
+  uses:="org.eclipse.jdt.internal.ui.wizards,
    org.eclipse.jdt.core,
-   sf.eclipse.javacc,
    org.eclipse.jface.viewers,
+   org.eclipse.jface.wizard,
+   sf.eclipse.javacc,
    org.eclipse.swt.widgets,
-   org.eclipse.jdt.internal.ui.wizards"
+   org.eclipse.core.runtime"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 

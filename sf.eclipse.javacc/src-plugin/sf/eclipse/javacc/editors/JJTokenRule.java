@@ -13,14 +13,15 @@ import org.eclipse.jface.text.rules.Token;
 
 /**
  * A special IRule for JavaCC syntax.
- *
- * @author Remi Koutcherawy 2003-2008 - CeCILL License http://www.cecill.info/index.en.html
+ * 
+ * @author Remi Koutcherawy 2003-2009 - CeCILL License http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009
  */
-/*
- * ModMMa : modified : added different rule tokens and changed algorithm by keeping state between invocations
- */
 public class JJTokenRule implements IRule {
+
+  // MMa 04/09 : modified : added different rule tokens and changed algorithm by keeping state between invocations
+  // MMa 11/09 : fixed syntax coloring issues in java code
+
   /** normal label identifier rule token */
   final IToken         normalLabel;
   /** special label identifier rule token */
@@ -38,8 +39,15 @@ public class JJTokenRule implements IRule {
   boolean              foundCOLON;
 /** found previously a '<' (reset to false when found a matching '>' */
   boolean              foundLT;
-  /** found previously a '#' (private label identifier prefix) (reset to false when found a ':' */
-  boolean              foundNB;
+  /** JJTree Node parenthesis level : -1 : outside ; 0 : found the node ; 1, 2 ... level */
+  int                  jnParenLevel;
+  /**
+   * found previously a private label identifier prefix ('#' before a label identifier) (reset to false when
+   * found a ':'
+   */
+  boolean              foundPLIP;
+  /** found an expansion unit 'try' */
+  boolean              foundEuTry;
   /** angle brackets nesting level */
   int                  angleBracketsLevel;
   /** braces nesting level */
@@ -48,19 +56,22 @@ public class JJTokenRule implements IRule {
   boolean              isAfterLabelIdentifier;
   /** is after a Java identifier */
   boolean              isAfterJavaIdentifier;
+  /** stack used to store same level angle brackets flag */
+  final Stack<Boolean> angStack;
   /** stack used to store same level parenthesis flag */
   final Stack<Boolean> parStack;
 
   /**
    * Standard constructor
-   *
+   * 
    * @param aNormalLabel the normal token rule token
    * @param aPrivateLabel the special token rule token
    * @param aLexicalState the lexical state rule token
    * @param aRegexPunct the regular_expression punctuation rule token
    * @param aChoicesPunct the choices enclosing punctuation rule token
    */
-  public JJTokenRule(final IToken aNormalLabel, final IToken aPrivateLabel, final IToken aLexicalState, final IToken aRegexPunct, final IToken aChoicesPunct) {
+  public JJTokenRule(final IToken aNormalLabel, final IToken aPrivateLabel, final IToken aLexicalState,
+                     final IToken aRegexPunct, final IToken aChoicesPunct) {
     normalLabel = aNormalLabel;
     privateLabel = aPrivateLabel;
     lexicalState = aLexicalState;
@@ -68,11 +79,14 @@ public class JJTokenRule implements IRule {
     choicesPunct = aChoicesPunct;
     foundCOLON = false;
     foundLT = false;
-    foundNB = false;
+    foundPLIP = false;
+    foundEuTry = false;
     angleBracketsLevel = 0;
     bracesLevel = 0;
+    jnParenLevel = -1;
     isAfterLabelIdentifier = false;
     isAfterJavaIdentifier = false;
+    angStack = new Stack<Boolean>();
     parStack = new Stack<Boolean>();
   }
 
@@ -82,11 +96,14 @@ public class JJTokenRule implements IRule {
   public void reinit() {
     foundCOLON = false;
     foundLT = false;
-    foundNB = false;
+    foundPLIP = false;
+    foundEuTry = false;
     angleBracketsLevel = 0;
     bracesLevel = 0;
+    jnParenLevel = -1;
     isAfterLabelIdentifier = false;
     isAfterJavaIdentifier = false;
+    angStack.clear();
     parStack.clear();
   }
 
@@ -104,7 +121,7 @@ public class JJTokenRule implements IRule {
    * We memorize some internal state information between each call through class fields.<br>
    * We must return whitespaces and punctuation (word separators) as soon as they are encountered (and without
    * consuming them) in order for the other rules to process the comments anywhereby they may appear.
-   *
+   * 
    * @see IRule#evaluate(ICharacterScanner)
    * @param scanner the character scanner
    * @return the rule token
@@ -126,6 +143,7 @@ public class JJTokenRule implements IRule {
       ic = scanner.read();
       w++;
     }
+
     if (w > 0) {
       // while (w > 0) {
       scanner.unread();
@@ -133,32 +151,46 @@ public class JJTokenRule implements IRule {
       // }
       return Token.WHITESPACE;
     }
+
     if (ic == ICharacterScanner.EOF) {
       return Token.UNDEFINED;
     }
+
     // process first character if no initial whitespaces
-    // TODO for generics syntax in java code parts, we should not show a regexPunct
     if (ic == '<') {
-      incrementAngleBrackets();
-      foundCOLON = false;
-      return regexPunct;
+      if (!isAfterJavaIdentifier && (jnParenLevel < 0)) {
+        // regular_expression case
+        foundCOLON = false;
+        incrementAngleBrackets();
+        angStack.push(Boolean.valueOf(isAfterJavaIdentifier));
+        return regexPunct;
+      }
+      // Java code case
+      foundLT = false;
+      return Token.UNDEFINED;
     }
+
     if (ic == '>') {
       final boolean isInRegExp = foundLT;
       decrementAngleBrackets();
-      if (isInRegExp) {
-        // for regular_expression cases
+      if (!angStack.isEmpty()) {
+        // this can occur for example when inserting before a '>' ...
+        isAfterJavaIdentifier = angStack.pop().booleanValue();
+      }
+      if (isInRegExp && !isAfterJavaIdentifier) {
+        // regular_expression case
         return regexPunct;
       }
-      // for Greater-than nodes "(>1)" cases
+      // Greater-than nodes "(>1)" or Java code case
       return Token.UNDEFINED;
     }
+
     if (ic == ':') {
       if (foundLT) {
         // ':' inside a '< ... >', so it is after a label identifier in a regular_expression,
         // so it cannot be before a lexical state identifier in a regexpr_spec
         isAfterLabelIdentifier = true;
-        foundNB = false;
+        foundPLIP = false;
         return regexPunct;
       }
       // ':' not inside a '< ... >' (of a regular_expression),
@@ -171,39 +203,76 @@ public class JJTokenRule implements IRule {
       scanner.unread();
       return Token.UNDEFINED;
     }
-    // other characters
+
     if (isChoicesPunct(ic)) {
+      // '(', ')', '*', '+', '?'
       boolean oldIsAfterJavaIdentifier = isAfterJavaIdentifier;
       if (ic == '(') {
         parStack.push(Boolean.valueOf(isAfterJavaIdentifier));
-      } else if (ic == ')') {
+        if (jnParenLevel >= 0) {
+          jnParenLevel++;
+        }
+      }
+      else if (ic == ')') {
         if (!parStack.isEmpty()) {
           // this can occur for example when inserting before a ')' ...
           oldIsAfterJavaIdentifier = parStack.pop().booleanValue();
+          if (jnParenLevel >= 0) {
+            jnParenLevel--;
+            if (jnParenLevel == 0) {
+              jnParenLevel = -1;
+            }
+          }
         }
       }
       isAfterJavaIdentifier = false;
-      // choices enclosing punctuation
-      // TODO after a try { in an expansion_unit, which leads to bracesLevel == 2,
-      // we should show a choicesPunct (ex : JavaCC15.jjt, javacc_getAST())
-      if (foundLT || (bracesLevel == 1 && !oldIsAfterJavaIdentifier)) {
+      // case '*' as the all lexical states symbol
+      if (ic == '*' && foundLT && bracesLevel == 0) {
+        return lexicalState;
+      }
+      // case in an expansion unit 'try'
+      if (foundEuTry && bracesLevel == 2 && !oldIsAfterJavaIdentifier) {
         return choicesPunct;
       }
-      // if not a choices enclosing punctuation
+      // case '(' or ')' in java code or conditional node
+      if ((ic == '(' || ic == ')') && oldIsAfterJavaIdentifier || jnParenLevel > 0) {
+        scanner.unread();
+        return Token.UNDEFINED;
+      }
+      // other cases
+      if (foundLT || (bracesLevel == 1 && (!oldIsAfterJavaIdentifier || jnParenLevel < 0))) {
+        if (ic == '+') {
+          ic = scanner.read();
+          if (ic == '+') {
+            scanner.unread();
+            return Token.UNDEFINED;
+          }
+          scanner.unread();
+        }
+        return choicesPunct;
+      }
+      // other cases, not a choices enclosing punctuation
       scanner.unread();
       return Token.UNDEFINED;
     }
+
     if (ic == '{') {
       bracesLevel++;
-      scanner.unread();
-      return Token.UNDEFINED;
-    }
-    if (ic == '}') {
-      bracesLevel--;
       isAfterJavaIdentifier = false;
       scanner.unread();
       return Token.UNDEFINED;
     }
+
+    if (ic == '}') {
+      bracesLevel--;
+      isAfterJavaIdentifier = false;
+      if (bracesLevel == 0) {
+        foundEuTry = false;
+      }
+      scanner.unread();
+      return Token.UNDEFINED;
+    }
+
     if (ic == '|') {
       // some other punctuation
       isAfterJavaIdentifier = false;
@@ -215,31 +284,63 @@ public class JJTokenRule implements IRule {
       scanner.unread();
       return Token.UNDEFINED;
     }
+
     if (ic == '#') {
       if (foundLT) {
         // if before a private label identifier (may be whitespaces and comments between !)
-        foundNB = true;
+        foundPLIP = true;
         return privateLabel;
+      }
+      else if (bracesLevel > 0) {
+        jnParenLevel = 0;
       }
       // otherwise continue with the next characters (of a node descriptor expression)
     }
+
     if (!foundLT && !foundCOLON) {
-      // other Java punctuation plus JavaCC and Java keywords
-      isAfterJavaIdentifier = true;
+      // other Java punctuation plus JavaCC and Java keywords plus Java identifiers
+      if (Character.isJavaIdentifierStart(ic)) {
+        isAfterJavaIdentifier = true;
+      }
+      else {
+        isAfterJavaIdentifier = false;
+      }
+      if (!foundEuTry && bracesLevel == 1) {
+        // search for expansion unit 'try' ; don't bother with EOF
+        if (ic == 't') {
+          ic = scanner.read();
+          if (ic == 'r') {
+            ic = scanner.read();
+            if (ic == 'y') {
+              foundEuTry = true;
+              isAfterJavaIdentifier = false;
+            }
+            scanner.unread();
+          }
+          scanner.unread();
+        }
+      }
       scanner.unread();
       return Token.UNDEFINED;
     }
+
     // here we are with fountLT or foundCOLON, process the character within the loop
     scanner.unread();
     // process next characters (can be if not JavaCC punctuation and if foundLT == true or foundCOLON == true)
     while ((ic = scanner.read()) != ICharacterScanner.EOF) {
       if (foundLT) {
-        // case inside a '< ... >'
+        if (isAfterJavaIdentifier) {
+          // Java code case
+          scanner.unread();
+          return Token.UNDEFINED;
+        }
+        // regular_expression case, inside a '< ... >'
         if (isWhitespaceOrComment1stChar(ic)) {
           // stop if whitespaces or beginning of a comment
           scanner.unread();
           break;
-        } else if (ic == '>' || ic == ',') {
+        }
+        else if (ic == '>' || ic == ',') {
           // case '>' and ','
           if (bracesLevel == 0) {
             // stop if we are in a lexical state list (not inside braces)
@@ -248,38 +349,50 @@ public class JJTokenRule implements IRule {
           }
           scanner.unread();
           break;
-        } else if (isChoicesPunct(ic)) {
+        }
+        else if (isChoicesPunct(ic)) {
           // stop if reached choices enclosing punctuation
           scanner.unread();
           break;
-        } else if (ic == '[' || ic == ']' || ic == '|' || ic == '~' || ic == ':' || ic == '-' || ic == '\"') {
+        }
+        else if (ic == '[' || ic == ']' || ic == '|' || ic == '~' || ic == ':' || ic == '-' || ic == '\"') {
           // stop if reached some other punctuation or the beginning of a string
           scanner.unread();
           break;
-        } else {
+        }
+        else {
           // other characters found : should be in a normal label identifier
           // if not in a private label identifier or in a lexical state list
-          if (foundNB) {
+          if (foundPLIP) {
             isPrLa = true;
-          } else if (bracesLevel == 0) {
+          }
+          else if (bracesLevel == 0) {
             isLxSt = true;
-          } else {
+          }
+          else {
             isNoLa = true;
           }
         }
-      } else if (foundCOLON) {
+      } // end if (foundLT)
+      else if (foundCOLON) {
         // case after a ':' in a regexpr_spec
         if (isWhitespaceOrComment1stChar(ic)) {
-          // stop if whitespaces or beginning of a comment
+          // stop if whitespaces or beginning of a comment, and terminate colon search
+          // if already found a lexical state identifier
           scanner.unread();
+          if (isLxSt) {
+            foundCOLON = false;
+          }
           break;
-        } else if (ic == '}' || ic == '|') {
+        }
+        else if (ic == '}' || ic == '|') {
           // stop if reached a '}', '|', and terminate colon search
           // (must have encountered before a lexical state identifier, so isLxSt should be true)
           scanner.unread();
           foundCOLON = false;
           break;
-        } else if (Character.isJavaIdentifierPart(ic) || ic == '*') {
+        }
+        else if (Character.isJavaIdentifierPart(ic) || ic == '*') {
           // java identifier characters or star found : should be the beginning of a lexical state identifier
           isAfterJavaIdentifier = true;
           isLxSt = true;
@@ -305,7 +418,7 @@ public class JJTokenRule implements IRule {
   /**
    * Returns whether the given character is a whitespace:<br>
    * ' ', '\t', '\n', '\r', '\f'.
-   *
+   * 
    * @param ic the character
    * @return true if the caracter is a whitespace, false otherwise
    */
@@ -316,7 +429,7 @@ public class JJTokenRule implements IRule {
   /**
    * Returns whether the given character is a whitespace or the beginning of a comment:<br>
    * ' ', '\t', '\n', '\r', '\f', '/'.
-   *
+   * 
    * @param ic the character
    * @return true if the character is a whitespace or the beginning of a comment, false otherwise
    */
@@ -327,7 +440,7 @@ public class JJTokenRule implements IRule {
   /**
    * Returns whether the given character is a choices enclosing punctuation:<br>
    * '(', ')', '*', '+', '?'.
-   *
+   * 
    * @param ic the character
    * @return true if the caracter is a choices enclosing punctuation, false otherwise
    */

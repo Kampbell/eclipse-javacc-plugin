@@ -52,7 +52,7 @@ public class JJGotoRule implements IEditorActionDelegate {
     if (!selection.isEmpty()) {
       String text = selection.getText();
       // Search matching node in AST
-      JJNode node = editor.getJJElements().getNode(text);
+      JJNode node = editor.getJJElements().getNonIdentifierNode(text);
       if (node != null) {
         editor.setSelection(node);
       }

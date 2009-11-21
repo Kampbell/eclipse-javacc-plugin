@@ -26,10 +26,10 @@ class JJTextHover  implements ITextHover {
       String word;
       word = doc.get(region.getOffset(), region.getLength());
       JJElements jjElements = editor.getJJElements();
-      if (!jjElements.isElement(word))
+      if (!jjElements.isNonIdentifierElement(word))
         return null;
 
-      JJNode node = jjElements.getNode(word);
+      JJNode node = jjElements.getNonIdentifierNode(word);
       // If the  node is on the same line as the word under the mouse
       // Definition is over itself : do not show it
       if (node.getBeginLine()-1 == doc.getLineOfOffset(region.getOffset()))

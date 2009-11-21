@@ -3,7 +3,7 @@
  * Rewritten for Java 1.5 and JJTree
  * The declaration nodes are identified with a node_descriptor # :
  * #parser_begin #javacc_options #option_binding #javacode_production 
- * #bnf_production #regular_expr_production #regexpr_spec
+ * #bnf_production #regular_expr_production #regexpr_spec #token_manager_decls (added MMa)
  * #ClassOrInterfaceDeclaration #MethodDeclaration
  * #identifier // Added for CallHierarchy
  */
@@ -619,7 +619,7 @@ void AccessModifier() : {}
 {
     ( "public" | "protected" | "private" )?
 }
-void regular_expr_production()                          :{/*@bgen(jjtree) regular_expr_production */
+void regular_expr_production()                         :{/*@bgen(jjtree) regular_expr_production */
   ASTregular_expr_production jjtn000 = new ASTregular_expr_production(JJTREGULAR_EXPR_PRODUCTION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -659,9 +659,37 @@ void regular_expr_production()                          :{/*@bgen(jjtree) regula
 /*@egen*/
 }
 
-void token_manager_decls():{}
-{
-  "TOKEN_MGR_DECLS" ":" ClassOrInterfaceBody()
+void token_manager_decls()                     :{/*@bgen(jjtree) token_manager_decls */
+  ASTtoken_manager_decls jjtn000 = new ASTtoken_manager_decls(JJTTOKEN_MANAGER_DECLS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) token_manager_decls */
+  try {
+/*@egen*/
+  "TOKEN_MGR_DECLS" ":" ClassOrInterfaceBody()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtreeCloseNodeScope(jjtn000);
+    }
+  }
+/*@egen*/
 }
 
 void regexpr_kind():{}
@@ -1623,7 +1651,7 @@ void DefaultValue():{}
 TOKEN : 
 {
   < IDENTIFIER: <LETTER> (<PART_LETTER>)* >
-| <#LETTER:
+| < #LETTER:
   [  // all chars for which Character.isIdentifierStart is true
          "$",
          "A"-"Z",

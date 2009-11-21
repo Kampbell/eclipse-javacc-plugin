@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description url="http://eclipse-javacc.sourceforge.net">
-      Site Sourceforge
+      Sourceforge JavaCC Eclipse Plug-in Project site
    </description>
-   <feature url="features/sf.eclipse.javacc.feature_1.5.16.jar" id="sf.eclipse.javacc.feature" version="1.5.16">
-      <category name="Eclipse JavaCC Plugin"/>
+   <feature url="features/sf.eclipse.javacc.feature_1.5.17.jar" id="sf.eclipse.javacc.feature" version="1.5.17">
+      <category name="JavaCC Eclipse Plug-in"/>
    </feature>
-   <category-def name="Eclipse JavaCC Plugin" label="Eclipse JavaCC Plugin">
-      <description>
-         Eclipse JavaCC Plugin
-      </description>
-   </category-def>
+   <category-def name="JavaCC Eclipse Plug-in" label="JavaCC Eclipse Plug-in"/>
 </site>

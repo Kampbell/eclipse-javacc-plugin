@@ -5,6 +5,7 @@ import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+
 import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.actions.JJFormat;
 import sf.eclipse.javacc.options.JJPreferences;
@@ -17,6 +18,10 @@ import sf.eclipse.javacc.options.JJPreferences;
  * @author Marc Mazas 2009 (refactoring and adaptation to JJFormat indentation rules)
  */
 public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
+
+  /*
+   * MMa 11/09 : javadoc and formatting revision ; removed newlines around '(' and ')'
+   */
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
    * 
@@ -24,28 +29,38 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param doc the document
    * @param cmd the document command (the last character)
    */
+  @Override
   public void customizeDocumentCommand(final IDocument doc, final DocumentCommand cmd) {
-    final boolean noAdvancedAutoInd = Activator.getDefault().getPreferenceStore().getBoolean(JJPreferences.P_NO_ADV_AUTO_INDENT);
+    final boolean noAdvancedAutoInd = Activator.getDefault().getPreferenceStore()
+                                               .getBoolean(JJPreferences.P_NO_ADV_AUTO_INDENT);
     if (noAdvancedAutoInd) {
       if (cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text)) {
         basicIndentAfterNewLine(doc, cmd);
       }
-    } else {
+    }
+    else {
       if (cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text)) {
         smartIndentAfterNewLine(doc, cmd);
-      } else if ("{".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if ("{".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterLeftBrace(doc, cmd);
-      } else if ("}".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if ("}".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterRightBrace(doc, cmd);
-      } else if ("(".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if ("(".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterLeftPar(doc, cmd);
-      } else if (")".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if (")".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterRightPar(doc, cmd);
-      } else if ("|".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if ("|".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterVertBar(doc, cmd);
-      } else if ("<".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if ("<".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterLeftAngleBracket(doc, cmd);
-      } else if (">".equals(cmd.text)) { //$NON-NLS-1$
+      }
+      else if (">".equals(cmd.text)) { //$NON-NLS-1$
         smartInsertAfterRightAngleBracket(doc, cmd);
       }
     }
@@ -59,8 +74,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    */
   void basicIndentAfterNewLine(final IDocument doc, final DocumentCommand cmd) {
     final int docLength = doc.getLength();
-    if (cmd.offset == -1 || docLength == 0)
+    if (cmd.offset == -1 || docLength == 0) {
       return;
+    }
     try {
       // line is the line number of the newline character
       final int line = doc.getLineOfOffset(cmd.offset);
@@ -87,8 +103,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    */
   void smartIndentAfterNewLine(final IDocument doc, final DocumentCommand cmd) {
     final int docLength = doc.getLength();
-    if (cmd.offset == -1 || docLength == 0)
+    if (cmd.offset == -1 || docLength == 0) {
       return;
+    }
     try {
       // p is the position of the newline character in the modified document
       int p = cmd.offset;
@@ -109,7 +126,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         char c;
         while (true) {
           c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             break;
           }
         }
@@ -117,11 +134,13 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           // last character was a left brace or parenthesis, so we must increment indentation and
           // add it to the command
           sb.append(cmd.text).append(currIndent).append(JJCodeScanner.getIndentString());
-        } else {
+        }
+        else {
           // otherwise keep current indentation and add it to the command
           sb.append(cmd.text).append(currIndent);
         }
-      } else {
+      }
+      else {
         // case newline at the beginning of a line (after whitespaces)
         // we assume current indentation is ok
         // just add the current indentation to the command
@@ -131,7 +150,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       p = cmd.offset;
       while (true) {
         final char c = doc.getChar(--p);
-        if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+        if (c != ' ' && c != '\t') { // $NON-NLS-2$
           ++p;
           break;
         }
@@ -153,8 +172,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterLeftBrace(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the '{' character in the modified document
       int p = cmd.offset;
@@ -179,7 +199,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         // "remove" trailing whitespaces
         while (true) {
           final char c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             ++p;
             break;
           }
@@ -187,11 +207,12 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         // modify the document command length and offset
         cmd.length += (cmd.offset - p);
         cmd.offset = p;
-      } else {
+      }
+      else {
         // case '{' at the beginning of a line (after whitespaces)
         // we assume current indentation is ok
         // add the left brace, a new line and an incremented indentation
-        sb.append('{'); //$NON-NLS-1$
+        sb.append('{');
         sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
       }
       // set the replacement document command text
@@ -208,8 +229,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterRightBrace(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the '}' character in the modified document
       int p = cmd.offset;
@@ -241,7 +263,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         // "remove" trailing whitespaces
         while (true) {
           final char c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             ++p;
             break;
           }
@@ -251,7 +273,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         cmd.offset = p;
         // set the replacement document command text
         cmd.text = sb.toString();
-      } else {
+      }
+      else {
         // case '}' at the beginning of a line (after whitespaces)
         // we must decrement the current indentation and keep the right brace
         int k = 0;
@@ -279,8 +302,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterLeftPar(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the '(' character in the modified document
       int p = cmd.offset;
@@ -303,30 +327,32 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         char c;
         while (true) {
           c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             ++p;
             break;
           }
         }
-        if (Character.isJavaIdentifierPart(c)) {
-          // '(' is probably at the beginning of a parameter list, so do nothing
-        } else {
-          // otherwise '(' is probably at the beginning of a choice
-          // add a new line, the previous indentation, the left parenthesis, a new line and
-          // an incremented indentation
-          sb.append(eol).append(currIndent).append('(');
-          sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
-          // modify the document command length and offset
-          cmd.length += (cmd.offset - p);
-          cmd.offset = p;
-          // set the replacement document command text
-          cmd.text = sb.toString();
-        }
-      } else {
+        // case '(' not at the beginning of a line (after whitespaces), do nothing
+        //        if (Character.isJavaIdentifierPart(c)) {
+        //          // '(' is probably at the beginning of a parameter list, so do nothing
+        //        } else {
+        //          // otherwise '(' is probably at the beginning of a choice
+        //          // add a new line, the previous indentation, the left parenthesis, a new line and
+        //          // an incremented indentation
+        //          sb.append(eol).append(currIndent).append('(');
+        //          sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
+        //          // modify the document command length and offset
+        //          cmd.length += (cmd.offset - p);
+        //          cmd.offset = p;
+        //          // set the replacement document command text
+        //          cmd.text = sb.toString();
+        //        }
+      }
+      else {
         // case '(' at the beginning of a line (after whitespaces)
         // assume current indentation is ok
         // add the left parenthesis, a new line and an incremented indentation
-        sb.append('('); //$NON-NLS-1$
+        sb.append('(');
         sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());
         // set the replacement document command text
         cmd.text = sb.toString();
@@ -343,8 +369,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterRightPar(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the ')' character in the modified document
       int p = cmd.offset;
@@ -355,41 +382,35 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       // firstNonWS is the offset of the next character after the last character of the line leading
       // whitespaces
       final int firstNonWS = findEndOfWhiteSpace(doc, startPos, p);
-      // currIndent is the current line indentation string
-      final String currIndent = doc.get(startPos, firstNonWS - startPos);
-      // eol is the newline string
-      final String eol = doc.getLegalLineDelimiters()[0];
       // indentString is the indentation string derived from the preferences
       final String indentString = JJCodeScanner.getIndentString();
       // nextIndent is the current and decremented indentation
       final int indLen = indentString.length();
-      final int len = currIndent.length() - indLen;
-      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : ""); //$NON-NLS-1$
-      // replacement buffer
-      final StringBuffer sb = new StringBuffer(32);
       if (firstNonWS < p) {
         // case line has characters others than spaces and tabs before the ')'
         // "remove" trailing whitespaces
         char c;
         while (true) {
           c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             ++p;
             break;
           }
         }
-        if (c == '(' || Character.isJavaIdentifierPart(c)) {
-          // ')' is probably at the end of a parameter list, so do nothing
-        } else {
-          // add a new line, the current and decremented indentation, the right parenthesis
-          sb.append(eol).append(nextIndent).append(')');
-          // modify the document command length and offset
-          cmd.length += (cmd.offset - p);
-          cmd.offset = p;
-          // set the replacement document command text
-          cmd.text = sb.toString();
-        }
-      } else {
+        // case ')' not at the beginning of a line (after whitespaces), do nothing
+        //        if (c == '(' || Character.isJavaIdentifierPart(c)) {
+        //          // ')' is probably at the end of a parameter list, so do nothing
+        //        } else {
+        //          // add a new line, the current and decremented indentation, the right parenthesis
+        //          sb.append(eol).append(nextIndent).append(')');
+        //          // modify the document command length and offset
+        //          cmd.length += (cmd.offset - p);
+        //          cmd.offset = p;
+        //          // set the replacement document command text
+        //          cmd.text = sb.toString();
+        //        }
+      }
+      else {
         // case ')' at the beginning of a line (after whitespaces)
         // we must decrement the current indentation and keep the right parenthesis
         int k = 0;
@@ -417,8 +438,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterVertBar(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the '|' character in the modified document
       int p = cmd.offset;
@@ -435,7 +457,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       final int indLen = indentString.length();
       if (firstNonWS < p) {
         // case line has characters others than spaces and tabs before the '|', do nothing
-      } else {
+      }
+      else {
         // case '|' at the beginning of a line (after whitespaces)
         // look at previous line
         final int sp = doc.getLineOffset(line - 1);
@@ -445,7 +468,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           // so keep the vertical bar and add the special indentation
           // set the replacement document command text
           cmd.text += JJCodeScanner.getSpecIndentString();
-        } else {
+        }
+        else {
           // case '|' is not after a previous line with a '|', so must decrement the current indentation,
           // keep the vertical bar and add the special indentation
           int k = 0;
@@ -476,8 +500,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterLeftAngleBracket(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the '<' character in the modified document
       int p = cmd.offset;
@@ -494,7 +519,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         char c;
         while (true) {
           c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             ++p;
             break;
           }
@@ -503,10 +528,12 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           // case after some JavaCC punctuation, so add a space
           // set the replacement document command text
           cmd.text = "< "; //$NON-NLS-1$
-        } else {
+        }
+        else {
           // case probably in a Java expression, so do nothing
         }
-      } else {
+      }
+      else {
         // case '<' at the beginning of a line (after whitespaces), so add a space
         // set the replacement document command text
         cmd.text = "< "; //$NON-NLS-1$
@@ -523,8 +550,9 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param cmd - the command being performed
    */
   void smartInsertAfterRightAngleBracket(final IDocument doc, final DocumentCommand cmd) {
-    if (cmd.offset == -1 || doc.getLength() == 0)
+    if (cmd.offset == -1 || doc.getLength() == 0) {
       return;
+    }
     try {
       // p is the position of the '>' character in the modified document
       int p = cmd.offset;
@@ -541,14 +569,15 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         char c;
         while (true) {
           c = doc.getChar(--p);
-          if (c != ' ' && c != '\t') { //$NON-NLS-1$ $NON-NLS-2$
+          if (c != ' ' && c != '\t') { // $NON-NLS-2$
             ++p;
             break;
           }
         }
         if (c == '(') {
           // case in a Greater-than node, so do nothing
-        } else {
+        }
+        else {
           // all other cases, so remove previous whitespaces and prepend a space
           // modify the document command length and offset
           cmd.length += (cmd.offset - p);
@@ -556,7 +585,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           // set the replacement document command text
           cmd.text = " >"; //$NON-NLS-1$
         }
-      } else {
+      }
+      else {
         // case '>' at the beginning of a line (after whitespaces), so do nothing
       }
     } catch (final BadLocationException e) {
@@ -569,12 +599,14 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * 
    * @param doc the document
    * @param txt the text
+   * @return true if the text ends with one of the document end of line delimiters, false otherwise
    */
   boolean endsWithDelimiter(final IDocument doc, final String txt) {
-    String[] delimiters = doc.getLegalLineDelimiters();
+    final String[] delimiters = doc.getLegalLineDelimiters();
     for (int i = 0; i < delimiters.length; i++) {
-      if (txt.endsWith(delimiters[i]))
+      if (txt.endsWith(delimiters[i])) {
         return true;
+      }
     }
     return false;
   }
@@ -587,8 +619,10 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param endPos - the end position to search back from (modified)
    * @param rightBracesCount - the number of braces to skip
    * @return the line number of the next matching brace after end
+   * @throws BadLocationException if not in the right place
    */
-  int findMatchingLeftBrace(final IDocument doc, int startLine, int endPos, final int rightBracesCount) throws BadLocationException {
+  int findMatchingLeftBrace(final IDocument doc, final int startLine, final int endPos,
+                            final int rightBracesCount) throws BadLocationException {
     int ln = startLine;
     int startPos = doc.getLineOffset(ln);
     int brackcount = getBracesCount(doc, startPos, endPos, false) - rightBracesCount;
@@ -600,7 +634,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
         return -1;
       }
       startPos = doc.getLineOffset(ln);
-      int ep = startPos + doc.getLineLength(ln) - 1;
+      final int ep = startPos + doc.getLineLength(ln) - 1;
       brackcount += getBracesCount(doc, startPos, ep, false);
     }
     return ln;
@@ -615,22 +649,25 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param endPos - the end position for the search
    * @param ignoreRightBraces - whether or not to ignore right braces in the count
    * @return the line number of the next matching brace after end
+   * @throws BadLocationException if not in the right place
    */
-  int getBracesCount(final IDocument doc, final int startPos, final int endPos, final boolean ignoreRightBraces) throws BadLocationException {
+  int getBracesCount(final IDocument doc, final int startPos, final int endPos,
+                     final boolean ignoreRightBraces) throws BadLocationException {
     int p = startPos;
     int bracesCount = 0;
     boolean ignore = ignoreRightBraces;
     while (p < endPos) {
-      char c = doc.getChar(p);
+      final char c = doc.getChar(p);
       p++;
       switch (c) {
-        case '/': //$NON-NLS-1$
+        case '/':
           if (p < endPos) {
-            char n = doc.getChar(p);
-            if (n == '*') { //$NON-NLS-1$
+            final char n = doc.getChar(p);
+            if (n == '*') {
               // a comment starts, advance to the comment end
               p = getCommentEnd(doc, p + 1, endPos);
-            } else if (n == '/') { //$NON-NLS-1$
+            }
+            else if (n == '/') {
               // '//'-comment: nothing to do anymore on this line
               p = endPos;
             }
@@ -638,25 +675,25 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           break;
         case '*':
           if (p < endPos) {
-            char n = doc.getChar(p);
-            if (n == '/') { //$NON-NLS-1$
+            final char n = doc.getChar(p);
+            if (n == '/') {
               // we have been in a comment: forget what we read before
               bracesCount = 0;
               p++;
             }
           }
           break;
-        case '{': //$NON-NLS-1$
+        case '{':
           bracesCount++;
           ignore = false;
           break;
-        case '}': //$NON-NLS-1$
+        case '}':
           if (!ignore) {
             bracesCount--;
           }
           break;
-        case '"': //$NON-NLS-1$
-        case '\'': //$NON-NLS-1$
+        case '"':
+        case '\'':
           p = getStringEnd(doc, p, endPos, c);
           break;
         default:
@@ -671,6 +708,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param doc - the document being parsed
    * @param line - the line being searched
    * @return the line indentation string.
+   * @throws BadLocationException if not in the right place
    */
   String getLineIndent(final IDocument doc, final int line) throws BadLocationException {
     if (line < 0) {
@@ -689,14 +727,15 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param startPos - the start position for the search
    * @param endPos - the end position for the search
    * @return the end position of a comment starting at the start position
+   * @throws BadLocationException if not in the right place
    */
   int getCommentEnd(final IDocument doc, final int startPos, final int endPos) throws BadLocationException {
     int p = startPos;
     while (p < endPos) {
-      char c = doc.getChar(p);
+      final char c = doc.getChar(p);
       p++;
-      if (c == '*') { //$NON-NLS-1$
-        if (p < endPos && doc.getChar(p) == '/') { //$NON-NLS-1$
+      if (c == '*') {
+        if (p < endPos && doc.getChar(p) == '/') {
           return p + 1;
         }
       }
@@ -712,16 +751,19 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param endPos - the position to end searching to
    * @param ch - the character to try to find
    * @return the first location of the character searched
+   * @throws BadLocationException if not in the right place
    */
-  int getStringEnd(final IDocument doc, final int startPos, final int endPos, final char ch) throws BadLocationException {
+  int getStringEnd(final IDocument doc, final int startPos, final int endPos, final char ch)
+                                                                                            throws BadLocationException {
     int p = startPos;
     while (p < endPos) {
-      char c = doc.getChar(p);
+      final char c = doc.getChar(p);
       p++;
-      if (c == '\\') { //$NON-NLS-1$
+      if (c == '\\') {
         // ignore escaped characters
         p++;
-      } else if (c == ch) {
+      }
+      else if (c == ch) {
         return p;
       }
     }
