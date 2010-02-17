@@ -6,14 +6,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Launcher for JavaCC Uses Runtime.exec()
+ * Launcher for JavaCC. Uses Runtime.exec().
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JarLauncher {
 
-  // MMa 11/09 : javadoc and formatting revision ; added -fullversion
+  // MMa 11/2009 : javadoc and formatting revision ; added -fullversion
+  // MMa 02/2010 : formatting and javadoc revision
 
   /** the java command on the command line */
   private static String javaCmd;
@@ -87,7 +88,7 @@ public class JarLauncher {
   }
 
   /**
-   * Launches JavaCC with Runtime.exec(), ie launches java -classpath javaccJarFile javacc args.
+   * Launches JavaCC with Runtime.exec(), i.e. launches java -classpath javaccJarFile JavaCC args.
    * 
    * @param javaccJarFile the jar file to use
    * @param args the arguments
@@ -106,7 +107,7 @@ public class JarLauncher {
   }
 
   /**
-   * Launches JJTree with Runtime.exec(), ie launches java -classpath javaccJarFile jjtree args.
+   * Launches JJTree with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJTree args.
    * 
    * @param javaccJarFile the jar file to use
    * @param args the arguments
@@ -125,7 +126,7 @@ public class JarLauncher {
   }
 
   /**
-   * Launches JJDoc with Runtime.exec(), ie launches java -classpath javaccJarFile jjdoc args.
+   * Launches JJDoc with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJDoc args.
    * 
    * @param javaccJarFile the jar file to use
    * @param args the arguments
@@ -144,7 +145,7 @@ public class JarLauncher {
   }
 
   /**
-   * Launches JTB with Runtime.exec(), ie launches java -jar javaccJarFile args.
+   * Launches JTB with Runtime.exec(), i.e. launches java -jar javaccJarFile args.
    * 
    * @param jarfile the jar file to use
    * @param args the arguments

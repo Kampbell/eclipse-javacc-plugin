@@ -3,18 +3,20 @@ package sf.eclipse.javacc.options;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
+import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 
 /**
- * The Tab for JJTB options.
+ * The JJTB options Tab that enables setting the JJTB options.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JTBOptions extends JJAbstractTab implements IJJConstants {
 
-  //MMa 04/09 : added description field (for JTB cryptic options)
-  //MMa 11/09 : added -d -nd -vd options
+  // MMa 04/2009 : added description field (for JTB cryptic options)
+  // MMa 11/2009 : added -d -nd -vd options
+  // MMa 02/2010 : formatting and javadoc revision ; changed VOID to BOOLEAN types (otherwise not saved in the store)
 
   // Memo 
   // Usage: jtb [OPTIONS] [inputfile]
@@ -44,48 +46,56 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
   /**
    * Standard constructor : initializes with known JTB options.
    * 
-   * @param parent the parent
-   * @param res the ressource
+   * @param aParent the parent
+   * @param aRes the resource
    */
-  public JTBOptions(final Composite parent, final IResource res) {
-    super(parent, res);
-    // All options are saved in a single property
-    preferenceName = JTB_OPTIONS;
-    optionSet = new OptionSet();
+  public JTBOptions(final Composite aParent, final IResource aRes) {
+    super(aParent, aRes);
+
+    // all options are saved in a single property
+    fPreferenceName = JTB_OPTIONS;
+
+    fOptionSet = new OptionSet();
+
     // int options
-    // void options, reordered on two columns
-    optionSet.add(new Option("cl", "print classes list", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("dl", "generate depth level", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("e", "suppress semantic error checking", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("f", "generate descriptive node classes field names", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("ia", "inline accept statements", "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("jd", "generate javadoc comments in nodes and visitor", "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("pp", "generate parent pointers in all node classes", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet
-             .add(new Option("printer", "generate TreeDumper & TreeFormatter visitors ", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("tk", "generate special tokens in the parse tree", "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("scheme", "generate for the Scheme language", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("w", "do not overwrite existing files", "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+    // boolean options, reordered on two columns
+    fOptionSet.add(new Option("cl", Activator.getString("JTBOptions.PrClLst"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("dl", Activator.getString("JTBOptions.GenDpthLvl"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("e", Activator.getString("JTBOptions.SupSemErrChk"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("f", Activator.getString("JTBOptions.GenDescFldNm"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("ia", Activator.getString("JTBOptions.InlnAccStmt"), "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("jd", Activator.getString("JTBOptions.GenJdocCmt"), "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("pp", Activator.getString("JTBOptions.GenParPntrs"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet
+              .add(new Option(
+                              "printer", Activator.getString("JTBOptions.GenTDTFVis"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("tk", Activator.getString("JTBOptions.GenSpecTk"), "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet
+              .add(new Option("scheme", Activator.getString("JTBOptions.GenScheme"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("w", Activator.getString("JTBOptions.NoOvrwrt"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
     // string options
-    optionSet.add(new Option("o", "generated file name", "jtb.out.jj", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet
-             .add(new Option("np", "generated syntax tree classes package name", "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("vp", "generated visitor classes package name", "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("p", "np = p + \".syntaxtree\", vp = p + \".visitor\"", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet
-             .add(new Option(
-                             "nd", "generated syntax tree classes directory name", "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("vd", "generated visitor classes directory name", "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("d", "nd = d + \"/syntaxtree\", vd = d + \"/visitor\"", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    optionSet.add(new Option("ns", "generated nodes classes super class name", "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    // Fix values to default values
-    optionSet.resetToDefaultValues();
-    // Super class fills the content from property and optionSet
+    fOptionSet.add(new Option("o", Activator.getString("JTBOptions.GnrtdFlNm"), "jtb.out.jj", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet
+              .add(new Option("np", Activator.getString("JTBOptions.GnrtdSTPck"), "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("vp", Activator.getString("JTBOptions.GnrtdVisPck"), "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("p", Activator.getString("JTBOptions.NPVP"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet
+              .add(new Option("nd", Activator.getString("JTBOptions.GnrtdSTDir"), "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("vd", Activator.getString("JTBOptions.GnrtdVisDir"), "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("d", Activator.getString("JTBOptions.NDVD"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("ns", Activator.getString("JTBOptions.GnrtdSupCl"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+    // set values to default values
+    fOptionSet.resetToDefaultValues();
+
+    // super class fills the content from property and optionSet
     createContents();
   }
 
   /**
-   * Set defaults in Eclipse
+   * Sets defaults in Eclipse.
    */
   @Override
   public void performDefaults() {

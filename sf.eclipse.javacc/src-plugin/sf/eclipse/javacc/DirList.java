@@ -5,84 +5,110 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Find last added or modified files
- * after a compilation of a .jjt or .jj file
+ * Find last added or modified files after a compilation of a .jjt or .jj file.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class DirList {
+
+  // MMa 02/2010 : formatting and javadoc revision
+
+  /** The last collection of files */
   static Collection<DatedFile> oldCol;
-  
+
   /**
-   * Add all files found under Directory root to collection col
-   * @param File root (directory)
-   * @param Collection col
+   * Adds all files found under a given root directory to a given collection.
+   * 
+   * @param aRoot the root directory
+   * @param aCol the Collection to fill
    */
-  protected static void listFiles(File root, Collection<DatedFile> col) {
-    File[] f = root.listFiles();
+  protected static void listFiles(final File aRoot, final Collection<DatedFile> aCol) {
+    final File[] f = aRoot.listFiles();
     for (int i = 0; i < f.length; i++) {
-      if(f[i].isDirectory())
-        listFiles(f[i], col);
-      else{
-        DatedFile df = new DatedFile(f[i]);
-        col.add(df);
+      if (f[i].isDirectory()) {
+        listFiles(f[i], aCol);
+      }
+      else {
+        final DatedFile df = new DatedFile(f[i]);
+        aCol.add(df);
       }
     }
   }
 
   /**
-   * Take a snapshot of files under root dir
-   * @param dir
+   * Take a snapshot of files under a given directory.
+   * 
+   * @param aDir a directory
    */
-  public static void snapshot(String dir) {
+  public static void snapshot(final String aDir) {
     oldCol = new ArrayList<DatedFile>();
-    listFiles(new File(dir), oldCol);
+    listFiles(new File(aDir), oldCol);
   }
 
   /**
-   * Identify differences and return last modified files.
-   * @param String dirname
-   * @return String[] filename
+   * Finds differences between the last computed collection and the current one on a given directory and
+   * returns the last modified files.
+   * 
+   * @param aDir a directory
+   * @return String[] the array of last modified files
    */
-  public static String[] getDiff(String dir) {
-    Collection<DatedFile> newCol = new ArrayList<DatedFile>();
-    listFiles(new File(dir), newCol);
+  public static String[] getDiff(final String aDir) {
+    final Collection<DatedFile> newCol = new ArrayList<DatedFile>();
+    listFiles(new File(aDir), newCol);
     if (oldCol == null) {
       return null;
     }
     newCol.removeAll(oldCol);
-    if (newCol.isEmpty())
+    if (newCol.isEmpty()) {
       return null;
-    Object[] df = newCol.toArray();
-    String[] res = new String[df.length];
-    for(int i = 0; i < df.length; i++)
+    }
+    final Object[] df = newCol.toArray();
+    final String[] res = new String[df.length];
+    for (int i = 0; i < df.length; i++) {
       res[i] = df[i].toString();
+    }
     return res;
   }
 }
 
 /**
- * Dated File to compare more accurately
+ * Class to compare files more accurately on their last modification date.
  */
 class DatedFile {
-  private File f;
-  private long date;
-  
-  DatedFile (File f) {
-    this.f = f;
-    this.date = f.lastModified();
+
+  /** The file */
+  private final File fFile;
+  /** The file modification date */
+  private final long fDate;
+
+  /**
+   * Standard constructor.
+   * 
+   * @param aFile a file
+   */
+  DatedFile(final File aFile) {
+    fFile = aFile;
+    fDate = aFile.lastModified();
   }
 
-  public boolean equals(Object o) {
-    DatedFile obj = (DatedFile) o;
-    if (this.date != obj.date)
+  /**
+   * @see Object#equals(Object)
+   */
+  @Override
+  public boolean equals(final Object aObj) {
+    final DatedFile obj = (DatedFile) aObj;
+    if (this.fDate != obj.fDate) {
       return false;
-    return this.f.equals(obj.f);
+    }
+    return this.fFile.equals(obj.fFile);
   }
 
+  /**
+   * @see Object#toString()
+   */
+  @Override
   public String toString() {
-    return f.toString();
+    return fFile.toString();
   }
 }
-

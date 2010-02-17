@@ -26,30 +26,30 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 /**
  * Content outline page for the JJEditor.
  * 
- * @author Remi Koutcherawy 2003-2006 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJOutlinePage extends ContentOutlinePage {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision ; changed sorting categories ;
-   * added javacode and token_mgr_decls entries ; moved lexical states at the kind's right
-   */
-  /** the document to outline */
-  protected IDocument                        doc;
-  /** the editor to outline */
-  protected JJEditor                         ed;
-  /** the label provider to use */
-  private JJLabelProvider                    labelProvider;
-  /** the content provider to use */
-  private final JJOutlinePageContentProvider contentProvider;
+  // MMa 11/2009 : javadoc and formatting revision ; changed sorting categories ;
+  // ........... : added javacode and token_mgr_decls entries ; moved lexical states at the kind's right
+  // MMa 02/2010 : formatting and javadoc revision
+
+  /** The document to outline */
+  protected IDocument                        fDocument;
+  /** The editor to outline */
+  protected JJEditor                         fEditor;
+  /** The label provider to use */
+  private JJLabelProvider                    fLabelProvider;
+  /** The content provider to use */
+  private final JJOutlinePageContentProvider fContentProvider;
 
   /**
    * Inner class to compact the tree
    */
   public class CollapseAllAction extends Action {
 
-    /** the tree viewer to use */
+    /** The tree viewer to use */
     private final TreeViewer fTreeViewer;
 
     /**
@@ -75,15 +75,15 @@ public class JJOutlinePage extends ContentOutlinePage {
   }
 
   /**
-   * An Action to sort the tree alphabeticaly
+   * An Action to sort the tree alphabetically.
    */
   public class AlphabeticSortingAction extends org.eclipse.jface.action.Action {
 
-    /** the viewer sorter to use */
+    /** The viewer sorter to use */
     private final ViewerSorter     sorter   = new JJOutlineSorter();
-    /** the structured viewer to use */
+    /** The structured viewer to use */
     private final StructuredViewer fViewer;
-    /** previous check status for the action */
+    /** The previous check status for the action */
     private boolean                oldState = false;
 
     /**
@@ -116,22 +116,22 @@ public class JJOutlinePage extends ContentOutlinePage {
   }
 
   /**
-   * Outline Sorter to perform the real sorting
+   * Outline Sorter to perform the real sorting.
    */
   public static class JJOutlineSorter extends ViewerSorter {
 
     // sorting is most of the time useful for bnf productions, not token definitions
-    /** the rules outline category */
+    /** The rules outline category */
     public static final int RULES           = -1;
-    /** the options outline category */
+    /** The options outline category */
     public static final int OPTIONS         = 0;
-    /** the parser outline category */
+    /** The parser outline category */
     public static final int PARSER          = 1;
-    /** the javacode outline category */
+    /** The javacode outline category */
     public static final int JAVACODE        = 2;
-    /** the token_mgr_decls outline category */
+    /** The token_mgr_decls outline category */
     public static final int TOKEN_MGR_DECLS = 3;
-    /** the regexpr_kind outline category */
+    /** The regexpr_kind outline category */
     public static final int REGEXPR_KIND    = 4;
 
     /**
@@ -187,24 +187,24 @@ public class JJOutlinePage extends ContentOutlinePage {
   /**
    * Creates a content outline page using the given editor (and a newly created content provider).
    * 
-   * @param aEd the given editor
+   * @param aEditor the given editor
    */
-  public JJOutlinePage(final ITextEditor aEd) {
+  public JJOutlinePage(final ITextEditor aEditor) {
     super();
-    ed = (JJEditor) aEd;
-    contentProvider = new JJOutlinePageContentProvider();
+    fEditor = (JJEditor) aEditor;
+    fContentProvider = new JJOutlinePageContentProvider();
   }
 
   /**
-   * Method declared on ContentOutlinePage
+   * Method declared on ContentOutlinePage.
    */
   @Override
   public void createControl(final Composite aParent) {
     super.createControl(aParent);
     final TreeViewer viewer = getTreeViewer();
-    viewer.setContentProvider(contentProvider);
-    labelProvider = new JJLabelProvider();
-    viewer.setLabelProvider(labelProvider);
+    viewer.setContentProvider(fContentProvider);
+    fLabelProvider = new JJLabelProvider();
+    viewer.setLabelProvider(fLabelProvider);
     viewer.addSelectionChangedListener(this);
 
     // Adds button to viewer's toolbar
@@ -213,18 +213,18 @@ public class JJOutlinePage extends ContentOutlinePage {
     mgr.add(new AlphabeticSortingAction(viewer));
 
     // This updates the TreeViewer the first time
-    setInput(doc);
+    setInput(fDocument);
   }
 
   /**
-   * Method declared on ContentOutlinePage
+   * Method declared on ContentOutlinePage.
    */
   @Override
   public void selectionChanged(final SelectionChangedEvent aEvent) {
     super.selectionChanged(aEvent);
     final ISelection selection = aEvent.getSelection();
     if (selection.isEmpty()) {
-      ed.resetHighlightRange();
+      fEditor.resetHighlightRange();
     }
     else {
       final JJNode node = (JJNode) ((IStructuredSelection) selection).getFirstElement();
@@ -238,7 +238,7 @@ public class JJOutlinePage extends ContentOutlinePage {
    * @param aNode the selected node
    */
   public void selectionChanged(final JJNode aNode) {
-    ed.setSelection(aNode);
+    fEditor.setSelection(aNode);
   }
 
   /**
@@ -249,7 +249,7 @@ public class JJOutlinePage extends ContentOutlinePage {
    * @param aDoc the given document
    */
   public void setInput(final IDocument aDoc) {
-    doc = aDoc;
+    fDocument = aDoc;
     if (aDoc == null) {
       return;
     }
@@ -269,8 +269,8 @@ public class JJOutlinePage extends ContentOutlinePage {
       final Control control = viewer.getControl();
       if (control != null && !control.isDisposed()) {
         control.setRedraw(false);
-        if (this.doc != null) {
-          viewer.refresh(this.doc, true);
+        if (this.fDocument != null) {
+          viewer.refresh(this.fDocument, true);
         }
         control.setRedraw(true);
       }
@@ -282,9 +282,9 @@ public class JJOutlinePage extends ContentOutlinePage {
    */
   @Override
   public void dispose() {
-    if (labelProvider != null) {
-      labelProvider.dispose();
-      labelProvider = null;
+    if (fLabelProvider != null) {
+      fLabelProvider.dispose();
+      fLabelProvider = null;
     }
     super.dispose();
   }
@@ -293,6 +293,6 @@ public class JJOutlinePage extends ContentOutlinePage {
    * @return IContentProvider
    */
   public IContentProvider getContentProvider() {
-    return contentProvider;
+    return fContentProvider;
   }
 }

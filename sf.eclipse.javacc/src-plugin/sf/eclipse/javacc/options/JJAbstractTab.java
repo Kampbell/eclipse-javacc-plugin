@@ -30,45 +30,46 @@ import sf.eclipse.javacc.IJJConstants;
  * @see JJTreeOptions
  * @see JJDocOptions
  * @see JTBOptions
- * @author Remi Koutcherawy 2003-2009 - CeCILL License http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public abstract class JJAbstractTab extends Composite implements IPropertyChangeListener, IJJConstants {
 
-  //MMa 04/09 : added descriptions
-  //MMa 11/09 : javadoc and formatting revision ; changed line option section
+  // MMa 04/2009 : added descriptions
+  // MMa 11/2009 : javadoc and formatting revision ; changed line option section
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** the optionSet used as a model */
-  protected OptionSet              optionSet;
+  /** The optionSet used as a model */
+  protected OptionSet              fOptionSet;
   // Controls
-  /** string options control */
-  protected StringFieldEditor      optionsField;
-  /** boolean options control */
-  protected BooleanFieldEditor     checkField[];
-  /** boolean options control */
-  protected IntegerFieldEditor     intField[];
-  /** string options controls */
-  protected StringFieldEditor[]    stringField;
-  /** directory options controls */
-  protected DirectoryFieldEditor[] pathField;
-  /** file options controls */
-  protected FileFieldEditor[]      fileField;
-  /** the option name, defined in subclasses */
-  protected String                 preferenceName = null;
-  /** flag to prevent loops */
-  protected boolean                isUpdating;
+  /** String options control */
+  protected StringFieldEditor      fOptionsField;
+  /** Boolean options control */
+  protected BooleanFieldEditor     fCheckField[];
+  /** Boolean options control */
+  protected IntegerFieldEditor     fIntField[];
+  /** String options controls */
+  protected StringFieldEditor[]    fStringField;
+  /** Directory options controls */
+  protected DirectoryFieldEditor[] fPathField;
+  /** File options controls */
+  protected FileFieldEditor[]      fFileField;
+  /** The option name, defined in subclasses */
+  protected String                 fPreferenceName = null;
+  /** Flag to prevent loops */
+  protected boolean                fIsUpdating;
   /** The IResource we are working on */
-  protected IResource              resource;
+  protected IResource              fResource;
 
   /**
-   * Standard onstructor.
+   * Standard constructor.
    * 
-   * @param parent the parent
-   * @param res the resource
+   * @param aParent the parent
+   * @param aRes the resource
    */
-  public JJAbstractTab(final Composite parent, final IResource res) {
-    super(parent, SWT.NONE);
-    this.resource = res;
+  public JJAbstractTab(final Composite aParent, final IResource aRes) {
+    super(aParent, SWT.NONE);
+    this.fResource = aRes;
     final GridLayout layout = new GridLayout();
     setLayout(layout);
     setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -80,38 +81,38 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * Fills in the control.
    */
   public void createContents() {
-    isUpdating = true;
-    // Get global line options String from Resource
-    final IResource res = resource;
+    fIsUpdating = true;
+    // get global line options String from Resource
+    final IResource res = fResource;
     String options = null;
     if (res != null) {
       final IProject proj = res.getProject();
       final IScopeContext projectScope = new ProjectScope(proj);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-      options = prefs.get(preferenceName, ""); //$NON-NLS-1$
-      optionSet.configuresFrom(options);
+      options = prefs.get(fPreferenceName, ""); //$NON-NLS-1$
+      fOptionSet.configuresFrom(options);
     }
-    // Add required sections
+    // add required sections
     addLineOptionsSection();
-    if (optionSet.getOptionsSize(Option.INT) != 0) {
+    if (fOptionSet.getOptionsSize(Option.INT) != 0) {
       addIntOptionsSection();
     }
-    if (optionSet.getOptionsSize(Option.BOOLEAN) != 0 || optionSet.getOptionsSize(Option.VOID) != 0) {
+    if (fOptionSet.getOptionsSize(Option.BOOLEAN) != 0 || fOptionSet.getOptionsSize(Option.VOID) != 0) {
       addBooleanOptionsSection();
     }
-    if (optionSet.getOptionsSize(Option.STRING) != 0) {
+    if (fOptionSet.getOptionsSize(Option.STRING) != 0) {
       addStringOptionsSection();
     }
-    if (optionSet.getOptionsSize(Option.PATH) != 0) {
+    if (fOptionSet.getOptionsSize(Option.PATH) != 0) {
       addPathOptionsSection();
     }
-    if (optionSet.getOptionsSize(Option.FILE) != 0) {
-      // Not shown when IResource is a project (irrevelant ... except for CSS for JJDoc)
-      if (resource.getType() != IResource.PROJECT) {
+    if (fOptionSet.getOptionsSize(Option.FILE) != 0) {
+      // not shown when IResource is a project (relevant ... except for CSS for JJDoc)
+      if (fResource.getType() != IResource.PROJECT) {
         addFileOptionsSection();
       }
     }
-    isUpdating = false;
+    fIsUpdating = false;
   }
 
   /**
@@ -121,15 +122,16 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
     final Composite composite = new Composite(this, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    optionsField = new StringFieldEditor(preferenceName,// name
-                                         "(Resulting) " + preferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$
-                                         StringFieldEditor.UNLIMITED, // width
-                                         StringFieldEditor.VALIDATE_ON_FOCUS_LOST,// strategy
-                                         composite);
-    // Copy to OptionsField
-    optionsField.setStringValue(optionSet.toString());
-    // Typing text automatically performs update of Controls
-    optionsField.setPropertyChangeListener(this);
+    fOptionsField = new StringFieldEditor(
+                                          fPreferenceName, // name
+                                          "(" + Activator.getString("JJAbstractTab.resulting") + ") " + fPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$
+                                          StringFieldEditor.UNLIMITED, // width
+                                          StringFieldEditor.VALIDATE_ON_FOCUS_LOST, // strategy
+                                          composite);
+    // copy to OptionsField
+    fOptionsField.setStringValue(fOptionSet.toString());
+    // typing text automatically performs update of Controls
+    fOptionsField.setPropertyChangeListener(this);
   }
 
   /**
@@ -139,60 +141,62 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
     final Composite composite = new Composite(this, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    // Adds EditFields for integer values
-    int nb = optionSet.getOptionsSize(Option.INT);
-    intField = new IntegerFieldEditor[nb];
+    // add EditFields for integer values
+    int nb = fOptionSet.getOptionsSize(Option.INT);
+    fIntField = new IntegerFieldEditor[nb];
     nb = 0;
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      if (optionSet.getType(i) != Option.INT) {
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      if (fOptionSet.getType(i) != Option.INT) {
         continue;
       }
-      final String label = optionSet.getNameAndDescription(i)
-                           + " (" + Activator.getString("JJAbstractTab.default") + optionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      intField[nb] = new IntegerFieldEditor(optionSet.getName(i), label, composite);
-      intField[nb].setPropertyChangeListener(this);
-      intField[nb].setEmptyStringAllowed(true);
-      // Sets IntegerFieldEditor value
-      intField[nb].setStringValue(optionSet.getValue(i));
+      final String label = fOptionSet.getNameAndDescription(i)
+                           + " (" + Activator.getString("JJAbstractTab.default") + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      fIntField[nb] = new IntegerFieldEditor(fOptionSet.getName(i), label, composite);
+      fIntField[nb].setPropertyChangeListener(this);
+      fIntField[nb].setEmptyStringAllowed(true);
+      // set IntegerFieldEditor value
+      fIntField[nb].setStringValue(fOptionSet.getValue(i));
       nb++;
     }
   }
 
   /**
-   * Shows boolean options with Checkboxes.
+   * Shows boolean options with checkboxes.
    */
   protected void addBooleanOptionsSection() {
-    // Aligns in 2 columns
+    // aligns in 2 columns
     final Composite composite = new Composite(this, SWT.NONE);
     composite.setLayout(new GridLayout(2, true));
     composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    // Adds Checkboxes for boolean values
-    int nb = optionSet.getOptionsSize(Option.BOOLEAN) + optionSet.getOptionsSize(Option.VOID);
-    checkField = new BooleanFieldEditor[nb];
+    // add checkboxes for boolean values
+    int nb = fOptionSet.getOptionsSize(Option.BOOLEAN) + fOptionSet.getOptionsSize(Option.VOID);
+    fCheckField = new BooleanFieldEditor[nb];
     nb = 0;
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      if (optionSet.getType(i) != Option.BOOLEAN) {
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      if (fOptionSet.getType(i) != Option.BOOLEAN) {
         continue;
       }
-      final String label = optionSet.getNameAndDescription(i)
-                           + " (" + Activator.getString("JJAbstractTab.default") + optionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      checkField[nb] = new BooleanFieldEditor(optionSet.getName(i), label, new Composite(composite, SWT.NONE));
-      checkField[nb].setPropertyChangeListener(this);
-      // Sets CheckBox state (BooleanFieldEditor subclassed for)
-      checkField[nb].setBooleanValue(optionSet.getValue(i).equals("true") ? true : false); //$NON-NLS-1$
+      final String label = fOptionSet.getNameAndDescription(i)
+                           + " (" + Activator.getString("JJAbstractTab.default") + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      fCheckField[nb] = new BooleanFieldEditor(fOptionSet.getName(i), label, new Composite(composite,
+                                                                                           SWT.NONE));
+      fCheckField[nb].setPropertyChangeListener(this);
+      // set checkbox state (BooleanFieldEditor subclassed for)
+      fCheckField[nb].setBooleanValue(fOptionSet.getValue(i).equals("true") ? true : false); //$NON-NLS-1$
       nb++;
     }
-    // Adds Checkboxes for void values
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      if (optionSet.getType(i) != Option.VOID) {
+    // add checkboxes for void values
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      if (fOptionSet.getType(i) != Option.VOID) {
         continue;
       }
-      final String label = optionSet.getNameAndDescription(i)
-                           + " (" + Activator.getString("JJAbstractTab.default") + optionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      checkField[nb] = new BooleanFieldEditor(optionSet.getName(i), label, new Composite(composite, SWT.NONE));
-      checkField[nb].setPropertyChangeListener(this);
-      // Sets CheckBox state (BooleanFieldEditor subclassed for)
-      checkField[nb].setBooleanValue(optionSet.getValue(i).equals("true") ? true : false); //$NON-NLS-1$
+      final String label = fOptionSet.getNameAndDescription(i)
+                           + " (" + Activator.getString("JJAbstractTab.default") + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      fCheckField[nb] = new BooleanFieldEditor(fOptionSet.getName(i), label, new Composite(composite,
+                                                                                           SWT.NONE));
+      fCheckField[nb].setPropertyChangeListener(this);
+      // set checkbox state (BooleanFieldEditor subclassed for)
+      fCheckField[nb].setBooleanValue(fOptionSet.getValue(i).equals("true") ? true : false); //$NON-NLS-1$
       nb++;
     }
   }
@@ -204,21 +208,21 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
     final Composite composite = new Composite(this, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    // Adds StringFields for text values
-    int nb = optionSet.getOptionsSize(Option.STRING);
-    stringField = new StringFieldEditor[nb];
+    // add StringFields for text values
+    int nb = fOptionSet.getOptionsSize(Option.STRING);
+    fStringField = new StringFieldEditor[nb];
     nb = 0;
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      if (optionSet.getType(i) != Option.STRING) {
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      if (fOptionSet.getType(i) != Option.STRING) {
         continue;
       }
-      final String label = optionSet.getNameAndDescription(i)
-                           + " (" + Activator.getString("JJAbstractTab.default") + optionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      stringField[nb] = new StringFieldEditor(optionSet.getName(i), label, composite);
-      stringField[nb].setPropertyChangeListener(this);
-      stringField[nb].setEmptyStringAllowed(true);
-      // Sets StringFieldEditor value
-      stringField[nb].setStringValue(optionSet.getValue(i));
+      final String label = fOptionSet.getNameAndDescription(i)
+                           + " (" + Activator.getString("JJAbstractTab.default") + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      fStringField[nb] = new StringFieldEditor(fOptionSet.getName(i), label, composite);
+      fStringField[nb].setPropertyChangeListener(this);
+      fStringField[nb].setEmptyStringAllowed(true);
+      // set StringFieldEditor value
+      fStringField[nb].setStringValue(fOptionSet.getValue(i));
       nb++;
     }
   }
@@ -237,20 +241,20 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
                                                    .setText(Activator
                                                                      .getString("JJAbstractTab.Path_can_be_pathSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    // Adds FileBrowser for path option
-    int nb = optionSet.getOptionsSize(Option.PATH);
-    pathField = new DirectoryFieldEditor[nb];
+    // add FileBrowser for path option
+    int nb = fOptionSet.getOptionsSize(Option.PATH);
+    fPathField = new DirectoryFieldEditor[nb];
     nb = 0;
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      if (optionSet.getType(i) != Option.PATH) {
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      if (fOptionSet.getType(i) != Option.PATH) {
         continue;
       }
-      pathField[nb] = new DirectoryFieldEditor(optionSet.getName(i), optionSet.getNameAndDescription(i),
-                                               Activator.getString("JJAbstractTab.Choose_a_directory"), //$NON-NLS-1$
-                                               resource.getProject().getLocation().toOSString(), composite);
-      pathField[nb].setPropertyChangeListener(this);
-      // Sets DirectoryFieldEditor value
-      pathField[nb].setStringValue(optionSet.getValueNoQuotes(i));
+      fPathField[nb] = new DirectoryFieldEditor(fOptionSet.getName(i), fOptionSet.getNameAndDescription(i),
+                                                Activator.getString("JJAbstractTab.Choose_a_directory"), //$NON-NLS-1$
+                                                fResource.getProject().getLocation().toOSString(), composite);
+      fPathField[nb].setPropertyChangeListener(this);
+      // set DirectoryFieldEditor value
+      fPathField[nb].setStringValue(fOptionSet.getValueNoQuotes(i));
       nb++;
     }
   }
@@ -267,18 +271,19 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
                                                    .setText(Activator
                                                                      .getString("JJAbstractTab.Path_can_be_FileSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    // Adds FileBrowser for file option
-    int nb = optionSet.getOptionsSize(Option.FILE);
-    fileField = new FileFieldEditor[nb];
+    // add FileBrowser for file option
+    int nb = fOptionSet.getOptionsSize(Option.FILE);
+    fFileField = new FileFieldEditor[nb];
     nb = 0;
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      if (optionSet.getType(i) != Option.FILE) {
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      if (fOptionSet.getType(i) != Option.FILE) {
         continue;
       }
-      fileField[nb] = new FileFieldEditor(optionSet.getName(i), optionSet.getNameAndDescription(i), composite);
-      fileField[nb].setPropertyChangeListener(this);
-      // Sets FileFieldEditor value
-      fileField[nb].setStringValue(optionSet.getValueNoQuotes(i));
+      fFileField[nb] = new FileFieldEditor(fOptionSet.getName(i), fOptionSet.getNameAndDescription(i),
+                                           composite);
+      fFileField[nb].setPropertyChangeListener(this);
+      // set FileFieldEditor value
+      fFileField[nb].setStringValue(fOptionSet.getValueNoQuotes(i));
       nb++;
     }
   }
@@ -289,11 +294,11 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * @see PreferencePage
    */
   public void performDefaults() {
-    // Reset the optionSet
-    optionSet.resetToDefaultValues();
-    // Reset global line options field
-    optionsField.setStringValue(null);
-    // Set Fields according to Options
+    // reset the optionSet
+    fOptionSet.resetToDefaultValues();
+    // reset global line options field
+    fOptionsField.setStringValue(null);
+    // set Fields according to Options
     updateFieldsValues();
   }
 
@@ -301,34 +306,35 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * Updates all fields according to optionSet.
    */
   protected void updateFieldsValues() {
-    // Set Fields values according to optionSet
+    // set Fields values according to optionSet
     int nBoolean = 0;
     int nInteger = 0;
     int nString = 0;
     int nPath = 0;
     int nFile = 0;
-    for (int i = 0; i < optionSet.getOptionsSize(); i++) {
-      final String txt = optionSet.getValueNoQuotes(i);
-      if (optionSet.getType(i) == Option.BOOLEAN || optionSet.getType(i) == Option.VOID) {
+    for (int i = 0; i < fOptionSet.getOptionsSize(); i++) {
+      final String txt = fOptionSet.getValueNoQuotes(i);
+      final int type = fOptionSet.getType(i);
+      if (type == Option.BOOLEAN || type == Option.VOID) {
         final boolean state = txt.equals("true") ? true : false; //$NON-NLS-1$
-        checkField[nBoolean].setBooleanValue(state);
+        fCheckField[nBoolean].setBooleanValue(state);
         nBoolean++;
       }
-      else if (optionSet.getType(i) == Option.INT) {
-        intField[nInteger].setStringValue(txt);
+      else if (type == Option.INT) {
+        fIntField[nInteger].setStringValue(txt);
         nInteger++;
       }
-      else if (optionSet.getType(i) == Option.STRING) {
-        stringField[nString].setStringValue(txt);
+      else if (type == Option.STRING) {
+        fStringField[nString].setStringValue(txt);
         nString++;
       }
-      else if (optionSet.getType(i) == Option.PATH) {
-        pathField[nPath].setStringValue(txt);
+      else if (type == Option.PATH) {
+        fPathField[nPath].setStringValue(txt);
         nPath++;
       }
-      else if (optionSet.getType(i) == Option.FILE) {
-        if (fileField != null) {
-          fileField[nFile].setStringValue(txt);
+      else if (type == Option.FILE) {
+        if (fFileField != null) {
+          fFileField[nFile].setStringValue(txt);
         }
         nFile++;
       }
@@ -341,13 +347,13 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * @return true if OK, false otherwise
    */
   public boolean performOk() {
-    final String options = optionsField.getStringValue();
-    final IResource res = this.resource;
+    final String options = fOptionsField.getStringValue();
+    final IResource res = this.fResource;
     if (res != null) {
       final IProject proj = res.getProject();
       final IScopeContext projectScope = new ProjectScope(proj);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-      prefs.put(preferenceName, options);
+      prefs.put(fPreferenceName, options);
       try {
         prefs.flush();
       } catch (final BackingStoreException e) {
@@ -361,80 +367,80 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
   /**
    * Listens to changes from booleanField, intFields, stringFields, pathField
    * 
-   * @param e the property change event object describing which property changed and how
+   * @param aEvent the property change event object describing which property changed and how
    * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
    */
-  public void propertyChange(final PropertyChangeEvent e) {
-    if (!e.getProperty().equals("field_editor_value")) { //$NON-NLS-1$
+  public void propertyChange(final PropertyChangeEvent aEvent) {
+    if (!aEvent.getProperty().equals("field_editor_value")) { //$NON-NLS-1$
       return;
     }
-    if (isUpdating) {
+    if (fIsUpdating) {
       return;
     }
-    // Handles special case where the command line field is modified.
-    if (e.getSource() == optionsField) {
-      optionSet.configuresFrom(optionsField.getStringValue());
-      isUpdating = true;
+    // handle special case where the command line field is modified
+    if (aEvent.getSource() == fOptionsField) {
+      fOptionSet.configuresFrom(fOptionsField.getStringValue());
+      fIsUpdating = true;
       updateFieldsValues();
-      isUpdating = false;
+      fIsUpdating = false;
     }
     else {
-      final FieldEditor field = (FieldEditor) e.getSource();
-      // Which option ?
+      final FieldEditor field = (FieldEditor) aEvent.getSource();
+      // which option ?
       int iOption;
-      for (iOption = 0; iOption < optionSet.getOptionsSize(); iOption++) {
-        final String name = optionSet.getName(iOption);
+      for (iOption = 0; iOption < fOptionSet.getOptionsSize(); iOption++) {
+        final String name = fOptionSet.getName(iOption);
         final String fieldPrefName = field.getPreferenceName();
         if (fieldPrefName.equals(name)) {
           break;
         }
       }
-      // Handles a change in an BooleanFieldEditor.
-      if (e.getSource() instanceof BooleanFieldEditor) {
-        final BooleanFieldEditor bfield = (BooleanFieldEditor) e.getSource();
-        // Fix option according to the new Boolean value.
-        optionSet.getOption(iOption).setValue(bfield.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+      // handle a change in an BooleanFieldEditor
+      if (aEvent.getSource() instanceof BooleanFieldEditor) {
+        final BooleanFieldEditor bfield = (BooleanFieldEditor) aEvent.getSource();
+        // Fix option according to the new Boolean value
+        fOptionSet.getOption(iOption).setValue(bfield.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      // Handles a change in an IntegerFieldEditor.
-      else if (e.getSource() instanceof IntegerFieldEditor) {
-        final IntegerFieldEditor ifield = (IntegerFieldEditor) e.getSource();
-        // Fix option according to the new Integer value.
-        optionSet.getOption(iOption).setValue(ifield.getStringValue());
+      // handle a change in an IntegerFieldEditor
+      else if (aEvent.getSource() instanceof IntegerFieldEditor) {
+        final IntegerFieldEditor ifield = (IntegerFieldEditor) aEvent.getSource();
+        // Fix option according to the new Integer value
+        fOptionSet.getOption(iOption).setValue(ifield.getStringValue());
       }
-      // Handles a change in DirectoryFieldEditor.
-      else if (e.getSource() instanceof DirectoryFieldEditor) {
-        final DirectoryFieldEditor sfield = (DirectoryFieldEditor) e.getSource();
-        // Sets option according to the new String value.
+      // handle a change in DirectoryFieldEditor.
+      else if (aEvent.getSource() instanceof DirectoryFieldEditor) {
+        final DirectoryFieldEditor sfield = (DirectoryFieldEditor) aEvent.getSource();
+        // set option according to the new String value
         final String val = sfield.getStringValue();
-        // Adds quotes to take care of path with spaces
+        // add quotes to take care of path with spaces
         if (val.indexOf(' ') != -1) {
-          optionSet.getOption(iOption).setValue("\"" + val + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+          fOptionSet.getOption(iOption).setValue("\"" + val + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else {
-          optionSet.getOption(iOption).setValue(val);
+          fOptionSet.getOption(iOption).setValue(val);
         }
       }
-      // Handles a change in FileFieldEditor.
-      else if (e.getSource() instanceof FileFieldEditor) {
-        final FileFieldEditor sfield = (FileFieldEditor) e.getSource();
-        // Sets option according to the new String value.
+      // handle a change in FileFieldEditor
+      else if (aEvent.getSource() instanceof FileFieldEditor) {
+        final FileFieldEditor sfield = (FileFieldEditor) aEvent.getSource();
+        // set option according to the new String value
         final String val = sfield.getStringValue();
-        // Adds quotes to take care of path with spaces
+        // add quotes to take care of path with spaces
         if (val.indexOf(' ') != -1) {
-          optionSet.getOption(iOption).setValue("\"" + val + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+          fOptionSet.getOption(iOption).setValue("\"" + val + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else {
-          optionSet.getOption(iOption).setValue(val);
+          fOptionSet.getOption(iOption).setValue(val);
         }
       }
-      // Handles a change in StringFieldEditor.
-      else if (e.getSource() instanceof StringFieldEditor) {
-        final StringFieldEditor sfield = (StringFieldEditor) e.getSource();
-        // Sets option according to the new String value.
-        optionSet.getOption(iOption).setValue(sfield.getStringValue());
+      // handle a change in StringFieldEditor
+      else if (aEvent.getSource() instanceof StringFieldEditor) {
+        final StringFieldEditor sfield = (StringFieldEditor) aEvent.getSource();
+        // set option according to the new String value
+        fOptionSet.getOption(iOption).setValue(sfield.getStringValue());
       }
-      // Updates optionsField
-      optionsField.setStringValue(optionSet.toString());
+      // update optionsField
+      fOptionsField.setStringValue(fOptionSet.toString());
     }
   }
 }

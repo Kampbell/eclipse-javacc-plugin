@@ -1,15 +1,15 @@
 package sf.eclipse.javacc.editors;
 
 /**
- * Editor designed for JTB files (almost the same as JJEditor except for the context id). Referenced by
- * plugin.xml<br>
+ * Editor designed for JTB files (almost the same as JJEditor except for the context id).<br>
+ * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.editors">
  * 
- * @author Marc Mazas 2009
+ * @author Marc Mazas 2009-2010
  */
 public class JTBEditor extends JJEditor {
 
-  // MMa 11/09 : created from JJEditor to allow proper context menu
+  // MMa 11/2009 : created from JJEditor to allow proper context menu
 
   /**
    * Standard constructor.

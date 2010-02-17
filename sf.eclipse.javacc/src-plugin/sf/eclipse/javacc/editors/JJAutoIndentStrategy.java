@@ -14,14 +14,14 @@ import sf.eclipse.javacc.options.JJPreferences;
  * Auto indent strategy sensitive to newlines, braces, parenthesis, vertical bar, angle brackets and colons.
  * 
  * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy
- * @author Remi Koutcherawy 2003-2006 CeCILL License http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009 (refactoring and adaptation to JJFormat indentation rules)
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision ; removed newlines around '(' and ')'
-   */
+  // MMa 11/2009 : javadoc and formatting revision ; removed newlines around '(' and ')'
+  // MMa 02/2010 : formatting and javadoc revision
+
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
    * 
@@ -87,7 +87,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       final int firstNonWS = findEndOfWhiteSpace(doc, startPos, cmd.offset);
       // currIndent is the current line indentation string
       final String currIndent = doc.get(startPos, firstNonWS - startPos);
-      // keep current identation and add it to the command
+      // keep current indentation and add it to the command
       // set the replacement document command text
       cmd.text += currIndent;
     } catch (final BadLocationException e) {
@@ -142,7 +142,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       }
       else {
         // case newline at the beginning of a line (after whitespaces)
-        // we assume current indentation is ok
+        // we assume current indentation is OK
         // just add the current indentation to the command
         sb.append(cmd.text).append(currIndent);
       }
@@ -350,7 +350,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       }
       else {
         // case '(' at the beginning of a line (after whitespaces)
-        // assume current indentation is ok
+        // assume current indentation is OK
         // add the left parenthesis, a new line and an incremented indentation
         sb.append('(');
         sb.append(eol).append(currIndent).append(JJCodeScanner.getIndentString());

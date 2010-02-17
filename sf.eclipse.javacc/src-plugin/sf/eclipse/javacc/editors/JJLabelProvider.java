@@ -16,49 +16,49 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 /**
  * LabelProvider for JJOutline.
  * 
- * @author Remi Koutcherawy 2003-2006 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJLabelProvider extends LabelProvider {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision ; added javacode and token_mgr_decls entries
-   */
-  /** the images hashmap */
+  // MMa 11/2009 : javadoc and formatting revision ; added javacode and token_mgr_decls entries
+  // MMa 02/2010 : formatting and javadoc revision
+
+  /** The images HashMap */
   private final HashMap<ImageDescriptor, Image> imgHashMap = new HashMap<ImageDescriptor, Image>(16);
-  /** the option image descriptor */
-  ImageDescriptor                               desc_option;
-  /** the parser image descriptor */
-  ImageDescriptor                               desc_parser;
-  /** the token image descriptor */
-  ImageDescriptor                               desc_token;
-  /** the rule image descriptor */
-  ImageDescriptor                               desc_rule;
-  /** the expression image descriptor */
-  ImageDescriptor                               desc_expr;
-  /** the class image descriptor */
-  ImageDescriptor                               desc_class;
-  /** the method image descriptor */
-  ImageDescriptor                               desc_method;
-  /** the javacode image descriptor */
-  ImageDescriptor                               desc_javacode;
-  /** the token_mgr_decls image descriptor */
-  ImageDescriptor                               desc_tmdecl;
+  /** The option image descriptor */
+  ImageDescriptor                               fDesc_option;
+  /** The parser image descriptor */
+  ImageDescriptor                               fDesc_parser;
+  /** The token image descriptor */
+  ImageDescriptor                               fDesc_token;
+  /** The rule image descriptor */
+  ImageDescriptor                               fDesc_rule;
+  /** The expression image descriptor */
+  ImageDescriptor                               fDesc_expr;
+  /** The class image descriptor */
+  ImageDescriptor                               fDesc_class;
+  /** The method image descriptor */
+  ImageDescriptor                               fDesc_method;
+  /** The javacode image descriptor */
+  ImageDescriptor                               fDesc_javacode;
+  /** The token_mgr_decls image descriptor */
+  ImageDescriptor                               fDesc_tmdecl;
 
   /**
    * To Decorate the Outline View, simply Text and Image
    */
   public JJLabelProvider() {
     super();
-    desc_option = Activator.getImageDescriptor("jj_option.gif"); //$NON-NLS-1$
-    desc_parser = Activator.getImageDescriptor("jj_parser.gif"); //$NON-NLS-1$
-    desc_token = Activator.getImageDescriptor("jj_token.gif"); //$NON-NLS-1$
-    desc_rule = Activator.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
-    desc_expr = Activator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
-    desc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
-    desc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
-    desc_javacode = Activator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
-    desc_tmdecl = Activator.getImageDescriptor("jj_tmd.gif"); //$NON-NLS-1$
+    fDesc_option = Activator.getImageDescriptor("jj_option.gif"); //$NON-NLS-1$
+    fDesc_parser = Activator.getImageDescriptor("jj_parser.gif"); //$NON-NLS-1$
+    fDesc_token = Activator.getImageDescriptor("jj_token.gif"); //$NON-NLS-1$
+    fDesc_rule = Activator.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
+    fDesc_expr = Activator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
+    fDesc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
+    fDesc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
+    fDesc_javacode = Activator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
+    fDesc_tmdecl = Activator.getImageDescriptor("jj_tmd.gif"); //$NON-NLS-1$
   }
 
   /**
@@ -66,37 +66,37 @@ public class JJLabelProvider extends LabelProvider {
    */
   @Override
   public Image getImage(final Object anElement) {
-    ImageDescriptor desc = desc_expr;
+    ImageDescriptor desc = fDesc_expr;
     final JJNode node = (JJNode) anElement;
     if (node.getId() == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS) {
-      desc = desc_option;
+      desc = fDesc_option;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTOPTION_BINDING) {
-      desc = desc_option;
+      desc = fDesc_option;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTPARSER_BEGIN) {
-      desc = desc_parser;
+      desc = fDesc_parser;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION) {
-      desc = desc_token;
+      desc = fDesc_token;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTBNF_PRODUCTION) {
-      desc = desc_rule;
+      desc = fDesc_rule;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTREGEXPR_SPEC) {
-      desc = desc_expr;
+      desc = fDesc_expr;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION) {
-      desc = desc_class;
+      desc = fDesc_class;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTMETHODDECLARATION) {
-      desc = desc_method;
+      desc = fDesc_method;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTTOKEN_MANAGER_DECLS) {
-      desc = desc_tmdecl;
+      desc = fDesc_tmdecl;
     }
     else if (node.getId() == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION) {
-      desc = desc_javacode;
+      desc = fDesc_javacode;
     }
     else {
       //      System.out.println("JJLabelProvider Id "+node.getId());
@@ -117,11 +117,11 @@ public class JJLabelProvider extends LabelProvider {
    * @see sf.eclipse.javacc.parser.JJNode#addCaller(JJNode)
    */
   @Override
-  public String getText(final Object anElement) {
-    if (anElement instanceof JJNode) {
-      return ((JJNode) anElement).getLabeledName();
+  public String getText(final Object aElement) {
+    if (aElement instanceof JJNode) {
+      return ((JJNode) aElement).getLabeledName();
     }
-    return anElement.toString();
+    return aElement.toString();
   }
 
   /**

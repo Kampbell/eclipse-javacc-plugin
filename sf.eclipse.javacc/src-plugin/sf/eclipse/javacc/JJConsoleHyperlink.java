@@ -31,41 +31,53 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Hyperlinks for JJConsole, a simplified version of org.eclipse.ui.forms.widgets.Hyperlink which are
  * underlined but... too complex, for me at least.
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJConsoleHyperlink implements IJJConstants {
 
-  // MMa 04/09 : formatting and javadoc revision ; managed JJEditor / JTBEditor
+  // MMa 04/2009 : formatting and javadoc revision ; managed JJEditor / JTBEditor
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** the offset of text to mark */
-  private final int   fOffset;
-  /** the length of text to mark */
-  private final int   fLength;
-  /** the target of Hyperlink */
-  private final IFile fFile;
-  /** the line number in the target */
-  private final int   fFileLine;
-  /** the column number in the target */
-  private final int   fFileCol;
+  /** The offset of text to mark */
+  private final int                       fOffset;
+  /** The length of text to mark */
+  private final int                       fLength;
+  /** The target of Hyperlink */
+  private final IFile                     fFile;
+  /** The line number in the target */
+  private final int                       fFileLine;
+  /** The column number in the target */
+  private final int                       fFileCol;
+  /** The "hand" cursor reference */
+  static Cursor                           fHandCursor;
+  /** The "busy" cursor reference */
+  static Cursor                           fBusyCursor;
+  /** True if mouse has been clicked down */
+  static boolean                          fMouseDown;
+  /** True if a drag event happened */
+  static boolean                          fDragEvent;
+  /** The list of hyperlinks */
+  static private List<JJConsoleHyperlink> fLinksList = new ArrayList<JJConsoleHyperlink>();
+  /** The (single) StyledText console */
+  static private StyledText               fStyledText;
 
   /**
    * Constructs a hyperlink in the StyledText to the specified file.
    * 
-   * @param offset the offset of text to mark
-   * @param length the lengty of text to mark
-   * @param file the target of Hyperlink
-   * @param line the line number in the target
-   * @param col the column number in the target
+   * @param aOffset the offset of text to mark
+   * @param aLength the length of text to mark
+   * @param aFile the target of Hyperlink
+   * @param aLine the line number in the target
+   * @param aCol the column number in the target
    */
-  public JJConsoleHyperlink(final int offset, final int length, final IFile file, final int line,
-                            final int col) {
-    fOffset = offset;
-    fLength = length;
-    fFile = file;
-    fFileLine = line;
-    fFileCol = col;
-
+  public JJConsoleHyperlink(final int aOffset, final int aLength, final IFile aFile, final int aLine,
+                            final int aCol) {
+    fOffset = aOffset;
+    fLength = aLength;
+    fFile = aFile;
+    fFileLine = aLine;
+    fFileCol = aCol;
     addStyleToStyledText();
   }
 
@@ -89,7 +101,6 @@ public class JJConsoleHyperlink implements IJJConstants {
           final IEditorInput input = editorPart.getEditorInput();
           final IDocumentProvider provider = textEditor.getDocumentProvider();
           provider.connect(input);
-
           final IDocument doc = provider.getDocument(input);
           final int offset = doc.getLineOffset(fFileLine) + fFileCol;
           textEditor.selectAndReveal(offset, 0);
@@ -115,9 +126,8 @@ public class JJConsoleHyperlink implements IJJConstants {
     style.fontStyle = SWT.BOLD;
     style.underline = true; // Only for Eclipse 3.1
     fStyledText.setStyleRange(style);
-
     // keep a reference to self, in a List used when activated.
-    linksList.add(this);
+    fLinksList.add(this);
   }
 
   /**
@@ -125,39 +135,23 @@ public class JJConsoleHyperlink implements IJJConstants {
    * @return true is this link is at the given character location, false otherwise
    */
   boolean isLinkAt(final int offset) {
-    // Check if there is a link at the offset
+    // check if there is a link at the offset
     if (offset >= fOffset && offset < fOffset + fLength) {
       return true;
     }
     return false;
   }
 
-  /*
-   * Static references and methods. This class manages all Links.
-   */
-  /** the "hand" cursor reference */
-  static Cursor                           handCursor;
-  /** the "busy" cursor reference */
-  static Cursor                           busyCursor;
-  /** true if mouse has been clicked down */
-  static boolean                          mouseDown;
-  /** true if a drag event happened */
-  static boolean                          dragEvent;
-  /** the list of hyperlinks */
-  static private List<JJConsoleHyperlink> linksList = new ArrayList<JJConsoleHyperlink>();
-  /** the (single) StyledText console */
-  static private StyledText               fStyledText;
-
   /**
-   * @param offset the offset in the text
+   * @param aOffset the offset in the text
    * @return the link if any at the given character location
    */
-  static JJConsoleHyperlink getLinkAt(final int offset) {
+  static JJConsoleHyperlink getLinkAt(final int aOffset) {
     JJConsoleHyperlink link;
-    final Iterator<JJConsoleHyperlink> iter = linksList.iterator();
+    final Iterator<JJConsoleHyperlink> iter = fLinksList.iterator();
     while (iter.hasNext()) {
       link = iter.next();
-      if (link.isLinkAt(offset)) {
+      if (link.isLinkAt(aOffset)) {
         return link;
       }
     }
@@ -168,76 +162,76 @@ public class JJConsoleHyperlink implements IJJConstants {
    * Clears all links for the StyledText widget.
    */
   static public void clear() {
-    linksList.clear();
+    fLinksList.clear();
     fStyledText.setStyleRanges(new StyleRange[0]);
   }
 
   /**
    * Adds listeners on the StyledText.
    * 
-   * @param styledText the StyledText to listen to
+   * @param aStyledText the StyledText to listen to
    */
-  static public void setViewer(final StyledText styledText) {
-    // Keep a static reference to used StyledText
-    fStyledText = styledText;
+  static public void setViewer(final StyledText aStyledText) {
+    // keep a static reference to used StyledText
+    fStyledText = aStyledText;
 
-    // Initialize cursors if not already done
-    if (handCursor == null) {
-      handCursor = styledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
-      busyCursor = styledText.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
+    // initialize cursors if not already done
+    if (fHandCursor == null) {
+      fHandCursor = aStyledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+      fBusyCursor = aStyledText.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
     }
-    // Add Listeners to the Viewer
-    // Activate link on a mouse clic
-    styledText.addMouseListener(new MouseAdapter() {
+    // add Listeners to the Viewer
+    // activate link on a mouse click
+    aStyledText.addMouseListener(new MouseAdapter() {
 
       @Override
       public void mouseDown(final MouseEvent e) {
         if (e.button != 1) {
           return;
         }
-        mouseDown = true;
+        fMouseDown = true;
       }
 
       @Override
-      public void mouseUp(final MouseEvent e) {
-        mouseDown = false;
-        final StyledText stTxt = (StyledText) e.widget;
+      public void mouseUp(final MouseEvent event) {
+        fMouseDown = false;
+        final StyledText stTxt = (StyledText) event.widget;
         final int offset = stTxt.getCaretOffset();
         final JJConsoleHyperlink link = getLinkAt(offset);
         if (link == null) {
           return;
         }
-        if (dragEvent) {
-          dragEvent = false;
+        if (fDragEvent) {
+          fDragEvent = false;
           if (link.isLinkAt(offset)) {
-            stTxt.setCursor(handCursor);
+            stTxt.setCursor(fHandCursor);
           }
         }
         else if (link.isLinkAt(offset)) {
-          stTxt.setCursor(busyCursor);
-          if (e.button == 1) {
+          stTxt.setCursor(fBusyCursor);
+          if (event.button == 1) {
             link.linkActivated();
             stTxt.setCursor(null);
           }
         }
       }
     });
-    // Change to hand cursor on a link
-    styledText.addMouseMoveListener(new MouseMoveListener() {
+    // change to hand cursor on a link
+    aStyledText.addMouseMoveListener(new MouseMoveListener() {
 
-      public void mouseMove(final MouseEvent e) {
-        final StyledText stTxt = (StyledText) e.widget;
-        // Do not change cursor on drag events
-        if (mouseDown) {
-          if (!dragEvent) {
+      public void mouseMove(final MouseEvent event) {
+        final StyledText stTxt = (StyledText) event.widget;
+        // do not change cursor on drag events
+        if (fMouseDown) {
+          if (!fDragEvent) {
             stTxt.setCursor(null);
           }
-          dragEvent = true;
+          fDragEvent = true;
           return;
         }
         int offset = -1;
         try {
-          offset = stTxt.getOffsetAtLocation(new Point(e.x, e.y));
+          offset = stTxt.getOffsetAtLocation(new Point(event.x, event.y));
         } catch (final IllegalArgumentException ex) {
           // location is not over a character, leave as -1
         }
@@ -245,7 +239,7 @@ public class JJConsoleHyperlink implements IJJConstants {
           stTxt.setCursor(null);
         }
         else if (getLinkAt(offset) != null) {
-          stTxt.setCursor(handCursor);
+          stTxt.setCursor(fHandCursor);
         }
         else {
           stTxt.setCursor(null);

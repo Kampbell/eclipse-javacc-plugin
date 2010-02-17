@@ -12,49 +12,53 @@ import sf.eclipse.javacc.Activator;
 /**
  * Class used to initialize default preference values.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL License http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
-// ModMMa : added / renamed colors and indentation preferences
 public class JJPreferences extends AbstractPreferenceInitializer {
-  /** JavaCC non automatic identation preference */
-  public static final String P_NO_ADV_AUTO_INDENT  = "JavaCCNoAutoIndentPref"; //$NON-NLS-1$
-  /** JavaCC identation character preference */
-  public static final String P_INDENT_CHAR     = "JavaCCIndentCharPref";   //$NON-NLS-1$
-  /** JavaCC number of identation character preference */
-  public static final String P_INDENT_CHAR_NB  = "JavaCCIndentCharNbPref"; //$NON-NLS-1$
+
+  // MMa 02/2010 : formatting and javadoc revision
+  // MMa : added / renamed colors and indentation preferences
+
+  /** JavaCC non automatic indentation preference */
+  public static final String P_NO_ADV_AUTO_INDENT = "JavaCCNoAutoIndentPref"; //$NON-NLS-1$
+  /** JavaCC indentation character preference */
+  public static final String P_INDENT_CHAR        = "JavaCCIndentCharPref";   //$NON-NLS-1$
+  /** JavaCC number of indentation character preference */
+  public static final String P_INDENT_CHAR_NB     = "JavaCCIndentCharNbPref"; //$NON-NLS-1$
   /** JavaCC keyword color preference */
-  public static final String P_JJKEYWORD       = "JavaCCKeyWordColorPref"; //$NON-NLS-1$
+  public static final String P_JJKEYWORD          = "JavaCCKeyWordColorPref"; //$NON-NLS-1$
   /** Java keyword color preference */
-  public static final String P_JAVAKEYWORD     = "JavaKeyWordColorPref";   //$NON-NLS-1$
+  public static final String P_JAVAKEYWORD        = "JavaKeyWordColorPref";   //$NON-NLS-1$
   /** Background color preference */
-  public static final String P_BACKGROUND      = "BackgroundColorPref";    //$NON-NLS-1$
+  public static final String P_BACKGROUND         = "BackgroundColorPref";    //$NON-NLS-1$
   /** String color preference */
-  public static final String P_STRING          = "StringColorPref";        //$NON-NLS-1$
+  public static final String P_STRING             = "StringColorPref";        //$NON-NLS-1$
   /** Comment color preference */
-  public static final String P_COMMENT         = "CommentColorPref";       //$NON-NLS-1$
+  public static final String P_COMMENT            = "CommentColorPref";       //$NON-NLS-1$
   /** Javadoc comment color preference */
-  public static final String P_JDOC_COMMENT    = "JavaDocCommentColorPref"; //$NON-NLS-1$
+  public static final String P_JDOC_COMMENT       = "JavaDocCommentColorPref"; //$NON-NLS-1$
   /** Normal label identifier color preference */
-  public static final String P_NORMALLABEL     = "TokenColorPref";         //$NON-NLS-1$
+  public static final String P_NORMALLABEL        = "TokenColorPref";         //$NON-NLS-1$
   /** Private label identifier color preference */
-  public static final String P_PRIVATELABEL    = "PrivateTokenColorPref";  //$NON-NLS-1$
+  public static final String P_PRIVATELABEL       = "PrivateTokenColorPref";  //$NON-NLS-1$
   /** Lexical state list or lexical state identifier color preference */
-  public static final String P_LEXICALSTATE    = "LexicalStateColorPref";  //$NON-NLS-1$
+  public static final String P_LEXICALSTATE       = "LexicalStateColorPref";  //$NON-NLS-1$
   /** Regular_expression punctuation color preference */
-  public static final String P_REGEXPUNCT      = "RegExPunctColorPref";    //$NON-NLS-1$
+  public static final String P_REGEXPUNCT         = "RegExPunctColorPref";    //$NON-NLS-1$
   /** Choices enclosing punctuation color preference */
-  public static final String P_CHOICESPUNCT    = "ChoicesPunctColorPref";  //$NON-NLS-1$
+  public static final String P_CHOICESPUNCT       = "ChoicesPunctColorPref";  //$NON-NLS-1$
   /** Default color preference */
-  public static final String P_DEFAULT         = "DefaultTextColorPref";   //$NON-NLS-1$
+  public static final String P_DEFAULT            = "DefaultTextColorPref";   //$NON-NLS-1$
   /** Matching opening/closing character color preference */
-  public static final String P_MATCHING_CHAR   = "MatchingCharColorPref";  //$NON-NLS-1$
+  public static final String P_MATCHING_CHAR      = "MatchingCharColorPref";  //$NON-NLS-1$
   /** Console command color preference */
-  public static final String P_CONSOLE_COMMAND = "ConsoleCommandColorPref"; //$NON-NLS-1$
+  public static final String P_CONSOLE_COMMAND    = "ConsoleCommandColorPref"; //$NON-NLS-1$
 
   /**
-   * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+   * @see AbstractPreferenceInitializer#initializeDefaultPreferences()
    */
+  @Override
   public void initializeDefaultPreferences() {
     final Display display = Display.getCurrent();
     final IPreferenceStore store = Activator.getDefault().getPreferenceStore();

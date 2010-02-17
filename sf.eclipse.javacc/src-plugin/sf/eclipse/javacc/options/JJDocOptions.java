@@ -6,12 +6,15 @@ import org.eclipse.swt.widgets.Composite;
 import sf.eclipse.javacc.IJJConstants;
 
 /**
- * The Tab for JJDoc options
+ * The Tab for JJDoc options.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL License http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJDocOptions extends JJAbstractTab implements IJJConstants {
+
+  // MMa 02/2010 : formatting and javadoc revision
+
   // TEXT (default false) 
   //     Setting TEXT to true causes JJDoc to generate a plain text.
   // BNF (default false)
@@ -24,41 +27,46 @@ public class JJDocOptions extends JJAbstractTab implements IJJConstants {
   //     This option allows you to specify a CSS file name. 
 
   /**
-   * Initialize with JJDoc known options
+   * Initializes with JJDoc known options.
+   * 
+   * @param parent the parent
+   * @param res the resource
    */
-  public JJDocOptions(Composite parent, IResource res) {
+  public JJDocOptions(final Composite parent, final IResource res) {
     super(parent, res);
- 
+
     // All options are saved in a single property
-    preferenceName = JJDOC_OPTIONS;
-    optionSet = new OptionSet();
+    fPreferenceName = JJDOC_OPTIONS;
+    fOptionSet = new OptionSet();
 
     // int options
     // boolean options
-    optionSet.add(new Option("TEXT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("BNF", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("ONE_TABLE", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("TEXT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("BNF", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("ONE_TABLE", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     // string options    
     // path options
     // file options
-    optionSet.add(new Option("CSS", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
-    optionSet.add(new Option("OUTPUT_FILE", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("CSS", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("OUTPUT_FILE", "", Option.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // Fix values to default values
-    optionSet.resetToDefaultValues();
-    
+    fOptionSet.resetToDefaultValues();
+
     // Super class fills the content from property and optionSet
     createContents();
-    
+
     // For JJDoc add a section for File options at the project level
-    if (resource.getType() == IResource.PROJECT) 
+    if (fResource.getType() == IResource.PROJECT) {
       addFileOptionsSection();
+    }
   }
-  
+
   /**
-   * Set defaults in Eclipse
+   * Sets defaults in Eclipse.
    */
+  @Override
   public void performDefaults() {
     super.performDefaults();
-  }  
+  }
 }

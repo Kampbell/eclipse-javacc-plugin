@@ -3,6 +3,8 @@ package sf.eclipse.javacc;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -19,28 +21,31 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 import sf.eclipse.javacc.options.OptionSet;
 
 /**
- * Builder for .jj, .jjt and .jtb files. Referenced by plugin.xml<br>
+ * Builder for .jj, .jjt and .jtb files. It is also used to compile files via static methods.<br>
+ * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.core.resources.builders">.<br>
- * It is also used to compile files via static methods.
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJBuilder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor,
                                                         IJJConstants {
 
-  // MMa 11/09 : javadoc and formatting revision ; changed jar names
+  // MMa 11/2009 : javadoc and formatting revision ; changed jar names
+  // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
 
-  /** the java project (needed to test if the resource is on class path) */
-  protected IJavaProject javaProject;
-  /** the output folder */
-  protected IPath        outputFolder;
+  /** The java project (needed to test if the resource is on class path) */
+  protected IJavaProject fJavaProject;
+  /** The output folder */
+  protected IPath        fOutputFolder;
 
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>.
@@ -59,10 +64,10 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   @Override
   protected IProject[] build(final int kind, @SuppressWarnings("unused") final Map args,
                              final IProgressMonitor monitor) throws CoreException {
-    // These are Constants on the build
-    javaProject = JavaCore.create(getProject());
-    outputFolder = javaProject.getOutputLocation().removeFirstSegments(1);
-    // Clear only once
+    // these are Constants on the build
+    fJavaProject = JavaCore.create(getProject());
+    fOutputFolder = fJavaProject.getOutputLocation().removeFirstSegments(1);
+    // clear only once
     clearConsole();
 
     if (kind == IncrementalProjectBuilder.FULL_BUILD) {
@@ -75,7 +80,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     else if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
       clean(monitor);
     }
-    // Refresh the whole project
+    // refresh the whole project
     getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
     return null;
   }
@@ -149,7 +154,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * Visits the given resource delta.
    * 
    * @exception CoreException if this visit fails
-   * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+   * @see IResourceDeltaVisitor#visit(IResourceDelta)
    */
   public boolean visit(final IResourceDelta delta) throws CoreException {
     return visit(delta.getResource());
@@ -162,10 +167,10 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @return <code>true</code> if the resource's members should be visited; <code>false</code> if they should
    *         be skipped
    * @exception CoreException if this visit fails
-   * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
+   * @see IResourceVisitor#visit(IResource)
    */
   public boolean visit(final IResource resource) throws CoreException {
-    final boolean okToCompile = javaProject.isOnClasspath(resource) && resource.getFileExtension() != null
+    final boolean okToCompile = fJavaProject.isOnClasspath(resource) && resource.getFileExtension() != null
                                 && (resource.getFileExtension().equals("jj") //$NON-NLS-1$
                                     || resource.getFileExtension().equals("jjt") //$NON-NLS-1$
                                 || resource.getFileExtension().equals("jtb")); //$NON-NLS-1$
@@ -173,9 +178,9 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
       CompileResource(resource);
     }
 
-    // This prevents traversing output directories
-    final boolean isOut = resource.getProjectRelativePath().equals(outputFolder)
-                          & outputFolder.toString().length() != 0;
+    // this prevents traversing output directories
+    final boolean isOut = resource.getProjectRelativePath().equals(fOutputFolder)
+                          & fOutputFolder.toString().length() != 0;
     return !isOut;
   }
 
@@ -190,45 +195,46 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
       return;
     }
 
-    // The file, the project and the directory
+    // the file, the project and the directory
     final IFile file = (IFile) resource;
-    final IProject pro = file.getProject();
-    final String dir = pro.getLocation().toOSString();
+    final IProject project = file.getProject();
+    final String dir = project.getLocation().toOSString();
 
-    // Delete markers
+    // delete markers
     try {
       file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
     } catch (final CoreException e) {
       e.printStackTrace();
     }
 
-    // JavaCC is launched in the directory where the file is.
-    String resdir = file.getLocation().toString();
-    final String name = resdir.substring(resdir.lastIndexOf("/") + 1); //$NON-NLS-1$
-    resdir = resdir.substring(0, resdir.lastIndexOf("/")); //$NON-NLS-1$
-    final String extension = file.getFullPath().getFileExtension();
+    // JavaCC is launched in the directory where the file is
+    String resDir = file.getLocation().toString();
+    final String resName = resDir.substring(resDir.lastIndexOf("/") + 1); //$NON-NLS-1$
+    resDir = resDir.substring(0, resDir.lastIndexOf("/")); //$NON-NLS-1$
+    final String resExt = file.getFullPath().getFileExtension();
 
     final JJConsole console = Activator.getConsole();
 
-    // Retrieve command line
-    final String[] args = getArgs(file, name);
+    // retrieve command line
+    final String[] args = getArgs(file, resName);
     final String jarfile = getJarFile(file);
 
-    // Redirect out and error streams
+    // save standard out and error streams
     final PrintStream orgOut = System.out;
     final PrintStream orgErr = System.err;
+    // redirect out and error streams
     final PrintStream outConsole = console.getPrintStream();
     System.setOut(outConsole);
     System.setErr(outConsole);
 
-    // Recall Command line on console
-    if (extension.equals("jj")) { //$NON-NLS-1$
+    // display the command line on the console
+    if (resExt.equals("jj")) { //$NON-NLS-1$
       console.print(">java -classpath " + jarfile + " javacc "); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    else if (extension.equals("jjt")) { //$NON-NLS-1$
+    else if (resExt.equals("jjt")) { //$NON-NLS-1$
       console.print(">java -classpath " + jarfile + " jjtree "); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    else if (extension.equals("jtb")) { //$NON-NLS-1$
+    else if (resExt.equals("jtb")) { //$NON-NLS-1$
       console.print(">java -jar " + jarfile + " "); //$NON-NLS-1$ //$NON-NLS-2$
     }
     for (int i = 0; i < args.length; i++) {
@@ -236,48 +242,92 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     }
     System.out.println();
 
-    // Call JavaCC, JJTree or JTB
+    // call JavaCC, JJTree or JTB
     DirList.snapshot(dir);
-    if (extension.equals("jjt")) { //$NON-NLS-1$
-      JarLauncher.launchJJTree(jarfile, args, resdir);
+    boolean isJtb = false;
+    if (resExt.equals("jjt")) { //$NON-NLS-1$
+      JarLauncher.launchJJTree(jarfile, args, resDir);
     }
-    else if (extension.equals("jj")) { //$NON-NLS-1$
-      JarLauncher.launchJavaCC(jarfile, args, resdir);
+    else if (resExt.equals("jj")) { //$NON-NLS-1$
+      JarLauncher.launchJavaCC(jarfile, args, resDir);
     }
-    else if (extension.equals("jtb")) { //$NON-NLS-1$
-      JarLauncher.launchJTB(jarfile, args, resdir);
+    else if (resExt.equals("jtb")) { //$NON-NLS-1$
+      JarLauncher.launchJTB(jarfile, args, resDir);
+      isJtb = true;
     }
     System.out.println();
 
-    // Restore standard and error streams
+    // restore standard out and error streams
     System.setOut(orgOut);
     System.setErr(orgErr);
 
-    // Notify Console with the File the Console should report Errors to
-    console.endReport(file);
+    // notify the console with the file the console should report errors to
+    console.endReport(file, isJtb);
 
-    // Compile Generated .jj File if a .jjt or .jtb file was processed
-    final String[] jjgenerated = DirList.getDiff(dir);
-    if (jjgenerated != null) {
-      for (int i = 0; i < jjgenerated.length; i++) {
-        jjgenerated[i] = jjgenerated[i].substring(dir.length() + 1);
-        IResource resgenerated = pro.findMember(jjgenerated[i]);
-        if (resgenerated == null) {
-          pro.refreshLocal(IResource.DEPTH_INFINITE, null);
-          resgenerated = pro.findMember(jjgenerated[i]);
+    // compile the generated .jj file if a .jjt or .jtb file was processed
+    final String[] generatedFiles = DirList.getDiff(dir);
+    if (generatedFiles != null) {
+      for (int i = 0; i < generatedFiles.length; i++) {
+        final String genFileName = generatedFiles[i].substring(dir.length() + 1);
+        IResource genFileRes = project.findMember(genFileName);
+        if (genFileRes == null) {
+          project.refreshLocal(IResource.DEPTH_INFINITE, null);
+          genFileRes = project.findMember(genFileName);
         }
 
-        // Take the opportunity to mark them with a 'G' and to correct .java files
-        MarkAndCorrect.markAndCorrect(pro, name, resgenerated);
+        // mark them with a 'G' and to correct .java files
+        markAndAlter(project, resName, genFileRes);
 
-        // Compile .jj only if .jjt or .jtb was compiled and .jj was generated
-        if ((extension.equals("jjt") || extension.equals("jtb")) //$NON-NLS-1$ //$NON-NLS-2$
-            && jjgenerated[i].endsWith(".jj")) { //$NON-NLS-1$ 
-          // Compile .jj if project has not Javacc Nature, ie no automatic build
-          // Well seems Eclipse has a small bug here, it doesn't recompile...
-          // if (!pro.getDescription().hasNature(JJ_NATURE_ID))
-          CompileResource(resgenerated);
+        // compile .jj only if .jjt or .jtb was compiled and .jj was generated
+        if ((resExt.equals("jjt") || resExt.equals("jtb")) //$NON-NLS-1$ //$NON-NLS-2$
+            && genFileName.endsWith(".jj")) { //$NON-NLS-1$ 
+          // compile .jj if project has not JavaCC Nature, i.e. no automatic build
+          // well seems Eclipse has a small bug here, it doesn't recompile...
+          // if (!project.getDescription().hasNature(JJ_NATURE_ID))
+          CompileResource(genFileRes);
         }
+      }
+    }
+  }
+
+  /**
+   * Regular expression to capture the class declaration, including potential @SuppressWarnings annotations.<br>
+   * (?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)? : non capturing group, once or not at all.<br>
+   * ((?:public )?(?:final )?(?:class|interface|enum)) : capturing group $1.<br>
+   * This group $1 will by prefixed by <code>@SuppressWarnings(\"all\")\n</code> and will replace the whole string (group $0).
+   */
+  private final static String  regEx   = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?((?:public )?(?:final )?(?:class|interface|enum))"; //$NON-NLS-1
+  /** Corresponding pattern */
+  private final static Pattern pattern = Pattern.compile(regEx, Pattern.MULTILINE | Pattern.DOTALL);
+
+  /**
+   * Marks the generated file as derived and suppresses the @SuppressWarnings annotation according to
+   * corresponding preference.
+   * 
+   * @param project the IProject the resource belongs to
+   * @param name the name of the grammar file this resource is generated from
+   * @param res the IResource to mark and to correct
+   * @throws CoreException see {@link IResource#setDerived(boolean)}
+   */
+  public static void markAndAlter(@SuppressWarnings("unused") final IProject project, final String name,
+                                  final IResource res) throws CoreException {
+    // mark
+    res.setDerived(true);
+    res.setPersistentProperty(QN_GENERATED_FILE, name);
+
+    final IEclipsePreferences prefs = new ProjectScope(res.getProject()).getNode(IJJConstants.ID);
+
+    // alter if set in preferences
+    final IJavaElement element = (IJavaElement) res.getAdapter(IJavaElement.class);
+    if ("true".equals(prefs.get(SUPPRESS_WARNINGS, "false")) //$NON-NLS-1$ //$NON-NLS-2$
+        && element instanceof ICompilationUnit) {
+      // direct access to the file !
+      final String filename = ((IFile) res).getLocation().toOSString();
+      final String source = FileUtils.getFileContents(filename);
+      final Matcher matcher = pattern.matcher(source);
+      if (matcher.find()) {
+        final String newsource = matcher.replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
+        FileUtils.saveFileContents(filename, newsource);
       }
     }
   }
@@ -299,34 +349,34 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 
     final JJConsole console = Activator.getConsole();
 
-    // Retrieve command line
+    // retrieve command line
     final String[] args = getJJDocArgs(file, name);
     final String jarfile = getJarFile(file);
 
-    // Redirect standard and error streams
+    // redirect standard and error streams
     final PrintStream orgOut = System.out;
     final PrintStream orgErr = System.err;
     final PrintStream outConsole = console.getPrintStream();
     System.setOut(outConsole);
     System.setErr(outConsole);
 
-    // Recall command line on console
+    // recall command line on console
     console.print(">java -classpath " + jarfile + " jjdoc "); //$NON-NLS-1$ //$NON-NLS-2$
     for (int i = 0; i < args.length; i++) {
       console.print(args[i] + " "); //$NON-NLS-1$
     }
     System.out.println();
 
-    // Call JJDoc
+    // call JJDoc
     JarLauncher.launchJJDoc(jarfile, args, dir);
     System.out.println();
 
-    // Restores standard and error streams
+    // restore standard and error streams
     System.setOut(orgOut);
     System.setErr(orgErr);
 
-    // Notify Console with the File the Console should report Errors to
-    console.endReport(file);
+    // notify Console with the file the Console should report errors to
+    console.endReport(file, false);
   }
 
   /**
@@ -357,10 +407,10 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
         options = ""; //$NON-NLS-1$
       }
 
-      // Add target ie file to compile
+      // add target file to compile
       options = options + " \"" + name + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
-      // Get tokens
+      // get tokens
       args = OptionSet.tokenize(options);
     } catch (final Exception e) {
       e.printStackTrace();
@@ -371,7 +421,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
       return args;
     }
 
-    // The JTB syntax is "-o" "foo" and not "-o=foo"
+    // the JTB syntax is "-o" "foo" and not "-o=foo"
     int nb = 0;
     for (int i = 0; i < args.length; i++) {
       if (args[i].indexOf('=') != -1) {
@@ -405,15 +455,15 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     try {
       final IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
       String options = null;
-      // Read project properties
+      // read project properties
       options = prefs.get(JJDOC_OPTIONS, ""); //$NON-NLS-1$
-      // Else take default
+      // else take default
       if (options == null) {
         options = ""; //$NON-NLS-1$
       }
-      // Adds target ie file to compile
+      // add target i.e. file to compile
       options = options + " \"" + name + " \""; //$NON-NLS-1$ //$NON-NLS-2$
-      // Gets tokens
+      // get tokens
       args = OptionSet.tokenize(options);
     } catch (final Exception e) {
       e.printStackTrace();
@@ -432,21 +482,21 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     final String extension = file.getFullPath().getFileExtension();
     try {
       final IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(IJJConstants.ID);
-      // Use the path in preferences
+      // use the path in preferences
       if (extension.equals("jj") || extension.equals("jjt")) {//$NON-NLS-1$ //$NON-NLS-2$
         jarfile = prefs.get(RUNTIME_JJJAR, ""); //$NON-NLS-1$
       }
       else if (extension.equals("jtb")) { //$NON-NLS-1$
         jarfile = prefs.get(RUNTIME_JTBJAR, ""); //$NON-NLS-1$
       }
-      // Else we use the jar in the plugin
+      // else we use the jar in the plug-in
       if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
         final URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
         // Eclipse 3.2 way. Only available in Eclipse 3.2
         final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
         final String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
 
-        // Same for both
+        // same for both
         if (extension.equals("jj") || extension.equals("jjt")) {//$NON-NLS-1$ //$NON-NLS-2$
           jarfile = home + JAVACC_JAR_NAME;
         }
@@ -457,8 +507,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
       try {
         jarfile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(jarfile,
                                                                                                     true);
-        // On Windows this returns "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
-        // As this will fails, we remove the first "/" if there is ":" at index 2
+        // on Windows this returns "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
+        // as this will fails, we remove the first "/" if there is ":" at index 2
         if (jarfile.startsWith("/") && jarfile.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
           jarfile = jarfile.substring(1);
         }

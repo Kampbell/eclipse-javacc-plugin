@@ -24,16 +24,15 @@ import sf.eclipse.javacc.parser.JJNode;
  * <extension point="org.eclipse.ui.editorActions"><br>
  * <action class="sf.eclipse.javacc.actions.JJOpenCallHierarchy"><br>
  * 
- * @author Remi Koutcherawy 2008-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision
-   */
+  // MMa 11/2009 : javadoc and formatting revision
+
   /** the action's editor */
-  static JJEditor editor;
+  static JJEditor fEditor;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
@@ -42,7 +41,7 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
     if (targetEditor == null) {
       return;
     }
-    editor = (JJEditor) targetEditor;
+    fEditor = (JJEditor) targetEditor;
   }
 
   /**
@@ -60,7 +59,7 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
       e.printStackTrace();
     }
     // Get text selection, extend it, using if necessary the appropriate method in JJGotoRule
-    ITextSelection sel = (ITextSelection) editor.getSelectionProvider().getSelection();
+    ITextSelection sel = (ITextSelection) fEditor.getSelectionProvider().getSelection();
     if (sel.getLength() <= 0) {
       sel = JJGotoRule.selectWord(sel);
     }
@@ -70,13 +69,13 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
       // The line is added to the text to distinguish between multiples occurrences
       // TODO this does not work for cases where 2 or more occurrences of the same production appear on the same line
       // Note that unlike in JDT the cursor is kept on the clicked identifier
-      final JJNode node = editor.getJJElements().getIdentifierNode(text + (sel.getStartLine() + 1));
+      final JJNode node = fEditor.getJJElements().getIdentifierNode(text + (sel.getStartLine() + 1));
       // To behave like JDT uncomment this two lines
       //      node = editor.getJJElements().getNode(text);
       //      editor.setSelection(node);
       if (node != null) {
         // Now pass the JJNode to the JJCallHierarchy View part
-        view.setSelection(node, editor);
+        view.setSelection(node, fEditor);
       }
     }
   }

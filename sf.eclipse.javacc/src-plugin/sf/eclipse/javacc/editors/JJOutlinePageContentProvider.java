@@ -13,17 +13,16 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 import sf.eclipse.javacc.parser.Node;
 
 /**
- * Content provider for outline page. Uses JavaCCParser to build the AST used in the Outline
+ * Content provider for outline page. Uses JavaCCParser to build the AST used in the Outline.
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJOutlinePageContentProvider implements IContentProvider, ITreeContentProvider,
                                          JavaCCParserTreeConstants {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision
-   */
+  // MMa 11/2009 : javadoc and formatting revision
+
   /** the AST node built from the text */
   protected JJNode node;
 

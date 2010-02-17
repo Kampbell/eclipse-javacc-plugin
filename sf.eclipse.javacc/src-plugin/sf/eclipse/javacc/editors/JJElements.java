@@ -8,16 +8,17 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 /**
  * Maps of JavaCC elements for one Editor. Used to navigate between declarations.
  * 
- * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJElements implements JavaCCParserTreeConstants {
 
-  // MMa 11/09 : javadoc and formatting and renaming revision
+  // MMa 11/2009 : javadoc and formatting and renaming revision
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** the map of node images to nodes for non identifier nodes */
+  /** The map of node images to nodes for non identifier nodes */
   private final HashMap<String, JJNode> nonIdentifiersMap = new HashMap<String, JJNode>();
-  /** the map of node identifiers (images + line number) to nodes for identifier nodes */
+  /** The map of node identifiers (images + line number) to nodes for identifier nodes */
   private final HashMap<String, JJNode> identifiersMap    = new HashMap<String, JJNode>();
 
   /**
@@ -36,7 +37,7 @@ public class JJElements implements JavaCCParserTreeConstants {
    */
   public final Object put(final String aImage, final JJNode aNode) {
     if (aNode.getId() == JJTIDENTIFIER) {
-      // The line is added to the text to distinguish between multiples occurrences of the identifier
+      // the line is added to the text to distinguish between multiples occurrences of the identifier
       // TODO this does not work for cases where 2 or more occurrences of the same production appear on the same line
       return identifiersMap.put(aImage + aNode.getBeginLine(), aNode);
     }

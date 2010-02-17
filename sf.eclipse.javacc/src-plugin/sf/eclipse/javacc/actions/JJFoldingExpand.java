@@ -4,39 +4,58 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+
 import sf.eclipse.javacc.editors.JJEditor;
+
 /**
- * Expand all folding Action referenced by plugin.xml
- * <extension point="org.eclipse.ui.editorActions">
- * <action  label="%JavaCC_FoldingExpandAll"
- *          class="sf.eclipse.javacc.actions.JJFoldingExpand"
+ * Expand all folding Action.<br>
+ * Referenced by plugin.xml<br>
+ * <extension point="org.eclipse.ui.editorActions"><br>
+ * <action label="%JavaCC_FoldingExpandAll" class="sf.eclipse.javacc.actions.JJFoldingExpand"
  * 
- * @author Remi Koutcherawy 2003-2009
- * CeCILL license http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJFoldingExpand implements IEditorActionDelegate {
-  static JJEditor editor;
-  
-  public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-    if (targetEditor == null)
+
+  // MMa 02/2010 : formatting and javadoc revision
+
+  /** The current editor */
+  static JJEditor fEditor;
+
+  /**
+   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
+   */
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+    if (aTargetEditor == null) {
       return;
-    editor = (JJEditor) targetEditor;
+    }
+    fEditor = (JJEditor) aTargetEditor;
   }
 
-  public void run(IAction action) {
-    ISourceViewer sourceViewer= editor.getSourceViewer2();
+  /**
+   * @see IActionDelegate#run(IAction)
+   */
+  public void run(@SuppressWarnings("unused") final IAction aAction) {
+    final ISourceViewer sourceViewer = fEditor.getSourceViewerPlease();
     if (sourceViewer instanceof ProjectionViewer) {
-      ProjectionViewer pv= (ProjectionViewer) sourceViewer;
+      final ProjectionViewer pv = (ProjectionViewer) sourceViewer;
       if (pv.isProjectionMode()) {
-        if (pv.canDoOperation(ProjectionViewer.EXPAND_ALL))
+        if (pv.canDoOperation(ProjectionViewer.EXPAND_ALL)) {
           pv.doOperation(ProjectionViewer.EXPAND_ALL);
+        }
       }
     }
   }
 
-  public void selectionChanged(IAction action, ISelection selection) {
-  //  not used
+  /**
+   * @see IActionDelegate#selectionChanged(IAction, ISelection)
+   */
+  public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
+                               @SuppressWarnings("unused") final ISelection aSelection) {
+    //  not used
   }
 }

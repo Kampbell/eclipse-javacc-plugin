@@ -3,14 +3,14 @@
 <repository name='file:/D:/Devs/workspace/sf.eclipse.javacc-web/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1258783470146'/>
+    <property name='p2.timestamp' value='1266442617406'/>
   </properties>
   <mappings size='3'>
     <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
     <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
     <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
   </mappings>
-  <artifacts size='2'>
+  <artifacts size='7'>
     <artifact classifier='osgi.bundle' id='sf.eclipse.javacc' version='1.5.17'>
       <properties size='3'>
         <property name='artifact.size' value='2111081'/>
@@ -18,10 +18,43 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='sf.eclipse.javacc' version='1.5.16'>
+      <properties size='3'>
+        <property name='artifact.size' value='896143'/>
+        <property name='download.size' value='896143'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
     <artifact classifier='org.eclipse.update.feature' id='sf.eclipse.javacc.feature' version='1.5.17'>
       <properties size='2'>
         <property name='artifact.size' value='8046'/>
         <property name='download.size' value='8046'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='sf.eclipse.javacc.feature' version='1.5.16'>
+      <properties size='2'>
+        <property name='artifact.size' value='8062'/>
+        <property name='download.size' value='8062'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='sf.eclipse.javacc.help' version='1.5.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='874448'/>
+        <property name='download.size' value='874448'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='sf.eclipse.javacc.feature' version='1.5.18'>
+      <properties size='2'>
+        <property name='artifact.size' value='8047'/>
+        <property name='download.size' value='8047'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='sf.eclipse.javacc' version='1.5.18'>
+      <properties size='3'>
+        <property name='artifact.size' value='2129597'/>
+        <property name='download.size' value='2129597'/>
+        <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
   </artifacts>

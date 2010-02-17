@@ -18,7 +18,7 @@ Features
    Menu Window->ShowView->Outline
 3) JavaCC Options setting for project.
    Right click on project->Properties->JavaCC options.
-   There you can set the javacc.jar you whish to use.
+   There you can set the javacc.jar you wish to use.
    You can enable builder to compile .jj, .jjt, .jtb on file save.
 4) Once the javacc.jar is defined, you can compile 
    with a right click on a .jj or .jjt file and choose 
@@ -29,7 +29,7 @@ Features
 4) Generated files are identified with a small 'G' on top right.
    Right click on a generated file->Properties->Info, 
    uncheck Derived to remove this decorator.
-   Open the file, edit, save to see removal of this Decorator.
+   Open the file, edit, save to see removal of this decorator.
 5) JJDoc compilation is available when a .jj or .jjt file is opened.
 6) JTB compilation is available on a .jtb file
 7) Help navigate into rules definitions
@@ -37,6 +37,17 @@ Features
    use Workbench "Back" to go back.
 
 History
+17/02/10 - version 1.5.18
+- Fixed /**/ syntax coloring issue (bug 2946447), missing french JTB preferences issue, JTB preferences not stored issue
+- Fixed compile annotations and hyperlink issues in JTB Editor / Console
+- Splitted templates for static = true and static = false (bug 2951454)
+- Added spell checking (but not spell correction...)
+- Updated with JTB 1.4.1 (bug 2945965) (Marc Mazas)
+
+13/11/09 - version 1.5.17
+- Fixed formatting / syntax coloring / outline / autoindent / call hierarchy / context menus / messages issues
+- Updated with JTB 1.4.0 and new options (Marc Mazas)
+
 26/09/09 - version 1.5.16
 - Support Variables in Builder, and Options
 - Click in call hierarchy view reopen Editor if it was closed
@@ -49,7 +60,7 @@ History
 - Added JavaCC 5.0 new options
 
 23/05/09 - version 1.5.14
-- Rfe 2589910 added call hierarchy
+- RfE 2589910 added call hierarchy
 
 25/04/09 - modifications on version 1.5.12 (Marc Mazas)
 - Updated / cleaned list of JavaCC / JJTree options in JJCCOptions & JJTreeOptions

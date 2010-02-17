@@ -1,38 +1,49 @@
 package sf.eclipse.javacc.options;
 
 /**
- * An option is a name + type + value + default value
+ * An option is a name + type + value + default value.
  * 
- * @author Remi Koutcherawy 2003-2006 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
-// ModMMa : added description related field and method (for JTB cryptic options)
 public class Option {
+
+  // MMa 02/2010 : formatting and javadoc revision
+  // ModMMa : added description related field and method (for JTB cryptic options)
+
   /** Integer option type */
-  public static final int INT = 1;
+  public static final int INT     = 1;
   /** Boolean option type */
   public static final int BOOLEAN = 2;
   /** String option type */
-  public static final int STRING = 3;
+  public static final int STRING  = 3;
   /** File option type */
-  public static final int FILE = 4;
+  public static final int FILE    = 4;
   /** Path option type */
-  public static final int PATH = 5;
+  public static final int PATH    = 5;
   /** Target option type */
-  public static final int TARGET = 6;
+  public static final int TARGET  = 6;
   /** Void option type */
-  public static final int VOID = 7;
-
-  protected int type;
-  protected String name;
-  protected String description;
-  protected String value;
-  protected String defaultValue;
+  public static final int VOID    = 7;
+  /** The option type */
+  protected int           type;
+  /** The option name */
+  protected String        name;
+  /** The option description */
+  protected String        description;
+  /** The option value */
+  protected String        value;
+  /** The option defaultValue */
+  protected String        defaultValue;
 
   /**
    * Constructor with a name, default value and type
+   * 
+   * @param aName the option name
+   * @param aDefaultValue the option default value
+   * @param aType the option type
    */
-  Option(String aName, String aDefaultValue, int aType) {
+  Option(final String aName, final String aDefaultValue, final int aType) {
     name = aName;
     description = ""; //$NON-NLS-1$
     defaultValue = aDefaultValue;
@@ -41,58 +52,67 @@ public class Option {
 
   /**
    * Constructor with a name, description, default value and type
+   * 
+   * @param aName the option name
+   * @param aDescription the option description
+   * @param aDefaultValue the option default value
+   * @param aType the option type
    */
-  Option(String aName, String aDescription, String aDefaultValue, int aType) {
+  Option(final String aName, final String aDescription, final String aDefaultValue, final int aType) {
     name = aName;
     description = aDescription;
     defaultValue = aDefaultValue;
     type = aType;
   }
 
- /**
-  * Returns the type.
-  */
+  /**
+   * @return the type
+   */
   int getType() {
     return type;
   }
 
   /**
-   * Returns the name.
+   * @return the name.
    */
-   String getName() {
-     return name;
-   }
+  String getName() {
+    return name;
+  }
 
-   /**
-    * Returns the name and the description.
-    */
-    String getNameAndDescription() {
-      if (description.length() == 0) {
-        return name;
-      }
-      return name + " - " + description; //$NON-NLS-1$
+  /**
+   * @return the name and the description.
+   */
+  String getNameAndDescription() {
+    if (description.length() == 0) {
+      return name;
     }
+    return name + " - " + description; //$NON-NLS-1$
+  }
 
- /**
-  * Returns the value.
-  */
+  /**
+   * @return the value.
+   */
   String getValue() {
     return value;
   }
 
- /**
-  * Sets the value.
-  */
-  void setValue(String aValue) {
-    if (aValue == null) // || value.equals("")
+  /**
+   * Sets the value.
+   * 
+   * @param aValue the value to be set
+   */
+  void setValue(final String aValue) {
+    if (aValue == null) {
       value = defaultValue;
-    else
+    }
+    else {
       value = aValue;
+    }
   }
 
- /**
-  * Returns the default value.
-  */
+  /**
+   * @return the default value.
+   */
   String getDefaultValue() {
     return defaultValue;
   }

@@ -27,22 +27,25 @@ import sf.eclipse.javacc.parser.JavaCCParserConstants;
 import sf.eclipse.javacc.parser.Token;
 
 /**
- * Format action referenced by plugin.xml For popup menu on Editor <extension
- * point="org.eclipse.ui.popupMenus"> For key binding <extension point="org.eclipse.ui.editorActions">
+ * Format action.<br>
+ * Referenced by plugin.xml<br>
+ * For popup menu on Editor<br>
+ * <extension point="org.eclipse.ui.popupMenus"><br>
+ * For key binding<br>
+ * <extension point="org.eclipse.ui.editorActions">
  * 
- * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, IJJConstants {
 
-  /*
-   * MMa 04/09 : performance improvements and enhanced reformatting
-   * MMa 11/09 : javadoc and formatting revision ; fixed formatting issues in java code
-   */
+  // MMa 04/2009 : performance improvements and enhanced reformatting
+  // MMa 11/2009 : javadoc and formatting revision ; fixed formatting issues in java code
+
   /** The editor */
-  static JJEditor  editor;
+  static JJEditor  fEditor;
   /** The document */
-  static IDocument doc;
+  static IDocument fDoc;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
@@ -51,8 +54,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     if (targetEditor == null) {
       return;
     }
-    editor = (JJEditor) targetEditor;
-    doc = editor.getDocument();
+    fEditor = (JJEditor) targetEditor;
+    fDoc = fEditor.getDocument();
   }
 
   /**
@@ -64,15 +67,15 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
   }
 
   /**
-   * Perform Formatting.
+   * Performs formatting.
    * 
    * @see IActionDelegate#run(IAction)
    */
   public void run(@SuppressWarnings("unused") final IAction action) {
-    if (editor == null) {
+    if (fEditor == null) {
       return;
     }
-    final ISelection selection = editor.getSelectionProvider().getSelection();
+    final ISelection selection = fEditor.getSelectionProvider().getSelection();
     if (!(selection instanceof ITextSelection)) {
       return;
     }
@@ -86,16 +89,16 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     try {
       // if No selection, treat full text
       if (tslen == 0) {
-        ts = new TextSelection(doc, 0, doc.getLength());
+        ts = new TextSelection(fDoc, 0, fDoc.getLength());
         tssl = ts.getStartLine();
         tsel = ts.getEndLine();
         tslen = ts.getLength();
       }
       // If partial lines are selected, extend selection
-      final IRegion endLine = doc.getLineInformation(tsel);
-      final IRegion startLine = doc.getLineInformation(tssl);
-      ts = new TextSelection(doc, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
-                                                         - startLine.getOffset());
+      final IRegion endLine = fDoc.getLineInformation(tsel);
+      final IRegion startLine = fDoc.getLineInformation(tssl);
+      ts = new TextSelection(fDoc, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
+                                                          - startLine.getOffset());
       tssl = ts.getStartLine();
       tsel = ts.getEndLine();
       tslen = ts.getLength();
@@ -103,21 +106,23 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // The tricky part is to replace only part of the full text
       // we need to process the editor full text using the JavaCC grammar
       // and we have to replace only part of it.
-      final String endLineDelim = doc.getLegalLineDelimiters()[0];
+      final String endLineDelim = fDoc.getLegalLineDelimiters()[0];
       final StringBuffer strbuf = new StringBuffer(2 * tslen);
-      final String docText = doc.get();
+      final String docText = fDoc.get();
       if (formatSelection(docText, endLineDelim, tssl + 1, tsel + 1, strbuf) == true) {
         // Replace the text with the modified version
-        doc.replace(startLine.getOffset(), tslen, strbuf.toString());
+        fDoc.replace(startLine.getOffset(), tslen, strbuf.toString());
       }
       // Reselect text... not exactly as JavaEditor... whole text here
       // editor.selectAndReveal(startLine.getOffset(), strbuf.length());
     } catch (final Exception e) {
       final IWorkbench workbench = PlatformUI.getWorkbench();
       final Shell shell = workbench.getDisplay().getActiveShell();
-      final MessageDialog dialog = new MessageDialog(shell,
+      final MessageDialog dialog = new MessageDialog(
+                                                     shell,
                                                      Activator.getString("JJFormat.Bug"), //$NON-NLS-1$
-                                                     null, fmtStackTrace(e, doc.getLegalLineDelimiters()[0]),
+                                                     null,
+                                                     fmtStackTrace(e, fDoc.getLegalLineDelimiters()[0]),
                                                      MessageDialog.QUESTION, new String[] {
                                                        IDialogConstants.OK_LABEL }, 0);
       dialog.open();
@@ -168,7 +173,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
    * @param firstLine the line number of the first character of the selected text
    * @param lastLine the line number of the last character of the selected text
    * @param sb the StringBuffer to receive the formatted text
-   * @return true if sucessful, false otherwise
+   * @return true if successful, false otherwise
    */
   protected boolean formatSelection(final String txt, final String endLineDelim, final int firstLine,
                                     final int lastLine, final StringBuffer sb) {
@@ -260,8 +265,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     /** flag telling if no space is needed for some special cases */
     boolean needNoSpace = false;
     /**
-     * false if in javacc/jjtree "sections" before parser_end (options, parser_begin), true otherwise (token,
-     * special_token, skip, more, productions)
+     * false if in JavaCC / JJTree "sections" before parser_end (options, parser_begin), true otherwise
+     * (token, special_token, skip, more, productions)
      */
     boolean isAfterParserEnd = false;
     /**
@@ -271,9 +276,9 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     int parLevelInLAC = -1;
     /** parenthesis level in for loops : 0 : outside ; 1, 2, ... : inside */
     int parLevelInFL = 0;
-    /** parenthesis level in JJTree noddes : -1 : outside ; 0 : found a node ; 1, 2, ... : inside */
+    /** parenthesis level in JJTree nodes : -1 : outside ; 0 : found a node ; 1, 2, ... : inside */
     int parLevelInJN = 0;
-    /** true from the 'for' keywork to the enclosing parenthesis, false otherwise */
+    /** true from the 'for' keyword to the enclosing parenthesis, false otherwise */
     boolean inForLoop = false;
     /** last parenthesis is LPAREN, not RPAREN nor BIT_OR */
     boolean lastParLPnotRPnorBO = false;
@@ -641,11 +646,11 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // before an argument list
       // after some JavaCC keywords
       // after a ':' if followed by a '{'
-      // after some javacc operators or punctuation or construct '#', '^','(>' in last sections
-      // before some javacc operators '?', '*', '+' in expansion units 
-      // before and after the javacc operator '-' in regular expression
-      // TODO for generics syntax, boolean expressions with '<' or '>'
-      // TODO for the javacc operators '?', '*', '+' in expansion_unit try syntax : try { (prod)+ } catch : no space after the ')'
+      // after some JavaCC operators or punctuation or construct '#', '^','(>' in last sections
+      // before some JavaCC operators '?', '*', '+' in expansion units 
+      // before and after the JavaCC operator '-' in regular expression
+      // TODO for "Generics" syntax, boolean expressions with '<' or '>'
+      // TODO for the JavaCC operators '?', '*', '+' in expansion_unit try syntax : try { (production)+ } catch : no space after the ')'
       if (needOneNewline
           || (currKind == LBRACE && nextKind == RBRACE)
           || currKind == LPAREN
@@ -827,7 +832,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           needNoSpace = false;
         }
         else if (newlineJustWritten && currKind == BIT_OR) {
-          // case of an unindented '|' : reindent
+          // case of an unindented '|' : re-indent
           if (!skipOutput) {
             sb.append(JJCodeScanner.getSpecIndentString());
           }

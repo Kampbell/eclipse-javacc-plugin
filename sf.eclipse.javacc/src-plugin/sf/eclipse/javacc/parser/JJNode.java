@@ -20,7 +20,7 @@ import sf.eclipse.javacc.editors.JJLabelProvider;
 public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserConstants {
 
   /*
-   * MMa 11/09 : javadoc and formatting revision ; fixed duplicated JJT identifiers (node #node) in maps ;
+   * MMa 11/2009 : javadoc and formatting revision ; fixed duplicated JJT identifiers (node #node) in maps ;
    * added lexical states and jjtree nodes in labels (to be displayed in outline and call hierarchy views)
    */
   /** the node's parent */

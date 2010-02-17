@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>JTB 1.4.0</title>
+  <title>JTB 1.4.1</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <style>@import url("web/site.css");</style>
 <STYLE type="text/css">
@@ -12,9 +12,9 @@ table { font-size:10pt; }
 </STYLE>
 </head>
 <body>
-<h1><font color="red">Java Tree Builder (JTB) 1.4.0</font></h1>
+<h1><font color="red">Java Tree Builder (JTB) 1.4.1</font></h1>
 
-<h2>Last update : november 21th, 2009 - version <font color="red">1.4.0</font></h2>
+<h2>Last update : february 17th, 2010 - version <font color="red">1.4.1</font></h2>
 
 <h2>Overview</h2>
 <font color="red">JTB</font> (Java Tree Builder) is a syntax tree builder and visitors generator to be used
@@ -39,12 +39,14 @@ New visitors, which subclass any generated one, can then override the default me
  operations on and manipulate the generated syntax tree.<br>
 
 <h2>History</h2>
+02/2010 - 1.4.1 : Fixed wrong conditionals generation and missing static modifier for generated return types issues (bug 2945965),
+ fixed hard error in semantic checker, fixed command line options overwrite issue<br>
 11/2009 - 1.4.0 : New version delivered / integrated under the
  <a href="http://sourceforge.net/projects/eclipse-javacc">JavaCC Eclipse Plug-in</a><br>
 xx/2005 - 1.3.2 : Last (known) version from UCLA Compilers Group 
 : see <a href="http://compilers.cs.ucla.edu/jtb/">JTB 1.3.2 home page</a><p>
 
-<h2>New Features in version 1.4.0</h2>
+<h2>New Features in version 1.4.0+</h2>
 Here are the following enhancements that have been added to JTB 1.3.2:
 <ul>
 <li>Internal code</li>
@@ -117,7 +119,7 @@ Options are the following:<br><br>
 <tr><td>-vp pkg  </td><td>JTB_VP="pkg"       </td><td>Use pkg as the package for the default visitor classes</td></tr>
 <tr><td>-w       </td><td>JTB_W=(true|false )</td><td>Do not overwrite existing files</td></tr>
 </table><br>
-Note that the JavaCC Eclipse Plug-in delivers both <font color="red">jtb132.jar</font> and <font color="red">jtb-1.4.0.jar</font>.
+Note that the JavaCC Eclipse Plug-in 1.5.18 delivers both <font color="red">jtb132.jar</font> and <font color="red">jtb-1.4.1.jar</font>.
 
 <h2>Support</h2>
 Feel free to report any bug or suggest enhancement at the
@@ -125,7 +127,7 @@ Feel free to report any bug or suggest enhancement at the
 
 <h2>License</h2>
 JTB 1.3.2 is licensed under the <a href="http://compilers.cs.ucla.edu/jtb/license.html">BSD license</a>.<br>
-JTB 1.4.0 adds the <a href="http://www.gnu.org/licenses/gpl.html">GPL license</a> and the <a href="http://www.cecill.info/">CECILL license</a>.
+JTB 1.4.x adds the <a href="http://www.gnu.org/licenses/gpl.html">GPL license</a> and the <a href="http://www.cecill.info/">CECILL license</a>.
 
 </body>
 </html>

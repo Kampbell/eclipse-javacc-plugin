@@ -19,8 +19,12 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
+import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
+import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.JavaElementSorter;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,38 +52,51 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 import sf.eclipse.javacc.Activator;
 
 /**
- * The "New" wizard page allows setting the srcdir, the package for the new file, the extension, as well as
- * the file name. This page handle the creation of the file.
+ * The "New" wizard page allows setting the source directory, the package for the new file, the extension, as
+ * well as the file name. This page handles the file creation.
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
+@SuppressWarnings("restriction")
 public class JJNewJJPage extends WizardPage {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision ; changed some modifiers for synthetic accesses
-   */
+  // MMa 11/2009 : javadoc and formatting revision ; changed some modifiers for synthetic accesses
+  // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files
 
+  /** The source directory */
   IPackageFragmentRoot         fSrcRootFragment;
+  /** The package */
   private IPackageFragment     fPackageFragment;
+  /** The workspace root directory returned by the plugin */
   private final IWorkspaceRoot fWorkspaceRoot;
-
+  /** The source input */
   Text                         fSrcRootText;
+  /** The package input */
   Text                         fPackageText;
+  /** The file name input */
   private Text                 fFileNameText;
-
+  /** The source change status */
   protected IStatus            fSrcRootStatus;
+  /** The package change status */
   protected IStatus            fPackageStatus;
+  /** The file extension change status */
   protected IStatus            fExtensionStatus;
+  /** The file name change status */
   protected IStatus            fFileStatus;
-
+  /** The checked source */
   String                       fSrcRoot;
+  /** The checked package */
   private String               fPackage;
+  /** The checked file name */
   private String               fFileName;
+  /** The checked file extension */
   String                       fExtension;
+  /** The static / non static flag */
+  boolean                      fStaticFlag;
 
   /**
-   * Creates a new <code>NewJJWizardPage</code>
+   * Creates a new <code>NewJJWizardPage</code>.
    */
   public JJNewJJPage() {
     super("NewJJWizardPage"); //$NON-NLS-1$
@@ -89,36 +106,38 @@ public class JJNewJJPage extends WizardPage {
   }
 
   /**
-   * The selection is used to initialize the fields.
+   * Initializes the fields.
    * 
    * @param aSelection used to initialize the fields
    */
   public void init(final IStructuredSelection aSelection) {
-    final IJavaElement jelem = getInitialJavaElement(aSelection);
+    final IJavaElement javaElem = getInitialJavaElement(aSelection);
     fPackage = ""; //$NON-NLS-1$
     fSrcRoot = ""; //$NON-NLS-1$
-    if (jelem != null) {
-      // init package name
-      fPackageFragment = (IPackageFragment) jelem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+    if (javaElem != null) {
+      // initialize package name
+      fPackageFragment = (IPackageFragment) javaElem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
       if (fPackageFragment != null && !fPackageFragment.isDefaultPackage()) {
         fPackage = fPackageFragment.getElementName();
       }
-      // init SrcRoot
-      final IPackageFragmentRoot pfr = (IPackageFragmentRoot) jelem
-                                                                   .getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+      // initialize SrcRoot
+      final IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElem
+                                                                      .getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
       if (pfr != null) {
         fSrcRoot = pfr.getPath().toString();
       }
     }
-    // init extension
+    // initialize extension
     fExtension = ".jj"; //$NON-NLS-1$
-    // init filename
+    // initialize filename
     fFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
+    // initialize static flag
+    fStaticFlag = true;
   }
 
   /**
-   * @param aParent the parent
    * @see WizardPage#createControl
+   * @param aParent the parent
    */
   public void createControl(final Composite aParent) {
     final Composite topLevel = new Composite(aParent, SWT.NONE);
@@ -128,7 +147,7 @@ public class JJNewJJPage extends WizardPage {
     layout.verticalSpacing = 9;
     topLevel.setLayout(layout);
 
-    // First: the source folder where to create the file
+    // first: the source folder where to create the file
     Label label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.Folder")); //$NON-NLS-1$
     // the input field
@@ -138,7 +157,7 @@ public class JJNewJJPage extends WizardPage {
     fSrcRootText.setText(fSrcRoot);
     fSrcRootText.addModifyListener(new ModifyListener() {
 
-      public void modifyText(@SuppressWarnings("unused") final ModifyEvent e) {
+      public void modifyText(@SuppressWarnings("unused") final ModifyEvent event) {
         fSrcRootStatus = sourceContainerChanged();
         if (fSrcRootStatus.isOK()) {
           packageChanged(); // Revalidates package
@@ -152,7 +171,7 @@ public class JJNewJJPage extends WizardPage {
     button.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent e) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final IPackageFragmentRoot root = chooseSourceContainer();
         if (root != null) {
           fSrcRootFragment = root;
@@ -164,10 +183,10 @@ public class JJNewJJPage extends WizardPage {
       }
     });
 
-    // Second: the package name
+    // second: the package name
     label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.Package_name")); //$NON-NLS-1$
-    // The input field
+    // the input field
     fPackageText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
     gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
     fPackageText.setLayoutData(gd);
@@ -185,7 +204,7 @@ public class JJNewJJPage extends WizardPage {
     button.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent e) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final IPackageFragment pack = choosePackage();
         if (pack != null) {
           final String str = pack.getElementName();
@@ -195,18 +214,18 @@ public class JJNewJJPage extends WizardPage {
         }
       }
     });
-    // Third: three check box for .jj, .jjt, .jtb
+    // third: three check box for .jj, .jjt, .jtb
     label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.Choose_type")); //$NON-NLS-1$
 
-    final Composite group = new Composite(topLevel, SWT.NONE);
-    group.setLayoutData(new GridData());
-    final GridLayout gd1 = new GridLayout();
-    gd1.numColumns = 3;
-    group.setLayout(gd1);
+    final Composite group1 = new Composite(topLevel, SWT.NONE);
+    group1.setLayoutData(new GridData());
+    final GridLayout gl1 = new GridLayout();
+    gl1.numColumns = 3;
+    group1.setLayout(gl1);
 
-    // The radio button listener
-    final SelectionAdapter listener = new SelectionAdapter() {
+    // the radio button listener
+    final SelectionAdapter listener1 = new SelectionAdapter() {
 
       @Override
       public void widgetSelected(final SelectionEvent event) {
@@ -216,25 +235,59 @@ public class JJNewJJPage extends WizardPage {
       }
     };
     // .jj
-    Button radio = new Button(group, SWT.RADIO);
-    radio.setText(Activator.getString("JJNewJJPage.JJ_file")); //$NON-NLS-1$
-    radio.setData(".jj"); //$NON-NLS-1$
-    radio.setSelection(true);
-    radio.addSelectionListener(listener);
+    Button radio1 = new Button(group1, SWT.RADIO);
+    radio1.setText(Activator.getString("JJNewJJPage.JJ_file")); //$NON-NLS-1$
+    radio1.setData(".jj"); //$NON-NLS-1$
+    radio1.setSelection(true);
+    radio1.addSelectionListener(listener1);
     // .jjt
-    radio = new Button(group, SWT.RADIO);
-    radio.setText(Activator.getString("JJNewJJPage.JJT_file")); //$NON-NLS-1$
-    radio.setData(".jjt"); //$NON-NLS-1$
-    radio.setSelection(false);
-    radio.addSelectionListener(listener);
+    radio1 = new Button(group1, SWT.RADIO);
+    radio1.setText(Activator.getString("JJNewJJPage.JJT_file")); //$NON-NLS-1$
+    radio1.setData(".jjt"); //$NON-NLS-1$
+    radio1.setSelection(false);
+    radio1.addSelectionListener(listener1);
     // .jtb
-    radio = new Button(group, SWT.RADIO);
-    radio.setText(Activator.getString("JJNewJJPage.JTB_File")); //$NON-NLS-1$
-    radio.setData(".jtb"); //$NON-NLS-1$
-    radio.addSelectionListener(listener);
+    radio1 = new Button(group1, SWT.RADIO);
+    radio1.setText(Activator.getString("JJNewJJPage.JTB_File")); //$NON-NLS-1$
+    radio1.setData(".jtb"); //$NON-NLS-1$
+    radio1.addSelectionListener(listener1);
     new Label(topLevel, SWT.NULL); // to fill the line
 
-    // Fourth: the file name
+    // fourth: two check box for static / non static
+    label = new Label(topLevel, SWT.NULL);
+    label.setText(Activator.getString("JJNewJJPage.Choose_flag")); //$NON-NLS-1$
+
+    final Composite group2 = new Composite(topLevel, SWT.NONE);
+    group2.setLayoutData(new GridData());
+    final GridLayout gl2 = new GridLayout();
+    gl2.numColumns = 2;
+    group2.setLayout(gl2);
+
+    // the radio button listener
+    final SelectionAdapter listener2 = new SelectionAdapter() {
+
+      @Override
+      public void widgetSelected(final SelectionEvent event) {
+        final String staticFlag = (String) event.widget.getData();
+        fStaticFlag = "true".equals(staticFlag);
+        updateStatus();
+      }
+    };
+    // static
+    Button radio2 = new Button(group2, SWT.RADIO);
+    radio2.setText(Activator.getString("JJNewJJPage.Static_flag")); //$NON-NLS-1$
+    radio2.setData("true"); //$NON-NLS-1$
+    radio2.setSelection(true);
+    radio2.addSelectionListener(listener2);
+    // non static
+    radio2 = new Button(group2, SWT.RADIO);
+    radio2.setText(Activator.getString("JJNewJJPage.Non_static_flag")); //$NON-NLS-1$
+    radio2.setData("false"); //$NON-NLS-1$
+    radio2.setSelection(false);
+    radio2.addSelectionListener(listener2);
+    new Label(topLevel, SWT.NULL); // to fill the line
+
+    // fifth: the file name
     label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.File_name")); //$NON-NLS-1$
     // The input field
@@ -244,17 +297,17 @@ public class JJNewJJPage extends WizardPage {
     fFileNameText.setLayoutData(gd);
     fFileNameText.addModifyListener(new ModifyListener() {
 
-      public void modifyText(@SuppressWarnings("unused") final ModifyEvent e) {
+      public void modifyText(@SuppressWarnings("unused") final ModifyEvent event) {
         fFileStatus = fileNameChanged();
         updateStatus();
       }
     });
     label = new Label(topLevel, SWT.NULL); // to fill the line
 
-    // Finish
+    // finish
     setControl(topLevel);
 
-    // Verifies that all this is OK
+    // verify that all this is OK
     fSrcRootStatus = sourceContainerChanged();
     fPackageStatus = packageChanged();
     fFileStatus = fileNameChanged();
@@ -273,7 +326,6 @@ public class JJNewJJPage extends WizardPage {
    * 
    * @return the status
    */
-  @SuppressWarnings("restriction")
   IStatus sourceContainerChanged() {
     final Status status = new Status();
 
@@ -290,10 +342,7 @@ public class JJNewJJPage extends WizardPage {
       if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
         final IProject proj = res.getProject();
         if (!proj.isOpen()) {
-          status
-                .setError(MessageFormat
-                                       .format(
-                                               org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_ProjectClosed,
+          status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ProjectClosed,
                                                new Object[] {
                                                  proj.getFullPath().toString() }));
           return status;
@@ -304,12 +353,10 @@ public class JJNewJJPage extends WizardPage {
           try {
             if (!proj.hasNature(JavaCore.NATURE_ID)) {
               if (resType == IResource.PROJECT) {
-                status
-                      .setError(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject);
+                status.setError(NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject);
               }
               else {
-                status
-                      .setWarning(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotInAJavaProject);
+                status.setWarning(NewWizardMessages.NewContainerWizardPage_warning_NotInAJavaProject);
               }
               return status;
             }
@@ -317,7 +364,7 @@ public class JJNewJJPage extends WizardPage {
               status
                     .setError(MessageFormat
                                            .format(
-                                                   org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary,
+                                                   NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary,
                                                    new Object[] {
                                                      str }));
               return status;
@@ -326,7 +373,7 @@ public class JJNewJJPage extends WizardPage {
               status
                     .setWarning(MessageFormat
                                              .format(
-                                                     org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder,
+                                                     NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder,
                                                      new Object[] {
                                                        str }));
             }
@@ -334,22 +381,18 @@ public class JJNewJJPage extends WizardPage {
               status
                     .setWarning(MessageFormat
                                              .format(
-                                                     org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath,
+                                                     NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath,
                                                      new Object[] {
                                                        str }));
             }
           } catch (final CoreException e) {
-            status
-                  .setWarning(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject);
+            status.setWarning(NewWizardMessages.NewContainerWizardPage_warning_NotAJavaProject);
           }
         }
         return status;
       }
       else {
-        status
-              .setError(MessageFormat
-                                     .format(
-                                             org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_NotAFolder,
+        status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_NotAFolder,
                                              new Object[] {
                                                str }));
         return status;
@@ -359,7 +402,7 @@ public class JJNewJJPage extends WizardPage {
       status
             .setError(MessageFormat
                                    .format(
-                                           org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist,
+                                           NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist,
                                            new Object[] {
                                              str }));
       return status;
@@ -371,20 +414,18 @@ public class JJNewJJPage extends WizardPage {
    * 
    * @return the status
    */
-  @SuppressWarnings( {
-      "restriction", "deprecation" })
+  @SuppressWarnings( {})
   IStatus packageChanged() {
     final Status status = new Status();
     final String packName = getPackage();
 
     if (packName.length() > 0) {
+      final IStatus val = JavaConventions.validatePackageName(packName, CompilerOptions.VERSION_1_5,
+                                                              CompilerOptions.VERSION_1_5); // For Eclipse 3.4
       // IStatus val = JavaConventions.validatePackageName(packName,null, null); // Eclipse 3.3
-      final IStatus val = JavaConventions.validatePackageName(packName); // Keep for Eclipse 3.2
+      // IStatus val = JavaConventions.validatePackageName(packName,); // Keep for Eclipse 3.2
       if (val.getSeverity() == IStatus.ERROR) {
-        status
-              .setError(MessageFormat
-                                     .format(
-                                             org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
+        status.setError(MessageFormat.format(NewWizardMessages.NewPackageWizardPage_error_InvalidPackageName,
                                              new Object[] {
                                                val.getMessage() }));
         return status;
@@ -393,7 +434,7 @@ public class JJNewJJPage extends WizardPage {
         status
               .setWarning(MessageFormat
                                        .format(
-                                               org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
+                                               NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
                                                new Object[] {
                                                  val.getMessage() }));
       }
@@ -406,12 +447,10 @@ public class JJNewJJPage extends WizardPage {
         final IPath rootPath = root.getPath();
         final IPath outputPath = root.getJavaProject().getOutputLocation();
         if (rootPath.isPrefixOf(outputPath) && !rootPath.equals(outputPath)) {
-          // if the bin folder is inside of our root, don't allow to name a
-          // package like the bin folder
+          // if the bin folder is inside of our root, don't allow to name a package like the bin folder
           final IPath packagePath = pack.getPath();
           if (outputPath.isPrefixOf(packagePath)) {
-            status
-                  .setError(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewPackageWizardPage_error_IsOutputFolder);
+            status.setError(NewWizardMessages.NewPackageWizardPage_error_IsOutputFolder);
             return status;
           }
         }
@@ -427,7 +466,7 @@ public class JJNewJJPage extends WizardPage {
   }
 
   /**
-   * Handles extension change.
+   * Handles the extension change.
    * 
    * @return the status
    */
@@ -439,17 +478,16 @@ public class JJNewJJPage extends WizardPage {
     }
     fileName = fileName.substring(0, dotLoc) + fExtension;
     fFileNameText.setText(fileName);
-    // Does not really matter
+    // does not really matter
     final Status status = new Status();
     return status;
   }
 
   /**
-   * Verifies the input for the filename field.
+   * Verifies the input for the file name field.
    * 
    * @return the status
    */
-  @SuppressWarnings("deprecation")
   IStatus fileNameChanged() {
     String fileName = getFileName();
     if (fileName.length() == 0) {
@@ -472,13 +510,13 @@ public class JJNewJJPage extends WizardPage {
       fileName = fileName.substring(0, dotLoc);
     }
     // in the end validate using JavaConventions
-    return (JavaConventions.validateIdentifier(fileName));
+    return (JavaConventions.validateIdentifier(fileName, CompilerOptions.VERSION_1_5,
+                                               CompilerOptions.VERSION_1_5));
   }
 
   /**
    * Updates the status line and the OK button according to the given status.
    */
-  @SuppressWarnings("restriction")
   protected void updateStatus() {
     final IStatus status = org.eclipse.jdt.internal.ui.dialogs.StatusUtil.getMostSevere(new IStatus[] {
         fSrcRootStatus, fPackageStatus, fExtensionStatus, fFileStatus });
@@ -498,6 +536,13 @@ public class JJNewJJPage extends WizardPage {
    */
   public String getPackage() {
     return fPackageText.getText();
+  }
+
+  /**
+   * @return the static flag
+   */
+  public boolean getStaticFalg() {
+    return fStaticFlag;
   }
 
   /**
@@ -533,18 +578,17 @@ public class JJNewJJPage extends WizardPage {
   }
 
   /**
-   * Opens a dialog to let user choose a source container.
+   * Opens a dialog to let the user choose a source container.
    * 
    * @return the source container
    */
   @SuppressWarnings( {
-      "restriction", "unchecked", "deprecation" })
+    "unchecked" })
   IPackageFragmentRoot chooseSourceContainer() {
     Class[] acceptedClasses = new Class[] {
         IPackageFragmentRoot.class, IJavaProject.class };
-    final org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator validator = new org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator(
-                                                                                                                                                                acceptedClasses,
-                                                                                                                                                                false) {
+    final TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,
+                                                                                        false) {
 
       @Override
       public boolean isSelectedValid(final Object element) {
@@ -567,7 +611,7 @@ public class JJNewJJPage extends WizardPage {
 
     acceptedClasses = new Class[] {
         IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class };
-    final ViewerFilter filter = new org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter(acceptedClasses) {
+    final ViewerFilter filter = new TypedViewerFilter(acceptedClasses) {
 
       @Override
       public boolean select(final Viewer viewer, final Object parent, final Object element) {
@@ -588,11 +632,10 @@ public class JJNewJJPage extends WizardPage {
     final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), labelProvider,
                                                                              provider);
     dialog.setValidator(validator);
-    dialog.setSorter(new JavaElementSorter());
-    dialog
-          .setTitle(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title);
-    dialog
-          .setMessage(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description);
+    //    dialog.setSorter(new JavaElementSorter());
+    dialog.setComparator(new JavaElementComparator());
+    dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title);
+    dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description);
     dialog.addFilter(filter);
     dialog.setInput(JavaCore.create(fWorkspaceRoot));
     dialog.setInitialSelection("dummy"); //$NON-NLS-1$
@@ -612,11 +655,10 @@ public class JJNewJJPage extends WizardPage {
   }
 
   /**
-   * Open a dialog to let user choose a package
+   * Opens a dialog to let the user choose a package.
    * 
    * @return the package
    */
-  @SuppressWarnings("restriction")
   IPackageFragment choosePackage() {
     final IPackageFragmentRoot froot = fSrcRootFragment;
     IJavaElement[] packages = null;
@@ -636,12 +678,9 @@ public class JJNewJJPage extends WizardPage {
                                                                              new JavaElementLabelProvider(
                                                                                                           JavaElementLabelProvider.SHOW_DEFAULT));
     dialog.setIgnoreCase(false);
-    dialog
-          .setTitle(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_title);
-    dialog
-          .setMessage(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description);
-    dialog
-          .setEmptyListMessage(org.eclipse.jdt.internal.ui.wizards.NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty);
+    dialog.setTitle(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_title);
+    dialog.setMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description);
+    dialog.setEmptyListMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty);
     dialog.setElements(packages);
     if (fPackageFragment != null) {
       dialog.setInitialSelections(new Object[] {
@@ -655,36 +694,35 @@ public class JJNewJJPage extends WizardPage {
   }
 
   /**
-   * Utility method to inspect a selection to find a Java element.
+   * Inspects a selection to find a Java element.
    * 
-   * @param selection the selection to be inspected
+   * @param aSelection the selection to be inspected
    * @return a Java element to be used as the initial selection, or <code>null</code>, if no Java element
    *         exists in the given selection
    */
-  @SuppressWarnings("restriction")
-  protected IJavaElement getInitialJavaElement(final IStructuredSelection selection) {
-    IJavaElement jelem = null;
-    if (selection != null && !selection.isEmpty()) {
-      final Object selectedElement = selection.getFirstElement();
+  protected IJavaElement getInitialJavaElement(final IStructuredSelection aSelection) {
+    IJavaElement javaElem = null;
+    if (aSelection != null && !aSelection.isEmpty()) {
+      final Object selectedElement = aSelection.getFirstElement();
       if (selectedElement instanceof IAdaptable) {
         final IAdaptable adaptable = (IAdaptable) selectedElement;
 
-        jelem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
-        if (jelem == null) {
+        javaElem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+        if (javaElem == null) {
           IResource resource = (IResource) adaptable.getAdapter(IResource.class);
           if (resource != null && resource.getType() != IResource.ROOT) {
-            while (jelem == null && resource.getType() != IResource.PROJECT) {
+            while (javaElem == null && resource.getType() != IResource.PROJECT) {
               resource = resource.getParent();
-              jelem = (IJavaElement) resource.getAdapter(IJavaElement.class);
+              javaElem = (IJavaElement) resource.getAdapter(IJavaElement.class);
             }
-            if (jelem == null) {
-              jelem = JavaCore.create(resource); // java project
+            if (javaElem == null) {
+              javaElem = JavaCore.create(resource); // java project
             }
           }
         }
       }
     }
-    if (jelem == null) {
+    if (javaElem == null) {
       IWorkbenchPart part = org.eclipse.jdt.internal.ui.JavaPlugin.getActivePage().getActivePart();
       if (part instanceof ContentOutline) {
         part = org.eclipse.jdt.internal.ui.JavaPlugin.getActivePage().getActiveEditor();
@@ -694,21 +732,21 @@ public class JJNewJJPage extends WizardPage {
         final Object elem = ((org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider) part)
                                                                                                    .getViewPartInput();
         if (elem instanceof IJavaElement) {
-          jelem = (IJavaElement) elem;
+          javaElem = (IJavaElement) elem;
         }
       }
     }
 
-    if (jelem == null || jelem.getElementType() == IJavaElement.JAVA_MODEL) {
+    if (javaElem == null || javaElem.getElementType() == IJavaElement.JAVA_MODEL) {
       try {
         final IJavaProject[] projects = JavaCore.create(fWorkspaceRoot).getJavaProjects();
         if (projects.length == 1) {
-          jelem = projects[0];
+          javaElem = projects[0];
         }
       } catch (final JavaModelException e) {
         Activator.log(e.getMessage());
       }
     }
-    return jelem;
+    return javaElem;
   }
 }

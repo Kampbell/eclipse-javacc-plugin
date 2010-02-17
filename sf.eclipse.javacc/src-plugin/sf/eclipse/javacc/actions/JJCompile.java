@@ -24,86 +24,88 @@ import sf.eclipse.javacc.JJBuilder;
 import sf.eclipse.javacc.editors.JJEditor;
 
 /**
- * Compile action. Referenced by plugin.xml<br>
+ * Compile with JavaCC action.<br>
+ * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.popupMenus"><br>
  * for popup menu in Package Explorer AND for popup menu in Editor
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, IJJConstants {
 
-  // MMa 04/09 : formatting and javadoc revision ; removed jtb files (managed in JTBCompile)
+  // MMa 04/2009 : formatting and javadoc revision ; removed jtb files (managed in JTBCompile)
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** the current editor */
-  private JJEditor  editor;
-  /** the resource to compile */
-  private IResource res;
+  /** The current editor */
+  private JJEditor  fEditor;
+  /** The resource to compile */
+  private IResource fRes;
 
   /**
-   * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction,
-   *      org.eclipse.ui.IEditorPart)
+   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
-    if (targetEditor == null) {
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
+    if (aTargetEditor == null) {
       return;
     }
-    editor = (JJEditor) targetEditor;
-    final IEditorInput input = editor.getEditorInput();
-    res = (IResource) input.getAdapter(IResource.class);
+    fEditor = (JJEditor) aTargetEditor;
+    final IEditorInput input = fEditor.getEditorInput();
+    fRes = (IResource) input.getAdapter(IResource.class);
   }
 
   /**
-   * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
-   *      org.eclipse.ui.IWorkbenchPart)
+   * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
    */
-  public void setActivePart(@SuppressWarnings("unused") final IAction action,
-                            @SuppressWarnings("unused") final IWorkbenchPart targetPart) {
+  public void setActivePart(@SuppressWarnings("unused") final IAction aAction,
+                            @SuppressWarnings("unused") final IWorkbenchPart aTargetPart) {
     // not used
   }
 
   /**
-   * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction action, ISelection selection)
+   * @see IActionDelegate#selectionChanged(IAction action, ISelection selection)
    */
-  public void selectionChanged(@SuppressWarnings("unused") final IAction action, final ISelection selection) {
-    if (selection instanceof IStructuredSelection) {
-      final Object obj = ((IStructuredSelection) selection).getFirstElement();
+  public void selectionChanged(@SuppressWarnings("unused") final IAction aAction, final ISelection aSelection) {
+    if (aSelection instanceof IStructuredSelection) {
+      final Object obj = ((IStructuredSelection) aSelection).getFirstElement();
       if (obj != null && obj instanceof IFile) {
-        res = (IFile) obj;
+        fRes = (IFile) obj;
       }
     }
   }
 
   /**
-   * Compile the .jj or .jjt file.
+   * Compiles the .jj or .jjt file.
    * 
    * @see IActionDelegate#run(IAction)
-   * @param action the action proxy that handles the presentation portion of the action
+   * @param aAction the action proxy that handles the presentation portion of the action
    */
-  public void run(@SuppressWarnings("unused") final IAction action) {
-    if (res == null) {
+  public void run(@SuppressWarnings("unused") final IAction aAction) {
+    if (fRes == null) {
       return;
     }
-
     try {
-      // Saving the file triggers a new Compilation if project has JJNature
-      if (editor != null) {
-        editor.doSave(null); // Called from Editor
+      // saving the file triggers a new Compilation if project has JJNature
+      if (fEditor != null) {
+        // called from Editor
+        fEditor.doSave(null);
       }
       else {
-        res.touch(null); // Called from Package Explorer
+        // called from Package Explorer
+        fRes.touch(null);
       }
 
-      // Force Compile if not triggered
-      final IScopeContext projectScope = new ProjectScope(res.getProject());
+      // force Compile if not triggered
+      final IScopeContext projectScope = new ProjectScope(fRes.getProject());
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
       if (!("true").equals(prefs.get(JJ_NATURE, "false")) //$NON-NLS-1$ //$NON-NLS-2$
-          || !isOnClasspath() || !res.getWorkspace().isAutoBuilding()) {
-        JJBuilder.CompileResource(res);
+          || !isOnClasspath() || !fRes.getWorkspace().isAutoBuilding()) {
+        JJBuilder.CompileResource(fRes);
       }
 
-      // Refresh the whole project to trigger compilation of Java files
-      res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+      // refresh the whole project to trigger compilation of Java files
+      fRes.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 
     } catch (final CoreException e) {
       e.printStackTrace();
@@ -112,19 +114,19 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
   }
 
   /**
-   * Check if the resource is a .jj, .jjt file and is on classpath.
+   * Checks if the resource is a .jj, .jjt file and is on classpath.
    * 
-   * @return true if all is ok, false otherwise
+   * @return true if all is OK, false otherwise
    */
   protected boolean isOnClasspath() {
     boolean gen = true;
-    // Look only for jj, jjt and jtb files
-    final String ext = res.getFullPath().getFileExtension();
+    // look only for jj and jjt files
+    final String ext = fRes.getFullPath().getFileExtension();
     if ("jj".equals(ext) || "jjt".equals(ext)) { //$NON-NLS-1$ //$NON-NLS-2$
-      final IProject project = res.getProject();
+      final IProject project = fRes.getProject();
       final IJavaProject javaProject = JavaCore.create(project);
       if (javaProject != null) {
-        gen = javaProject.isOnClasspath(res);
+        gen = javaProject.isOnClasspath(fRes);
       }
     }
     return gen;

@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INavigationLocationProvider;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -36,97 +35,96 @@ import sf.eclipse.javacc.options.JJPreferences;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
- * Editor designed for JavaCC files. Referenced by plugin.xml<br>
+ * Editor designed for JavaCC files.<br>
+ * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.editors">
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJEditor extends TextEditor implements IJJConstants, INavigationLocationProvider {
 
-  // MMa 11/09 : formatting and javadoc revision ; added constructor for subclass
+  // MMa 11/2009 : formatting and javadoc revision ; added constructor for subclass
+  // MMa 12/2009 : added spell checking ; some renaming
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** the JJ outline page */
-  protected JJOutlinePage                               outlinePage;
-  /** the JJ reconciling strategy */
-  protected JJReconcilingStrategy                       reconcilingStrategy;
-  /** the JJ source viewer configuration */
-  protected JJSourceViewerConfiguration                 jjSourceViewerConfiguration;
-  /** the projection support */
-  private ProjectionSupport                             projectionSupport;
-  /** the annotations */
-  private final HashMap<ProjectionAnnotation, Position> oldAnnotations = new HashMap<ProjectionAnnotation, Position>();
-  /** the annotation model */
-  private ProjectionAnnotationModel                     annotationModel;
+  /** The JJ outline page */
+  protected JJOutlinePage                               fOutlinePage;
+  /** The JJ source viewer configuration */
+  protected JJSourceViewerConfiguration                 fJJSourceViewerConfiguration;
+  /** The projection support */
+  private ProjectionSupport                             fProjectionSupport;
+  /** The projection annotations */
+  private final HashMap<ProjectionAnnotation, Position> fOldAnnotations = new HashMap<ProjectionAnnotation, Position>();
+  /** The projection annotation model */
+  private ProjectionAnnotationModel                     fAnnotationModel;
 
-  /** the editor's pair Parent Matcher */
-  private final ParentMatcher                           fParentMatcher = new ParentMatcher();
-  /** the pair matching char color */
-  private Color                                         colorMatchingChar;
+  /** The editor's pair Parent Matcher */
+  private final JJCharacterPairMatcher                  fParentMatcher  = new JJCharacterPairMatcher();
+  /** The pair matching char color */
+  private Color                                         fColorMatchingChar;
 
-  /** the editor's peer character painter */
+  /** The editor's peer character painter */
   private MatchingCharacterPainter                      fMatchingCharacterPainter;
-  /** the JJ elements */
-  private JJElements                                    jjElements;
+  /** The JJ elements */
+  private JJElements                                    fJJElements;
 
   /**
    * Standard constructor.
    */
   public JJEditor() {
     super();
-    // Offer the possibility to add contributions to context menu via plugin.xml
+    // offer the possibility to add contributions to context menu via plugin.xml
     setEditorContextMenuId("sf.eclipse.javacc.editors.JJEditor"); //$NON-NLS-1$
   }
 
   /**
    * Customized constructor for subclass.
    * 
-   * @param ctx the context menu id (from plugin.xml)
+   * @param aCtx the context menu id (from plugin.xml)
    */
-  public JJEditor(final String ctx) {
+  public JJEditor(final String aCtx) {
     super();
-    // Offer the possibility to add contributions to context menu via plugin.xml
-    setEditorContextMenuId(ctx);
+    // for sub-classes like JTBEditor
+    setEditorContextMenuId(aCtx);
   }
 
   /**
-   * Initializes this editor. Method declared on AbstractTextEditor
+   * Initializes this editor.
    */
   @Override
   protected void initializeEditor() {
     super.initializeEditor();
 
-    // Generic Document provider
-    setDocumentProvider(new FileDocumentProvider());
+    // JJ DocumentProvider
+    setDocumentProvider(new JJDocumentProvider());
     // JJ CodeScanner, Formatter, IndentStrategy, ContentAssist,...
-    jjSourceViewerConfiguration = new JJSourceViewerConfiguration(this);
-    setSourceViewerConfiguration(jjSourceViewerConfiguration);
-    // Used to synchronize Outline and Editor
-    reconcilingStrategy = new JJReconcilingStrategy(this);
-    // Used to retrieve JJElements (methods, tokens, class) updated at each document parsing
-    jjElements = new JJElements();
+    fJJSourceViewerConfiguration = new JJSourceViewerConfiguration(this);
+    setSourceViewerConfiguration(fJJSourceViewerConfiguration);
+    // used to retrieve JJElements (methods, tokens, class) updated at each document parsing
+    fJJElements = new JJElements();
 
-    // Actions are declared in plugin.xml
+    // actions are declared in plugin.xml
   }
 
   /**
-   * Disposes the colors.
+   * Disposes the colors and the code scanner.
    */
   @Override
   public void dispose() {
-    if (colorMatchingChar != null) {
-      colorMatchingChar.dispose();
-      colorMatchingChar = null;
+    if (fColorMatchingChar != null) {
+      fColorMatchingChar.dispose();
+      fColorMatchingChar = null;
     }
-    if (jjSourceViewerConfiguration != null) {
-      jjSourceViewerConfiguration.dispose();
-      jjSourceViewerConfiguration = null;
+    if (fJJSourceViewerConfiguration != null) {
+      fJJSourceViewerConfiguration.dispose();
+      fJJSourceViewerConfiguration = null;
     }
     super.dispose();
   }
 
   /**
-   * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
+   * @see TextEditor#initializeKeyBindingScopes()
    */
   @Override
   protected void initializeKeyBindingScopes() {
@@ -135,57 +133,59 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * Subclassed in order to add MatchingCharacterPainter to install ProjectionSupport
+   * Overridden in order to add MatchingCharacterPainter to install ProjectionSupport
    */
   @Override
-  public void createPartControl(final Composite parent) {
-    super.createPartControl(parent);
-    // Parent matcher
+  public void createPartControl(final Composite aParent) {
+    super.createPartControl(aParent);
+    // ParentMatcher
     showMatchingCharacters();
     // Projection Support
     final ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
-    projectionSupport = new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
-    projectionSupport.install();
-    // Turn projection mode on
+    fProjectionSupport = new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
+    fProjectionSupport.install();
+    // turn projection mode on
     viewer.doOperation(ProjectionViewer.TOGGLE);
-    annotationModel = viewer.getProjectionAnnotationModel();
+    fAnnotationModel = viewer.getProjectionAnnotationModel();
   }
 
   /**
-   * Subclassed to return a ProjectionViewer instead of a SourceViewer.
+   * Overridden to return a ProjectionViewer instead of a SourceViewer.
    */
   @Override
-  protected ISourceViewer createSourceViewer(final Composite parent, final IVerticalRuler ruler,
-                                             final int styles) {
-    final ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(),
-                                                      isOverviewRulerVisible(), styles);
-    // ensure decoration support has been created and configured.
-    getSourceViewerDecorationSupport(viewer);
-    fAnnotationAccess = getAnnotationAccess();
+  protected ISourceViewer createSourceViewer(final Composite aParent, final IVerticalRuler aRuler,
+                                             final int aStyles) {
+    fAnnotationAccess = createAnnotationAccess();
     fOverviewRuler = createOverviewRuler(getSharedColors());
+    final ISourceViewer viewer = new ProjectionViewer(aParent, aRuler, fOverviewRuler,
+                                                      isOverviewRulerVisible(), aStyles);
+    // ensure decoration support has been created and configured
+    getSourceViewerDecorationSupport(viewer);
     return viewer;
   }
 
   /**
+   * Relay as AbstractTextEditor.getSourceViewer() is protected.
+   * 
    * @return the source viewer
    */
-  public ISourceViewer getSourceViewer2() {
+  public ISourceViewer getSourceViewerPlease() {
     return getSourceViewer();
   }
 
   /**
    * Tells the editor which regions are collapsable.
    * 
-   * @param positions the positions
+   * @param aPositions the folding positions
    */
-  public void updateFoldingStructure(final ArrayList<Position> positions) {
+  public void updateFoldingStructure(final ArrayList<Position> aPositions) {
     final HashMap<ProjectionAnnotation, Position> additions = new HashMap<ProjectionAnnotation, Position>();
-    for (int i = 0; i < positions.size(); i++) {
+    for (int i = 0; i < aPositions.size(); i++) {
       ProjectionAnnotation annotation = null;
-      final Position pos = positions.get(i);
+      final Position pos = aPositions.get(i);
       boolean collapsed = false;
-      // Search existing annotations, to keep state (collapsed or not)
-      final Iterator<Entry<ProjectionAnnotation, Position>> e = oldAnnotations.entrySet().iterator();
+      // search existing annotations, to keep state (collapsed or not)
+      final Iterator<Entry<ProjectionAnnotation, Position>> e = fOldAnnotations.entrySet().iterator();
       while (e.hasNext()) {
         final Entry<ProjectionAnnotation, Position> mapEntry = e.next();
         final ProjectionAnnotation key = mapEntry.getKey();
@@ -195,16 +195,15 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
           break;
         }
       }
-      // Create new annotation eventually with old state
+      // create new annotation eventually with old state
       annotation = new ProjectionAnnotation(collapsed);
       additions.put(annotation, pos);
     }
-    // Clumsy only additions can be passed as a Map, we need to build an array
-    final Annotation[] deletions = (oldAnnotations.keySet().toArray(new Annotation[] {}));
-    annotationModel.modifyAnnotations(deletions, additions, null);
-    // Now we can add additions to oldAnnotations
-    oldAnnotations.clear();
-    oldAnnotations.putAll(additions);
+    final Annotation[] deletions = (fOldAnnotations.keySet().toArray(new Annotation[fOldAnnotations.size()]));
+    fAnnotationModel.modifyAnnotations(deletions, additions, null);
+    // now we can add additions to oldAnnotations
+    fOldAnnotations.clear();
+    fOldAnnotations.putAll(additions);
   }
 
   /**
@@ -216,9 +215,9 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
         fMatchingCharacterPainter = new MatchingCharacterPainter(getSourceViewer(), fParentMatcher);
         final Display display = Display.getCurrent();
         final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-        colorMatchingChar = new Color(display, PreferenceConverter.getColor(store,
-                                                                            JJPreferences.P_MATCHING_CHAR));
-        fMatchingCharacterPainter.setColor(colorMatchingChar);
+        fColorMatchingChar = new Color(display, PreferenceConverter.getColor(store,
+                                                                             JJPreferences.P_MATCHING_CHAR));
+        fMatchingCharacterPainter.setColor(fColorMatchingChar);
         final ITextViewerExtension2 extension = (ITextViewerExtension2) getSourceViewer();
         extension.addPainter(fMatchingCharacterPainter);
       }
@@ -226,54 +225,46 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * Returns ContentOutlinePage Method declared on IAdaptable.
+   * Returns the JJOutlinePage declared on IAdaptable.
    */
   @Override
   @SuppressWarnings("unchecked")
-  public Object getAdapter(final Class key) {
-    if (key.equals(IContentOutlinePage.class)) {
-      if (outlinePage == null) {
-        outlinePage = new JJOutlinePage(this);
+  public Object getAdapter(final Class aRequiredClass) {
+    if (IContentOutlinePage.class.equals(aRequiredClass)) {
+      if (fOutlinePage == null) {
+        fOutlinePage = new JJOutlinePage(this);
         updateOutlinePage();
       }
-      return outlinePage;
+      return fOutlinePage;
     }
-    return super.getAdapter(key);
+    return super.getAdapter(aRequiredClass);
   }
 
   /**
-   * @return the reconciling strategy
-   */
-  public JJReconcilingStrategy getReconcilingStrategy() {
-    return reconcilingStrategy;
-  }
-
-  /**
-   * Takes the current socument and calls setInput() on JJOutlinePage which leads to
+   * Takes the current document and calls setInput() on JJOutlinePage which leads to
    * JJOutlinePageContentProvider.setInput() which parses the document.
    */
   protected void updateOutlinePage() {
-    if (outlinePage == null) {
-      outlinePage = (JJOutlinePage) getAdapter(IContentOutlinePage.class);
+    if (fOutlinePage == null) {
+      fOutlinePage = (JJOutlinePage) getAdapter(IContentOutlinePage.class);
     }
-    outlinePage.setInput(getDocument());
-    // Get root node to build JJElement HashMap
-    final JJOutlinePageContentProvider contentProvider = (JJOutlinePageContentProvider) outlinePage
-                                                                                                   .getContentProvider();
-    JJNode rootNode = contentProvider.getAST();
+    fOutlinePage.setInput(getDocument());
+    // get root node to build JJElement HashMap
+    final JJOutlinePageContentProvider contentProvider = (JJOutlinePageContentProvider) fOutlinePage
+                                                                                                    .getContentProvider();
     // If the outline is not up, then use the ContentProvider directly
-    if (outlinePage.getControl() == null) {
+    if (fOutlinePage.getControl() == null) {
       contentProvider.inputChanged(null, null, getDocument());
-      rootNode = contentProvider.getAST();
     }
-    // If parsing failed we don't touch JJElements used for navigation and completion 
-    if (rootNode.getFirstToken().next == null) {
+    final JJNode rootNode = contentProvider.getAST();
+    // if parsing failed we don't touch JJElements used for navigation and completion 
+    if (rootNode == null || rootNode.getFirstToken().next == null) {
       return;
     }
 
-    // Clear and Fill the JJElements HashMap for this Editor
-    jjElements.clear();
-    rootNode.setJJElementsToUpdate(jjElements);
+    // clear and Fill the JJElements HashMap for this Editor
+    fJJElements.clear();
+    rootNode.setJJElementsToUpdate(fJJElements);
     rootNode.buildHashMap();
   }
 
@@ -281,7 +272,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
    * @return jjElements
    */
   public JJElements getJJElements() {
-    return jjElements;
+    return fJJElements;
   }
 
   /**
@@ -293,16 +284,16 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * Set the Selection given a Node of the AST
+   * Sets the Selection given a Node of the AST.
    * 
-   * @param node the JJNode to set the selection on
+   * @param aNode the JJNode to set the selection on
    */
-  public void setSelection(final JJNode node) {
+  public void setSelection(final JJNode aNode) {
     try {
       final IDocument doc = getDocument();
       if (doc != null) {
-        final int start = doc.getLineOffset(node.getBeginLine() - 1);
-        int end = doc.getLineOffset(node.getEndLine());
+        final int start = doc.getLineOffset(aNode.getBeginLine() - 1);
+        int end = doc.getLineOffset(aNode.getEndLine());
         if (start > end) {
           end = start;
         }
@@ -322,8 +313,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * Subclassed to add edit location in History [ 1891111 ] Alt + left arrow should jump back to correct
-   * position
+   * Overridden to add edit location in History. Alt + left arrow should jump back to correct position.
    */
   @Override
   protected void updateContentDependentActions() {
@@ -334,18 +324,18 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Highlights a range and selects a text.
    * 
-   * @param range the range to highlight
-   * @param sel the text to select
+   * @param aRange the range to highlight
+   * @param aSelection the text to select
    */
-  public void setSelection(final IRegion range, final ITextSelection sel) {
-    if (range != null) {
-      setHighlightRange(range.getOffset(), range.getLength(), true);
+  public void setSelection(final IRegion aRange, final ITextSelection aSelection) {
+    if (aRange != null) {
+      setHighlightRange(aRange.getOffset(), aRange.getLength(), true);
     }
     else {
       resetHighlightRange();
     }
-    if (sel != null) {
-      selectAndReveal(sel.getOffset(), sel.getLength());
+    if (aSelection != null) {
+      selectAndReveal(aSelection.getOffset(), aSelection.getLength());
     }
   }
 

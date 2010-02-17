@@ -29,47 +29,53 @@ import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.JJNature;
 
 /**
- * The Tab for JavaCC runtime options
+ * The Tab for JavaCC runtime options.
  * 
- * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJRuntimeOptions extends Composite implements IJJConstants {
 
-  // MMa 04/09 : formatting revision ; changed jar names
+  // MMa 02/2010 : formatting and javadoc revision
+  // MMa 04/2009 : formatting revision ; changed jar names
 
-  // Controls
-  protected Text               jarFile;
-  protected BooleanFieldEditor checkSuppressWarnings;
-  protected BooleanFieldEditor checkClearConsole;
-  protected BooleanFieldEditor checkJJNature;
-  protected Text               jtbjarFile;
-
-  // The Resource to work on.
-  protected IResource          resource;
+  /** The JavaCC jar file */
+  protected Text               fJavaCCjarFile;
+  /** The suppress warnings flag */
+  protected BooleanFieldEditor fSuppressWarnings;
+  /** The clear console flag */
+  protected BooleanFieldEditor fClearConsole;
+  /** the add JJNature flag */
+  protected BooleanFieldEditor fJJNature;
+  //  /** the check spelling flag */
+  //  protected BooleanFieldEditor fCheckSpelling;
+  /** The JTB jar file */
+  protected Text               fJtbjarFile;
+  /** The Resource to work on */
+  protected IResource          fResource;
 
   /**
    * Constructor for JJRuntimeOptions.
    * 
-   * @param parent
-   * @param style
+   * @param aParent the parent
+   * @param aResource the resource
    */
-  public JJRuntimeOptions(final Composite parent, final IResource res) {
-    super(parent, SWT.NONE);
-    this.resource = res;
+  public JJRuntimeOptions(final Composite aParent, final IResource aResource) {
+    super(aParent, SWT.NONE);
+    fResource = aResource;
     final GridLayout layout = new GridLayout(1, false);
     setLayout(layout);
     setLayoutData(new GridData(GridData.FILL_BOTH));
     layout.marginWidth = 10;
     layout.marginHeight = 10;
 
-    // Adds Project options
+    // add Project options
     final Group groupProject = new Group(this, SWT.NONE);
     groupProject.setText(Activator.getString("JJRuntimeOptions.Shared_project_options_Group")); //$NON-NLS-1$
     groupProject.setLayout(layout);
     groupProject.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-    // Adds runtime_jar selection control
+    // add runtime_jar selection control
     final Composite subGroup = new Composite(groupProject, SWT.NONE);
     subGroup.setLayout(new GridLayout(4, false));
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL)
@@ -78,12 +84,12 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    // Add File Field Editor (no more FileFieldEditor)
-    // Code inspired by org.eclipse.jdt.internal.ui.preferences.OptionsConfigurationBlock
+    // add File Field Editor (no more FileFieldEditor)
+    // code inspired by org.eclipse.jdt.internal.ui.preferences.OptionsConfigurationBlock
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL)
                                                   .setText(Activator
                                                                     .getString("JJRuntimeOptions.Set_the_JavaCC_jar_file")); //$NON-NLS-1$
-    jarFile = new Text(subGroup, SWT.BORDER | SWT.SINGLE);
+    fJavaCCjarFile = new Text(subGroup, SWT.BORDER | SWT.SINGLE);
     GridData gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
     // Eclipse 3.5
@@ -94,40 +100,42 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     // Eclipse 3.4
     gd.widthHint = 300;
 
-    jarFile.setLayoutData(gd);
+    fJavaCCjarFile.setLayoutData(gd);
     Button browse = new Button(subGroup, SWT.PUSH);
     browse.setText(Activator.getString(Activator.getString("JJRuntimeOptions.Browse"))); //$NON-NLS-1$
     browse.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(final SelectionEvent event) {
-        final FileDialog dialog = new FileDialog(jarFile.getShell(), SWT.OPEN);
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
+        final FileDialog dialog = new FileDialog(fJavaCCjarFile.getShell(), SWT.OPEN);
         dialog.setText(Activator.getString("JJRuntimeOptions.Choose_file")); //$NON-NLS-1$
-        dialog.setFilterPath(jarFile.getText());
+        dialog.setFilterPath(fJavaCCjarFile.getText());
         final String path = dialog.open();
         if (path != null) {
-          jarFile.setText(path);
+          fJavaCCjarFile.setText(path);
         }
       }
     });
-    // Add "Variables..." button
+    // add "Variables..." button
     Button variables = new Button(subGroup, SWT.PUSH);
     variables.setText(Activator.getString(Activator.getString("JJRuntimeOptions.Variables"))); //$NON-NLS-1$
     variables.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(final SelectionEvent e) {
-        final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(jarFile.getShell());
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
+        final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
+                                                                                       fJavaCCjarFile
+                                                                                                     .getShell());
         if (dialog.open() == Window.OK) {
-          jarFile.insert(dialog.getVariableExpression());
+          fJavaCCjarFile.insert(dialog.getVariableExpression());
         }
       }
     });
-    // Adds jtb runtime_jar selection control    
+    // add jtb runtime_jar selection control    
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL)
                                                   .setText(Activator
                                                                     .getString("JJRuntimeOptions.Set_the_jtb_jar_file")); //$NON-NLS-1$
-    jtbjarFile = new Text(subGroup, SWT.BORDER | SWT.SINGLE);
+    fJtbjarFile = new Text(subGroup, SWT.BORDER | SWT.SINGLE);
     gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
     // Eclipse 3.5
@@ -138,65 +146,69 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     // Eclipse 3.4
     gd.widthHint = 300;
 
-    jtbjarFile.setLayoutData(gd);
+    fJtbjarFile.setLayoutData(gd);
     browse = new Button(subGroup, SWT.PUSH);
     browse.setText(Activator.getString(Activator.getString("JJRuntimeOptions.Browse"))); //$NON-NLS-1$
     browse.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(final SelectionEvent event) {
-        final FileDialog dialog = new FileDialog(jarFile.getShell(), SWT.OPEN);
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
+        final FileDialog dialog = new FileDialog(fJavaCCjarFile.getShell(), SWT.OPEN);
         dialog.setText(Activator.getString("JJRuntimeOptions.Choose_file")); //$NON-NLS-1$
-        dialog.setFilterPath(jtbjarFile.getText());
+        dialog.setFilterPath(fJtbjarFile.getText());
         final String path = dialog.open();
         if (path != null) {
-          jtbjarFile.setText(path);
+          fJtbjarFile.setText(path);
         }
       }
     });
-    // Add "Variables..." button
+    // add "Variables..." button
     variables = new Button(subGroup, SWT.PUSH);
     variables.setText(Activator.getString(Activator.getString("JJRuntimeOptions.Variables"))); //$NON-NLS-1$
     variables.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(final SelectionEvent e) {
-        final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(jarFile.getShell());
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
+        final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
+                                                                                       fJavaCCjarFile
+                                                                                                     .getShell());
         if (dialog.open() == Window.OK) {
-          jtbjarFile.insert(dialog.getVariableExpression());
+          fJtbjarFile.insert(dialog.getVariableExpression());
         }
       }
     });
 
-    // Add Checkboxes for boolean values
+    // add Checkboxes for boolean values
     final Composite checkGroup = new Composite(groupProject, SWT.NONE);
     checkGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-    checkClearConsole = new BooleanFieldEditor(
-                                               CLEAR_CONSOLE,
-                                               Activator
-                                                        .getString("JJRuntimeOptions.Clear_JavaCC_console_before_build"), checkGroup); //$NON-NLS-1$
-    checkJJNature = new BooleanFieldEditor(
-                                           JJ_NATURE_NAME,
+    fClearConsole = new BooleanFieldEditor(
+                                           CLEAR_CONSOLE,
                                            Activator
-                                                    .getString("JJRuntimeOptions.Build_automatically_on_save"), checkGroup); //$NON-NLS-1$
-    checkSuppressWarnings = new BooleanFieldEditor(
-                                                   SUPPRESS_WARNINGS,
-                                                   Activator
-                                                            .getString("JJRuntimeOptions.Automatically_suppress_warnings"), checkGroup); //$NON-NLS-1$
+                                                    .getString("JJRuntimeOptions.Clear_JavaCC_console_before_build"), checkGroup); //$NON-NLS-1$
+    fJJNature = new BooleanFieldEditor(
+                                       JJ_NATURE_NAME,
+                                       Activator.getString("JJRuntimeOptions.Build_automatically_on_save"), checkGroup); //$NON-NLS-1$
+    fSuppressWarnings = new BooleanFieldEditor(
+                                               SUPPRESS_WARNINGS,
+                                               Activator
+                                                        .getString("JJRuntimeOptions.Automatically_suppress_warnings"), checkGroup); //$NON-NLS-1$
+    //    fCheckSpelling = new BooleanFieldEditor(CHECK_SPELLING,
+    //                                           Activator.getString("JJRuntimeOptions.Check_spelling"), checkGroup); //$NON-NLS-1$
 
-    // Reads and sets values
-    if (res != null) {
-      final IProject proj = res.getProject();
-      final IScopeContext projectScope = new ProjectScope(proj);
+    // read and set values
+    if (aResource != null) {
+      final IProject project = aResource.getProject();
+      final IScopeContext projectScope = new ProjectScope(project);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
       try {
-        // Sets according to PersistentProperties
-        jarFile.setText(prefs.get(RUNTIME_JJJAR, "")); //$NON-NLS-1$
-        jtbjarFile.setText(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
-        checkClearConsole.setBooleanValue("true".equals((prefs.get(CLEAR_CONSOLE, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
-        final boolean hasJavaccNature = proj.getDescription().hasNature(JJ_NATURE_ID);
-        checkJJNature.setBooleanValue(hasJavaccNature);
-        checkSuppressWarnings.setBooleanValue("true".equals((prefs.get(SUPPRESS_WARNINGS, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
+        // set according to PersistentProperties
+        fJavaCCjarFile.setText(prefs.get(RUNTIME_JJJAR, "")); //$NON-NLS-1$
+        fJtbjarFile.setText(prefs.get(RUNTIME_JTBJAR, "")); //$NON-NLS-1$
+        fClearConsole.setBooleanValue("true".equals((prefs.get(CLEAR_CONSOLE, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
+        final boolean hasJavaccNature = project.getDescription().hasNature(JJ_NATURE_ID);
+        fJJNature.setBooleanValue(hasJavaccNature);
+        fSuppressWarnings.setBooleanValue("true".equals((prefs.get(SUPPRESS_WARNINGS, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
+        //        fCheckSpelling.setBooleanValue("true".equals((prefs.get(CHECK_SPELLING, "true")))); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (final CoreException e) {
         e.printStackTrace();
       }
@@ -204,47 +216,49 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   }
 
   /**
-   * Just set defaults
+   * Sets the defaults.
    */
   public void performDefaults() {
-    // By default we use the jar in the plugin
+    // bBy default we use the jar in the plugin
     final URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
     try {
       final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
       String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
-      // Returned String is like "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
+      // returned String is like "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
       if (home.startsWith("/") && home.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
         home = home.substring(1);
       }
-      jarFile.setText(home + JAVACC_JAR_NAME);
-      jtbjarFile.setText(home + JTB_JAR_NAME);
+      fJavaCCjarFile.setText(home + JAVACC_JAR_NAME);
+      fJtbjarFile.setText(home + JTB_JAR_NAME);
     } catch (final IOException e) {
       e.printStackTrace();
     }
-    checkClearConsole.setBooleanValue(true);
-    checkSuppressWarnings.setBooleanValue(false);
-    checkJJNature.setBooleanValue(true);
+    fClearConsole.setBooleanValue(true);
+    fJJNature.setBooleanValue(true);
+    fSuppressWarnings.setBooleanValue(false);
+    //    fCheckSpelling.setBooleanValue(true);
   }
 
   /**
-   * Called by JJPropertyPage to save settings in Properties
+   * Save settings in Properties (called by JJPropertyPage).
+   * 
+   * @return true if successful, false otherwise
    */
   public boolean performOk() {
-    // Reads and store values
-    final IResource res = resource;
-    if (res != null) {
-      final IProject proj = res.getProject();
-      final IScopeContext projectScope = new ProjectScope(proj);
+    if (fResource != null) {
+      final IProject project = fResource.getProject();
+      final IScopeContext projectScope = new ProjectScope(project);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
 
-      prefs.put(RUNTIME_JJJAR, jarFile.getText());
-      prefs.put(RUNTIME_JTBJAR, jtbjarFile.getText());
-      prefs.put(CLEAR_CONSOLE, checkClearConsole.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-      prefs.put(SUPPRESS_WARNINGS, checkSuppressWarnings.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-      prefs.put(JJ_NATURE, checkJJNature.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+      prefs.put(RUNTIME_JJJAR, fJavaCCjarFile.getText());
+      prefs.put(RUNTIME_JTBJAR, fJtbjarFile.getText());
+      prefs.put(JJ_NATURE, fJJNature.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+      prefs.put(CLEAR_CONSOLE, fClearConsole.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+      prefs.put(SUPPRESS_WARNINGS, fSuppressWarnings.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+      //      prefs.put(CHECK_SPELLING, fCheckSpelling.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      // Sets the nature directly
-      JJNature.setJJNature(checkJJNature.getBooleanValue(), proj);
+      // set directly the nature 
+      JJNature.setJJNature(fJJNature.getBooleanValue(), project);
 
       try {
         prefs.flush();

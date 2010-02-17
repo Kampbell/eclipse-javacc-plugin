@@ -1,0 +1,105 @@
+package sf.eclipse.javacc.editors;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.text.spelling.DefaultSpellingEngine;
+import org.eclipse.jdt.internal.ui.text.spelling.JavaSpellingEngine;
+import org.eclipse.jdt.internal.ui.text.spelling.SpellingEngine;
+import org.eclipse.jdt.internal.ui.text.spelling.TextSpellingEngine;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.texteditor.spelling.ISpellingEngine;
+import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
+import org.eclipse.ui.texteditor.spelling.SpellingContext;
+
+/**
+ * JJ spelling engine, copied from the default spelling engine {@link DefaultSpellingEngine} and modified to
+ * use a {@link JavaSpellingEngine} to process {@link JJDocumentProvider#JJ_COMMENT} partitions.
+ * 
+ * @author Marc Mazas 2009-2010
+ */
+@SuppressWarnings("restriction")
+public class JJSpellingEngine extends DefaultSpellingEngine {
+
+  // MMa 12/2009 : added to project for spell checking (but not used)
+
+  /** Text content type */
+  private static final IContentType               TEXT_CONTENT_TYPE = Platform
+                                                                              .getContentTypeManager()
+                                                                              .getContentType(
+                                                                                              IContentTypeManager.CT_TEXT);
+
+  /** Java source content type */
+  private static final IContentType               JAVA_CONTENT_TYPE = Platform
+                                                                              .getContentTypeManager()
+                                                                              .getContentType(
+                                                                                              JavaCore.JAVA_SOURCE_CONTENT_TYPE);
+
+  //  /** Java properties content type */
+  //  private static final IContentType PROPERTIES_CONTENT_TYPE = Platform
+  //                                                                      .getContentTypeManager()
+  //                                                                      .getContentType(
+  //                                                                                      "org.eclipse.jdt.core.javaProperties"); //$NON-NLS-1$
+
+  /** Available spelling engines by content type */
+  private final Map<IContentType, SpellingEngine> fEngines          = new HashMap<IContentType, SpellingEngine>();
+
+  /**
+   * Initialize concrete engines.
+   */
+  public JJSpellingEngine() {
+    if (JAVA_CONTENT_TYPE != null) {
+      fEngines.put(JAVA_CONTENT_TYPE, new JavaSpellingEngine());
+    }
+    //    if (PROPERTIES_CONTENT_TYPE != null)
+    //      fEngines.put(PROPERTIES_CONTENT_TYPE, new PropertiesFileSpellingEngine());
+    if (TEXT_CONTENT_TYPE != null) {
+      fEngines.put(TEXT_CONTENT_TYPE, new TextSpellingEngine());
+    }
+  }
+
+  /**
+   * Modified from
+   * {@link DefaultSpellingEngine#check(IDocument, IRegion[], SpellingContext, ISpellingProblemCollector, IProgressMonitor)}
+   * to return the {@link JavaSpellingEngine}.
+   * 
+   * @see ISpellingEngine#check(IDocument, IRegion[], SpellingContext, ISpellingProblemCollector,
+   *      IProgressMonitor)
+   */
+  @Override
+  public void check(final IDocument document, final IRegion[] regions, final SpellingContext context,
+                    final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
+    //    ISpellingEngine engine= getEngine(context.getContentType());
+    ISpellingEngine engine = getEngine(JAVA_CONTENT_TYPE);
+    if (engine == null) {
+      engine = getEngine(TEXT_CONTENT_TYPE);
+    }
+    if (engine != null) {
+      engine.check(document, regions, context, collector, monitor);
+    }
+  }
+
+  /**
+   * Returns a spelling engine for the given content type or <code>null</code> if none could be found.
+   * 
+   * @param contentType the content type
+   * @return a spelling engine for the given content type or <code>null</code> if none could be found
+   */
+  private ISpellingEngine getEngine(final IContentType contentType) {
+    if (contentType == null) {
+      return null;
+    }
+
+    if (fEngines.containsKey(contentType)) {
+      return fEngines.get(contentType);
+    }
+
+    return getEngine(contentType.getBaseType());
+  }
+}

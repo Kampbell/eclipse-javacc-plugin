@@ -5,7 +5,7 @@
  * #bnf_production #regular_expr_production #regexpr_spec #token_manager_decls
  * #identifier // Added for CallHierarchy
  *//*
-   * MMa 11/09 : added #token_manager_decls
+   * MMa 11/2009 : added #token_manager_decls
    */options{  JAVA_UNICODE_ESCAPE = false; // See CHARACTER_LITERAL definition
   MULTI = true;  NODE_DEFAULT_VOID = true;  NODE_SCOPE_HOOK = true;  NODE_PREFIX = "AST";  ERROR_REPORTING = false;  NODE_PACKAGE = "sf.eclipse.javacc.parser";  NODE_CLASS = "JJNode";  JDK_VERSION = "1.5";  GENERATE_GENERICS = true;}PARSER_BEGIN(JavaCCParser)package sf.eclipse.javacc.parser;import java.io.Reader;public class JavaCCParser{  protected static JavaCCParser parser = null;  protected static JJNode lastGoodJJNode = null;  public static JJNode parse(Reader in)  {    JJNode n = null;    try    {      if (parser == null)       parser = new JavaCCParser(in);      else       JavaCCParser.ReInit(in);      n = JavaCCParser.javacc_getAST();      lastGoodJJNode = n;    }    catch (Throwable e)    {      // The TreeViewer expects something
       // This will give a basic error message based on the Exception

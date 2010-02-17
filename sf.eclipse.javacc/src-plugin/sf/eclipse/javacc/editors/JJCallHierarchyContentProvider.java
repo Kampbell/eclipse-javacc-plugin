@@ -1,5 +1,7 @@
 package sf.eclipse.javacc.editors;
 
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -8,15 +10,15 @@ import sf.eclipse.javacc.parser.JJNode;
 /**
  * Content provider for the Call hierarchy view provides callers or callees depending of fMode
  * 
- * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJCallHierarchyContentProvider implements ITreeContentProvider {
 
-  /*
-   * MMa 11/09 : javadoc and formatting revision
-   */
-  /** true for callers mode, false for callees mode */
+  // MMa 11/2009 : javadoc and formatting revision
+  // MMa 02/2010 : formatting and javadoc revision
+
+  /** True for callers mode, false for callees mode */
   private int fMode;
 
   /**
@@ -30,7 +32,7 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   }
 
   /**
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+   * @see ITreeContentProvider#getChildren(Object)
    */
   public Object[] getChildren(final Object obj) {
     final JJNode node = (JJNode) obj;
@@ -43,21 +45,21 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   }
 
   /**
-   * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+   * @see IStructuredContentProvider#getElements(Object)
    */
   public Object[] getElements(final Object inputElement) {
     return getChildren(inputElement);
   }
 
   /**
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+   * @see ITreeContentProvider#getParent(Object)
    */
   public Object getParent(final Object obj) {
     return obj == null ? null : ((JJNode) obj).jjtGetParent();
   }
 
   /**
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+   * @see ITreeContentProvider#hasChildren(Object)
    */
   public boolean hasChildren(final Object obj) {
     final JJNode node = (JJNode) obj;
@@ -70,14 +72,14 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   }
 
   /**
-   * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+   * @see IContentProvider#dispose()
    */
   public void dispose() {
     // nothing done here
   }
 
   /**
-   * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
+   * @see IContentProvider#inputChanged(Viewer, Object, Object)
    */
   public void inputChanged(@SuppressWarnings("unused") final Viewer viewer,
                            @SuppressWarnings("unused") final Object oldInput,

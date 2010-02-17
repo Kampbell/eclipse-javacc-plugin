@@ -42,29 +42,30 @@ import sf.eclipse.javacc.parser.JJNode;
  * method.<bR>
  * Inspired from org.eclipse.jdt.internal.ui.callhierarchy and simplified to the minimum required.
  * 
- * @author Remi Koutcherawy 2008-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 @SuppressWarnings("restriction")
 public class JJCallHierarchy extends ViewPart implements ISelectionChangedListener, IJJConstants {
 
-  // MMa 11/09 : javadoc and formatting revision ; added automatic expansion when selection is changed ; managed JJEditor / JTBEditor
+  // MMa 11/2009 : javadoc and formatting revision ; added automatic expansion when selection is changed ; managed JJEditor / JTBEditor
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** callers mode */
+  /** Callers mode */
   static final int                       CALLERS = 0;
-  /** callees mode */
+  /** Callees mode */
   static final int                       CALLEES = 1;
-  /** the view's parent */
+  /** The view's parent */
   private Composite                      fParent;
-  /** the created parent's tree viewer */
+  /** The created parent's tree viewer */
   private TreeViewer                     fTreeViewer;
-  /** the created call hierarchy content provider */
+  /** The created call hierarchy content provider */
   private JJCallHierarchyContentProvider fContentProvider;
-  /** the selected node */
+  /** The selected node */
   private JJNode                         fNode;
-  /** the selected node's editor */
+  /** The selected node's editor */
   private JJEditor                       fJJEditor;
-  /** the edited file */
+  /** The edited file */
   private IFile                          fFile;
 
   /**
@@ -127,7 +128,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
       final JJNode node = (JJNode) ((IStructuredSelection) selection).getFirstElement();
       // fJJEditor.setSelection(node); // This is OK only if JJEditor is up
       showInJJEditor(node); // Bring up JJEditor and select the node 
-      // Add children and expand one level
+      // add children and expand one level
       node.buildCalleeMap();
       node.buildCallerMap();
       fTreeViewer.expandToLevel(node, 1);
@@ -146,14 +147,14 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
       final IWorkbenchPage page = window.getActivePage();
       if (page != null) {
         try {
-          // Open the editor on the file we got when this JJCallHierary was opened
+          // open the editor on the file we got when this JJCallHierary was opened
           final String edid = "jtb".equals(fFile.getFileExtension()) ? JTBEDITOR_ID : JJEDITOR_ID; //$NON-NLS-1$
           final IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), edid, true);
           final JJEditor jjEditor = (JJEditor) editorPart;
           final IEditorInput input = editorPart.getEditorInput();
           final IDocumentProvider provider = jjEditor.getDocumentProvider();
           provider.connect(input);
-          // Select the node
+          // select the node
           jjEditor.setSelection(node);
           provider.disconnect(input);
         } catch (final PartInitException e) {
@@ -178,10 +179,10 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
     final IEditorInput editorInput = editor.getEditorInput();
     fFile = ((IFileEditorInput) editorInput).getFile();
 
-    // Need a root which is not displayed
+    // need a root which is not displayed
     final JJNode root = new JJNode(0);
 
-    // Add the node to the root as a caller and a callee
+    // add the node to the root as a caller and a callee
     root.addCaller(node);
     root.addCallee(node);
     node.buildCalleeMap();
@@ -238,13 +239,13 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
    */
   class ToggleCallModeAction extends Action {
 
-    /** the caller / callee mode */
+    /** The caller / callee mode */
     private final int fMode;
 
     /**
      * Toggles the call mode.
      * 
-     * @param mode the caller or calle mode
+     * @param mode the caller or callee mode
      */
     public ToggleCallModeAction(final int mode) {
       super("", AS_RADIO_BUTTON); //$NON-NLS-1$
@@ -273,7 +274,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
      */
     @Override
     public void run() {
-      // Each button will pass it's value of fMode
+      // each button will pass it's value of fMode
       JJCallHierarchy.this.setCallMode(fMode);
     }
   }

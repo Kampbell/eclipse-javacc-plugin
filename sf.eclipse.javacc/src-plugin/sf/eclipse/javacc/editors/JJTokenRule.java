@@ -14,55 +14,56 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * A special IRule for JavaCC syntax.
  * 
- * @author Remi Koutcherawy 2003-2009 - CeCILL License http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJTokenRule implements IRule {
 
-  // MMa 04/09 : modified : added different rule tokens and changed algorithm by keeping state between invocations
-  // MMa 11/09 : fixed syntax coloring issues in java code
+  // MMa 04/2009 : modified : added different rule tokens and changed algorithm by keeping state between invocations
+  // MMa 11/2009 : fixed syntax coloring issues in java code
+  // MMa 02/2010 : formatting and javadoc revision
 
-  /** normal label identifier rule token */
+  /** Normal label identifier rule token */
   final IToken         normalLabel;
-  /** special label identifier rule token */
+  /** Special label identifier rule token */
   final IToken         privateLabel;
-  /** lexical state rule token */
+  /** Lexical state rule token */
   final IToken         lexicalState;
-/** regular_expression punctuation ('<', '>' and ':') rule token */
+/** Regular_expression punctuation ('<', '>' and ':') rule token */
   final IToken         regexPunct;
   /**
-   * choices enclosing punctuation ('(', ')', '*', '+' and '?') rule token (in complex_regular_expression_unit
+   * Choices enclosing punctuation ('(', ')', '*', '+' and '?') rule token (in complex_regular_expression_unit
    * and expansion_choices)
    */
   final IToken         choicesPunct;
-  /** found previously a ':', to search a lexical state identifier (reset to false when not the case) */
+  /** Found previously a ':', to search a lexical state identifier (reset to false when not the case) */
   boolean              foundCOLON;
-/** found previously a '<' (reset to false when found a matching '>' */
+/** Found previously a '<' (reset to false when found a matching '>' */
   boolean              foundLT;
   /** JJTree Node parenthesis level : -1 : outside ; 0 : found the node ; 1, 2 ... level */
   int                  jnParenLevel;
   /**
-   * found previously a private label identifier prefix ('#' before a label identifier) (reset to false when
+   * Found previously a private label identifier prefix ('#' before a label identifier) (reset to false when
    * found a ':'
    */
   boolean              foundPLIP;
-  /** found an expansion unit 'try' */
+  /** Found an expansion unit 'try' */
   boolean              foundEuTry;
-  /** angle brackets nesting level */
+  /** Angle brackets nesting level */
   int                  angleBracketsLevel;
-  /** braces nesting level */
+  /** Braces nesting level */
   int                  bracesLevel;
-  /** is after a label identifier in a regular_expression */
+  /** Is after a label identifier in a regular_expression */
   boolean              isAfterLabelIdentifier;
-  /** is after a Java identifier */
+  /** Is after a Java identifier */
   boolean              isAfterJavaIdentifier;
-  /** stack used to store same level angle brackets flag */
+  /** Stack used to store same level angle brackets flag */
   final Stack<Boolean> angStack;
-  /** stack used to store same level parenthesis flag */
+  /** Stack used to store same level parenthesis flag */
   final Stack<Boolean> parStack;
 
   /**
-   * Standard constructor
+   * Standard constructor.
    * 
    * @param aNormalLabel the normal token rule token
    * @param aPrivateLabel the special token rule token
@@ -127,11 +128,11 @@ public class JJTokenRule implements IRule {
    * @return the rule token
    */
   public IToken evaluate(final ICharacterScanner scanner) {
-    /** found a normal label identifier */
+    /** Found a normal label identifier */
     boolean isNoLa = false;
-    /** found a private label identifier */
+    /** Found a private label identifier */
     boolean isPrLa = false;
-    /** found a lexical state identifier after a ':' or in a lexical state list */
+    /** Found a lexical state identifier after a ':' or in a lexical state list */
     boolean isLxSt = false;
     int ic = scanner.read();
     // returns initial whitespaces if any
@@ -420,7 +421,7 @@ public class JJTokenRule implements IRule {
    * ' ', '\t', '\n', '\r', '\f'.
    * 
    * @param ic the character
-   * @return true if the caracter is a whitespace, false otherwise
+   * @return true if the character is a whitespace, false otherwise
    */
   public static boolean isWhitespace(final int ic) {
     return (ic == ' ' || (ic >= '\t' && ic <= '\r'));
@@ -442,7 +443,7 @@ public class JJTokenRule implements IRule {
    * '(', ')', '*', '+', '?'.
    * 
    * @param ic the character
-   * @return true if the caracter is a choices enclosing punctuation, false otherwise
+   * @return true if the character is a choices enclosing punctuation, false otherwise
    */
   public static boolean isChoicesPunct(final int ic) {
     return ((ic >= '(' && ic <= '+') || ic == '?');

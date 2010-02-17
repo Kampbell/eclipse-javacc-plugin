@@ -26,51 +26,51 @@ import sf.eclipse.javacc.options.JJPreferences;
 /**
  * A (not anymore so rudimentary) JavaCC code scanner coloring words and comments.
  * 
- * @see org.eclipse.jdt.internal.ui.text.java.JavaCodeScanner
- * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
-@SuppressWarnings("restriction")
 public class JJCodeScanner extends BufferedRuleBasedScanner {
 
   // MMa 04/2009 : added different coloring objects, renamed some, added some JavaCC / JJTree keywords,
-  // removed some, and added indentations and color preferences changes management
-  // MMa 11/2009 : formating & javadoc revision ; added JTB keywords
+  // ........... : removed some, and added indentations and color preferences changes management
+  // MMa 11/2009 : formatting & javadoc revision ; added JTB keywords
+  // MMa 02/2010 : formatting and javadoc revision ; fixed /**/ syntax coloring
 
   /** The preference store */
-  static IPreferenceStore      store;
+  static IPreferenceStore      fStore;
   /** The display */
-  static Display               display;
+  static Display               fDisplay;
   /** The indentation string */
-  public static String         indentString;
+  public static String         fIndentString;
   /** The special indentation string */
-  public static String         specIndentString;
+  public static String         fSpecIndentString;
   /** The preference change listener and its associated method */
-  IPropertyChangeListener      preferenceListener = new IPropertyChangeListener() {
+  IPropertyChangeListener      fPreferenceListener = new IPropertyChangeListener() {
 
-                                                    public void propertyChange(final PropertyChangeEvent event) {
-                                                      final String p = event.getProperty();
-                                                      final Object ov = event.getOldValue();
-                                                      final Object nv = event.getNewValue();
-                                                      if ((p.equals(JJPreferences.P_INDENT_CHAR)
-                                                           || p.equals(JJPreferences.P_INDENT_CHAR_NB)
-                                                           || p.equals(JJPreferences.P_JJKEYWORD)
-                                                           || p.equals(JJPreferences.P_JAVAKEYWORD)
-                                                           || p.equals(JJPreferences.P_STRING)
-                                                           || p.equals(JJPreferences.P_COMMENT)
-                                                           || p.equals(JJPreferences.P_JDOC_COMMENT)
-                                                           || p.equals(JJPreferences.P_NORMALLABEL)
-                                                           || p.equals(JJPreferences.P_PRIVATELABEL)
-                                                           || p.equals(JJPreferences.P_LEXICALSTATE)
-                                                           || p.equals(JJPreferences.P_REGEXPUNCT)
-                                                           || p.equals(JJPreferences.P_CHOICESPUNCT) || p
-                                                                                                         .equals(JJPreferences.P_DEFAULT))
-                                                          && ov != nv) {
-                                                        dispose();
-                                                        loadPrefsAndInitRules();
-                                                      }
-                                                    }
-                                                  };
+                                                     public void propertyChange(
+                                                                                final PropertyChangeEvent event) {
+                                                       final String p = event.getProperty();
+                                                       final Object ov = event.getOldValue();
+                                                       final Object nv = event.getNewValue();
+                                                       if ((p.equals(JJPreferences.P_INDENT_CHAR)
+                                                            || p.equals(JJPreferences.P_INDENT_CHAR_NB)
+                                                            || p.equals(JJPreferences.P_JJKEYWORD)
+                                                            || p.equals(JJPreferences.P_JAVAKEYWORD)
+                                                            || p.equals(JJPreferences.P_STRING)
+                                                            || p.equals(JJPreferences.P_COMMENT)
+                                                            || p.equals(JJPreferences.P_JDOC_COMMENT)
+                                                            || p.equals(JJPreferences.P_NORMALLABEL)
+                                                            || p.equals(JJPreferences.P_PRIVATELABEL)
+                                                            || p.equals(JJPreferences.P_LEXICALSTATE)
+                                                            || p.equals(JJPreferences.P_REGEXPUNCT)
+                                                            || p.equals(JJPreferences.P_CHOICESPUNCT) || p
+                                                                                                          .equals(JJPreferences.P_DEFAULT))
+                                                           && ov != nv) {
+                                                         dispose();
+                                                         loadPrefsAndInitRules();
+                                                       }
+                                                     }
+                                                   };
   /** The JavaCC keywords coloring object */
   static Color                 cJJKEYWORD;
   /** The Java keywords coloring object */
@@ -96,33 +96,33 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
   /** The Default coloring object */
   Color                        cDEFAULT;
   /** The JJTokenRule object */
-  JJTokenRule                  jjtr;
+  JJTokenRule                  fJjtr;
   /** Rule token for JavaCC / JTB keywords */
-  IToken                       jjKeyword;
+  IToken                       fJjKeyword;
   /** Rule token for Java keywords */
-  IToken                       javaKeyword;
+  IToken                       fJavaKeyword;
   /** Rule token for Java strings */
-  IToken                       string;
+  IToken                       fString;
   /** Rule token for Java comments */
-  IToken                       comment;
+  IToken                       fComment;
   /** Rule token for Javadoc comments */
-  IToken                       jdocComment;
+  IToken                       fJdocComment;
   /** Rule token for JavaCC normal label identifiers */
-  IToken                       normalLabel;
+  IToken                       fNormalLabel;
   /** Rule token for JavaCC private label identifiers */
-  IToken                       privateLabel;
+  IToken                       fPrivateLabel;
   /** Rule token for JavaCC lexical states */
-  IToken                       lexicalState;
+  IToken                       fLexicalState;
   /** Rule token for JavaCC regular expression punctuation */
-  IToken                       regexPunct;
+  IToken                       fRegexPunct;
   /** Rule token for JavaCC choices punctuation */
-  IToken                       choicesPunct;
+  IToken                       fChoicesPunct;
   /** Rule token for all other tokens */
-  IToken                       other;
+  IToken                       fOther;
   /**
    * The JavaCC and JTB keywords
    */
-  public static final String[] fgJJkeywords       = {
+  public static final String[] fgJJkeywords        = {
       "BNF", //$NON-NLS-1$
       "BUILD_NODE_FILES", //$NON-NLS-1$
       "BUILD_PARSER", //$NON-NLS-1$
@@ -204,11 +204,11 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       "VISITOR_DATA_TYPE", //$NON-NLS-1$
       "VISITOR_EXCEPTION", //$NON-NLS-1$
       "VISITOR_RETURN_TYPE", //$NON-NLS-1$
-      "options"                                  }; //$NON-NLS-1$
+      "options"                                   }; //$NON-NLS-1$
   /**
    * The java keywords
    */
-  public static final String[] fgJavaKeywords     = {
+  public static final String[] fgJavaKeywords      = {
       "abstract", //$NON-NLS-1$
       "boolean", //$NON-NLS-1$
       "break", //$NON-NLS-1$
@@ -271,15 +271,15 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       "double", //$NON-NLS-1$
       "false", //$NON-NLS-1$
       "null", //$NON-NLS-1$
-      "true"                                     }; //$NON-NLS-1$
+      "true"                                      }; //$NON-NLS-1$
 
   /**
    * Standard constructor, which initializes variables deriving from preferences and registers a listener.
    */
   public JJCodeScanner() {
     super();
-    store = Activator.getDefault().getPreferenceStore();
-    display = Display.getCurrent();
+    fStore = Activator.getDefault().getPreferenceStore();
+    fDisplay = Display.getCurrent();
     loadPrefsAndInitRules();
   }
 
@@ -287,7 +287,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * Loads preference from the store, adds a listener and initializes the rules.
    */
   void loadPrefsAndInitRules() {
-    store.addPropertyChangeListener(preferenceListener);
+    fStore.addPropertyChangeListener(fPreferenceListener);
     setIndentString();
     setSpecIndentString();
     fRules = createRules();
@@ -322,69 +322,71 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
       cREGEXPUNCT = null;
       cCHOICESPUNCT = null;
       cDEFAULT = null;
-      if (store != null) {
-        store.removePropertyChangeListener(preferenceListener);
+      if (fStore != null) {
+        fStore.removePropertyChangeListener(fPreferenceListener);
       }
     }
   }
 
   /**
-   * Create the rules tokens in the rules array.
+   * Creates the rules tokens in the rules array.
    * 
    * @return the rules array
    */
   public IRule[] createRules() {
     // get color preferences
-    cJJKEYWORD = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
-    cJAVAKEYWORD = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JAVAKEYWORD));
+    cJJKEYWORD = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_JJKEYWORD));
+    cJAVAKEYWORD = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_JAVAKEYWORD));
     //    cBACKGROUND = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_BACKGROUND));
-    cSTRING = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_STRING));
-    cCOMMENT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_COMMENT));
-    cJDOC_COMMENT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JDOC_COMMENT));
-    cNORMALLABEL = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_NORMALLABEL));
-    cPRIVATELABEL = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_PRIVATELABEL));
-    cLEXICALSTATE = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_LEXICALSTATE));
-    cREGEXPUNCT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_REGEXPUNCT));
-    cCHOICESPUNCT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_CHOICESPUNCT));
-    cDEFAULT = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_DEFAULT));
+    cSTRING = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_STRING));
+    cCOMMENT = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_COMMENT));
+    cJDOC_COMMENT = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_JDOC_COMMENT));
+    cNORMALLABEL = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_NORMALLABEL));
+    cPRIVATELABEL = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_PRIVATELABEL));
+    cLEXICALSTATE = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_LEXICALSTATE));
+    cREGEXPUNCT = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_REGEXPUNCT));
+    cCHOICESPUNCT = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_CHOICESPUNCT));
+    cDEFAULT = new Color(fDisplay, PreferenceConverter.getColor(fStore, JJPreferences.P_DEFAULT));
     // create rules tokens
-    jjKeyword = new Token(new TextAttribute(cJJKEYWORD, null, SWT.BOLD));
-    javaKeyword = new Token(new TextAttribute(cJAVAKEYWORD, null, SWT.BOLD));
+    fJjKeyword = new Token(new TextAttribute(cJJKEYWORD, null, SWT.BOLD));
+    fJavaKeyword = new Token(new TextAttribute(cJAVAKEYWORD, null, SWT.BOLD));
     //    background = new Token(new TextAttribute(cBACKGROUND, null, SWT.BOLD));
-    string = new Token(new TextAttribute(cSTRING, null, 0));
-    comment = new Token(new TextAttribute(cCOMMENT, null, 0));
-    jdocComment = new Token(new TextAttribute(cJDOC_COMMENT, null, 0));
-    normalLabel = new Token(new TextAttribute(cNORMALLABEL, null, 0));
-    privateLabel = new Token(new TextAttribute(cPRIVATELABEL, null, 0));
-    lexicalState = new Token(new TextAttribute(cLEXICALSTATE, null, SWT.ITALIC));
-    regexPunct = new Token(new TextAttribute(cREGEXPUNCT, null, SWT.BOLD));
-    choicesPunct = new Token(new TextAttribute(cCHOICESPUNCT, null, SWT.BOLD));
-    other = new Token(new TextAttribute(cDEFAULT, null, 0));
+    fString = new Token(new TextAttribute(cSTRING, null, 0));
+    fComment = new Token(new TextAttribute(cCOMMENT, null, 0));
+    fJdocComment = new Token(new TextAttribute(cJDOC_COMMENT, null, 0));
+    fNormalLabel = new Token(new TextAttribute(cNORMALLABEL, null, 0));
+    fPrivateLabel = new Token(new TextAttribute(cPRIVATELABEL, null, 0));
+    fLexicalState = new Token(new TextAttribute(cLEXICALSTATE, null, SWT.ITALIC));
+    fRegexPunct = new Token(new TextAttribute(cREGEXPUNCT, null, SWT.BOLD));
+    fChoicesPunct = new Token(new TextAttribute(cCHOICESPUNCT, null, SWT.BOLD));
+    fOther = new Token(new TextAttribute(cDEFAULT, null, 0));
     // set the default return token
-    setDefaultReturnToken(other);
+    setDefaultReturnToken(fOther);
     // create the rules and fill the rules array
-    final IRule[] rules = new IRule[7];
-    // rules for comments
-    rules[0] = new EndOfLineRule("//", comment); //$NON-NLS-1$
-    rules[1] = new MultiLineRule("/**", "*/", jdocComment); //$NON-NLS-1$ //$NON-NLS-2$
-    rules[2] = new MultiLineRule("/*", "*/", comment); //$NON-NLS-1$ //$NON-NLS-2$
-    // rules for string and character constants
-    rules[3] = new SingleLineRule("\"", "\"", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-    rules[4] = new SingleLineRule("'", "'", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+    final IRule[] rules = new IRule[8];
+    //    final IRule[] rules = new IRule[2];
     // rule for JavaCC syntax
-    jjtr = new JJTokenRule(normalLabel, privateLabel, lexicalState, regexPunct, choicesPunct);
-    rules[5] = jjtr;
+    fJjtr = new JJTokenRule(fNormalLabel, fPrivateLabel, fLexicalState, fRegexPunct, fChoicesPunct);
+    rules[0] = fJjtr;
     // word rule for JavaCC and Java keywords
-    final WordRule wordRule = new WordRule(new JJWordDetector(), other);
+    final WordRule wordRule = new WordRule(new JJWordDetector(), fOther);
     // color JavaCC keywords
     for (int i = 0; i < fgJJkeywords.length; i++) {
-      wordRule.addWord(fgJJkeywords[i], jjKeyword);
+      wordRule.addWord(fgJJkeywords[i], fJjKeyword);
     }
     // color Java keywords
     for (int i = 0; i < fgJavaKeywords.length; i++) {
-      wordRule.addWord(fgJavaKeywords[i], javaKeyword);
+      wordRule.addWord(fgJavaKeywords[i], fJavaKeyword);
     }
-    rules[6] = wordRule;
+    rules[1] = wordRule;
+    // rules for comments
+    rules[2] = new EndOfLineRule("//", fComment); //$NON-NLS-1$
+    rules[3] = new EndOfLineRule("/**/", fComment); //$NON-NLS-1$ 
+    rules[4] = new MultiLineRule("/**", "*/", fJdocComment); //$NON-NLS-1$ //$NON-NLS-2$
+    rules[5] = new MultiLineRule("/*", "*/", fComment); //$NON-NLS-1$ //$NON-NLS-2$
+    // rule for strings and character constants
+    rules[6] = new SingleLineRule("\"", "\"", fString, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+    rules[7] = new SingleLineRule("'", "'", fString, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
     return rules;
   }
 
@@ -395,7 +397,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    */
   @Override
   public void setRange(final IDocument document, final int offset, final int length) {
-    jjtr.reinit();
+    fJjtr.reinit();
     super.setRange(document, offset, length);
   }
 
@@ -405,8 +407,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * indentation character is tab, return a string with the number of indentation characters.
    */
   public static void setSpecIndentString() {
-    final String idstr = (store.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
-    int nbch = store.getInt(JJPreferences.P_INDENT_CHAR_NB);
+    final String idstr = (fStore.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
+    int nbch = fStore.getInt(JJPreferences.P_INDENT_CHAR_NB);
     if (" ".equals(idstr)) { //$NON-NLS-1$
       nbch--;
     }
@@ -414,7 +416,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     for (int i = 0; i < nbch; i++) {
       sb.append(idstr);
     }
-    specIndentString = sb.toString();
+    fSpecIndentString = sb.toString();
   }
 
   /**
@@ -423,24 +425,23 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * @return the special indentation string
    */
   public static String getSpecIndentString() {
-    if (specIndentString != null) {
-      return specIndentString;
+    if (fSpecIndentString == null) {
+      JJCodeScanner.setSpecIndentString();
     }
-    JJCodeScanner.setSpecIndentString();
-    return specIndentString;
+    return fSpecIndentString;
   }
 
   /**
    * Computes the indentation string from the store preferences.
    */
   public static void setIndentString() {
-    final int nbch = store.getInt(JJPreferences.P_INDENT_CHAR_NB);
-    final String idstr = (store.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
+    final int nbch = fStore.getInt(JJPreferences.P_INDENT_CHAR_NB);
+    final String idstr = (fStore.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
     final StringBuffer sb = new StringBuffer(nbch);
     for (int i = 0; i < nbch; i++) {
       sb.append(idstr);
     }
-    indentString = sb.toString();
+    fIndentString = sb.toString();
   }
 
   /**
@@ -449,11 +450,10 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * @return the indentation string
    */
   public static String getIndentString() {
-    if (indentString != null) {
-      return indentString;
+    if (fIndentString == null) {
+      JJCodeScanner.setIndentString();
     }
-    JJCodeScanner.setIndentString();
-    return indentString;
+    return fIndentString;
   }
 
   /**

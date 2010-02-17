@@ -6,61 +6,74 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextViewer;
 
 /**
- * Double click strategy aware of JavaCC identifier syntax rules.
+ * Double click strategy aware of JavaCC identifier syntax rules. Allows the viewer to select the JavaCC
+ * identifier around the first character of the selected text.
  * 
- * @author Remi Koutcherawy 2003-2006
- * CeCILL license http://www.cecill.info/index.en.html
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
-  protected ITextViewer fText;
 
-  public JJDoubleClickStrategy() {
-    super();
-  }
-  
-  public void doubleClicked(ITextViewer part) {
-    int pos = part.getSelectedRange().x;
-    if (pos < 0)
+  // MMa 12/2009 : javadoc and formatting revision ; some refactoring
+  // MMa 02/2010 : formatting and javadoc revision
+
+  /**
+   * @see ITextDoubleClickStrategy#doubleClicked(ITextViewer)
+   */
+  public void doubleClicked(final ITextViewer aViewer) {
+    final int selectionStartPos = aViewer.getSelectedRange().x;
+    if (selectionStartPos < 0) {
       return;
-    fText = part;
-    selectWord(pos);
+    }
+    selectWord(aViewer, selectionStartPos);
     return;
   }
 
-  public boolean selectWord(int caretPos) {
-    IDocument doc = fText.getDocument();
+  /**
+   * @param aViewer the current viewer
+   * @param aCharPos a character position
+   * @return the whole word around the character position
+   */
+  public boolean selectWord(final ITextViewer aViewer, final int aCharPos) {
+    final IDocument doc = aViewer.getDocument();
     int startPos, endPos;
     try {
-      int pos = caretPos;
+      int pos = aCharPos;
       char c;
       while (pos >= 0) {
         c = doc.getChar(pos);
-        if (!Character.isJavaIdentifierPart(c))
+        if (!Character.isJavaIdentifierPart(c)) {
           break;
+        }
         --pos;
       }
       startPos = pos;
-      pos = caretPos;
-      int length = doc.getLength();
+      pos = aCharPos;
+      final int length = doc.getLength();
       while (pos < length) {
         c = doc.getChar(pos);
-        if (!Character.isJavaIdentifierPart(c))
+        if (!Character.isJavaIdentifierPart(c)) {
           break;
+        }
         ++pos;
       }
       endPos = pos;
-      selectRange(startPos, endPos);
+      selectRange(aViewer, startPos, endPos);
       return true;
-    } catch (BadLocationException x)
-    {
-        // Do nothing, except returning false
+    } catch (final BadLocationException x) {
+      // do nothing, except returning false
     }
     return false;
   }
 
-  private void selectRange(int startPos, int stopPos) {
-    int offset = startPos + 1;
-    int length = stopPos - offset;
-    fText.setSelectedRange(offset, length);
+  /**
+   * @param aViewer the current viewer
+   * @param aStartPos the starting position
+   * @param aEndPos the ending position
+   */
+  private void selectRange(final ITextViewer aViewer, final int aStartPos, final int aEndPos) {
+    final int offset = aStartPos + 1;
+    final int length = aEndPos - offset;
+    aViewer.setSelectedRange(offset, length);
   }
 }

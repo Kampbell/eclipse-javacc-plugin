@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.1"?>
-<!-- MMa 11/09 : changed JTB Editor class, fixed popup menu commands  -->
+<!-- MMa 11/2009 : changed JTB Editor class, fixed popup menu commands  -->
 <plugin>
 <!-- Natures Extension -->
    <extension point="org.eclipse.core.resources.natures"

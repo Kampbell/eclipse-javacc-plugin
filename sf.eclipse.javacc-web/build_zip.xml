@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- build_zip.xml
+     Marc Mazas - Sopra Group - 02/2010 -->
+<project name="javacc-web" default="make_zip" basedir=".">
+
+	<property name="javacc-ver" value="1.5.18" />
+
+	<target name="make_zip">
+		<zip destfile="sf.eclipse.javacc-${javacc-ver}-updatesite.zip" compress="true" update="true">
+			<fileset dir=".">
+				<include name="artifacts.xml" />
+				<include name="content.xml" />
+				<include name="index.html" />
+				<include name="features/sf.eclipse.javacc.feature_${javacc-ver}.jar" />
+				<include name="plugins/sf.eclipse.javacc_${javacc-ver}.jar" />
+			</fileset>
+		</zip>
+	</target>
+
+</project>

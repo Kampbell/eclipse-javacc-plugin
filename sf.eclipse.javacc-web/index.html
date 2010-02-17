@@ -15,41 +15,41 @@ h2 { font-size:12pt; }
   <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo" border="0" height="62" width="210">
 </a>
 <h1><font color="red">JavaCC Eclipse Plug-in</font> for <font color="green">Eclipse 3.4 - 3.5</font>
- with <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.0</font></h1>
+ with <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.1</font></h1>
 
-<h2>Last update : november 21th, 2009 - version <font color="red">1.5.17</font></h2>
+<h2>Last update : february 17th, 2010 - version <font color="red">1.5.18</font></h2>
 
 The JavaCC plug-in is designed to help development of JavaCC applications within the Eclipse IDE.<br>
 License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a href="http://www.cecill.info/">Cecill</a><br>
 
 <h2>How to update / download</h2>
 You can use this site as an update site in Eclipse :<br>
-add <font color="red">http://eclipse-javacc.sourceforge.net/</font> to your software update sites and follow the instructions.<p>
+add <font color="red">http://eclipse-javacc.sourceforge.net/</font> to your software update sites and follow the instructions.<br><br>
 
 Or you can download from the
  <a href="http://sourceforge.net/projects/eclipse-javacc">JavaCC Eclipse Plug-in site on Sourceforge</a>
 the (zipped) update site file,<br>
-and use it a a local update site, or unzip it directly over the Eclipse home directory.<p>
+save it under a local directory, add this directory as a local update site and follow the instructions.<br><br>
 
 Or you can get the source from the CVS repository and recompile the plug-in :<br>
 see the <a href="http://sourceforge.net/scm/?type=cvs&amp;group_id=56876">JavaCC Eclipse Plug-in CVS information</a>
 for accessing the CVS repository.<br>
 You can also look at the following <a href="https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html">
-tutorial on Team development with Eclipse and CVS</a>.<p>
+tutorial on Team development with Eclipse and CVS</a>.<br><br>
 
 Note for Galileo users: we encountered different problems during our tests updating our Eclipse environments,
  which we did not understand in most cases and which seem related to Eclipse and not to the JavaCC Eclipse plug-in:
- so we recommend you to backup your Eclipse environment (eclipse home and .eclipse under user_home) before updating it.
+ so we recommend you to backup your Eclipse environment (eclipse home and .eclipse under user_home) before updating it.<br><br>
 
 The plug-in needs Java 1.5 or 1.6 and Eclipse 3.4.2 or 3.5 to run.
-<br>
+<br><br>
 See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
 <h2>This plug-in provides</h2>
 <ul>
   <li>preference pages for JavaCC, JJTree, JJDoc & JTB options setting</li>
   <li>an editor for JavaCC, JJTree and JTB sources, with
-  <ul><li>formatting, syntax coloring, automatic indentation, matching punctuation highlighting</li>
+  <ul><li>formatting, syntax coloring, automatic indentation, matching punctuation highlighting, spell checking</li>
       <li>navigation to elements declaration / uses (open declaration and back / forth)</li>
       <li>some keyboard shortcuts : Comment lines Ctrl+/, Open declaration Ctrl+clic, Format Ctrl+Shift+F </li>
   </ul></li>
@@ -62,11 +62,15 @@ on how to modify the sources.
   <li>JavaCC, JJTree and JTB sources compilation problems reporting</li>
   <li>a console for compilation outputs with hyperlinks to Errors and Warnings</li>
   <li>decoration of generated files</li>
-  <li>support for Eclipse 3.4 & 3.5, Java 1.5 & 1.6, JavaCC5.0, JTB 1.4.0 (JTB 1.3.2 is still provided)</li>
+  <li>support for Eclipse 3.4 & 3.5, Java 1.5 & 1.6, JavaCC5.0, JTB 1.4.1 (JTB 1.3.2 is still provided)</li>
   <li>JavaCC launching in the same directory as the grammar files (to facilitate package handling)</li>
   <li>some help through the Eclipse menu Help / Help Contents</li>
 </ul>
 <h2>History</h2>
+17/02/10 - 1.5.18 : Fixed /**/ syntax coloring issue (bug 2946447), fixed missing french JTB preferences issue,
+ fixed JTB preferences not stored issue, fixed compile annotations and hyperlink issues in JTB Editor / Console,
+ splitted templates for static = true and static = false (bug 2951454), added spell checking (but not spell correction...),
+ updated with <a href="jtb_doc.html">JTB 1.4.1</a> (Marc Mazas)<br>
 13/11/09 - 1.5.17 : Fixed formatting / syntax coloring / outline / autoindent / call hierarchy / context menus / messages issues ;
  updated with <a href="jtb_doc.html">JTB 1.4.0 and new options</a> (Marc Mazas)<br>
 04/10/09 - 1.5.16 : Added support for Eclipse variables in Builder and Options ; fixed JTB jar store bug in preferences and
@@ -84,16 +88,16 @@ on how to modify the sources.
 01/10/06 - 1.5.4 : Suppressed warnings in generated files, global preferences for colors<br>
 24/05/06 - 1.5.3 : Fixed plug-in key conflict F3<br>
 27/03/06 - 1.5.2 : Removed "exclude from build" and adopted Eclipse way, ie Build Path<br>
-24/02/06 - 1.5.1 : Added French version, sauf que je n'ai pas encore traduit l'aide en français<br>
+24/02/06 - 1.5.1 : Added French version, sauf que je n'ai pas encore traduit l'aide en franais<br>
 13/11/05 - 1.4.0 : Added update site, automatic format, java 1.4 .class files compatibility<br>
-31/10/05 - 1.3.0 : Added JTB, Ctrl+click to open declaration, Wizard<p>
+31/10/05 - 1.3.0 : Added JTB, Ctrl+click to open declaration, Wizard<br>
 <h2>Quick Start</h2>
-1) Create a new Java project and a package "foo".<p>
-<p>
+1) Create a new Java project and a package "foo".<br>
+<br>
 2) Select package "foo" and create a new JavaCC file. Just accept all default settings.<br>
 <br>
-<img src="new_project.png" alt="new project"><p>
-<p>
+<img src="new_project.png" alt="new project"><br>
+<br>
 3) You have now a new JavaCC file, compiled with JavaCC, with all the generated java files in you project.<br>
 Note that :<ul>
 <li>the generated files are decorated with a "<strong>G</strong>" and a "<strong>&lt;somefromfile.jj&gt;</strong>"
@@ -102,27 +106,27 @@ Note that :<ul>
 and due to the way JavaCC generates the java code)</li>
 <li>the JavaCC console opens automatically.</li>
 </ul>
-<img src="files_generated.png" alt="files generated"><p>
-<p>
+<img src="files_generated.png" alt="files generated"><br>
+<br>
 4) Run the example :<ul>
 <li>Select "<strong>TestJavaCC</strong>" and menu "<strong>Run</strong>"/ "<strong>Run as...</strong>" /
  "<strong>Java application</strong>"</li>
 <li>Choose "<strong>eg1</strong>" for the main type.</li>
 <li>You can now test your JavaCC application :</li>
 </ul>
-<img src="file_run_test.png"><p>
-<p>
-You can do the same with the template for JJTree :<p>
-<p>
-<img src="file_run_eg2.png"><p>
-<p>
-and also with the template for JTB :<p>
-<p>
-<img src="file_run_eg3.png"><p>
-<p><p>
+<img src="file_run_test.png"><br>
+<br>
+You can do the same with the template for JJTree :<br>
+<br>
+<img src="file_run_eg2.png"><br>
+<br>
+and also with the template for JTB :<br>
+<br>
+<img src="file_run_eg3.png"><br>
+<br><br>
 <h2>Support</h2>
 Feel free to report any bug or suggest enhancement at the
- <a href="http://sourceforge.net/tracker/?group_id=56876">JavaCC Eclipse Plug-in Sourceforge site</a>.<p>
+ <a href="http://sourceforge.net/tracker/?group_id=56876">JavaCC Eclipse Plug-in Sourceforge site</a>.<br>
 <h2>JavaCC Book</h2>
 Tom Copeland wrote a very nice book on JavaCC :
  <a href="http://generatingparserswithjavacc.com/">http://generatingparserswithjavacc.com/</a><br>
@@ -130,3 +134,4 @@ A really good book, clear, well written, and full of ready to use examples.<br>
 If you need to parse a complex file format and choose JavaCC to generate the parser, this is definitly the best book.
 </body>
 </html>
+

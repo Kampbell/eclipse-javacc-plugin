@@ -8,12 +8,13 @@ import sf.eclipse.javacc.parser.JJNode;
 /**
  * JavaCC element hyperlink.
  * 
- * @author Remi Koutcherawy 2003-2009 - CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010
  */
 class JJHyperlink implements IHyperlink {
 
-  // MMa 11/2009 : formating & javadoc revision
+  // MMa 11/2009 : formatting and javadoc revision
+  // MMa 02/2010 : formatting and javadoc revision
 
   /** the region */
   private final IRegion  fRegion;
