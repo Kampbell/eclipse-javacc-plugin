@@ -37,15 +37,21 @@ Features
    use Workbench "Back" to go back.
 
 History
+19/02/10 - version 1.5.19
+- Fixed project preferences issues with resulting command line options field / specific options fields
+  / enclosing quotes for paths and files
+
 17/02/10 - version 1.5.18
-- Fixed /**/ syntax coloring issue (bug 2946447), missing french JTB preferences issue, JTB preferences not stored issue
+- Fixed /**/ syntax coloring issue (bug 2946447), missing french JTB preferences issue,
+  JTB preferences not stored issue
 - Fixed compile annotations and hyperlink issues in JTB Editor / Console
 - Splitted templates for static = true and static = false (bug 2951454)
 - Added spell checking (but not spell correction...)
 - Updated with JTB 1.4.1 (bug 2945965) (Marc Mazas)
 
 13/11/09 - version 1.5.17
-- Fixed formatting / syntax coloring / outline / autoindent / call hierarchy / context menus / messages issues
+- Fixed formatting / syntax coloring / outline / autoindent / call hierarchy / context menus
+  / messages issues
 - Updated with JTB 1.4.0 and new options (Marc Mazas)
 
 26/09/09 - version 1.5.16

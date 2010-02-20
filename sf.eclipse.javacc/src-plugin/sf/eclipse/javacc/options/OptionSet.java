@@ -12,28 +12,28 @@ import java.util.StringTokenizer;
  */
 public class OptionSet {
 
-  // MMa 02/2010 : formatting and javadoc revision
   // MMa 04/2009 : added Option description related method
+  // MMa 02/2010 : formatting and javadoc revision ; fixed not stored Option.VOID properties issue
 
   /** The list of options */
-  protected ArrayList<Option> list;
-  /** The command line string */
-  protected String            target;
+  protected ArrayList<Option> fList;
+  /** The command line target (after the options) */
+  protected String            fTarget;
 
   /**
    * Standard constructor.
    */
   public OptionSet() {
-    list = new ArrayList<Option>();
+    fList = new ArrayList<Option>();
   }
 
   /**
    * @return the set of options as in a command line string.
    */
-  @Override
-  public String toString() {
+  public String buildCmdLine() {
     final StringBuffer sb = new StringBuffer(32);
-    for (int i = 0; i < list.size(); i++) {
+    final int len = fList.size();
+    for (int i = 0; i < len; i++) {
       final String val = getValue(i);
       final String defVal = getDefaultValue(i);
       final int type = getType(i);
@@ -45,12 +45,19 @@ public class OptionSet {
       }
       sb.append("-").append(getName(i)); //$NON-NLS-1$
       if (type != Option.VOID) {
-        sb.append("=").append(val); //$NON-NLS-1$
+        if (val.indexOf(' ') != -1) {
+          // add enclosing quotes if val contains one or more spaces
+          sb.append("=\"").append(val).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        else {
+          sb.append("=").append(val); //$NON-NLS-1$
+        }
       }
     }
-    if (target != null) {
-      sb.append(" ").append(target); //$NON-NLS-1$
-    }
+    // no need in preference pages
+    //    if (fTarget != null) {
+    //      sb.append(" ").append(fTarget); //$NON-NLS-1$
+    //    }
     return sb.toString();
   }
 
@@ -68,8 +75,8 @@ public class OptionSet {
     boolean insideQuotes = false;
     boolean startNewToken = true;
     // takes care of quotes on the command line
-    // '-xxx "aaa -bbb" -ccc' ---> {"-xxx aaa -bbb","-ccc"}
-    // '-xxx aaa -bbb -ccc' ---> {"-xxx aaa","-bbb","-ccc"}
+    // '-xxx aaa -bbb -ccc'   ---> {"-xxx aaa", "-bbb", "-ccc"}
+    // '-xxx "aaa -bbb" -ccc' ---> {"-xxx aaa -bbb", "-ccc"}
     while (tokenizer.hasMoreTokens()) {
       token = tokenizer.nextToken();
       if (token.equals(" ")) { //$NON-NLS-1$
@@ -86,7 +93,8 @@ public class OptionSet {
           if (count == arguments.length) {
             System.arraycopy(arguments, 0, (arguments = new String[count * 2]), 0, count);
           }
-          arguments[count++] = ""; //$NON-NLS-1$
+          // keep quotes
+          arguments[count++] = "\""; //$NON-NLS-1$
         }
         insideQuotes = !insideQuotes;
         startNewToken = false;
@@ -119,41 +127,54 @@ public class OptionSet {
    * @param str the command line arguments
    */
   public void configuresFrom(final String str) {
+    resetToDefaultValues();
     if (str == null) {
-      resetToDefaultValues();
       return;
     }
     final String[] tok = tokenize(str);
     for (int i = 0; i < tok.length; i++) {
-      // Standard option ie -xxx=yyy
-      if (tok[i].startsWith("-") && tok[i].indexOf("=") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
-        final String name = tok[i].substring(1, tok[i].indexOf('='));
-        final String value = tok[i].substring(tok[i].indexOf('=') + 1);
-        if (value.length() == 0) {
+      final String toki = tok[i];
+      final boolean startsWithDash = toki.startsWith("-"); //$NON-NLS-1$
+      final int indexOfEqual = toki.indexOf("="); //$NON-NLS-1$ 
+      // Standard option : -xxx=yyy or -xxx="yyy zzz" (tokenize does not remove enclosing quotes)
+      if (startsWithDash && indexOfEqual != -1) {
+        final String name = toki.substring(1, indexOfEqual);
+        String value = toki.substring(indexOfEqual + 1);
+        if (value == null || value.length() == 0) {
           continue;
         }
-        for (int j = 0; j < list.size(); j++) {
-          final Option opt = (list.get(j));
+        // strip enclosing quotes
+        final int len = value.length() - 1;
+        if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
+          value = value.substring(1, len - 1);
+        }
+        for (int j = 0; j < fList.size(); j++) {
+          final Option opt = (fList.get(j));
           if (opt.getName().equals(name)) {
             opt.setValue(value);
             break;
           }
         }
       }
-      // Void option ie -xxx
-      else if (tok[i].startsWith("-")) { //$NON-NLS-1$
-        final String name = tok[i].substring(1);
-        final String value = "true"; //$NON-NLS-1$
-        for (int j = 0; j < list.size(); j++) {
-          final Option opt = list.get(j);
+      // Void option : -xxx
+      else if (startsWithDash) {
+        final String name = toki.substring(1);
+        for (int j = 0; j < fList.size(); j++) {
+          final Option opt = fList.get(j);
           if (opt.getName().equals(name)) {
-            opt.setValue(value);
+            final String defVal = opt.getDefaultValue();
+            if ("true".equals(defVal)) { //$NON-NLS-1$
+              opt.setValue("false"); //$NON-NLS-1$
+            }
+            else {
+              opt.setValue("true"); //$NON-NLS-1$
+            }
             break;
           }
         }
       }
       else {
-        target = tok[i];
+        fTarget = toki;
       }
     }
   }
@@ -162,11 +183,12 @@ public class OptionSet {
    * Resets all options to their default values.
    */
   public void resetToDefaultValues() {
-    final Iterator<Option> it = list.iterator();
-    while (it.hasNext()) {
-      final Option opt = it.next();
+    final int len = fList.size();
+    for (int i = 0; i < len; i++) {
+      final Option opt = getOption(i);
       opt.setValue(opt.getDefaultValue());
     }
+    fTarget = null;
   }
 
   /**
@@ -175,7 +197,7 @@ public class OptionSet {
    * @param option the option
    */
   public void add(final Option option) {
-    list.add(option);
+    fList.add(option);
   }
 
   /**
@@ -183,14 +205,14 @@ public class OptionSet {
    * @return the option
    */
   public Option getOption(final int i) {
-    return list.get(i);
+    return fList.get(i);
   }
 
   /**
    * @return the total number of options.
    */
   public int getOptionsSize() {
-    return list.size();
+    return fList.size();
   }
 
   /**
@@ -199,7 +221,7 @@ public class OptionSet {
    */
   public int getOptionsSize(final int type) {
     int n = 0;
-    final Iterator<Option> it = list.iterator();
+    final Iterator<Option> it = fList.iterator();
     while (it.hasNext()) {
       if (it.next().getType() == type) {
         n++;
@@ -234,11 +256,11 @@ public class OptionSet {
 
   /**
    * @param i the option index
-   * @return the option value enclosed in quotes
+   * @return the option value (enclosed in extra quotes if contains one or more spaces)
    */
-  public String getValue(final int i) {
+  public String getValueInQuotes(final int i) {
     String val = getOption(i).getValue();
-    if (val.indexOf(' ') != -1 && !val.startsWith("\"")) {
+    if (val.indexOf(' ') != -1 /*&& !val.startsWith("\"")*/) {
       val = "\"" + val + "\""; //$NON-NLS-1$ //$NON-NLS-2$
     }
     return val;
@@ -246,9 +268,9 @@ public class OptionSet {
 
   /**
    * @param i the option index
-   * @return the option value
+   * @return the option value (no quotes added)
    */
-  public String getValueNoQuotes(final int i) {
+  public String getValue(final int i) {
     return getOption(i).getValue();
   }
 

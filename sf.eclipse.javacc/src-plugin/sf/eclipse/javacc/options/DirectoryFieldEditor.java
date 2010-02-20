@@ -8,9 +8,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 
 /**
- * I Found no way but redefine DirectoryFieldEditor for adding lastPath, and label.
+ * I found no way but subclassing to allow adding the last path and the label.
  * 
- * @see org.eclipse.jface.preference.DirectoryFieldEditor
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */

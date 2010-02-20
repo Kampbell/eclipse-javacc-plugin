@@ -16,7 +16,7 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
 
   // MMa 04/2009 : added description field (for JTB cryptic options)
   // MMa 11/2009 : added -d -nd -vd options
-  // MMa 02/2010 : formatting and javadoc revision ; changed VOID to BOOLEAN types (otherwise not saved in the store)
+  // MMa 02/2010 : formatting and javadoc revision
 
   // Memo 
   // Usage: jtb [OPTIONS] [inputfile]
@@ -60,20 +60,17 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
     // int options
 
     // boolean options, reordered on two columns
-    fOptionSet.add(new Option("cl", Activator.getString("JTBOptions.PrClLst"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("dl", Activator.getString("JTBOptions.GenDpthLvl"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("e", Activator.getString("JTBOptions.SupSemErrChk"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("f", Activator.getString("JTBOptions.GenDescFldNm"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("ia", Activator.getString("JTBOptions.InlnAccStmt"), "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("jd", Activator.getString("JTBOptions.GenJdocCmt"), "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("pp", Activator.getString("JTBOptions.GenParPntrs"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet
-              .add(new Option(
-                              "printer", Activator.getString("JTBOptions.GenTDTFVis"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("tk", Activator.getString("JTBOptions.GenSpecTk"), "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet
-              .add(new Option("scheme", Activator.getString("JTBOptions.GenScheme"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    fOptionSet.add(new Option("w", Activator.getString("JTBOptions.NoOvrwrt"), "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("cl", Activator.getString("JTBOptions.PrClLst"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("dl", Activator.getString("JTBOptions.GenDpthLvl"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("e", Activator.getString("JTBOptions.SupSemErrChk"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("f", Activator.getString("JTBOptions.GenDescFldNm"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("ia", Activator.getString("JTBOptions.InlnAccStmt"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("jd", Activator.getString("JTBOptions.GenJdocCmt"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("pp", Activator.getString("JTBOptions.GenParPntrs"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("printer", Activator.getString("JTBOptions.GenTDTFVis"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("tk", Activator.getString("JTBOptions.GenSpecTk"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("scheme", Activator.getString("JTBOptions.GenScheme"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    fOptionSet.add(new Option("w", Activator.getString("JTBOptions.NoOvrwrt"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     // string options
     fOptionSet.add(new Option("o", Activator.getString("JTBOptions.GnrtdFlNm"), "jtb.out.jj", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -100,7 +97,5 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
   @Override
   public void performDefaults() {
     super.performDefaults();
-    // No pathField yet for JTB
-    //    pathField[0].setStringValue(Activator.getString("JTBOptions.outputdir")); //$NON-NLS-1$
   }
 }

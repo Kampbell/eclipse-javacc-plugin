@@ -171,8 +171,8 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     aMonitor.worked(1);
 
     // initialize properties do get automatically a full build
-    final IProject pro = res.getProject();
-    final IScopeContext projectScope = new ProjectScope(pro);
+    final IProject project = res.getProject();
+    final IScopeContext projectScope = new ProjectScope(project);
     final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
 
     // tricky part: JTB needs -p packageName, only if there is a package name
@@ -206,7 +206,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       prefs.put(SUPPRESS_WARNINGS, "true"); //$NON-NLS-1$
       //      prefs.put(CHECK_SPELLING, "true"); //$NON-NLS-1$
       // set the nature directly
-      JJNature.setJJNature(true, pro);
+      JJNature.setJJNature(true, project);
 
       try {
         prefs.flush();

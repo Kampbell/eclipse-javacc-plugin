@@ -8,8 +8,8 @@ package sf.eclipse.javacc.options;
  */
 public class Option {
 
+  // MMa : added description related field and method (for JTB cryptic options)
   // MMa 02/2010 : formatting and javadoc revision
-  // ModMMa : added description related field and method (for JTB cryptic options)
 
   /** Integer option type */
   public static final int INT     = 1;
@@ -21,17 +21,17 @@ public class Option {
   public static final int FILE    = 4;
   /** Path option type */
   public static final int PATH    = 5;
-  /** Target option type */
+  /** Target option type (unused) */
   public static final int TARGET  = 6;
   /** Void option type */
   public static final int VOID    = 7;
-  /** The option type */
+  /** The option type (as above) */
   protected int           type;
-  /** The option name */
+  /** The option name (no leading '-') */
   protected String        name;
   /** The option description */
   protected String        description;
-  /** The option value */
+  /** The option value (no extra added enclosing quotes) */
   protected String        value;
   /** The option defaultValue */
   protected String        defaultValue;

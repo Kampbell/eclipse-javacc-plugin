@@ -68,7 +68,5 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
   @Override
   public void performDefaults() {
     super.performDefaults();
-    // For Eclipse
-    // pathField[0].setStringValue(Activator.getString("JJTreeOptions.outputdir")); //$NON-NLS-1$
   }
 }

@@ -17,7 +17,7 @@ h2 { font-size:12pt; }
 <h1><font color="red">JavaCC Eclipse Plug-in</font> for <font color="green">Eclipse 3.4 - 3.5</font>
  with <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.1</font></h1>
 
-<h2>Last update : february 17th, 2010 - version <font color="red">1.5.18</font></h2>
+<h2>Last update : february 19th, 2010 - version <font color="red">1.5.19</font></h2>
 
 The JavaCC plug-in is designed to help development of JavaCC applications within the Eclipse IDE.<br>
 License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a href="http://www.cecill.info/">Cecill</a><br>
@@ -41,7 +41,8 @@ Note for Galileo users: we encountered different problems during our tests updat
  which we did not understand in most cases and which seem related to Eclipse and not to the JavaCC Eclipse plug-in:
  so we recommend you to backup your Eclipse environment (eclipse home and .eclipse under user_home) before updating it.<br><br>
 
-The plug-in needs Java 1.5 or 1.6 and Eclipse 3.4.2 or 3.5 to run.
+The plug-in needs Java 1.5 or 1.6 and Eclipse 3.4.2 or 3.5 to run.<br>
+<font color="red">NOTE : next version will need Java 1.6 and Eclipse3.5 to run.</font>
 <br><br>
 See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
@@ -49,7 +50,7 @@ on how to modify the sources.
 <ul>
   <li>preference pages for JavaCC, JJTree, JJDoc & JTB options setting</li>
   <li>an editor for JavaCC, JJTree and JTB sources, with
-  <ul><li>formatting, syntax coloring, automatic indentation, matching punctuation highlighting, spell checking</li>
+  <ul><li>formatting, syntax coloring, automatic indentation, matching punctuation highlighting, spell checking (but not spell correction)</li>
       <li>navigation to elements declaration / uses (open declaration and back / forth)</li>
       <li>some keyboard shortcuts : Comment lines Ctrl+/, Open declaration Ctrl+clic, Format Ctrl+Shift+F </li>
   </ul></li>
@@ -67,12 +68,14 @@ on how to modify the sources.
   <li>some help through the Eclipse menu Help / Help Contents</li>
 </ul>
 <h2>History</h2>
+19/02/10 - 1.5.19 : Fixed project preferences issues with resulting command line options field / specific options fields
+ / enclosing quotes for paths and files<br>
 17/02/10 - 1.5.18 : Fixed /**/ syntax coloring issue (bug 2946447), fixed missing french JTB preferences issue,
  fixed JTB preferences not stored issue, fixed compile annotations and hyperlink issues in JTB Editor / Console,
  splitted templates for static = true and static = false (bug 2951454), added spell checking (but not spell correction...),
- updated with <a href="jtb_doc.html">JTB 1.4.1</a> (Marc Mazas)<br>
+ updated with <a href="jtb_doc.html">JTB 1.4.1</a><br>
 13/11/09 - 1.5.17 : Fixed formatting / syntax coloring / outline / autoindent / call hierarchy / context menus / messages issues ;
- updated with <a href="jtb_doc.html">JTB 1.4.0 and new options</a> (Marc Mazas)<br>
+ updated with JTB 1.4.0 and new options (Marc Mazas)<br>
 04/10/09 - 1.5.16 : Added support for Eclipse variables in Builder and Options ; fixed JTB jar store bug in preferences and
  added use of default jar when no jar is set<br>
 07/09/09 - 1.5.15 : Updated with JavaCC 5.0 and for new options, fixed running in Galileo, compiled with Java 1.5 to support Mac OS X ;
@@ -94,7 +97,7 @@ on how to modify the sources.
 <h2>Quick Start</h2>
 1) Create a new Java project and a package "foo".<br>
 <br>
-2) Select package "foo" and create a new JavaCC file. Just accept all default settings.<br>
+2) Select package "foo" and create a new JavaCC file. Just accept all default settings (note : the following screens are not up to date).<br>
 <br>
 <img src="new_project.png" alt="new project"><br>
 <br>

@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * I Found no way but subclass to allow setting of CheckBox state.
+ * I found no way but subclassing to allow setting of CheckBox state.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
@@ -15,7 +15,7 @@ public class BooleanFieldEditor extends org.eclipse.jface.preference.BooleanFiel
 
   // MMa 02/2010 : formatting and javadoc revision
 
-  /** the checkbox */
+  /** The checkbox */
   protected Button fCheckbox;
 
   /**

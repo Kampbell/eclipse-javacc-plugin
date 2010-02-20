@@ -13,7 +13,7 @@ import sf.eclipse.javacc.IJJConstants;
  */
 public class JJDocOptions extends JJAbstractTab implements IJJConstants {
 
-  // MMa 02/2010 : formatting and javadoc revision
+  // MMa 02/2010 : formatting and javadoc revision ; fixed output file handling
 
   // TEXT (default false) 
   //     Setting TEXT to true causes JJDoc to generate a plain text.
@@ -37,6 +37,7 @@ public class JJDocOptions extends JJAbstractTab implements IJJConstants {
 
     // All options are saved in a single property
     fPreferenceName = JJDOC_OPTIONS;
+
     fOptionSet = new OptionSet();
 
     // int options
@@ -56,10 +57,10 @@ public class JJDocOptions extends JJAbstractTab implements IJJConstants {
     // Super class fills the content from property and optionSet
     createContents();
 
-    // For JJDoc add a section for File options at the project level
-    if (fResource.getType() == IResource.PROJECT) {
-      addFileOptionsSection();
-    }
+    //    // For JJDoc add a section for File options at the project level
+    //    if (fResource.getType() == IResource.PROJECT) {
+    //      addFileOptSection();
+    //    }
   }
 
   /**

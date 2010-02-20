@@ -114,7 +114,5 @@ public class JJCCOptions extends JJAbstractTab implements IJJConstants {
   @Override
   public void performDefaults() {
     super.performDefaults();
-    // For Eclipse
-    // pathField[0].setStringValue(Activator.getString("JJCCOptions.outputdir")); //$NON-NLS-1$
   }
 }
