@@ -32,7 +32,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @author Marc Mazas 2009-2010
  */
 @SuppressWarnings("restriction")
-public final class JJJavaCodeScanner extends AbstractJavaScanner {
+public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
 
   // MMa 12/2009 : added to project (but not used)
 
@@ -466,7 +466,7 @@ public final class JJJavaCodeScanner extends AbstractJavaScanner {
    * @param manager the color manager
    * @param store the preference store
    */
-  public JJJavaCodeScanner(final IColorManager manager, final IPreferenceStore store) {
+  public UnusedJJJavaCodeScanner(final IColorManager manager, final IPreferenceStore store) {
     super(manager, store);
     initialize();
   }

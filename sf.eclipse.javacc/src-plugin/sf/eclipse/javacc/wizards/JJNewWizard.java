@@ -46,7 +46,8 @@ import sf.eclipse.javacc.JJNature;
 public class JJNewWizard extends NewElementWizard implements IJJConstants {
 
   // MMa 04/2009 : formatting revision ; changed jar names
-  // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files
+  // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files ; removed SHOW_CONSOLE pref
+  // ... ....... : removed (@SuppressWarnings("unused") and Exceptions for finishPage() for SR 2956977
 
   /** The wizard page */
   private JJNewJJPage fPage;
@@ -189,7 +190,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       try {
         final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
         String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
-        // return string is "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
+        // return string is "/C:/workspace/sf.eclipse.javacc/"
         if (home.startsWith("/") && home.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
           home = home.substring(1);
         }
@@ -200,10 +201,9 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       }
       prefs.put(RUNTIME_JJJAR, javaCCjarFile);
       prefs.put(RUNTIME_JTBJAR, jtbjarFile);
-      prefs.put(SHOW_CONSOLE, "true"); //$NON-NLS-1$
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
       prefs.put(JJ_NATURE, "true"); //$NON-NLS-1$
-      prefs.put(SUPPRESS_WARNINGS, "true"); //$NON-NLS-1$
+      prefs.put(SUPPRESS_WARNINGS, "false"); //$NON-NLS-1$
       //      prefs.put(CHECK_SPELLING, "true"); //$NON-NLS-1$
       // set the nature directly
       JJNature.setJJNature(true, project);
@@ -229,8 +229,8 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     final URL installURL = Activator.getDefault().getBundle().getEntry("/templates/"); //$NON-NLS-1$
     URL url;
     try {
-      // the extension gives the right template
-      final String filename = "new_file" + (aStaticFlag ? "_static" : "_non_static") + aExtension; //$NON-NLS-1$
+      // the extension and the flag give the right template
+      final String filename = "new_file" + (aStaticFlag ? "_static" : "_non_static") + aExtension; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       url = new URL(installURL, filename);
       // makeInputStream customizes the template
       return makeInputStream(url.openStream(), aPackageName);
@@ -285,9 +285,8 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   /**
    * @see NewElementWizard#finishPage(IProgressMonitor)
    */
-  @SuppressWarnings("unused")
   @Override
-  protected void finishPage(final IProgressMonitor aMonitor) throws InterruptedException, CoreException {
+  protected void finishPage(@SuppressWarnings("unused") final IProgressMonitor aMonitor) /*throws InterruptedException, CoreException*/{
     // nothing done here
   }
 

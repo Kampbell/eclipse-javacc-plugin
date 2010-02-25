@@ -25,8 +25,8 @@ import sf.eclipse.javacc.editors.JJEditor;
  */
 public class JJPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-  // MMa 02/2010 : formatting and javadoc revision
   // MMa : added some colors and indentation preferences
+  // MMa 02/2010 : formatting and javadoc revision
 
   /**
    * Standard constructor

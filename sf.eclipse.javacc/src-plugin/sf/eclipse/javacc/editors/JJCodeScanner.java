@@ -381,6 +381,7 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
     rules[1] = wordRule;
     // rules for comments
     rules[2] = new EndOfLineRule("//", fComment); //$NON-NLS-1$
+    // TODO should allow statement after !
     rules[3] = new EndOfLineRule("/**/", fComment); //$NON-NLS-1$ 
     rules[4] = new MultiLineRule("/**", "*/", fJdocComment); //$NON-NLS-1$ //$NON-NLS-2$
     rules[5] = new MultiLineRule("/*", "*/", fComment); //$NON-NLS-1$ //$NON-NLS-2$

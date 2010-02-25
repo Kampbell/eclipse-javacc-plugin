@@ -161,7 +161,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
     JJDecorator result = null;
     final IDecoratorManager decoratorManager = Activator.getDefault().getWorkbench().getDecoratorManager();
 
-    if (decoratorManager.getEnabled("sf.eclipse.javacc.jjdecorator")) {
+    if (decoratorManager.getEnabled("sf.eclipse.javacc.jjdecorator")) { //$NON-NLS-1$
       result = (JJDecorator) decoratorManager.getBaseLabelProvider("sf.eclipse.javacc.jjdecorator"); //$NON-NLS-1$
     }
     return result;

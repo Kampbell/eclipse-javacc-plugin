@@ -25,7 +25,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
    * 
-   * @see IAutoEditStrategy
+   * @see IAutoEditStrategy#customizeDocumentCommand(IDocument, DocumentCommand)
    * @param doc the document
    * @param cmd the document command (the last character)
    */

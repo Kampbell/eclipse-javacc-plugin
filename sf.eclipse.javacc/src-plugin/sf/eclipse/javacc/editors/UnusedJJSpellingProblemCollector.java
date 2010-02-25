@@ -22,7 +22,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
  * 
  * @author Marc Mazas 2009-2010
  */
-public class JJSpellingProblemCollector implements ISpellingProblemCollector {
+public class UnusedJJSpellingProblemCollector implements ISpellingProblemCollector {
 
   // MMa 12/2009 : added to project for spell checking (but not used)
 
@@ -40,7 +40,7 @@ public class JJSpellingProblemCollector implements ISpellingProblemCollector {
    * 
    * @param annotationModel the annotation model
    */
-  public JJSpellingProblemCollector(final IAnnotationModel annotationModel) {
+  public UnusedJJSpellingProblemCollector(final IAnnotationModel annotationModel) {
     fAnnotationModel = annotationModel;
   }
 

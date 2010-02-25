@@ -235,6 +235,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
       // should not occur
       return null;
     }
+    // TODO passer en ArrayList puis en tableau
     final ITypedRegion[] partioningRegions = partitioner.computePartitioning(0, docLength);
     int commentRegionsNumber = 0;
     for (final ITypedRegion region : partioningRegions) {

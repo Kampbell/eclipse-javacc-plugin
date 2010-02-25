@@ -65,9 +65,9 @@ public class JJPreferences extends AbstractPreferenceInitializer {
     /*
      * Indentation
      */
-    store.setDefault(JJPreferences.P_NO_ADV_AUTO_INDENT, false);
-    store.setDefault(JJPreferences.P_INDENT_CHAR, false);
-    store.setDefault(JJPreferences.P_INDENT_CHAR_NB, 2);
+    store.setDefault(P_NO_ADV_AUTO_INDENT, false);
+    store.setDefault(P_INDENT_CHAR, false);
+    store.setDefault(P_INDENT_CHAR_NB, 2);
     /*
      * Colors
      */

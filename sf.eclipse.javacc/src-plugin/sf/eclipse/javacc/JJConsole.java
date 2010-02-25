@@ -293,7 +293,7 @@ public class JJConsole extends ViewPart implements IJJConstants {
                 final IResource resFrom = project.findMember(from);
                 if (resFrom != null) {
                   newFile = (IFile) resFrom;
-                  if (newFile.getFileExtension().equals("jtb")) {
+                  if (newFile.getFileExtension().equals("jtb")) { //$NON-NLS-1$
                     newFile = aFile;
                   }
                 }
@@ -324,8 +324,8 @@ public class JJConsole extends ViewPart implements IJJConstants {
         while (jtbPbMatcher.find()) {
           report = jtbPbMatcher.group();
           final String sevStr = jtbPbMatcher.group(3);
-          final int severity = "info".equals(sevStr) ? IMarker.SEVERITY_INFO
-                                                    : "warning".equals(sevStr) ? IMarker.SEVERITY_WARNING
+          final int severity = "info".equals(sevStr) ? IMarker.SEVERITY_INFO //$NON-NLS-1$
+                                                    : "warning".equals(sevStr) ? IMarker.SEVERITY_WARNING //$NON-NLS-1$
                                                                               : IMarker.SEVERITY_ERROR;
 
           line = Integer.parseInt(jtbPbMatcher.group(1));

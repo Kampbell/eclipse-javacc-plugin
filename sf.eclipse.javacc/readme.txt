@@ -37,6 +37,10 @@ Features
    use Workbench "Back" to go back.
 
 History
+25/02/10 - version 1.5.20
+- Fixed JTB preferences issue (for options defaulting to true)
+- Fixed extra quote in command line (bug RK and SR 2956977)
+
 19/02/10 - version 1.5.19
 - Fixed project preferences issues with resulting command line options field / specific options fields
   / enclosing quotes for paths and files

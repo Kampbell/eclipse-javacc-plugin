@@ -17,7 +17,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * @author Marc Mazas 2009-2010
  */
 @SuppressWarnings("restriction")
-public class JJCompositeReconcilingStrategy extends JavaCompositeReconcilingStrategy {
+public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcilingStrategy {
 
   /** The current JJ editor */
   private final JJEditor              fJJEditor;
@@ -31,7 +31,7 @@ public class JJCompositeReconcilingStrategy extends JavaCompositeReconcilingStra
    * @param aEditor the editor of the strategy's reconciler
    * @param aDocumentPartitioning the document partitioning this strategy uses for configuration
    */
-  public JJCompositeReconcilingStrategy(final ISourceViewer aViewer, final JJEditor aEditor,
+  public UnusedJJCompositeReconcilingStrategy(final ISourceViewer aViewer, final JJEditor aEditor,
                                         final String aDocumentPartitioning) {
     super(aViewer, aEditor, aDocumentPartitioning);
     fJJEditor = aEditor;

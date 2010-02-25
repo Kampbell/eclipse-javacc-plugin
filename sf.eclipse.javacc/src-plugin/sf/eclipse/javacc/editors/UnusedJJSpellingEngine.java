@@ -25,7 +25,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingContext;
  * @author Marc Mazas 2009-2010
  */
 @SuppressWarnings("restriction")
-public class JJSpellingEngine extends DefaultSpellingEngine {
+public class UnusedJJSpellingEngine extends DefaultSpellingEngine {
 
   // MMa 12/2009 : added to project for spell checking (but not used)
 
@@ -53,7 +53,7 @@ public class JJSpellingEngine extends DefaultSpellingEngine {
   /**
    * Initialize concrete engines.
    */
-  public JJSpellingEngine() {
+  public UnusedJJSpellingEngine() {
     if (JAVA_CONTENT_TYPE != null) {
       fEngines.put(JAVA_CONTENT_TYPE, new JavaSpellingEngine());
     }

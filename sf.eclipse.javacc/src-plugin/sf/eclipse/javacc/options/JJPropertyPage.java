@@ -72,9 +72,9 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * @see PreferencePage#createContents(Composite)
    */
   @Override
-  protected Control createContents(final Composite parent) {
+  protected Control createContents(final Composite aParent) {
     // create a TabFolder
-    fFolder = new TabFolder(parent, SWT.NONE);
+    fFolder = new TabFolder(aParent, SWT.NONE);
     final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
     fFolder.setLayoutData(gd);
 
@@ -103,7 +103,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     if (prefs.get(RUNTIME_JJJAR, null) == null) {
       performDefaults();
     }
-    return parent;
+    return aParent;
   }
 
   /*

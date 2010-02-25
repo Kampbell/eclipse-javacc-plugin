@@ -8,19 +8,22 @@ How to set up the admin & security requirements for the JavaCC Eclipse Plugin up
 - User must generate on his workstation a pair of DSA or RSA keys 
  e.g.: through Eclipse / Window / Preferences / General / Network Connections
                 / SSH2 / Key Management / Generate DSA Keys
-  user must save the keys on his workstation and choose and record a pass phrase
+  user must choose (and record) a pass phrase and save the keys on his workstation
+  (e.g. save private key under xxx.txt and public key under xxx.txt.pub ; they will be in OpenSSH format)
 - User must upload his public key to the SF site
  (through Account / Services / Edit SSH Keys for Shell/CVS and paste ;
-  the update takes some delay)
-
+  the update may take some delay)
+- To use PSFTP or WinSCP the files must be in Putty keys format, so use puttygen to load the keys (from xxx.txt)
+  and save the private key to xxx.ppk and the public key to xxx.ppk.pub
 
 
 
 How to create the JavaCC Eclipse Plugin update site zip file
 ------------------------------------------------------------
-(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010
+(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010
 
 
+- Build JTB Project, copy jtb-x.y.z.jar and remove old one, copy jtb_doc.html
 - Build project "sf.eclipse.javacc" and review "plugin.xml"
   * do not use the export wizard
 - Update project "sf.eclipse.javacc-feature" through "feature.xml" (mainly version)
@@ -34,7 +37,6 @@ How to create the JavaCC Eclipse Plugin update site zip file
   * update "javacc-ver" property in "build_zip.xml"
   * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml"
   * upload files to the SF site as below
-
 
 
 

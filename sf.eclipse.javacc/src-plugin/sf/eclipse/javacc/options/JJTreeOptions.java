@@ -11,7 +11,7 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
+public class JJTreeOptions extends JJAbstractProjectTab implements IJJConstants {
 
   // MMa 04/2009 : cleanup and reordering in alphabetic order
   // MMa 02/2010 : formatting and javadoc revision
@@ -28,7 +28,7 @@ public class JJTreeOptions extends JJAbstractTab implements IJJConstants {
     // all options are saved in a single property
     fPreferenceName = JJTREE_OPTIONS;
 
-    fOptionSet = new OptionSet();
+    fOptionSet = new OptionSet(true);
 
     // int options & boolean options, in alphabetic order on two columns
     fOptionSet.add(new Option("BUILD_NODE_FILES", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$

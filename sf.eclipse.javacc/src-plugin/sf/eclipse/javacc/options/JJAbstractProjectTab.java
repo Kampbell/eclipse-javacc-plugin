@@ -23,7 +23,7 @@ import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.IJJConstants;
 
 /**
- * The basic Tab for JavaCC, JJTree, JJDoc and JTB Options.<br>
+ * The basic Tab for JavaCC, JJTree, JJDoc and JTB project options.<br>
  * This class is extended by :
  * 
  * @see JJCCOptions
@@ -33,11 +33,12 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public abstract class JJAbstractTab extends Composite implements IPropertyChangeListener, IJJConstants {
+public abstract class JJAbstractProjectTab extends Composite implements IPropertyChangeListener, IJJConstants {
 
   // MMa 04/2009 : added descriptions
   // MMa 11/2009 : javadoc and formatting revision ; changed line option section
-  // MMa 02/2010 : formatting and javadoc revision ; fixed not stored Option.VOID properties issue ; fixed output file not showing issue
+  // MMa 02/2010 : formatting and javadoc revision ; fixed not stored Option.VOID properties issue
+  // ... ....... : fixed output file not showing issue ; fixed display true cases for void options ; renamed
 
   /** The optionSet used as a model */
   protected OptionSet              fOptionSet;
@@ -61,7 +62,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
   /** The IResource we are working on */
   protected IResource              fResource;
   /** The "default" label */
-  String                           fDefaultLabel   = Activator.getString("JJAbstractTab.default");
+  String                           fDefaultLabel   = Activator.getString("JJAbstractTab.default"); //$NON-NLS-1$
 
   /**
    * Standard constructor.
@@ -69,7 +70,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * @param aParent the parent
    * @param aRes the resource
    */
-  public JJAbstractTab(final Composite aParent, final IResource aRes) {
+  public JJAbstractProjectTab(final Composite aParent, final IResource aRes) {
     super(aParent, SWT.NONE);
     fResource = aRes;
     final GridLayout layout = new GridLayout();
@@ -84,17 +85,17 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    */
   public void createContents() {
     fIsUpdating = true;
-    // get global line options string from resource
-    final IResource res = fResource;
-    if (res != null) {
-      final IProject proj = res.getProject();
+    // get the global line options string from the resource
+    String options = null;
+    if (fResource != null) {
+      final IProject proj = fResource.getProject();
       final IScopeContext projectScope = new ProjectScope(proj);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-      final String options = prefs.get(fPreferenceName, ""); //$NON-NLS-1$
+      options = prefs.get(fPreferenceName, ""); //$NON-NLS-1$
       fOptionSet.configuresFrom(options);
     }
     // add required sections
-    addCmdLnOptSection();
+    addCmdLnOptSection(options);
     if (fOptionSet.getOptionsSize(Option.INT) != 0) {
       addIntegerOptSection();
     }
@@ -117,24 +118,26 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
   }
 
   /**
-   * Shows the resulting command line arguments.
+   * Shows the resulting command line arguments field.
+   * 
+   * @param aStr the command line arguments
    */
-  protected void addCmdLnOptSection() {
+  protected void addCmdLnOptSection(final String aStr) {
     final Composite composite = new Composite(this, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     fCmdLnOptField = new StringFieldEditor(
                                            fPreferenceName, // name
-                                           "(" + Activator.getString("JJAbstractTab.resulting") + ") " + fPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$
+                                           "(" + Activator.getString("JJAbstractTab.resulting") + ") " + fPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                            StringFieldEditor.UNLIMITED, // width
                                            StringFieldEditor.VALIDATE_ON_FOCUS_LOST, // strategy
                                            composite);
-    fCmdLnOptField.setStringValue(fOptionSet.buildCmdLine());
+    fCmdLnOptField.setStringValue(aStr);
     fCmdLnOptField.setPropertyChangeListener(this);
   }
 
   /**
-   * Shows integer options with EditFields.
+   * Shows integer options with edit fields.
    */
   protected void addIntegerOptSection() {
     final Composite composite = new Composite(this, SWT.NONE);
@@ -184,7 +187,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
   }
 
   /**
-   * Shows String options with EditFields.
+   * Shows string options with edit fields.
    */
   protected void addStringOptSection() {
     final Composite composite = new Composite(this, SWT.NONE);
@@ -209,7 +212,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
   }
 
   /**
-   * Shows path options.
+   * Shows path options with edit fields.
    */
   protected void addPathOptSection() {
     final Composite composite = new Composite(this, SWT.NONE);
@@ -240,7 +243,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
   }
 
   /**
-   * Shows file options.
+   * Shows file options with edit fields.
    */
   protected void addFileOptSection() {
     final Composite composite = new Composite(this, SWT.NONE);
@@ -273,9 +276,11 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * @see PreferencePage
    */
   public void performDefaults() {
+    fIsUpdating = true;
     fOptionSet.resetToDefaultValues();
-    fCmdLnOptField.setStringValue(null);
     updateFieldsValues();
+    fCmdLnOptField.setStringValue(fOptionSet.buildCmdLine());
+    fIsUpdating = false;
   }
 
   /**
@@ -331,12 +336,12 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * @return true if OK, false otherwise
    */
   public boolean performOk() {
-    final IResource res = fResource;
-    if (res != null) {
-      final IProject project = res.getProject();
+    if (fResource != null) {
+      final IProject project = fResource.getProject();
       final IScopeContext projectScope = new ProjectScope(project);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-      prefs.put(fPreferenceName, fCmdLnOptField.getStringValue());
+      //      prefs.put(fPreferenceName, fCmdLnOptField.getStringValue());
+      prefs.put(fPreferenceName, fOptionSet.buildCmdLine());
       try {
         prefs.flush();
       } catch (final BackingStoreException e) {
@@ -351,7 +356,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
    * Listens to changes from booleanFields, intFields, stringFields, pathField.
    * 
    * @param aEvent the property change event object describing which property changed and how
-   * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+   * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
    */
   public void propertyChange(final PropertyChangeEvent aEvent) {
     // don't see what use it is
@@ -361,12 +366,11 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
     if (fIsUpdating) {
       return;
     }
+    fIsUpdating = true;
     if (aEvent.getSource() == fCmdLnOptField) {
       // handle special case where the command line field is modified
       fOptionSet.configuresFrom(fCmdLnOptField.getStringValue());
-      fIsUpdating = true;
       updateFieldsValues();
-      fIsUpdating = false;
     }
     else {
       final FieldEditor field = (FieldEditor) aEvent.getSource();
@@ -418,22 +422,7 @@ public abstract class JJAbstractTab extends Composite implements IPropertyChange
     }
     // update (even back) the command line field
     fCmdLnOptField.setStringValue(fOptionSet.buildCmdLine());
+    fIsUpdating = false;
   }
 
-  //  /**
-  //   * Sets the value of the option, adding extra enclosing quotes if the value contains one or more spaces.
-  //   * 
-  //   * @param aOpt the option to set
-  //   * @param aVal the value to set
-  //   */
-  //  private void specialSetValue(final Option aOpt, final String aVal) {
-  //    final String str = (aVal == null ? "" : aVal);
-  //    // add quotes to take care of path / files with spaces
-  //    if (str.indexOf(' ') != -1) {
-  //      aOpt.setValue("\"" + str + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-  //    }
-  //    else {
-  //      aOpt.setValue(str);
-  //    }
-  //  }
 }

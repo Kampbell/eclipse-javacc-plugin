@@ -22,7 +22,7 @@ public class JarLauncher {
   static {
     final String os = System.getProperty("os.name"); //$NON-NLS-1$
     if (os != null) {
-      if (os.indexOf("win") >= 0) {
+      if (os.indexOf("win") >= 0) { //$NON-NLS-1$
         javaCmd = "javaw"; //$NON-NLS-1$
       }
       else {

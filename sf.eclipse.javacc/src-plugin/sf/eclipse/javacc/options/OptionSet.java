@@ -14,17 +14,23 @@ public class OptionSet {
 
   // MMa 04/2009 : added Option description related method
   // MMa 02/2010 : formatting and javadoc revision ; fixed not stored Option.VOID properties issue
+  // ... ....... : fixed display true cases for void options
 
   /** The list of options */
   protected ArrayList<Option> fList;
+  /** The "equals" flag : true if an '=' is needed, false otherwise */
+  protected boolean           fNeedEqual;
   /** The command line target (after the options) */
   protected String            fTarget;
 
   /**
    * Standard constructor.
+   * 
+   * @param aNeedEqual true if an '=' is needed, false otherwise
    */
-  public OptionSet() {
+  public OptionSet(final boolean aNeedEqual) {
     fList = new ArrayList<Option>();
+    fNeedEqual = aNeedEqual;
   }
 
   /**
@@ -37,22 +43,26 @@ public class OptionSet {
       final String val = getValue(i);
       final String defVal = getDefaultValue(i);
       final int type = getType(i);
-      if (val.equals(defVal)) {
+      if (type == Option.VOID) {
+        // special case for void options
+        if (val.equals("true")) { //$NON-NLS-1$
+          sb.append(sb.length() == 0 ? "-" : " -").append(getName(i)); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         continue;
       }
-      if (sb.length() != 0) {
-        sb.append(" "); //$NON-NLS-1$
+      if (val.equals(defVal)) {
+        // don't show anything for default values for non void options
+        continue;
       }
-      sb.append("-").append(getName(i)); //$NON-NLS-1$
-      if (type != Option.VOID) {
-        if (val.indexOf(' ') != -1) {
-          // add enclosing quotes if val contains one or more spaces
-          sb.append("=\"").append(val).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        else {
-          sb.append("=").append(val); //$NON-NLS-1$
-        }
+      sb.append(sb.length() == 0 ? "-" : " -").append(getName(i)).append(fNeedEqual ? "=" : " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      if (val.indexOf(' ') != -1) {
+        // add enclosing quotes if val contains one or more spaces
+        sb.append("\"").append(val).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
       }
+      else {
+        sb.append(val);
+      }
+
     }
     // no need in preference pages
     //    if (fTarget != null) {
@@ -75,8 +85,8 @@ public class OptionSet {
     boolean insideQuotes = false;
     boolean startNewToken = true;
     // takes care of quotes on the command line
-    // '-xxx aaa -bbb -ccc'   ---> {"-xxx aaa", "-bbb", "-ccc"}
-    // '-xxx "aaa -bbb" -ccc' ---> {"-xxx aaa -bbb", "-ccc"}
+    // '-xx aa -bb -cc'   ---> {"-xx aa", "-bb", "-cc"}
+    // '-xx "aa -bb" -cc' ---> {"-xx aa -bb", "-cc"}
     while (tokenizer.hasMoreTokens()) {
       token = tokenizer.nextToken();
       if (token.equals(" ")) { //$NON-NLS-1$
@@ -93,8 +103,8 @@ public class OptionSet {
           if (count == arguments.length) {
             System.arraycopy(arguments, 0, (arguments = new String[count * 2]), 0, count);
           }
-          // keep quotes
-          arguments[count++] = "\""; //$NON-NLS-1$
+          // don't keep quote
+          arguments[count++] = ""; //$NON-NLS-1$
         }
         insideQuotes = !insideQuotes;
         startNewToken = false;
@@ -124,57 +134,105 @@ public class OptionSet {
   /**
    * Configures from a command line.
    * 
-   * @param str the command line arguments
+   * @param aStr the command line arguments
    */
-  public void configuresFrom(final String str) {
-    resetToDefaultValues();
-    if (str == null) {
+  public void configuresFrom(final String aStr) {
+
+    final int nb = fList.size();
+
+    // clears all void options
+    for (int j = 0; j < nb; j++) {
+      final Option opt = fList.get(j);
+      if (opt.getType() == Option.VOID) {
+        opt.setValue("false"); //$NON-NLS-1$
+      }
+    }
+
+    if (aStr == null) {
+      // empty command line string
       return;
     }
-    final String[] tok = tokenize(str);
+
+    // parse the command line string
+    final String[] tok = tokenize(aStr);
+    Option lastOpt = null;
     for (int i = 0; i < tok.length; i++) {
       final String toki = tok[i];
       final boolean startsWithDash = toki.startsWith("-"); //$NON-NLS-1$
       final int indexOfEqual = toki.indexOf("="); //$NON-NLS-1$ 
-      // Standard option : -xxx=yyy or -xxx="yyy zzz" (tokenize does not remove enclosing quotes)
-      if (startsWithDash && indexOfEqual != -1) {
-        final String name = toki.substring(1, indexOfEqual);
-        String value = toki.substring(indexOfEqual + 1);
-        if (value == null || value.length() == 0) {
-          continue;
-        }
-        // strip enclosing quotes
-        final int len = value.length() - 1;
-        if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
-          value = value.substring(1, len - 1);
-        }
-        for (int j = 0; j < fList.size(); j++) {
-          final Option opt = (fList.get(j));
-          if (opt.getName().equals(name)) {
-            opt.setValue(value);
-            break;
+      if (fNeedEqual) {
+        // JavaCC / JJTree / JJDoc option : '-xx=yy' or '-xx = yy' or '-xx="yy zz"' or '-xx = "yy zz"'
+        if (startsWithDash) {
+          if (indexOfEqual != -1) {
+            // '-xx=yy' or '-xx="yy zz"' or first '-xx=' of '-xx= yy' or '-xx= "yy zz"'
+            final String name = toki.substring(1, indexOfEqual);
+            String value = toki.substring(indexOfEqual + 1);
+            if (value == null || value.length() == 0) {
+              continue;
+            }
+            // strip enclosing quotes
+            final int len = value.length() - 1;
+            if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
+              value = value.substring(1, len - 1);
+            }
+            for (int j = 0; j < nb; j++) {
+              final Option opt = (fList.get(j));
+              if (opt.getName().equals(name)) {
+                opt.setValue(value);
+                lastOpt = null;
+                break;
+              }
+            }
+          }
+          else {
+            // first '-xx' of '-xx = yy' or '-xx = "yy zz"' or '-xx =yy' or '-xx ="yy zz"'
+            final String name = toki.substring(1);
+            for (int j = 0; j < nb; j++) {
+              final Option opt = (fList.get(j));
+              if (opt.getName().equals(name)) {
+                lastOpt = opt;
+                break;
+              }
+            }
           }
         }
-      }
-      // Void option : -xxx
-      else if (startsWithDash) {
-        final String name = toki.substring(1);
-        for (int j = 0; j < fList.size(); j++) {
-          final Option opt = fList.get(j);
-          if (opt.getName().equals(name)) {
-            final String defVal = opt.getDefaultValue();
-            if ("true".equals(defVal)) { //$NON-NLS-1$
-              opt.setValue("false"); //$NON-NLS-1$
-            }
-            else {
-              opt.setValue("true"); //$NON-NLS-1$
-            }
-            break;
-          }
+        else if (indexOfEqual != -1) {
+
+        }
+        else {
+          fTarget = toki;
         }
       }
       else {
-        fTarget = toki;
+        // JTB option : '-xx' or '-xx yy' or '-xx "yy zz"'
+        if (startsWithDash) {
+          final String name = toki.substring(1);
+          for (int j = 0; j < nb; j++) {
+            final Option opt = fList.get(j);
+            if (opt.getName().equals(name)) {
+              if (opt.getType() == Option.VOID) {
+                opt.setValue("true"); //$NON-NLS-1$
+                lastOpt = null;
+              }
+              else {
+                lastOpt = opt;
+              }
+              break;
+            }
+          }
+        }
+        else if (lastOpt != null) {
+          String value = toki;
+          // strip enclosing quotes
+          final int len = value.length() - 1;
+          if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
+            value = value.substring(1, len - 1);
+          }
+          lastOpt.setValue(value);
+        }
+        else {
+          fTarget = toki;
+        }
       }
     }
   }
@@ -216,14 +274,14 @@ public class OptionSet {
   }
 
   /**
-   * @param type the given type
+   * @param aType the given type
    * @return the number of options of the given type
    */
-  public int getOptionsSize(final int type) {
+  public int getOptionsSize(final int aType) {
     int n = 0;
     final Iterator<Option> it = fList.iterator();
     while (it.hasNext()) {
-      if (it.next().getType() == type) {
+      if (it.next().getType() == aType) {
         n++;
       }
     }

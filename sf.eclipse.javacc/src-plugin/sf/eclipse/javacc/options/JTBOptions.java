@@ -12,7 +12,7 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JTBOptions extends JJAbstractTab implements IJJConstants {
+public class JTBOptions extends JJAbstractProjectTab implements IJJConstants {
 
   // MMa 04/2009 : added description field (for JTB cryptic options)
   // MMa 11/2009 : added -d -nd -vd options
@@ -55,7 +55,7 @@ public class JTBOptions extends JJAbstractTab implements IJJConstants {
     // all options are saved in a single property
     fPreferenceName = JTB_OPTIONS;
 
-    fOptionSet = new OptionSet();
+    fOptionSet = new OptionSet(false);
 
     // int options
 

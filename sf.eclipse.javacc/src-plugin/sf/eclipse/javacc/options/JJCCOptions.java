@@ -11,7 +11,7 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JJCCOptions extends JJAbstractTab implements IJJConstants {
+public class JJCCOptions extends JJAbstractProjectTab implements IJJConstants {
 
   // MMa 02/2010 : formatting and javadoc revision
 
@@ -60,7 +60,7 @@ public class JJCCOptions extends JJAbstractTab implements IJJConstants {
     // All options are saved in a single property
     fPreferenceName = JAVACC_OPTIONS;
 
-    fOptionSet = new OptionSet();
+    fOptionSet = new OptionSet(true);
 
     // int options
     fOptionSet.add(new Option("LOOKAHEAD", "1", Option.INT)); //$NON-NLS-1$ //$NON-NLS-2$

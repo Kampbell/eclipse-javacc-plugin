@@ -50,7 +50,6 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>.
    * 
-   * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
    * @param args a table of builder-specific arguments keyed by argument name (key type: <code>String</code>,
    *          value type: <code>String</code>); <code>null</code> is equivalent to an empty map
    * @param monitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
@@ -58,7 +57,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @return the list of projects for which this builder would like deltas the next time it is run or
    *         <code>null</code> if none
    * @exception CoreException if this build fails.
-   * @see IProject#build(int, String, Map, IProgressMonitor)
+   * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -296,7 +295,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * ((?:public )?(?:final )?(?:class|interface|enum)) : capturing group $1.<br>
    * This group $1 will by prefixed by <code>@SuppressWarnings(\"all\")\n</code> and will replace the whole string (group $0).
    */
-  private final static String  regEx   = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?((?:public )?(?:final )?(?:class|interface|enum))"; //$NON-NLS-1
+  private final static String  regEx   = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?((?:public )?(?:final )?(?:class|interface|enum))"; //NON-NLS-1$ //$NON-NLS-1$
   /** Corresponding pattern */
   private final static Pattern pattern = Pattern.compile(regEx, Pattern.MULTILINE | Pattern.DOTALL);
 

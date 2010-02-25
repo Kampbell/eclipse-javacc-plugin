@@ -15,7 +15,7 @@ import org.eclipse.text.edits.TextEdit;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JavaFormat {
+public class UnusedJavaFormat {
 
   /**
    * Standard main.
@@ -26,9 +26,9 @@ public class JavaFormat {
    */
   public static void main(final String[] args) throws MalformedTreeException, BadLocationException {
     // source : a String containing your source code
-    final String source = "CodeFormatter \nformatter=ToolFactory.createCodeFormatter\n"
-                          + "(DefaultCodeFormatterConstants.getJavaConventionsSettings());IDocument\n"
-                          + "document             = new Document  (  source);";
+    final String source = "CodeFormatter \nformatter=ToolFactory.createCodeFormatter\n" //$NON-NLS-1$
+                          + "(DefaultCodeFormatterConstants.getJavaConventionsSettings());IDocument\n" //$NON-NLS-1$
+                          + "document             = new Document  (  source);"; //$NON-NLS-1$
     final CodeFormatter formatter = ToolFactory
                                                .createCodeFormatter(DefaultCodeFormatterConstants
                                                                                                  .getJavaConventionsSettings());
@@ -37,7 +37,7 @@ public class JavaFormat {
     textEdit.apply(document);
     final String formattedSource = document.get();
 
-    System.out.println("Avant : \n" + source);
-    System.out.println("Après : \n" + formattedSource);
+    System.out.println("Avant : \n" + source); //$NON-NLS-1$
+    System.out.println("Après : \n" + formattedSource); //$NON-NLS-1$
   }
 }

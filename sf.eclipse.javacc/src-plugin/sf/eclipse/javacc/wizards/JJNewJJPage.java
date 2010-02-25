@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
@@ -129,10 +130,10 @@ public class JJNewJJPage extends WizardPage {
     }
     // initialize extension
     fExtension = ".jj"; //$NON-NLS-1$
-    // initialize filename
-    fFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
     // initialize static flag
     fStaticFlag = true;
+    // initialize filename
+    fFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
   }
 
   /**
@@ -269,7 +270,7 @@ public class JJNewJJPage extends WizardPage {
       @Override
       public void widgetSelected(final SelectionEvent event) {
         final String staticFlag = (String) event.widget.getData();
-        fStaticFlag = "true".equals(staticFlag);
+        fStaticFlag = "true".equals(staticFlag); //$NON-NLS-1$
         updateStatus();
       }
     };
@@ -518,10 +519,10 @@ public class JJNewJJPage extends WizardPage {
    * Updates the status line and the OK button according to the given status.
    */
   protected void updateStatus() {
-    final IStatus status = org.eclipse.jdt.internal.ui.dialogs.StatusUtil.getMostSevere(new IStatus[] {
+    final IStatus status = StatusUtil.getMostSevere(new IStatus[] {
         fSrcRootStatus, fPackageStatus, fExtensionStatus, fFileStatus });
     setPageComplete(!status.matches(IStatus.ERROR));
-    org.eclipse.jdt.internal.ui.dialogs.StatusUtil.applyToStatusLine(this, status);
+    StatusUtil.applyToStatusLine(this, status);
   }
 
   /**
