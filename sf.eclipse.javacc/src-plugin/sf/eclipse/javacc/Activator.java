@@ -134,11 +134,12 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   }
 
   /**
-   * @param msg the message to log
+   * @param msg the message to log as an error (no exception thrown to avoid side effects)
    */
   public static void log(final String msg) {
-    final Status status = new Status(IStatus.INFO, "JavaCC", IStatus.OK, msg, //$NON-NLS-1$
-                                     new Exception("For information only")); //$NON-NLS-1$
+    final Status status = new Status(IStatus.ERROR, "JavaCC", IStatus.OK, msg, //$NON-NLS-1$
+                                     //                                     new Exception("For information only")); //$NON-NLS-1$
+                                     null);
     getDefault().getLog().log(status);
   }
 

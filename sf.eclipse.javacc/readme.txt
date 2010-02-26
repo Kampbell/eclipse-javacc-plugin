@@ -37,6 +37,9 @@ Features
    use Workbench "Back" to go back.
 
 History
+26/02/10 - version 1.5.21
+- Fixed Wizard not closing on error (bug RK and SR 2956977)
+
 25/02/10 - version 1.5.20
 - Fixed JTB preferences issue (for options defaulting to true)
 - Fixed extra quote in command line (bug RK and SR 2956977)

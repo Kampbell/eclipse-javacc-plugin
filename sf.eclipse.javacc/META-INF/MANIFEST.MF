@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle_name
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.20
+Bundle-Version: 1.5.21
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.Activator
 Bundle-Vendor: %Bundle_Vendor_name

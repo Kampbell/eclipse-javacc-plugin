@@ -51,6 +51,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.IJJConstants;
 
 /**
  * The "New" wizard page allows setting the source directory, the package for the new file, the extension, as
@@ -60,7 +61,7 @@ import sf.eclipse.javacc.Activator;
  * @author Marc Mazas 2009-2010
  */
 @SuppressWarnings("restriction")
-public class JJNewJJPage extends WizardPage {
+public class JJNewJJPage extends WizardPage implements IJJConstants {
 
   // MMa 11/2009 : javadoc and formatting revision ; changed some modifiers for synthetic accesses
   // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files
@@ -81,8 +82,6 @@ public class JJNewJJPage extends WizardPage {
   protected IStatus            fSrcRootStatus;
   /** The package change status */
   protected IStatus            fPackageStatus;
-  /** The file extension change status */
-  protected IStatus            fExtensionStatus;
   /** The file name change status */
   protected IStatus            fFileStatus;
   /** The checked source */
@@ -121,11 +120,14 @@ public class JJNewJJPage extends WizardPage {
       if (fPackageFragment != null && !fPackageFragment.isDefaultPackage()) {
         fPackage = fPackageFragment.getElementName();
       }
-      // initialize SrcRoot
+      // initialize fSrcRoot
       final IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElem
                                                                       .getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
       if (pfr != null) {
         fSrcRoot = pfr.getPath().toString();
+        if (fSrcRoot.startsWith("/")) {
+          fSrcRoot = fSrcRoot.substring(1);
+        }
       }
     }
     // initialize extension
@@ -231,7 +233,7 @@ public class JJNewJJPage extends WizardPage {
       @Override
       public void widgetSelected(final SelectionEvent event) {
         fExtension = (String) event.widget.getData();
-        fExtensionStatus = extensionChanged();
+        extensionChanged();
         updateStatus();
       }
     };
@@ -269,8 +271,7 @@ public class JJNewJJPage extends WizardPage {
 
       @Override
       public void widgetSelected(final SelectionEvent event) {
-        final String staticFlag = (String) event.widget.getData();
-        fStaticFlag = "true".equals(staticFlag); //$NON-NLS-1$
+        fStaticFlag = "true".equals(event.widget.getData()); //$NON-NLS-1$
         updateStatus();
       }
     };
@@ -312,7 +313,6 @@ public class JJNewJJPage extends WizardPage {
     fSrcRootStatus = sourceContainerChanged();
     fPackageStatus = packageChanged();
     fFileStatus = fileNameChanged();
-    fExtensionStatus = new Status();
     if (fSrcRootStatus.getSeverity() == IStatus.ERROR || fPackageStatus.getSeverity() == IStatus.ERROR
         || fFileStatus.getSeverity() == IStatus.ERROR) {
       setPageComplete(false);
@@ -415,7 +415,6 @@ public class JJNewJJPage extends WizardPage {
    * 
    * @return the status
    */
-  @SuppressWarnings( {})
   IStatus packageChanged() {
     final Status status = new Status();
     final String packName = getPackage();
@@ -460,7 +459,7 @@ public class JJNewJJPage extends WizardPage {
                 .setError(Activator.getString("JJNewJJPage.the_package") + " " + pack.getElementName() + " " + Activator.getString(Activator.getString("JJNewJJPage._does_not_exist"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
       } catch (final JavaModelException e) {
-        Activator.log(e.toString());
+        Activator.log(e.getMessage());
       }
     }
     return status;
@@ -468,10 +467,8 @@ public class JJNewJJPage extends WizardPage {
 
   /**
    * Handles the extension change.
-   * 
-   * @return the status
    */
-  IStatus extensionChanged() {
+  void extensionChanged() {
     String fileName = getFileName();
     int dotLoc = fileName.lastIndexOf('.');
     if (dotLoc == -1) {
@@ -479,9 +476,7 @@ public class JJNewJJPage extends WizardPage {
     }
     fileName = fileName.substring(0, dotLoc) + fExtension;
     fFileNameText.setText(fileName);
-    // does not really matter
-    final Status status = new Status();
-    return status;
+    return;
   }
 
   /**
@@ -516,11 +511,11 @@ public class JJNewJJPage extends WizardPage {
   }
 
   /**
-   * Updates the status line and the OK button according to the given status.
+   * Updates the status line and the OK button according to the current statuses.
    */
   protected void updateStatus() {
     final IStatus status = StatusUtil.getMostSevere(new IStatus[] {
-        fSrcRootStatus, fPackageStatus, fExtensionStatus, fFileStatus });
+        fSrcRootStatus, fPackageStatus, fFileStatus });
     setPageComplete(!status.matches(IStatus.ERROR));
     StatusUtil.applyToStatusLine(this, status);
   }
@@ -583,10 +578,8 @@ public class JJNewJJPage extends WizardPage {
    * 
    * @return the source container
    */
-  @SuppressWarnings( {
-    "unchecked" })
   IPackageFragmentRoot chooseSourceContainer() {
-    Class[] acceptedClasses = new Class[] {
+    Class<?>[] acceptedClasses = new Class[] {
         IPackageFragmentRoot.class, IJavaProject.class };
     final TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,
                                                                                         false) {
