@@ -24,7 +24,7 @@ How to create the JavaCC Eclipse Plugin update site zip file
 
 
 - Build JTB Project, copy jtb-x.y.z.jar and remove old one, copy jtb_doc.html
-- Build project "sf.eclipse.javacc" and review "plugin.xml"
+- Build project "sf.eclipse.javacc" ; update JTB_JAR_NAME in IJJConstants ; review "plugin.xml"
   * do not use the export wizard
 - Update project "sf.eclipse.javacc-feature" through "feature.xml" (mainly version)
   * use the export wizard to create the "sf.eclipse.javacc-z.y.zz-plugin.zip" file (under project "sf.eclipse.javacc-web")
