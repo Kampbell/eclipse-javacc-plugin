@@ -15,7 +15,7 @@ public class JTBEditor extends JJEditor {
    * Standard constructor.
    */
   public JTBEditor() {
-    super("sf.eclipse.javacc.editors.JTBEditor"); //$NON-NLS-1$
+    super(JTBEDITOR_ID);
   }
 
 }

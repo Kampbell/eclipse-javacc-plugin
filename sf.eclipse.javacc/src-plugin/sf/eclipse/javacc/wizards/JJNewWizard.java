@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -25,7 +26,9 @@ import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -60,7 +63,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     final ImageDescriptor id = Activator.getImageDescriptor("jjnew_wiz.gif"); //$NON-NLS-1$
     setDefaultPageImageDescriptor(id);
     setDialogSettings(Activator.getDefault().getDialogSettings());
-    setWindowTitle(Activator.getString("JJNewWizard.creates_jj_example_file")); //$NON-NLS-1$
+    setWindowTitle(Activator.getString("JJNewWizard.Creates_jj_example_file")); //$NON-NLS-1$
   }
 
   /**
@@ -91,7 +94,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
           doFinish(srcdir, fileName, extension, packageName, staticFlag, monitor);
         } catch (final CoreException e) {
           e.printStackTrace();
-          Activator.log("doFinish problem : " + e.getMessage()); //$NON-NLS-1$
+          Activator.logErr("doFinish problem : " + e.getMessage()); //$NON-NLS-1$
         } finally {
           monitor.done();
         }
@@ -101,11 +104,11 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       getContainer().run(true, false, op);
     } catch (final InterruptedException e) {
       e.printStackTrace();
-      Activator.log("getContainer IE problem : " + e.getMessage()); //$NON-NLS-1$
+      Activator.logErr("getContainer IE problem : " + e.getMessage()); //$NON-NLS-1$
       return false;
     } catch (final InvocationTargetException e) {
       e.printStackTrace();
-      Activator.log("getContainer ITE problem : " + e.getMessage()); //$NON-NLS-1$
+      Activator.logErr("getContainer ITE problem : " + e.getMessage()); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -126,26 +129,31 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
                 final String aPackageName, final boolean aStaticFlag, final IProgressMonitor aMonitor)
                                                                                                       throws CoreException {
 
-    aMonitor.beginTask(Activator.getString("JJNewWizard.Creating") + aFileName, 2); //$NON-NLS-1$
+    aMonitor.beginTask(Activator.getString("JJNewWizard.Creating") + " " + aFileName + aExtension, 2); //$NON-NLS-1$ //$NON-NLS-2$
 
     // first: look for the srcDir/package 
-    String resName;
-    if (aPackageName.equals("")) { //$NON-NLS-1$
-      resName = aSrcDir;
-    }
-    else {
-      resName = aSrcDir + "/" + aPackageName.replace('.', '/'); //$NON-NLS-1$
-    }
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    if (root == null || !root.exists()) {
+      final String msg = Activator.getString("JJNewWizard.Root_problem"); //$NON-NLS-1$
+      new Exception(msg).printStackTrace();
+      Activator.logErr(msg + " (" + root + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+      return;
+    }
+    String resName = aSrcDir;
+    if (aPackageName != null && !"".equals(aPackageName)) { //$NON-NLS-1$
+      resName += "/" + aPackageName.replace('.', '/'); //$NON-NLS-1$
+    }
     final IResource res = root.findMember(new Path(resName));
     if (res == null || !res.exists() || !(res instanceof IContainer)) {
-      new Exception(Activator.getString("JJNewWizard.src_dir_doesnot_exist")).printStackTrace();
-      Activator.log(Activator.getString("JJNewWizard.src_dir_doesnot_exist") + " (" + resName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+      final String msg = Activator.getString("JJNewWizard.Srcpkgdir_doesnot_exist"); //$NON-NLS-1$
+      new Exception(msg).printStackTrace();
+      Activator.logErr(msg + " (" + resName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
       return;
     }
     // second: create the file
     final IContainer container = (IContainer) res;
-    final Path path = new Path(aFileName + aExtension);
+    final String fileNameWithExt = aFileName + aExtension;
+    final Path path = new Path(fileNameWithExt);
     final IFile file = container.getFile(path);
     try {
       final InputStream stream = openTemplateContentStream(aExtension, aPackageName, aStaticFlag);
@@ -155,30 +163,46 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       }
       if (file.exists()) {
         file.setContents(stream, true, true, aMonitor);
+        Activator.logInfo("File " + file + " updated"); //$NON-NLS-1$ //$NON-NLS-2$
       }
       else {
         file.create(stream, true, aMonitor);
+        Activator.logInfo("File " + file + " created"); //$NON-NLS-1$ //$NON-NLS-2$
       }
       stream.close();
     } catch (final IOException e) {
       e.printStackTrace();
       Activator
-               .log(Activator.getString("JJNewWizard.Creation_of") + " (" + aFileName + ") " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+               .logErr(Activator.getString("JJNewWizard.Creation_of") + " (" + file + ") " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       return;
     }
     aMonitor.worked(1);
-    aMonitor.setTaskName(Activator.getString("JJNewWizard.Opening_file_for_editing")); //$NON-NLS-1$
+    aMonitor.setTaskName(Activator.getString("JJNewWizard.Opening_file_for_editing") + " (" + file + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    getShell().getDisplay().asyncExec(new Runnable() {
+    final Shell wizShell = getShell();
+    if (wizShell == null) {
+      Activator.logErr(Activator.getString("JJNewWizard.Wizardshell_problem")); //$NON-NLS-1$ 
+      return;
+    }
+    wizShell.getDisplay().asyncExec(new Runnable() {
 
       public void run() {
-        final IWorkbenchPage wpage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        final IWorkbenchWindow iww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (iww == null) {
+          Activator.logErr(Activator.getString("JJNewWizard.Workbenchwindow_problem")); //$NON-NLS-1$ 
+          return;
+        }
+        final IWorkbenchPage wpage = iww.getActivePage();
+        if (wpage == null) {
+          Activator.logInfo(Activator.getString("JJNewWizard.Activepage_null")); //$NON-NLS-1$ 
+          return;
+        }
         try {
           IDE.openEditor(wpage, file, true);
         } catch (final PartInitException e) {
           e.printStackTrace();
           Activator
-                   .log(Activator.getString("JJNewWizard.opening_of") + " (" + file + ") " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                   .logErr(Activator.getString("JJNewWizard.Opening_of") + " " + file + " " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
       }
     });
@@ -186,50 +210,56 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
 
     // initialize properties to get automatically a full build
     final IProject project = res.getProject();
+    // force the nature in case the project has just been created
+    JJNature.setJJNature(true, project);
     final IScopeContext projectScope = new ProjectScope(project);
     final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
 
-    // tricky part: JTB needs -p packageName, only if there is a package name
-    if (!aPackageName.equals("")) //$NON-NLS-1$
-    {
-      prefs.put(JTB_OPTIONS, "-p=" + aPackageName); //$NON-NLS-1$
+    if (prefs == null) {
+      Activator.logErr(Activator.getString("JJNewWizard.Prefs_null")); //$NON-NLS-1$ 
+      return;
     }
 
-    // initializing properties do get automatically a full build
+    // tricky part: JTB needs -p packageName, only if there is a package name
+    if (".jtb".equals(aExtension) && aPackageName != null && !"".equals(aPackageName)) //$NON-NLS-1$
+    {
+      prefs.put(JTB_OPTIONS, "-p " + aPackageName); //$NON-NLS-1$
+    }
+
     if (prefs.get(RUNTIME_JJJAR, null) == null) {
+      // initializing properties do get automatically a full build
+      Activator.logInfo(Activator.getString("JJNewWizard.Initializing_preferences")); //$NON-NLS-1$ 
       // use the jar(s) in the plugin
-      String javaCCjarFile = "", jtbjarFile = ""; //$NON-NLS-1$ //$NON-NLS-2$
+      String javaCCJarFile = ""; //$NON-NLS-1$
+      String jtbJarFile = ""; //$NON-NLS-1$
       final URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
       try {
-        final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
-        String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
+        final URL resolvedURL = FileLocator.resolve(installURL);
+        String home = FileLocator.toFileURL(resolvedURL).getFile();
         // return string is "/C:/workspace/sf.eclipse.javacc/"
         if (home.startsWith("/") && home.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
           home = home.substring(1);
         }
-        javaCCjarFile = home + JAVACC_JAR_NAME;
-        jtbjarFile = home + JTB_JAR_NAME;
+        javaCCJarFile = home + JAVACC_JAR_NAME;
+        jtbJarFile = home + JTB_JAR_NAME;
       } catch (final IOException e) {
         e.printStackTrace();
-        Activator.log(Activator.getString("JJNewWizard.rootbundle_notfound") + " : " + e.getMessage());
+        Activator.logErr(Activator.getString("JJNewWizard.Rootbundle_notfound") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
         return;
       }
-      prefs.put(RUNTIME_JJJAR, javaCCjarFile);
-      prefs.put(RUNTIME_JTBJAR, jtbjarFile);
+      prefs.put(RUNTIME_JJJAR, javaCCJarFile);
+      prefs.put(RUNTIME_JTBJAR, jtbJarFile);
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
       prefs.put(JJ_NATURE, "true"); //$NON-NLS-1$
       prefs.put(SUPPRESS_WARNINGS, "false"); //$NON-NLS-1$
-      //      prefs.put(CHECK_SPELLING, "true"); //$NON-NLS-1$
-      // set the nature directly
-      JJNature.setJJNature(true, project);
+    }
 
-      try {
-        prefs.flush();
-      } catch (final BackingStoreException e) {
-        e.printStackTrace();
-        Activator.log(Activator.getString("JJNewWizard.backingstore_problem") + " : " + e.getMessage());
-        return;
-      }
+    try {
+      prefs.flush();
+    } catch (final BackingStoreException e) {
+      e.printStackTrace();
+      Activator.logErr(Activator.getString("JJNewWizard.Backingstore_problem") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+      return;
     }
   }
 
@@ -243,12 +273,11 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
    */
   private InputStream openTemplateContentStream(final String aExtension, final String aPackageName,
                                                 final boolean aStaticFlag) {
-    final URL installURL = Activator.getDefault().getBundle().getEntry("/templates/"); //$NON-NLS-1$
-    URL url;
     // the extension and the flag give the right template
-    final String filename = "new_file" + (aStaticFlag ? "_static" : "_non_static") + aExtension; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final String filename = "New_file" + (aStaticFlag ? "_static" : "_non_static") + aExtension; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     try {
-      url = new URL(installURL, filename);
+      final URL installURL = Activator.getDefault().getBundle().getEntry("/templates/"); //$NON-NLS-1$
+      final URL url = new URL(installURL, filename);
       // makeInputStream customizes the template
       return makeInputStream(url.openStream(), aPackageName);
     } catch (final MalformedURLException e) {
@@ -256,7 +285,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     } catch (final IOException e) {
       e.printStackTrace();
     }
-    Activator.log(Activator.getString("JJNewWizard.template_problem") + " (" + filename + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+    Activator.logErr(Activator.getString("JJNewWizard.Template_problem") + " (" + filename + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     return null;
   }
 
@@ -276,7 +305,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       buffer = Util.getInputStreamAsByteArray(aInputStream, -1);
       aInputStream.close();
     } catch (final IOException e) {
-      Activator.log(Activator.getString("JJNewWizard.Reading_failed") + " : " + e.getMessage()); //$NON-NLS-1$
+      Activator.logErr(Activator.getString("JJNewWizard.Reading_failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
       return null;
     }
 

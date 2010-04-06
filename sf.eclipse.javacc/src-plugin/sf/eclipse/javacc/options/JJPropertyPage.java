@@ -53,7 +53,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
   /** The current global options */
   protected JJRuntimeOptions fJJRunOptions;
   /** The current JavaCC options */
-  protected JJCCOptions      fJJCCOptions;
+  protected JavaCCOptions      fJJCCOptions;
   /** The current JJTree options */
   protected JJTreeOptions    fJJTreeOptions;
   /** The current JJDoc options */
@@ -88,7 +88,8 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     // JJRuntime always present
     fJJRunOptions = new JJRuntimeOptions(fFolder, fResource);
     fJJRunItem = new TabItem(fFolder, SWT.NONE);
-    fJJRunItem.setText(Activator.getString("JJPropertyPage.JavaCC_runtime_options_Tab")); //$NON-NLS-1$
+    fJJRunItem.setText(Activator.getString("JJPropertyPage.Runtime_options_Tab")); //$NON-NLS-1$
+    fJJRunItem.setToolTipText(Activator.getString("JJPropertyPage.Runtime_options_Tab_TT")); //$NON-NLS-1$
     fJJRunItem.setControl(fJJRunOptions);
 
     // for project
@@ -113,9 +114,10 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * Adds the JavaCC preference tab.
    */
   protected void addJCCTab() {
-    fJJCCOptions = new JJCCOptions(fFolder, fResource);
+    fJJCCOptions = new JavaCCOptions(fFolder, fResource);
     fJJCCItem = new TabItem(fFolder, SWT.NONE);
     fJJCCItem.setText(Activator.getString("JJPropertyPage.JavaCC_options_Tab")); //$NON-NLS-1$
+    fJJCCItem.setToolTipText(Activator.getString("JJPropertyPage.JavaCC_options_Tab_TT")); //$NON-NLS-1$
     fJJCCItem.setControl(fJJCCOptions);
   }
 
@@ -126,6 +128,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     fJJTreeOptions = new JJTreeOptions(fFolder, fResource);
     fJJTreeItem = new TabItem(fFolder, SWT.NONE);
     fJJTreeItem.setText(Activator.getString("JJPropertyPage.JJTree_options_Tab")); //$NON-NLS-1$
+    fJJTreeItem.setToolTipText(Activator.getString("JJPropertyPage.JJTree_options_Tab_TT")); //$NON-NLS-1$
     fJJTreeItem.setControl(fJJTreeOptions);
   }
 
@@ -136,6 +139,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     fJJDocOptions = new JJDocOptions(fFolder, fResource);
     fJJDocItem = new TabItem(fFolder, SWT.NONE);
     fJJDocItem.setText(Activator.getString("JJPropertyPage.JJDoc_options_Tab")); //$NON-NLS-1$
+    fJJDocItem.setToolTipText(Activator.getString("JJPropertyPage.JJDoc_options_Tab_TT")); //$NON-NLS-1$
     fJJDocItem.setControl(fJJDocOptions);
   }
 
@@ -146,6 +150,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     fJTBOptions = new JTBOptions(fFolder, fResource);
     fJTBItem = new TabItem(fFolder, SWT.NONE);
     fJTBItem.setText(Activator.getString("JJPropertyPage.JTB_options_Tab")); //$NON-NLS-1$
+    fJTBItem.setToolTipText(Activator.getString("JJPropertyPage.JTB_options_Tab_TT")); //$NON-NLS-1$
     fJTBItem.setControl(fJTBOptions);
   }
 

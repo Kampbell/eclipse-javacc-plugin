@@ -11,9 +11,10 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JJCCOptions extends JJAbstractProjectTab implements IJJConstants {
+public class JavaCCOptions extends JJAbstractTab implements IJJConstants {
 
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : adapted boolean options sort to 3 columns display
 
   //	The integer valued options are:
   //	    LOOKAHEAD              (default 1)
@@ -54,7 +55,7 @@ public class JJCCOptions extends JJAbstractProjectTab implements IJJConstants {
    * @param aParent the parent
    * @param aRes the resource
    */
-  public JJCCOptions(final Composite aParent, final IResource aRes) {
+  public JavaCCOptions(final Composite aParent, final IResource aRes) {
     super(aParent, aRes);
 
     // All options are saved in a single property
@@ -68,29 +69,30 @@ public class JJCCOptions extends JJAbstractProjectTab implements IJJConstants {
     fOptionSet.add(new Option("OTHER_AMBIGUITY_CHECK", "1", Option.INT)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // boolean options
+    fNbColBooleans = 3;
     fOptionSet.add(new Option("BUILD_PARSER", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("GENERATE_STRING_BUILDER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("BUILD_TOKEN_MANAGER", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("IGNORE_CASE", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("CACHE_TOKENS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("JAVA_UNICODE_ESCAPE", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("COMMON_TOKEN_ACTION", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("KEEP_LINE_COLUMN", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("DEBUG_LOOKAHEAD", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("SANITY_CHECK", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("DEBUG_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("STATIC", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("DEBUG_TOKEN_MANAGER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("SUPPORT_CLASS_VISIBILITY_PUBLIC", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("ERROR_REPORTING", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("TOKEN_MANAGER_USES_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     fOptionSet.add(new Option("FORCE_LA_CHECK", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("UNICODE_INPUT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("SANITY_CHECK", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("BUILD_TOKEN_MANAGER", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     fOptionSet.add(new Option("GENERATE_ANNOTATIONS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("USER_CHAR_STREAM", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("STATIC", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("CACHE_TOKENS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     fOptionSet.add(new Option("GENERATE_CHAINED_EXCEPTION", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
-    fOptionSet.add(new Option("USER_TOKEN_MANAGER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("SUPPORT_CLASS_VISIBILITY_PUBLIC", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("COMMON_TOKEN_ACTION", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     fOptionSet.add(new Option("GENERATE_GENERICS", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("TOKEN_MANAGER_USES_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("DEBUG_LOOKAHEAD", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("GENERATE_STRING_BUILDER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("UNICODE_INPUT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("DEBUG_PARSER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("IGNORE_CASE", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("USER_CHAR_STREAM", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("DEBUG_TOKEN_MANAGER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("JAVA_UNICODE_ESCAPE", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("USER_TOKEN_MANAGER", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("ERROR_REPORTING", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("KEEP_LINE_COLUMN", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // string options
     fOptionSet.add(new Option("JDK_VERSION", "1.5", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$

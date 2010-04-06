@@ -20,23 +20,29 @@ How to set up the admin & security requirements for the JavaCC Eclipse Plugin up
 
 How to create the JavaCC Eclipse Plugin update site zip file
 ------------------------------------------------------------
-(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010
+(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010 / Mar 31th, 2010
 
 
-- Build JTB Project, copy jtb-x.y.z.jar and remove old one, copy jtb_doc.html
-- Build project "sf.eclipse.javacc" ; update JTB_JAR_NAME in IJJConstants ; review "plugin.xml"
+- Build JTB Project, check that "Release_Notes.txt" and "jtb_doc.html" are up to date
+- Build project "sf.eclipse.javacc" ;
+  * copy "jtb-x.y.z.jar" and remove old one
+  * update JTB_JAR_NAME in "IJJConstants"
+  * review "plugin.xml" (change JTB jar name in "build.properties" tab)
+  * update "readme.txt"
   * do not use the export wizard
 - Update project "sf.eclipse.javacc-feature" through "feature.xml" (mainly version)
   * use the export wizard to create the "sf.eclipse.javacc-z.y.zz-plugin.zip" file (under project "sf.eclipse.javacc-web")
 - Update project "sf.eclipse.javacc-web" through "site.xml" (mainly feature, keep it under the category)
+  * copy "jtb_doc.html"
   * move to folder "old_versions" previous jars from folders "plugins" and "features"
-  * update "index.html", "jtb_doc.html", and add last version for jtb jar
+  * update "index.html"
   * delete "artifacts.xml" & "content.xml"
-  * use "Build all" in "Site Map"
+  * use "Build all" in "Site Map" tab
   * check there are no old versions entries in "artifacts.xml" & "content.xml"
   * update "javacc-ver" property in "build_zip.xml"
   * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml"
   * upload files to the SF site as below
+  * commit files to CVS and tag as a version
 
 
 
@@ -55,7 +61,10 @@ How to update the JavaCC Eclipse Plugin SourceForge site
   * link it to the DSA key file on the workstation
   * cd /home/pfs/project/e/ec/eclipse-javacc to go to the release directory, where to put the sf.eclipse.javacc-z.y.xx-updatesite.zip
   * cd /home/groups/e/ec/eclipse-javacc/htdocs to go to the project web directory, where to put the index.html and all files
-  current problem : open works with SFTP, not SCP (remote shell restricted to copy operations ?) ;
+  current problems :
+  - open works with SFTP, not SCP (remote shell restricted to copy operations ?) ;
+  - cannot overwrite not owned files (even if in right group)
+  
   
 + Putty PSFTP :
   * configure putty with host web.sourceforge.net port 22, sf account,project (e.g. mmazas,eclipse-javacc) on Connection / Data

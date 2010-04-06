@@ -21,6 +21,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
 
   // MMa 11/2009 : javadoc and formatting revision ; removed newlines around '(' and ')'
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : fixed NPE
 
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
@@ -148,7 +149,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       }
       // remove trailing whitespaces
       p = cmd.offset;
-      while (true) {
+      while (p >= 0) {
         final char c = doc.getChar(--p);
         if (c != ' ' && c != '\t') { // $NON-NLS-2$
           ++p;

@@ -20,7 +20,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingContext;
 
 /**
  * JJ spelling engine, copied from the default spelling engine {@link DefaultSpellingEngine} and modified to
- * use a {@link JavaSpellingEngine} to process {@link JJDocumentProvider#JJ_COMMENT} partitions.
+ * use a {@link JavaSpellingEngine} to process {@link JJDocumentProvider#JJ_COMMENT_CONTENT_TYPE} partitions.
  * 
  * @author Marc Mazas 2009-2010
  */

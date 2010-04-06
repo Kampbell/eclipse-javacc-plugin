@@ -191,6 +191,7 @@
       <editor
             class="sf.eclipse.javacc.editors.JJEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            default="true"
             extensions="jjt, jj"
             icon="icons/jj_file.gif"
             id="sf.eclipse.javacc.editors.JJEditor"
@@ -200,6 +201,7 @@
       <editor
             class="sf.eclipse.javacc.editors.JTBEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            default="true"
             extensions="jtb"
             icon="icons/jtb_file.gif"
             id="sf.eclipse.javacc.editors.JTBEditor"
@@ -229,6 +231,7 @@
          <action
                class="sf.eclipse.javacc.actions.JJDocCompile"
                definitionId="commands.jjdoccompile"
+               icon="icons/jjdoc_compile.gif"
                id="javacc.jjdoccompile"
                label="%Compile_with_JJDoc">
          </action>
@@ -248,12 +251,14 @@
          <action
                class="sf.eclipse.javacc.actions.JJFoldingCollapse"
                definitionId="commands.jjfoldingcollapseall"
+               icon="icons/jj_collapse.gif"
                id="javacc.jjfoldingcollapseall"
                label="%JavaCC_FoldingCollapseAll">
          </action>
          <action
                class="sf.eclipse.javacc.actions.JJFoldingExpand"
                definitionId="commands.jjfoldingexpandall"
+               icon="icons/jj_expand.gif"
                id="javacc.jjfoldingexpandall"
                label="%JavaCC_FoldingExpandAll">
          </action>
@@ -291,6 +296,7 @@
          <action
                class="sf.eclipse.javacc.actions.JJDocCompile"
                definitionId="commands.jjdoccompile"
+               icon="icons/jjdoc_compile.gif"
                id="javacc.jjdoccompile"
                label="%Compile_with_JJDoc">
          </action>
@@ -310,12 +316,14 @@
          <action
                class="sf.eclipse.javacc.actions.JJFoldingCollapse"
                definitionId="commands.jjfoldingcollapseall"
+               icon="icons/jj_collapse.gif"
                id="javacc.jjfoldingcollapseall"
                label="%JavaCC_FoldingCollapseAll">
          </action>
          <action
                class="sf.eclipse.javacc.actions.JJFoldingExpand"
                definitionId="commands.jjfoldingexpandall"
+               icon="icons/jj_expand.gif"
                id="javacc.jjfoldingexpandall"
                label="%JavaCC_FoldingExpandAll">
          </action>
@@ -428,6 +436,7 @@
          <action
                class="sf.eclipse.javacc.actions.JJOpenCallHierarchy"
                definitionId="commands.jjcallhierarchy"
+               icon="icons/jj_call_hierarchy.gif"
                id="javacc.jjcallhierarchy"
                label="%JavaCC_openCallHierarchy"
                menubarPath="JJGroup">

@@ -36,7 +36,21 @@ Features
    click on a rule, and right click to "goto definition"
    use Workbench "Back" to go back.
 
-History
+History (dd/mm/yy)
+
+31/04/10 - version 1.5.23
+- Added spelling problems hover
+
+31/03/10 - version 1.5.22
+- Fixed spell checking issues (non reported bugs + SR 2904433)
+- Fixed tab issue (bugs 2961174 & 2958124)
+- Fixed wizard template files issue (bug 2962672)
+- Fixed comments highlighting issue (bug 2961174 + non reported bug)
+- Fixed files regeneration warnings issue(bug 2903612)
+- Fixed folding structure update issue (bug 1975872)
+- Refactored layouts of Preferences and Project Properties pages (added groups and tooltips)
+- Updated with JTB 1.4.3 (Marc Mazas)
+
 26/02/10 - version 1.5.21
 - Fixed Wizard not closing on error (bug RK and SR 2956977)
 

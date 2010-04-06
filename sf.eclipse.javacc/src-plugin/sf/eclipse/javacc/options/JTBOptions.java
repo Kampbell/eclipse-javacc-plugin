@@ -12,7 +12,7 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JTBOptions extends JJAbstractProjectTab implements IJJConstants {
+public class JTBOptions extends JJAbstractTab implements IJJConstants {
 
   // MMa 04/2009 : added description field (for JTB cryptic options)
   // MMa 11/2009 : added -d -nd -vd options
@@ -60,6 +60,7 @@ public class JTBOptions extends JJAbstractProjectTab implements IJJConstants {
     // int options
 
     // boolean options, reordered on two columns
+    fNbColBooleans = 2;
     fOptionSet.add(new Option("cl", Activator.getString("JTBOptions.PrClLst"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     fOptionSet.add(new Option("dl", Activator.getString("JTBOptions.GenDpthLvl"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     fOptionSet.add(new Option("e", Activator.getString("JTBOptions.SupSemErrChk"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

@@ -456,10 +456,10 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
         }
         if (!pack.exists()) {
           status
-                .setError(Activator.getString("JJNewJJPage.the_package") + " " + pack.getElementName() + " " + Activator.getString(Activator.getString("JJNewJJPage._does_not_exist"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                .setError(Activator.getString("JJNewJJPage.The_package") + " " + pack.getElementName() + " " + Activator.getString(Activator.getString("JJNewJJPage._does_not_exist"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
       } catch (final JavaModelException e) {
-        Activator.log(e.getMessage());
+        Activator.logErr(e.getMessage());
       }
     }
     return status;
@@ -597,7 +597,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
           }
           return true;
         } catch (final JavaModelException e) {
-          Activator.log(e.getStatus().getMessage());
+          Activator.logErr(e.getStatus().getMessage());
         }
         return false;
       }
@@ -613,7 +613,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
           try {
             return (((IPackageFragmentRoot) element).getKind() == IPackageFragmentRoot.K_SOURCE);
           } catch (final JavaModelException e) {
-            Activator.log(e.getStatus().getMessage());
+            Activator.logErr(e.getStatus().getMessage());
             return false;
           }
         }
@@ -661,7 +661,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
         packages = froot.getChildren();
       }
     } catch (final JavaModelException e) {
-      Activator.log(e.getMessage());
+      Activator.logErr(e.getMessage());
     }
     if (packages == null) {
       packages = new IJavaElement[0];
@@ -738,7 +738,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
           javaElem = projects[0];
         }
       } catch (final JavaModelException e) {
-        Activator.log(e.getMessage());
+        Activator.logErr(e.getMessage());
       }
     }
     return javaElem;

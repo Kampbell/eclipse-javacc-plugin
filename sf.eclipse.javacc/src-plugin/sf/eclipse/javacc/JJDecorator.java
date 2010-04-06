@@ -26,6 +26,7 @@ import org.eclipse.ui.IDecoratorManager;
 public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJConstants {
 
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix
 
   /** the Image to add on the original if generated */
   private final Image fImgGeneratedStamp;
@@ -121,6 +122,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
       try {
         if (res.isDerived()) {
           gen = res.getPersistentProperty(QN_GENERATED_FILE);
+          gen = gen.substring(gen.lastIndexOf('/') + 1);
         }
       } catch (final CoreException e) {
         // e.printStackTrace();
@@ -161,8 +163,8 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
     JJDecorator result = null;
     final IDecoratorManager decoratorManager = Activator.getDefault().getWorkbench().getDecoratorManager();
 
-    if (decoratorManager.getEnabled("sf.eclipse.javacc.jjdecorator")) { //$NON-NLS-1$
-      result = (JJDecorator) decoratorManager.getBaseLabelProvider("sf.eclipse.javacc.jjdecorator"); //$NON-NLS-1$
+    if (decoratorManager.getEnabled(JJ_DECORATOR_ID)) {
+      result = (JJDecorator) decoratorManager.getBaseLabelProvider(JJ_DECORATOR_ID);
     }
     return result;
   }

@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
  */
 public class JarLauncher {
 
-  // MMa 11/2009 : javadoc and formatting revision ; added -fullversion
+  // MMa 11/2009 : javadoc and formatting revision
   // MMa 02/2010 : formatting and javadoc revision
 
   /** the java command on the command line */

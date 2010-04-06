@@ -4,6 +4,7 @@ import java.io.StringReader;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -27,15 +28,14 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
   protected JJNode node;
 
   /**
-   * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+   * @see IContentProvider#dispose()
    */
   public void dispose() {
     node = null;
   }
 
   /**
-   * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-   *      java.lang.Object, java.lang.Object)
+   * @see IContentProvider#inputChanged(Viewer, Object, Object)
    */
   public void inputChanged(@SuppressWarnings("unused") final Viewer viewer,
                            @SuppressWarnings("unused") final Object oldInput, final Object newInput) {
@@ -46,7 +46,7 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
   }
 
   /**
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+   * @see ITreeContentProvider#getChildren(Object)
    */
   public Object[] getChildren(final Object aObj) {
     if (aObj == null) {
@@ -75,21 +75,21 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
   }
 
   /**
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+   * @see ITreeContentProvider#getParent(Object)
    */
   public Object getParent(final Object obj) {
     return obj == null ? null : ((JJNode) obj).jjtGetParent();
   }
 
   /**
-   * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+   * @see ITreeContentProvider#hasChildren(Object)
    */
   public boolean hasChildren(final Object obj) {
     return getChildren(obj) == null ? false : getChildren(obj).length != 0;
   }
 
   /**
-   * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+   * @see IStructuredContentProvider#getElements(Object)
    */
   public Object[] getElements(@SuppressWarnings("unused") final Object obj) {
     return getChildren(node);

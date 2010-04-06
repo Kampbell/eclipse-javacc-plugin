@@ -1,7 +1,5 @@
 package sf.eclipse.javacc.editors;
 
-import java.util.Iterator;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -9,9 +7,7 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
 import sf.eclipse.javacc.parser.JJNode;
 
@@ -34,6 +30,7 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
   /** the current editor */
   private final JJEditor      fEditor;
   /** the current source viewer */
+  @SuppressWarnings("unused")
   private final ISourceViewer fSourceViewer;
   /** the current content type */
   private final String        fContentType;
@@ -72,8 +69,8 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
     String hoverInfo = null;
     final IDocument document = aTextViewer.getDocument();
     try {
-      if (fContentType.equals(JJDocumentProvider.JJ_CODE)) {
-        //      if (fContentType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+      //      if (fContentType.equals(UnusedJJDocumentProvider.JJ_CODE)) {
+      if (fContentType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
         // hover info for code regions (grammar)
         String word;
         word = document.get(aHoverRegion.getOffset(), aHoverRegion.getLength());
@@ -98,32 +95,29 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
         final int length = end - start;
         hoverInfo = document.get(start, length);
       }
-      else if (fContentType.equals(JJDocumentProvider.JJ_COMMENT)) {
-        //      else if (fContentType.equals(IJavaPartitions.JAVA_DOC)
-        //               || fContentType.equals(IJavaPartitions.JAVA_MULTI_LINE_COMMENT)
-        //               || fContentType.equals(IJavaPartitions.JAVA_SINGLE_LINE_COMMENT)) {
-        // hover info for comments regions (spelling)
-        final IAnnotationModel model = fSourceViewer.getAnnotationModel();
-        final Iterator<?> iter = model.getAnnotationIterator();
-        while (iter.hasNext()) {
-          final Object obj = iter.next();
-          if (obj instanceof SpellingAnnotation) {
-            final SpellingAnnotation annotation = (SpellingAnnotation) obj;
-            final int offset = annotation.getSpellingProblem().getOffset();
-            try {
-              final int line = fSourceViewer.getDocument().getLineOfOffset(offset);
-              if (line == document.getLineOfOffset(aHoverRegion.getOffset())) { // same start numbers
-                hoverInfo = annotation.getText();
-                break;
-              }
-            } catch (final BadLocationException e) {
-              e.printStackTrace();
-              return null;
-            }
-          }
-        }
-        //        return "JJTextHover.getHoverInfo2";
-      }
+      //      else if (fContentType.equals(UnusedJJDocumentProvider.JJ_COMMENT)) {
+      //        // hover info for comments regions (spelling)
+      //        final IAnnotationModel model = fSourceViewer.getAnnotationModel();
+      //        final Iterator<?> iter = model.getAnnotationIterator();
+      //        while (iter.hasNext()) {
+      //          final Object obj = iter.next();
+      //          if (obj instanceof SpellingAnnotation) {
+      //            final SpellingAnnotation annotation = (SpellingAnnotation) obj;
+      //            final int offset = annotation.getSpellingProblem().getOffset();
+      //            try {
+      //              final int line = fSourceViewer.getDocument().getLineOfOffset(offset);
+      //              if (line == document.getLineOfOffset(aHoverRegion.getOffset())) { // same start numbers
+      //                hoverInfo = annotation.getText();
+      //                break;
+      //              }
+      //            } catch (final BadLocationException e) {
+      //              e.printStackTrace();
+      //              return null;
+      //            }
+      //          }
+      //        }
+      //        //        return "JJTextHover.getHoverInfo2";
+      //      }
     } catch (final BadLocationException e) {
       // e.printStackTrace();
     }

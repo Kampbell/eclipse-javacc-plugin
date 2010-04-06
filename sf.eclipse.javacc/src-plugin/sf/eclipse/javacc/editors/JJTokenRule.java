@@ -22,6 +22,7 @@ public class JJTokenRule implements IRule {
   // MMa 04/2009 : modified : added different rule tokens and changed algorithm by keeping state between invocations
   // MMa 11/2009 : fixed syntax coloring issues in java code
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : minor refactoring / renamings
 
   /** Normal label identifier rule token */
   final IToken         normalLabel;
@@ -38,7 +39,7 @@ public class JJTokenRule implements IRule {
   final IToken         choicesPunct;
   /** Found previously a ':', to search a lexical state identifier (reset to false when not the case) */
   boolean              foundCOLON;
-/** Found previously a '<' (reset to false when found a matching '>' */
+/** Found previously a '<' (reset to false when found a matching '>' or in Java code) */
   boolean              foundLT;
   /** JJTree Node parenthesis level : -1 : outside ; 0 : found the node ; 1, 2 ... level */
   int                  jnParenLevel;
@@ -121,7 +122,7 @@ public class JJTokenRule implements IRule {
    * of the modified line.<br>
    * We memorize some internal state information between each call through class fields.<br>
    * We must return whitespaces and punctuation (word separators) as soon as they are encountered (and without
-   * consuming them) in order for the other rules to process the comments anywhereby they may appear.
+   * consuming them) in order for the other rules to process the comments anywhere they may appear.
    * 
    * @see IRule#evaluate(ICharacterScanner)
    * @param scanner the character scanner

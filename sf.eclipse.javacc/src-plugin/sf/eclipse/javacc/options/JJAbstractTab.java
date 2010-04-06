@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -26,19 +27,20 @@ import sf.eclipse.javacc.IJJConstants;
  * The basic Tab for JavaCC, JJTree, JJDoc and JTB project options.<br>
  * This class is extended by :
  * 
- * @see JJCCOptions
+ * @see JavaCCOptions
  * @see JJTreeOptions
  * @see JJDocOptions
  * @see JTBOptions
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public abstract class JJAbstractProjectTab extends Composite implements IPropertyChangeListener, IJJConstants {
+public abstract class JJAbstractTab extends Composite implements IPropertyChangeListener, IJJConstants {
 
   // MMa 04/2009 : added descriptions
   // MMa 11/2009 : javadoc and formatting revision ; changed line option section
   // MMa 02/2010 : formatting and javadoc revision ; fixed not stored Option.VOID properties issue
-  // ... ....... : fixed output file not showing issue ; fixed display true cases for void options ; renamed
+  // ... ....... : fixed output file not showing issue ; fixed display true cases for void options
+  // MMa 03/2010 : enhanced layout (groups / tool tips) ; renamed preference keys
 
   /** The optionSet used as a model */
   protected OptionSet              fOptionSet;
@@ -55,14 +57,18 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
   protected DirectoryFieldEditor[] fPathField;
   /** The File options controls */
   protected FileFieldEditor[]      fFileField;
+  /** The number of columns to use for boolean options */
+  protected int                    fNbColBooleans     = 1;
   /** The options preference property, defined in subclasses */
-  protected String                 fPreferenceName = null;
+  protected String                 fPreferenceName    = null;
   /** The flag to prevent loops from user input and change listeners */
   protected boolean                fIsUpdating;
   /** The IResource we are working on */
   protected IResource              fResource;
   /** The "default" label */
-  String                           fDefaultLabel   = Activator.getString("JJAbstractTab.default"); //$NON-NLS-1$
+  String                           fDefaultLabel      = Activator.getString("JJAbstractTab.default");      //$NON-NLS-1$
+  /** The "empty default" label */
+  String                           fEmptyDefaultLabel = Activator.getString("JJAbstractTab.empty_default"); //$NON-NLS-1$
 
   /**
    * Standard constructor.
@@ -70,14 +76,9 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
    * @param aParent the parent
    * @param aRes the resource
    */
-  public JJAbstractProjectTab(final Composite aParent, final IResource aRes) {
+  public JJAbstractTab(final Composite aParent, final IResource aRes) {
     super(aParent, SWT.NONE);
     fResource = aRes;
-    final GridLayout layout = new GridLayout();
-    setLayout(layout);
-    setLayoutData(new GridData(GridData.FILL_BOTH));
-    layout.marginWidth = 10;
-    layout.marginHeight = 10;
   }
 
   /**
@@ -94,24 +95,44 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
       options = prefs.get(fPreferenceName, ""); //$NON-NLS-1$
       fOptionSet.configuresFrom(options);
     }
-    // add required sections
-    addCmdLnOptSection(options);
+    // add layout
+    final GridLayout layout = new GridLayout();
+    setLayout(layout);
+    setLayoutData(new GridData(GridData.FILL_BOTH));
+    layout.marginWidth = 10;
+    layout.marginHeight = 10;
+
+    // add group
+    final Group resGrp = new Group(this, SWT.NONE);
+    resGrp.setText(Activator.getString("JJAbstractTab.Resulting_group")); //$NON-NLS-1$
+    resGrp.setLayout(layout);
+    resGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+
+    // add command line options
+    addCmdLnOptSection(options, resGrp);
+
+    // add group
+    final Group optGrp = new Group(this, SWT.NONE);
+    optGrp.setText(Activator.getString("JJAbstractTab.Options_group")); //$NON-NLS-1$
+    optGrp.setLayout(layout);
+    optGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+
     if (fOptionSet.getOptionsSize(Option.INT) != 0) {
-      addIntegerOptSection();
+      addIntegerOptSection(optGrp);
     }
     if (fOptionSet.getOptionsSize(Option.BOOLEAN) != 0 || fOptionSet.getOptionsSize(Option.VOID) != 0) {
-      addBooleanOptSection();
+      addBooleanOptSection(optGrp);
     }
     if (fOptionSet.getOptionsSize(Option.STRING) != 0) {
-      addStringOptSection();
+      addStringOptSection(optGrp);
     }
     if (fOptionSet.getOptionsSize(Option.PATH) != 0) {
-      addPathOptSection();
+      addPathOptSection(optGrp);
     }
     if (fOptionSet.getOptionsSize(Option.FILE) != 0) {
       //      // not shown when IResource is a project (relevant ... except for CSS for JJDoc)
       //      if (fResource.getType() != IResource.PROJECT) {
-      addFileOptSection();
+      addFileOptSection(optGrp);
       //      }
     }
     fIsUpdating = false;
@@ -121,14 +142,15 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
    * Shows the resulting command line arguments field.
    * 
    * @param aStr the command line arguments
+   * @param aGrp the group inside which to add the field
    */
-  protected void addCmdLnOptSection(final String aStr) {
-    final Composite composite = new Composite(this, SWT.NONE);
+  protected void addCmdLnOptSection(final String aStr, final Composite aGrp) {
+    final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
-    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     fCmdLnOptField = new StringFieldEditor(
                                            fPreferenceName, // name
-                                           "(" + Activator.getString("JJAbstractTab.resulting") + ") " + fPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                           "(" + Activator.getString("JJAbstractTab.Resulting") + ") " + fPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                            StringFieldEditor.UNLIMITED, // width
                                            StringFieldEditor.VALIDATE_ON_FOCUS_LOST, // strategy
                                            composite);
@@ -138,11 +160,20 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
 
   /**
    * Shows integer options with edit fields.
+   * 
+   * @param aGrp the group inside which to add the option
    */
-  protected void addIntegerOptSection() {
-    final Composite composite = new Composite(this, SWT.NONE);
+  protected void addIntegerOptSection(final Composite aGrp) {
+    final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
-    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    final GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
+    // Eclipse 3.5
+    // import org.eclipse.jface.layout.PixelConverter
+    // PixelConverter converter= new PixelConverter(parent);
+    // gd.widthHint = converter.convertWidthInCharsToPixels(250);
+    // Eclipse 3.4
+    gd.widthHint = 250;
+    composite.setLayoutData(gd);
     int k = fOptionSet.getOptionsSize(Option.INT);
     fIntegerField = new IntegerFieldEditor[k];
     k = 0;
@@ -163,12 +194,14 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
 
   /**
    * Shows boolean options with checkboxes.
+   * 
+   * @param aGrp the group inside which to add the option
    */
-  protected void addBooleanOptSection() {
+  protected void addBooleanOptSection(final Composite aGrp) {
     // aligns in 2 columns
-    final Composite composite = new Composite(this, SWT.NONE);
-    composite.setLayout(new GridLayout(2, true));
-    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    final Composite composite = new Composite(aGrp, SWT.NONE);
+    composite.setLayout(new GridLayout(fNbColBooleans, false));
+    composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
     int k = fOptionSet.getOptionsSize(Option.BOOLEAN) + fOptionSet.getOptionsSize(Option.VOID);
     fCheckboxField = new BooleanFieldEditor[k];
     k = 0;
@@ -177,6 +210,7 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
       if (fOptionSet.getType(i) == Option.BOOLEAN || fOptionSet.getType(i) == Option.VOID) {
         final String label = fOptionSet.getNameAndDescription(i)
                              + " (" + fDefaultLabel + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ 
+        // need to create a new Composite to have 2 columns !
         fCheckboxField[k] = new BooleanFieldEditor(fOptionSet.getName(i), label, new Composite(composite,
                                                                                                SWT.NONE));
         fCheckboxField[k].setBooleanValue("true".equals(fOptionSet.getValue(i)) ? true : false); //$NON-NLS-1$
@@ -188,11 +222,20 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
 
   /**
    * Shows string options with edit fields.
+   * 
+   * @param aGrp the group inside which to add the option
    */
-  protected void addStringOptSection() {
-    final Composite composite = new Composite(this, SWT.NONE);
+  protected void addStringOptSection(final Composite aGrp) {
+    final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
-    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    final GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
+    // Eclipse 3.5
+    // import org.eclipse.jface.layout.PixelConverter
+    // PixelConverter converter= new PixelConverter(parent);
+    // gd.widthHint = converter.convertWidthInCharsToPixels(400);
+    // Eclipse 3.4
+    gd.widthHint = 400;
+    composite.setLayoutData(gd);
     int k = fOptionSet.getOptionsSize(Option.STRING);
     fStringField = new StringFieldEditor[k];
     k = 0;
@@ -201,8 +244,12 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
       if (fOptionSet.getType(i) != Option.STRING) {
         continue;
       }
-      final String label = fOptionSet.getNameAndDescription(i)
-                           + " (" + fDefaultLabel + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ 
+      final String defVal = fOptionSet.getDefaultValue(i);
+      String defLbl = fEmptyDefaultLabel;
+      if (defVal != null && defVal.length() == 0) {
+        defLbl = fDefaultLabel + defVal;
+      }
+      final String label = fOptionSet.getNameAndDescription(i).concat(" (").concat(defLbl).concat(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
       fStringField[k] = new StringFieldEditor(fOptionSet.getName(i), label, composite);
       fStringField[k].setEmptyStringAllowed(true);
       fStringField[k].setStringValue(fOptionSet.getValueInQuotes(i));
@@ -213,11 +260,13 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
 
   /**
    * Shows path options with edit fields.
+   * 
+   * @param aGrp the group inside which to add the option
    */
-  protected void addPathOptSection() {
-    final Composite composite = new Composite(this, SWT.NONE);
+  protected void addPathOptSection(final Composite aGrp) {
+    final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
-    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL)
                                                    .setText(Activator
                                                                      .getString("JJAbstractTab.Select_directory")); //$NON-NLS-1$
@@ -244,11 +293,13 @@ public abstract class JJAbstractProjectTab extends Composite implements IPropert
 
   /**
    * Shows file options with edit fields.
+   * 
+   * @param aGrp the group inside which to add the option
    */
-  protected void addFileOptSection() {
-    final Composite composite = new Composite(this, SWT.NONE);
+  protected void addFileOptSection(final Composite aGrp) {
+    final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
-    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJAbstractTab.Select_file")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL)
                                                    .setText(Activator

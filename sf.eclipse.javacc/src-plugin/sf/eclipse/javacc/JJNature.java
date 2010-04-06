@@ -18,6 +18,7 @@ public class JJNature implements IProjectNature, IJJConstants {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : some renamings ; removed reapplying the nature
 
   /** The project */
   private IProject fProject;
@@ -41,8 +42,10 @@ public class JJNature implements IProjectNature, IJJConstants {
   }
 
   /**
-   * Configures this nature for the project. Called by the workspace when nature is added to the project with
-   * <code>IProject.setDescription</code>.
+   * Configures this nature for its project. This is called by the workspace when natures are added to the
+   * project using <code>IProject.setDescription</code> and should not be called directly by clients.<br>
+   * The nature extension id is added to the list of natures before this method is called, and need not be
+   * added here.
    * 
    * @see IProjectNature#configure()
    */
@@ -70,10 +73,12 @@ public class JJNature implements IProjectNature, IJJConstants {
   }
 
   /**
-   * Deconfigures this nature for the project. Called by the workspace when nature is removed from the
-   * project.
+   * De-configures this nature for its project. This is called by the workspace when natures are removed from
+   * the project using <code>IProject.setDescription</code> and should not be called directly by clients.<br>
+   * The nature extension id is removed from the list of natures before this method is called, and need not be
+   * removed here.
    * 
-   * @see org.eclipse.core.resources.IProjectNature#deconfigure()
+   * @see IProjectNature#deconfigure()
    */
   public void deconfigure() throws CoreException {
     final IProjectDescription desc = fProject.getDescription();
@@ -92,48 +97,53 @@ public class JJNature implements IProjectNature, IJJConstants {
   }
 
   /**
-   * Adds a JavaCC Nature to the project.
+   * Adds or removes a JavaCC Nature (nature id only) to the project.
    * 
-   * @param isJJNature adds if true, removes if false
-   * @param project to change
+   * @param aJJNature adds if true, removes if false
+   * @param aProject to change
    */
-  static public void setJJNature(final boolean isJJNature, final IProject project) {
-    if (project == null) {
+  static public void setJJNature(final boolean aJJNature, final IProject aProject) {
+    if (aProject == null) {
+      Activator.logErr(Activator.getString("JJNature.Project_null")); //$NON-NLS-1$ 
       return;
     }
     try {
-      final IProjectDescription desc = project.getDescription();
+      final IProjectDescription desc = aProject.getDescription();
       final String[] natures = desc.getNatureIds();
       boolean found = false;
+      // find whether nature already exists
       for (int i = 0; i < natures.length; ++i) {
         if (natures[i].equals(JJ_NATURE_ID)) {
           found = true;
           break;
         }
       }
-      if (!found && isJJNature) {
-        // add nature to the project (ID only)
+      if (!found && aJJNature) {
+        // add the nature to the project
         final String[] newNatures = new String[natures.length + 1];
         System.arraycopy(natures, 0, newNatures, 0, natures.length);
         newNatures[natures.length] = JJ_NATURE_ID;
         desc.setNatureIds(newNatures);
-        project.setDescription(desc, null);
+        aProject.setDescription(desc, null);
       }
-      if (found && !isJJNature) {
-        // remove the nature
-        final String[] newNatures = new String[natures.length - 1];
-        for (int i = natures.length - 1; i >= 0; i--) {
-          if (natures[i].equals(JJ_NATURE_ID)) {
-            // copy without JJNature
-            System.arraycopy(natures, 0, newNatures, 0, i);
-            System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
-            desc.setNatureIds(newNatures);
-            project.setDescription(desc, null);
-            break;
+      if (found) {
+        if (!aJJNature) {
+          // remove the nature from the project
+          final String[] newNatures = new String[natures.length - 1];
+          for (int i = natures.length - 1; i >= 0; i--) {
+            if (natures[i].equals(JJ_NATURE_ID)) {
+              // copy without JJNature
+              System.arraycopy(natures, 0, newNatures, 0, i);
+              System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
+              desc.setNatureIds(newNatures);
+              aProject.setDescription(desc, null);
+              break;
+            }
           }
         }
       }
     } catch (final CoreException e) {
+      Activator.logErr(Activator.getString("JJNature.Problem") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
       e.printStackTrace();
     }
   }

@@ -47,8 +47,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   protected BooleanFieldEditor fClearConsole;
   /** the add JJNature flag */
   protected BooleanFieldEditor fJJNature;
-  //  /** the check spelling flag */
-  //  protected BooleanFieldEditor fCheckSpelling;
   /** The JTB jar file */
   protected Text               fJtbjarFile;
   /** The Resource to work on */
@@ -63,24 +61,26 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
   public JJRuntimeOptions(final Composite aParent, final IResource aResource) {
     super(aParent, SWT.NONE);
     fResource = aResource;
+
+    // add layout
     final GridLayout layout = new GridLayout(1, false);
     setLayout(layout);
     setLayoutData(new GridData(GridData.FILL_BOTH));
     layout.marginWidth = 10;
     layout.marginHeight = 10;
 
-    // add Project options
+    // add group
     final Group groupProject = new Group(this, SWT.NONE);
-    groupProject.setText(Activator.getString("JJRuntimeOptions.Shared_project_options_Group")); //$NON-NLS-1$
+    groupProject.setText(Activator.getString("JJRuntimeOptions.Common_options_Group")); //$NON-NLS-1$
     groupProject.setLayout(layout);
-    groupProject.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    groupProject.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
     // add runtime_jar selection control
     final Composite subGroup = new Composite(groupProject, SWT.NONE);
     subGroup.setLayout(new GridLayout(4, false));
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL)
                                                   .setText(Activator
-                                                                    .getString("JJRuntimeOptions.Select_jar_file")); //$NON-NLS-1$
+                                                                    .getString("JJRuntimeOptions.Select_jar_files")); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
@@ -94,9 +94,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     gd.grabExcessHorizontalSpace = true;
     // Eclipse 3.5
     // import org.eclipse.jface.layout.PixelConverter
-    // PixelConverter converter= new PixelConverter(parent);
+    // PixelConverter converter= new PixelConverter(aParent);
     // gd.widthHint = converter.convertWidthInCharsToPixels(50);
-
     // Eclipse 3.4
     gd.widthHint = 300;
 
@@ -140,9 +139,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
     gd.grabExcessHorizontalSpace = true;
     // Eclipse 3.5
     // import org.eclipse.jface.layout.PixelConverter
-    // PixelConverter converter= new PixelConverter(parent);
+    // PixelConverter converter= new PixelConverter(aParent);
     // gd.widthHint = converter.convertWidthInCharsToPixels(50);
-
     // Eclipse 3.4
     gd.widthHint = 300;
 
@@ -192,8 +190,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
                                                SUPPRESS_WARNINGS,
                                                Activator
                                                         .getString("JJRuntimeOptions.Automatically_suppress_warnings"), checkGroup); //$NON-NLS-1$
-    //    fCheckSpelling = new BooleanFieldEditor(CHECK_SPELLING,
-    //                                           Activator.getString("JJRuntimeOptions.Check_spelling"), checkGroup); //$NON-NLS-1$
 
     // read and set values
     if (aResource != null) {
@@ -208,7 +204,6 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
         final boolean hasJavaccNature = project.getDescription().hasNature(JJ_NATURE_ID);
         fJJNature.setBooleanValue(hasJavaccNature);
         fSuppressWarnings.setBooleanValue("true".equals((prefs.get(SUPPRESS_WARNINGS, "false")))); //$NON-NLS-1$ //$NON-NLS-2$
-        //        fCheckSpelling.setBooleanValue("true".equals((prefs.get(CHECK_SPELLING, "true")))); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (final CoreException e) {
         e.printStackTrace();
       }
@@ -219,7 +214,7 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
    * Sets the defaults.
    */
   public void performDefaults() {
-    // bBy default we use the jar in the plugin
+    // by default we use the jar in the plugin
     final URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
     try {
       final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
@@ -255,9 +250,8 @@ public class JJRuntimeOptions extends Composite implements IJJConstants {
       prefs.put(JJ_NATURE, fJJNature.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
       prefs.put(CLEAR_CONSOLE, fClearConsole.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
       prefs.put(SUPPRESS_WARNINGS, fSuppressWarnings.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-      //      prefs.put(CHECK_SPELLING, fCheckSpelling.getBooleanValue() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      // set directly the nature 
+      // set the nature 
       JJNature.setJJNature(fJJNature.getBooleanValue(), project);
 
       try {

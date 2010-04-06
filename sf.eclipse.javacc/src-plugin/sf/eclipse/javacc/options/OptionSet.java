@@ -163,18 +163,15 @@ public class OptionSet {
       if (fNeedEqual) {
         // JavaCC / JJTree / JJDoc option : '-xx=yy' or '-xx = yy' or '-xx="yy zz"' or '-xx = "yy zz"'
         if (startsWithDash) {
+          // '-xx'
           if (indexOfEqual != -1) {
-            // '-xx=yy' or '-xx="yy zz"' or first '-xx=' of '-xx= yy' or '-xx= "yy zz"'
+            // first '-xx' of '-xx=yy' or '-xx="yy zz"', or first '-xx=' of '-xx= yy' or '-xx= "yy zz"'
             final String name = toki.substring(1, indexOfEqual);
             String value = toki.substring(indexOfEqual + 1);
             if (value == null || value.length() == 0) {
               continue;
             }
-            // strip enclosing quotes
-            final int len = value.length() - 1;
-            if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
-              value = value.substring(1, len - 1);
-            }
+            value = stripEnclosingQuotes(value);
             for (int j = 0; j < nb; j++) {
               final Option opt = (fList.get(j));
               if (opt.getName().equals(name)) {
@@ -196,11 +193,18 @@ public class OptionSet {
             }
           }
         }
+        // last 'yy' of '-xx= yy' or '-xx = yy', or first 'yy' of last "yy zz" of '-xx= "yy zz"' or "yy zz" of '-xx = "yy zz"'
         else if (indexOfEqual != -1) {
-
+          final String value = stripEnclosingQuotes(toki.substring(1));
+          if (lastOpt != null) {
+            lastOpt.setValue(lastOpt.getValue() + value);
+          }
         }
         else {
-          fTarget = toki;
+          final String value = stripEnclosingQuotes(toki);
+          if (lastOpt != null) {
+            lastOpt.setValue(lastOpt.getValue() + value);
+          }
         }
       }
       else {
@@ -223,11 +227,7 @@ public class OptionSet {
         }
         else if (lastOpt != null) {
           String value = toki;
-          // strip enclosing quotes
-          final int len = value.length() - 1;
-          if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
-            value = value.substring(1, len - 1);
-          }
+          value = stripEnclosingQuotes(value);
           lastOpt.setValue(value);
         }
         else {
@@ -235,6 +235,21 @@ public class OptionSet {
         }
       }
     }
+  }
+
+  /**
+   * Strips enclosing quotes.
+   * 
+   * @param aValue the string
+   * @return the string with the enclosing quotes stripped, or the string itself
+   */
+  private String stripEnclosingQuotes(final String aValue) {
+    String value = aValue;
+    final int len = value.length() - 1;
+    if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {
+      value = value.substring(1, len - 1);
+    }
+    return value;
   }
 
   /**

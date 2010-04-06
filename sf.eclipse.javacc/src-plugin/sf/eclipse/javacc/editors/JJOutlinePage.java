@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
@@ -77,7 +78,7 @@ public class JJOutlinePage extends ContentOutlinePage {
   /**
    * An Action to sort the tree alphabetically.
    */
-  public class AlphabeticSortingAction extends org.eclipse.jface.action.Action {
+  public class AlphabeticSortingAction extends Action {
 
     /** The viewer sorter to use */
     private final ViewerSorter     sorter   = new JJOutlineSorter();
@@ -278,7 +279,7 @@ public class JJOutlinePage extends ContentOutlinePage {
   }
 
   /**
-   * @see org.eclipse.ui.part.IPage#dispose()
+   * @see IPage#dispose()
    */
   @Override
   public void dispose() {

@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 
 /**
- * The JJ content assist processor for completions.
+ * The JJ content assist processor for completions in java or javacc code (not in java & javadoc comments).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
@@ -88,7 +88,8 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
         final IEditorInput input = jjeditor.getEditorInput();
         final IDocument doc = jjeditor.getDocumentProvider().getDocument(input);
         if (currentDocument.equals(doc)) {
-          break; // we got the current JJEditor for the current Document
+          // we got the current JJEditor for the current Document
+          break;
         }
       }
     }

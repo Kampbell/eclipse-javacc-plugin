@@ -11,7 +11,7 @@ import sf.eclipse.javacc.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JJDocOptions extends JJAbstractProjectTab implements IJJConstants {
+public class JJDocOptions extends JJAbstractTab implements IJJConstants {
 
   // MMa 02/2010 : formatting and javadoc revision ; fixed output file handling
 
@@ -42,9 +42,10 @@ public class JJDocOptions extends JJAbstractProjectTab implements IJJConstants {
 
     // int options
     // boolean options
-    fOptionSet.add(new Option("TEXT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fNbColBooleans = 1;
     fOptionSet.add(new Option("BNF", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     fOptionSet.add(new Option("ONE_TABLE", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
+    fOptionSet.add(new Option("TEXT", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     // string options    
     // path options
     // file options

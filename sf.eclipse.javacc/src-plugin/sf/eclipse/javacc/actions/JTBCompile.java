@@ -36,6 +36,7 @@ public class JTBCompile implements IObjectActionDelegate, IEditorActionDelegate,
 
   // MMa 04/2009 : formatting and javadoc revision ; adapted to JTBEditor ; removed jj and jjt files (managed in JJEditor)
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : doSave changed into touch
 
   /** The current editor */
   private JTBEditor fEditor;
@@ -87,15 +88,17 @@ public class JTBCompile implements IObjectActionDelegate, IEditorActionDelegate,
     }
 
     try {
-      // saving the file triggers a new Compilation if project has JJNature
-      if (fEditor != null) {
-        // called from Editor
-        fEditor.doSave(null);
-      }
-      else {
-        // called from Package explorer
-        fRes.touch(null);
-      }
+      //      // saving the file triggers a new Compilation if project has JJNature
+      //      if (fEditor != null) {
+      //        // called from Editor
+      //                fEditor.doSave(null);
+      //      }
+      //      else {
+      //        // called from Package explorer
+      //        fRes.touch(null);
+      //      }
+      // touch the file 
+      fRes.touch(null);
 
       // force Compile if not triggered
       final IScopeContext projectScope = new ProjectScope(fRes.getProject());

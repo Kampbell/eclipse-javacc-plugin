@@ -17,8 +17,10 @@ import sf.eclipse.javacc.Activator;
  */
 public class JJPreferences extends AbstractPreferenceInitializer {
 
-  // MMa 02/2010 : formatting and javadoc revision
   // MMa : added / renamed colors and indentation preferences
+  // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : added check spelling
+  // MMa 03/2010 : enhanced layout (groups / tool tips) ; renamed preference keys
 
   /** JavaCC non automatic indentation preference */
   public static final String P_NO_ADV_AUTO_INDENT = "JavaCCNoAutoIndentPref"; //$NON-NLS-1$
@@ -54,6 +56,8 @@ public class JJPreferences extends AbstractPreferenceInitializer {
   public static final String P_MATCHING_CHAR      = "MatchingCharColorPref";  //$NON-NLS-1$
   /** Console command color preference */
   public static final String P_CONSOLE_COMMAND    = "ConsoleCommandColorPref"; //$NON-NLS-1$
+  /** Console command color preference */
+  public static final String P_NO_SPELL_CHECKING  = "SpellCheckPref";         //$NON-NLS-1$
 
   /**
    * @see AbstractPreferenceInitializer#initializeDefaultPreferences()
@@ -62,6 +66,10 @@ public class JJPreferences extends AbstractPreferenceInitializer {
   public void initializeDefaultPreferences() {
     final Display display = Display.getCurrent();
     final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+    /*
+     * Spelling
+     */
+    store.setDefault(P_NO_SPELL_CHECKING, false);
     /*
      * Indentation
      */

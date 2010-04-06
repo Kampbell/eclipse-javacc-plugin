@@ -17,7 +17,6 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
@@ -31,13 +30,16 @@ import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
+import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.options.JJPreferences;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 import sf.eclipse.javacc.parser.Node;
 
 /**
- * Reconciler strategy which updates the Outline View on a document change.
+ * Reconciler strategy which updates the outline view, the folding structure and checks spelling on a document
+ * change.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
@@ -49,20 +51,22 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
   // MMa 11/2009 : javadoc and formatting revision ; added javacode and token_mgr_decls regions
   // MMa 12/2009 : added spell checking ; some renaming
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 03/2010 : fixed computePositions on parsing failure
 
   /** The current editor */
   JJEditor                 fEditor;
   /** The array of folding positions */
-  ArrayList<Position>      fPositions    = new ArrayList<Position>();
-
+  ArrayList<Position>      fPositions       = new ArrayList<Position>();
   /** The current source viewer */
-  private ISourceViewer    fSourceViewer = null;
+  private ISourceViewer    fSourceViewer    = null;
+  /** The current spelling context */
+  private SpellingContext  fSpellingContext = null;
   /** The current document */
   private IDocument        fDocument;
   /** The current progress monitor */
   private IProgressMonitor fMonitor;
-  /** The previous annotations */
-  Annotation[]             fPreviousAnnotations;
+  /** The (previous / current) spelling annotations */
+  Annotation[]             fSpellingAnnotations;
 
   /**
    * Standard constructor.
@@ -73,6 +77,14 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
   public JJReconcilingStrategy(final ISourceViewer aSourceViewer, final JJEditor aEditor) {
     fSourceViewer = aSourceViewer;
     fEditor = aEditor;
+    fSpellingContext = new SpellingContext();
+  }
+
+  /**
+   * @param sourceViewer the source viewer to set
+   */
+  public void setSourceViewer(final ISourceViewer sourceViewer) {
+    fSourceViewer = sourceViewer;
   }
 
   /**
@@ -80,9 +92,9 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * 
    * @see IReconcilingStrategy#setDocument(IDocument)
    */
-  public void setDocument(final IDocument aDoc) {
-    fDocument = aDoc;
-    updateOutlineView();
+  public void setDocument(final IDocument aDocument) {
+    fDocument = aDocument;
+    performUpdates();
   }
 
   /**
@@ -91,7 +103,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * @see IReconcilingStrategyExtension#initialReconcile()
    */
   public void initialReconcile() {
-    reconcile(new Region(0, fDocument.getLength()));
+    performUpdates();
   }
 
   /**
@@ -101,8 +113,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    */
   public void reconcile(@SuppressWarnings("unused") final DirtyRegion aDirtyRegion,
                         @SuppressWarnings("unused") final IRegion aSubRegion) {
-    updateOutlineView();
-    checkSpelling();
+    performUpdates();
   }
 
   /**
@@ -111,14 +122,13 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * @see IReconcilingStrategy#reconcile(IRegion)
    */
   public void reconcile(@SuppressWarnings("unused") final IRegion aPartition) {
-    updateOutlineView();
-    checkSpelling();
+    performUpdates();
   }
 
   /**
-   * Updates the Outline View.
+   * Performs the different updates : the outline view, the folding structure, the check spelling
    */
-  public void updateOutlineView() {
+  public void performUpdates() {
     computePositions();
 
     Display.getDefault().asyncExec(new Runnable() {
@@ -126,6 +136,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
       public void run() {
         fEditor.updateOutlinePage();
         fEditor.updateFoldingStructure(fPositions);
+        checkSpelling();
       }
     });
   }
@@ -134,14 +145,18 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * Computes and adds folding positions.
    */
   private void computePositions() {
-    // clean old positions
-    fPositions.clear();
-
     // parse document to get the AST
     final StringReader in = new StringReader(fEditor.getDocument().get());
     final JJNode root = JavaCCParser.parse(in);
     in.close();
 
+    // if parsing failed (we get a void id, instead of an option or parser_begin id), do not change anything
+    if (root.getId() == JJTVOID) {
+      return;
+    }
+
+    // clean old positions
+    fPositions.clear();
     // process the tree to add folding positions
     walksDown(root);
   }
@@ -154,9 +169,9 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
   public void walksDown(final JJNode aNode) {
     // add a region if the node is one of the appropriate types
     final int id = aNode.getId();
-    if (id == JJTJAVACC_OPTIONS || id == JJTPARSER_BEGIN || id == JJTREGULAR_EXPR_PRODUCTION
-        || id == JJTBNF_PRODUCTION || id == JJTREGEXPR_SPEC || id == JJTCLASSORINTERFACEDECLARATION
-        || id == JJTMETHODDECLARATION || id == JJTTOKEN_MANAGER_DECLS || id == JJTJAVACODE_PRODUCTION) {
+    if (id == JJTBNF_PRODUCTION || id == JJTREGULAR_EXPR_PRODUCTION || id == JJTREGEXPR_SPEC
+        || id == JJTCLASSORINTERFACEDECLARATION || id == JJTMETHODDECLARATION || id == JJTPARSER_BEGIN
+        || id == JJTJAVACC_OPTIONS || id == JJTTOKEN_MANAGER_DECLS || id == JJTJAVACODE_PRODUCTION) {
       try {
         final IDocument doc = fEditor.getDocument();
         // lines in JavaCC begin at 1, in Eclipse begin at 0
@@ -188,15 +203,18 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
   }
 
   /**
-   * Performs the spell checking.
+   * Performs the spelling checking (if enabled).
    */
-  private void checkSpelling() {
-    final List<SpellingProblem> problems = collectSpellingProblems();
-    if (problems != null) {
-      final Map<Annotation, Position> annotations = createAnnotations(problems);
-      final IAnnotationModelExtension model = (IAnnotationModelExtension) fSourceViewer.getAnnotationModel();
-      model.replaceAnnotations(fPreviousAnnotations, annotations);
-      fPreviousAnnotations = annotations.keySet().toArray(new Annotation[annotations.size()]);
+  void checkSpelling() {
+    if (!Activator.getDefault().getPreferenceStore().getBoolean(JJPreferences.P_NO_SPELL_CHECKING)) {
+      final List<SpellingProblem> problems = collectSpellingProblems();
+      if (problems != null) {
+        final Map<Annotation, Position> annotations = createAnnotations(problems);
+        final IAnnotationModelExtension model = (IAnnotationModelExtension) fSourceViewer
+                                                                                         .getAnnotationModel();
+        model.replaceAnnotations(fSpellingAnnotations, annotations);
+        fSpellingAnnotations = annotations.keySet().toArray(new Annotation[annotations.size()]);
+      }
     }
   }
 
@@ -210,56 +228,50 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
     final IPreferenceStore fPreferences = EditorsPlugin.getDefault().getPreferenceStore();
     final JJSpellingService service = new JJSpellingService(fPreferences);
     final SpellingProblemCollector collector = new SpellingProblemCollector();
-    final ITypedRegion[] commentRegions = getCommentRegions();
-    if (commentRegions == null) {
+    final ITypedRegion[] nonCodeRegions = getNonCodeRegions();
+    if (nonCodeRegions == null) {
       return null;
     }
-    service.check(fDocument, commentRegions, new SpellingContext(), collector, fMonitor);
+    service.check(fDocument, nonCodeRegions, fSpellingContext, collector, fMonitor);
     final List<SpellingProblem> problems = collector.getProblems();
     return problems;
   }
 
   /**
-   * @return the array of the document comments regions
+   * @return the array of the document non code regions
    */
-  private ITypedRegion[] getCommentRegions() {
+  private ITypedRegion[] getNonCodeRegions() {
     final int docLength = fDocument.getLength();
     if (!(fDocument instanceof IDocumentExtension3)) {
       // should not occur
       return null;
     }
     final IDocumentExtension3 ext = (IDocumentExtension3) fDocument;
-    final IDocumentPartitioner partitioner = ext.getDocumentPartitioner(JJDocumentProvider.JJ_PARTITIONING);
-    //    final IDocumentPartitioner partitioner = ext.getDocumentPartitioner(IJavaPartitions.JAVA_PARTITIONING);
+    final IDocumentPartitioner partitioner = ext
+                                                .getDocumentPartitioner(JJDocumentProvider.JJ_PARTITIONING_ID);
     if (partitioner == null) {
       // should not occur
       return null;
     }
     // TODO passer en ArrayList puis en tableau
     final ITypedRegion[] partioningRegions = partitioner.computePartitioning(0, docLength);
-    int commentRegionsNumber = 0;
+    int nonCodeRegionsNumber = 0;
     for (final ITypedRegion region : partioningRegions) {
-      if (region.getType() == JJDocumentProvider.JJ_COMMENT) {
-        //      if (region.getType() == IJavaPartitions.JAVA_DOC
-        //          || region.getType() == IJavaPartitions.JAVA_MULTI_LINE_COMMENT
-        //          || region.getType() == IJavaPartitions.JAVA_SINGLE_LINE_COMMENT) {
-        commentRegionsNumber++;
+      if (region.getType() == JJDocumentProvider.JJ_COMMENT_CONTENT_TYPE) {
+        nonCodeRegionsNumber++;
       }
     }
-    if (commentRegionsNumber == partioningRegions.length) {
+    if (nonCodeRegionsNumber == partioningRegions.length) {
       return partioningRegions;
     }
-    final ITypedRegion[] commentRegions = new ITypedRegion[commentRegionsNumber];
+    final ITypedRegion[] nonCodeRegions = new ITypedRegion[nonCodeRegionsNumber];
     int i = 0;
     for (final ITypedRegion region : partioningRegions) {
-      if (region.getType() == JJDocumentProvider.JJ_COMMENT) {
-        //      if (region.getType() == IJavaPartitions.JAVA_DOC
-        //          || region.getType() == IJavaPartitions.JAVA_MULTI_LINE_COMMENT
-        //          || region.getType() == IJavaPartitions.JAVA_SINGLE_LINE_COMMENT) {
-        commentRegions[i++] = region;
+      if (region.getType() == JJDocumentProvider.JJ_COMMENT_CONTENT_TYPE) {
+        nonCodeRegions[i++] = region;
       }
     }
-    return commentRegions;
+    return nonCodeRegions;
   }
 
   /**
