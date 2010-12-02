@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<!-- Natures Extension -->
+   <extension point="org.eclipse.core.resources.natures"
+         name="%JavaCC_Nature"
+         id="javaccnature" >
+      <runtime>
+         <run
+          class="sf.eclipse.javacc.headless.JJNature">
+         </run>
+      </runtime>
+   </extension>
+<!-- Builders Extension -->
+   <extension point="org.eclipse.core.resources.builders"
+         name="%JavaCC_Builder"
+         id="javaccbuilder">
+      <builder>
+         <run
+          class="sf.eclipse.javacc.headless.JJBuilder" >
+         </run>
+      </builder>
+   </extension>
+</plugin>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- build_zip.xml
+     Marc Mazas - Sopra Group - 02/2010 -->
+<project name="javacc-web" default="make_zip" basedir=".">
+
+	<property name="javacc-ver" value="1.5.24" />
+
+	<target name="make_zip">
+		<zip destfile="sf.eclipse.javacc.headless-${javacc-ver}-updatesite.zip" compress="true" update="true">
+			<fileset dir=".">
+				<include name="artifacts.jar" />
+				<include name="content.jar" />
+				<include name="site.xml" />
+				<include name="features/sf.eclipse.javacc.headless.feature_${javacc-ver}.jar" />
+				<include name="plugins/sf.eclipse.javacc.headless_${javacc-ver}.jar" />
+			</fileset>
+		</zip>
+	</target>
+
+</project>
