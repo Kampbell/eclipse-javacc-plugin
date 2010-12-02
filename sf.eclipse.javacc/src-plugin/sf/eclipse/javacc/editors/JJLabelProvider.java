@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -9,7 +10,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.head.Activator;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 

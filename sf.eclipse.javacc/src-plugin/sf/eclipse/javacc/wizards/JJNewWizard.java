@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.wizards;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +35,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.osgi.service.prefs.BackingStoreException;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
-import sf.eclipse.javacc.JJNature;
+import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.head.JJNature;
 
 /**
  * This wizard creates one file with the extension "jj", "jjt" or "jtb" based on files in templates directory

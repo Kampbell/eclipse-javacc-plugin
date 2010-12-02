@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,9 +32,9 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
-import sf.eclipse.javacc.options.JJPreferences;
+import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.options.JJPreferencesInitializer;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
@@ -228,7 +229,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
         final Display display = Display.getCurrent();
         final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
         fColorMatchingChar = new Color(display, PreferenceConverter.getColor(store,
-                                                                             JJPreferences.P_MATCHING_CHAR));
+                                                                             JJPreferencesInitializer.P_MATCHING_CHAR));
         fMatchingCharacterPainter.setColor(fColorMatchingChar);
         final ITextViewerExtension2 extension = (ITextViewerExtension2) getSourceViewer();
         extension.addPainter(fMatchingCharacterPainter);

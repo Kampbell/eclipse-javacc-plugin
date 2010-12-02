@@ -25,7 +25,7 @@ This plug-in uses 14 extensions:
 
 1) Nature
    point="org.eclipse.core.resources.natures"
-   class="sf.eclipse.javacc.JJNature"
+   class="sf.eclipse.javacc.base.JJNature"
    
    This class sets and removes JavaCC Nature to projects.
    The nature is used by the Workbench to identify the builder.
@@ -33,7 +33,7 @@ This plug-in uses 14 extensions:
    
 2) Builder
    point="org.eclipse.core.resources.builders"
-   class="sf.eclipse.javacc.JJBuilder"
+   class="sf.eclipse.javacc.base.JJBuilder"
    
    Builder extends IncrementalProjectBuilder
    and is called by the Workbench to compile javaCC files.
@@ -47,7 +47,7 @@ This plug-in uses 14 extensions:
    
 3) Console View for JavaCC output
    point="org.eclipse.ui.views"
-   class="sf.eclipse.javacc.JJConsole"
+   class="sf.eclipse.javacc.base.JJConsole"
    
    JJConsole extends ViewPart
    and is used to show JavaCC outputs.
@@ -101,7 +101,7 @@ This plug-in uses 14 extensions:
    
 6) Decorator to annotate generated files
    point="org.eclipse.ui.decorators">
-   class="sf.eclipse.javacc.JJDecorator"
+   class="sf.eclipse.javacc.base.JJDecorator"
 
    JJDecorator provides a decoration for generated files.
    A text is added <file.jj> if the file is derived from file.jj.

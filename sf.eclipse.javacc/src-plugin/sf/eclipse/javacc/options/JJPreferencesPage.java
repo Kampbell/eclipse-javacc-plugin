@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.options;
 
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -16,8 +17,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.editors.JJEditor;
+import sf.eclipse.javacc.head.Activator;
 
 /**
  * The Preferences page class for JavaCC.<br>
@@ -67,7 +68,7 @@ public class JJPreferencesPage extends FieldEditorPreferencePage implements IWor
     coSpell.setLayout(new GridLayout());
 
     addField(new BooleanFieldEditor(
-                                    JJPreferences.P_NO_SPELL_CHECKING,
+                                    JJPreferencesInitializer.P_NO_SPELL_CHECKING,
                                     Activator.getString("JJPreferencesPage.Spell_check_disable"), BooleanFieldEditor.DEFAULT, coSpell)); //$NON-NLS-1$
 
     /*
@@ -84,13 +85,13 @@ public class JJPreferencesPage extends FieldEditorPreferencePage implements IWor
     coIndent.setLayout(new GridLayout());
 
     addField(new BooleanFieldEditor(
-                                    JJPreferences.P_NO_ADV_AUTO_INDENT,
+                                    JJPreferencesInitializer.P_NO_ADV_AUTO_INDENT,
                                     Activator.getString("JJPreferencesPage.No_Adv_Auto_Indent"), BooleanFieldEditor.DEFAULT, coIndent)); //$NON-NLS-1$
     addField(new BooleanFieldEditor(
-                                    JJPreferences.P_INDENT_CHAR,
+                                    JJPreferencesInitializer.P_INDENT_CHAR,
                                     Activator.getString("JJPreferencesPage.Indent_char"), BooleanFieldEditor.DEFAULT, coIndent)); //$NON-NLS-1$
     final IntegerFieldEditor ife = new IntegerFieldEditor(
-                                                          JJPreferences.P_INDENT_CHAR_NB,
+                                                          JJPreferencesInitializer.P_INDENT_CHAR_NB,
                                                           Activator
                                                                    .getString("JJPreferencesPage.Indent_chars_number"), coIndent, 1); //$NON-NLS-1$
     ife.setValidRange(1, 8);
@@ -116,36 +117,36 @@ public class JJPreferencesPage extends FieldEditorPreferencePage implements IWor
     final GridLayout lyRight = new GridLayout();
     coColorsRight.setLayout(lyRight);
 
-    addField(new ColorFieldEditor(JJPreferences.P_JJKEYWORD,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_JJKEYWORD,
                                   Activator.getString("JJPreferencesPage.JavaCC_Keyword"), coColorsLeft)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_JAVAKEYWORD,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_JAVAKEYWORD,
                                   Activator.getString("JJPreferencesPage.Java_Keyword"), coColorsLeft)); //$NON-NLS-1$
     // addField(new ColorFieldEditor(JJPreferences.P_BACKGROUND, Activator.getString("JJPreferencesPage.Background"), coColors)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_STRING,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_STRING,
                                   Activator.getString("JJPreferencesPage.Strings"), coColorsLeft)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_COMMENT,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_COMMENT,
                                   Activator.getString("JJPreferencesPage.Comments"), coColorsLeft)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_JDOC_COMMENT,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_JDOC_COMMENT,
                                   Activator.getString("JJPreferencesPage.Javadoc_comments"), coColorsLeft)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_NORMALLABEL,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_NORMALLABEL,
                                   Activator.getString("JJPreferencesPage.Token_declaration"), coColorsLeft)); //$NON-NLS-1$
     addField(new ColorFieldEditor(
-                                  JJPreferences.P_PRIVATELABEL,
+                                  JJPreferencesInitializer.P_PRIVATELABEL,
                                   Activator.getString("JJPreferencesPage.Private_token_declaration"), coColorsLeft)); //$NON-NLS-1$
     addField(new ColorFieldEditor(
-                                  JJPreferences.P_LEXICALSTATE,
+                                  JJPreferencesInitializer.P_LEXICALSTATE,
                                   Activator.getString("JJPreferencesPage.Lexical_state_declaration"), coColorsRight)); //$NON-NLS-1$
     addField(new ColorFieldEditor(
-                                  JJPreferences.P_REGEXPUNCT,
+                                  JJPreferencesInitializer.P_REGEXPUNCT,
                                   Activator.getString("JJPreferencesPage.RegExPunct_declaration"), coColorsRight)); //$NON-NLS-1$
     addField(new ColorFieldEditor(
-                                  JJPreferences.P_CHOICESPUNCT,
+                                  JJPreferencesInitializer.P_CHOICESPUNCT,
                                   Activator.getString("JJPreferencesPage.ChoicesPunct_declaration"), coColorsRight)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_DEFAULT,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_DEFAULT,
                                   Activator.getString("JJPreferencesPage.Text_by_default"), coColorsRight)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_MATCHING_CHAR,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_MATCHING_CHAR,
                                   Activator.getString("JJPreferencesPage.Matching_char"), coColorsRight)); //$NON-NLS-1$
-    addField(new ColorFieldEditor(JJPreferences.P_CONSOLE_COMMAND,
+    addField(new ColorFieldEditor(JJPreferencesInitializer.P_CONSOLE_COMMAND,
                                   Activator.getString("JJPreferencesPage.Console_commands"), coColorsRight)); //$NON-NLS-1$
   }
 

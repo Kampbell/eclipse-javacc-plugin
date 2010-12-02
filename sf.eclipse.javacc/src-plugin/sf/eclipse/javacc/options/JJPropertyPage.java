@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.options;
 
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -21,8 +22,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.head.Activator;
 
 /**
  * The Property page class for JavaCC projects or files. Enables setting of JavaCC options for project or jj
@@ -51,15 +52,15 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
   protected TabItem          fJTBItem;
 
   /** The current global options */
-  protected JJRuntimeOptions fJJRunOptions;
+  protected RuntimeOptions fJJRunOptions;
   /** The current JavaCC options */
-  protected JavaCCOptions      fJJCCOptions;
+  protected JavaccOptions      fJJCCOptions;
   /** The current JJTree options */
-  protected JJTreeOptions    fJJTreeOptions;
+  protected JjtreeOptions    fJJTreeOptions;
   /** The current JJDoc options */
-  protected JJDocOptions     fJJDocOptions;
+  protected JjdocOptions     fJJDocOptions;
   /** The current JTB options */
-  protected JTBOptions       fJTBOptions;
+  protected JtbOptions       fJTBOptions;
 
   /** The current resource */
   protected IResource        fResource;
@@ -86,7 +87,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     }
 
     // JJRuntime always present
-    fJJRunOptions = new JJRuntimeOptions(fFolder, fResource);
+    fJJRunOptions = new RuntimeOptions(fFolder, fResource);
     fJJRunItem = new TabItem(fFolder, SWT.NONE);
     fJJRunItem.setText(Activator.getString("JJPropertyPage.Runtime_options_Tab")); //$NON-NLS-1$
     fJJRunItem.setToolTipText(Activator.getString("JJPropertyPage.Runtime_options_Tab_TT")); //$NON-NLS-1$
@@ -114,7 +115,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * Adds the JavaCC preference tab.
    */
   protected void addJCCTab() {
-    fJJCCOptions = new JavaCCOptions(fFolder, fResource);
+    fJJCCOptions = new JavaccOptions(fFolder, fResource);
     fJJCCItem = new TabItem(fFolder, SWT.NONE);
     fJJCCItem.setText(Activator.getString("JJPropertyPage.JavaCC_options_Tab")); //$NON-NLS-1$
     fJJCCItem.setToolTipText(Activator.getString("JJPropertyPage.JavaCC_options_Tab_TT")); //$NON-NLS-1$
@@ -125,7 +126,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * Adds the JJTree preference tab.
    */
   protected void addJTreeTab() {
-    fJJTreeOptions = new JJTreeOptions(fFolder, fResource);
+    fJJTreeOptions = new JjtreeOptions(fFolder, fResource);
     fJJTreeItem = new TabItem(fFolder, SWT.NONE);
     fJJTreeItem.setText(Activator.getString("JJPropertyPage.JJTree_options_Tab")); //$NON-NLS-1$
     fJJTreeItem.setToolTipText(Activator.getString("JJPropertyPage.JJTree_options_Tab_TT")); //$NON-NLS-1$
@@ -136,7 +137,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * Adds the JJDoc preference tab.
    */
   protected void addJDocTab() {
-    fJJDocOptions = new JJDocOptions(fFolder, fResource);
+    fJJDocOptions = new JjdocOptions(fFolder, fResource);
     fJJDocItem = new TabItem(fFolder, SWT.NONE);
     fJJDocItem.setText(Activator.getString("JJPropertyPage.JJDoc_options_Tab")); //$NON-NLS-1$
     fJJDocItem.setToolTipText(Activator.getString("JJPropertyPage.JJDoc_options_Tab_TT")); //$NON-NLS-1$
@@ -147,7 +148,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * Adds the JTB preference tab.
    */
   protected void addJTBTab() {
-    fJTBOptions = new JTBOptions(fFolder, fResource);
+    fJTBOptions = new JtbOptions(fFolder, fResource);
     fJTBItem = new TabItem(fFolder, SWT.NONE);
     fJTBItem.setText(Activator.getString("JJPropertyPage.JTB_options_Tab")); //$NON-NLS-1$
     fJTBItem.setToolTipText(Activator.getString("JJPropertyPage.JTB_options_Tab_TT")); //$NON-NLS-1$

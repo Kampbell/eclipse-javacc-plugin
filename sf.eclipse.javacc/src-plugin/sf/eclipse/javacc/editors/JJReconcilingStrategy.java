@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +31,8 @@ import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.options.JJPreferences;
+import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.options.JJPreferencesInitializer;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
@@ -206,7 +207,7 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
    * Performs the spelling checking (if enabled).
    */
   void checkSpelling() {
-    if (!Activator.getDefault().getPreferenceStore().getBoolean(JJPreferences.P_NO_SPELL_CHECKING)) {
+    if (!Activator.getDefault().getPreferenceStore().getBoolean(JJPreferencesInitializer.P_NO_SPELL_CHECKING)) {
       final List<SpellingProblem> problems = collectSpellingProblems();
       if (problems != null) {
         final Map<Annotation, Position> annotations = createAnnotations(problems);

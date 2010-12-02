@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.editors.JJCallHierarchy;
 import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.parser.JJNode;

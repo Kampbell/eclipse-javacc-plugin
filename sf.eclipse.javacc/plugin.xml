@@ -8,7 +8,7 @@
          id="javaccnature" >
       <runtime>
          <run
-          class="sf.eclipse.javacc.JJNature">
+          class="sf.eclipse.javacc.head.JJNature">
          </run>
       </runtime>
    </extension>
@@ -18,7 +18,7 @@
          id="javaccbuilder">
       <builder>
          <run
-          class="sf.eclipse.javacc.JJBuilder" >
+          class="sf.eclipse.javacc.head.JJBuilder" >
          </run>
       </builder>
    </extension>
@@ -26,7 +26,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="sf.eclipse.javacc.options.JJPreferences">
+            class="sf.eclipse.javacc.options.JJPreferencesInitializer">
       </initializer>
    </extension>
 <!-- Filters Extension -->
@@ -170,7 +170,7 @@
          point="org.eclipse.ui.decorators">
       <decorator
             adaptable="true"
-            class="sf.eclipse.javacc.JJDecorator"
+            class="sf.eclipse.javacc.head.JJDecorator"
             id="sf.eclipse.javacc.jjdecorator"
             label="%JavaCC_Decorator"
             state="true">
@@ -559,7 +559,7 @@
       <view           
        name="%JavaCC_Console"
        allowMultiple="false"
-       class="sf.eclipse.javacc.JJConsole"
+       class="sf.eclipse.javacc.head.JJConsole"
        icon="icons/jj_console.gif"
        category="sf.eclipse.javacc"
        id="sf.eclipse.javacc.Console">

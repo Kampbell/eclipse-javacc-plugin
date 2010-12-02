@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -19,9 +20,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.actions.JJFormat;
-import sf.eclipse.javacc.options.JJPreferences;
+import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.options.JJPreferencesInitializer;
 
 /**
  * A (not anymore so rudimentary) JavaCC code scanner coloring words and comments.<br>
@@ -51,19 +52,19 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
                                                   final String p = event.getProperty();
                                                   final Object ov = event.getOldValue();
                                                   final Object nv = event.getNewValue();
-                                                  if ((p.equals(JJPreferences.P_INDENT_CHAR)
-                                                       || p.equals(JJPreferences.P_INDENT_CHAR_NB)
-                                                       || p.equals(JJPreferences.P_JJKEYWORD)
-                                                       || p.equals(JJPreferences.P_JAVAKEYWORD)
-                                                       || p.equals(JJPreferences.P_STRING)
-                                                       || p.equals(JJPreferences.P_COMMENT)
-                                                       || p.equals(JJPreferences.P_JDOC_COMMENT)
-                                                       || p.equals(JJPreferences.P_NORMALLABEL)
-                                                       || p.equals(JJPreferences.P_PRIVATELABEL)
-                                                       || p.equals(JJPreferences.P_LEXICALSTATE)
-                                                       || p.equals(JJPreferences.P_REGEXPUNCT)
-                                                       || p.equals(JJPreferences.P_CHOICESPUNCT) || p
-                                                                                                     .equals(JJPreferences.P_DEFAULT))
+                                                  if ((p.equals(JJPreferencesInitializer.P_INDENT_CHAR)
+                                                       || p.equals(JJPreferencesInitializer.P_INDENT_CHAR_NB)
+                                                       || p.equals(JJPreferencesInitializer.P_JJKEYWORD)
+                                                       || p.equals(JJPreferencesInitializer.P_JAVAKEYWORD)
+                                                       || p.equals(JJPreferencesInitializer.P_STRING)
+                                                       || p.equals(JJPreferencesInitializer.P_COMMENT)
+                                                       || p.equals(JJPreferencesInitializer.P_JDOC_COMMENT)
+                                                       || p.equals(JJPreferencesInitializer.P_NORMALLABEL)
+                                                       || p.equals(JJPreferencesInitializer.P_PRIVATELABEL)
+                                                       || p.equals(JJPreferencesInitializer.P_LEXICALSTATE)
+                                                       || p.equals(JJPreferencesInitializer.P_REGEXPUNCT)
+                                                       || p.equals(JJPreferencesInitializer.P_CHOICESPUNCT) || p
+                                                                                                     .equals(JJPreferencesInitializer.P_DEFAULT))
                                                       && ov != nv) {
                                                     dispose();
                                                     loadPrefsAndInitRules();
@@ -309,17 +310,17 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
   public IRule[] createRules() {
     final Display display = Display.getCurrent();
     // get color preferences
-    cJJKEYWORD = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_JJKEYWORD));
-    cJAVAKEYWORD = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_JAVAKEYWORD));
-    cSTRING = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_STRING));
-    cCOMMENT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_COMMENT));
-    cJDOC_COMMENT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_JDOC_COMMENT));
-    cNORMALLABEL = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_NORMALLABEL));
-    cPRIVATELABEL = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_PRIVATELABEL));
-    cLEXICALSTATE = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_LEXICALSTATE));
-    cREGEXPUNCT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_REGEXPUNCT));
-    cCHOICESPUNCT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_CHOICESPUNCT));
-    cDEFAULT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferences.P_DEFAULT));
+    cJJKEYWORD = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_JJKEYWORD));
+    cJAVAKEYWORD = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_JAVAKEYWORD));
+    cSTRING = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_STRING));
+    cCOMMENT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_COMMENT));
+    cJDOC_COMMENT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_JDOC_COMMENT));
+    cNORMALLABEL = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_NORMALLABEL));
+    cPRIVATELABEL = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_PRIVATELABEL));
+    cLEXICALSTATE = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_LEXICALSTATE));
+    cREGEXPUNCT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_REGEXPUNCT));
+    cCHOICESPUNCT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_CHOICESPUNCT));
+    cDEFAULT = new Color(display, PreferenceConverter.getColor(fStore, JJPreferencesInitializer.P_DEFAULT));
     // create rules tokens
     final IToken jjKwRTk = new Token(new TextAttribute(cJJKEYWORD, null, SWT.BOLD));
     final IToken javaKwRTk = new Token(new TextAttribute(cJAVAKEYWORD, null, SWT.BOLD));
@@ -379,8 +380,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * indentation character is tab, return a string with the number of indentation characters.
    */
   public static void setSpecIndentString() {
-    final String idstr = (fStore.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
-    int nbch = fStore.getInt(JJPreferences.P_INDENT_CHAR_NB);
+    final String idstr = (fStore.getBoolean(JJPreferencesInitializer.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
+    int nbch = fStore.getInt(JJPreferencesInitializer.P_INDENT_CHAR_NB);
     if (" ".equals(idstr)) { //$NON-NLS-1$
       nbch--;
     }
@@ -407,8 +408,8 @@ public class JJCodeScanner extends BufferedRuleBasedScanner {
    * Computes the indentation string from the store preferences.
    */
   public static void setIndentString() {
-    final int nbch = fStore.getInt(JJPreferences.P_INDENT_CHAR_NB);
-    final String idstr = (fStore.getBoolean(JJPreferences.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
+    final int nbch = fStore.getInt(JJPreferencesInitializer.P_INDENT_CHAR_NB);
+    final String idstr = (fStore.getBoolean(JJPreferencesInitializer.P_INDENT_CHAR) ? JJFormat.TAB : JJFormat.SPACE);
     final StringBuffer sb = new StringBuffer(nbch);
     for (int i = 0; i < nbch; i++) {
       sb.append(idstr);

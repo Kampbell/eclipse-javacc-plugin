@@ -1,14 +1,15 @@
 package sf.eclipse.javacc.editors;
 
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 
-import sf.eclipse.javacc.Activator;
 import sf.eclipse.javacc.actions.JJFormat;
-import sf.eclipse.javacc.options.JJPreferences;
+import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.options.JJPreferencesInitializer;
 
 /**
  * Auto indent strategy sensitive to newlines, braces, parenthesis, vertical bar, angle brackets and colons.
@@ -33,7 +34,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
   @Override
   public void customizeDocumentCommand(final IDocument doc, final DocumentCommand cmd) {
     final boolean noAdvancedAutoInd = Activator.getDefault().getPreferenceStore()
-                                               .getBoolean(JJPreferences.P_NO_ADV_AUTO_INDENT);
+                                               .getBoolean(JJPreferencesInitializer.P_NO_ADV_AUTO_INDENT);
     if (noAdvancedAutoInd) {
       if (cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text)) {
         basicIndentAfterNewLine(doc, cmd);

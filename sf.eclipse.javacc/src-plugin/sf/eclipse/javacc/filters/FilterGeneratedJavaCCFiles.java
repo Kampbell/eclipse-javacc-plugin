@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.base.IJJConstants;
 
 /**
  * Filters the generated JavaCC files.

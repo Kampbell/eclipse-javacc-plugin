@@ -19,9 +19,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import sf.eclipse.javacc.IJJConstants;
-import sf.eclipse.javacc.JJBuilder;
+import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.editors.JTBEditor;
+import sf.eclipse.javacc.head.JJBuilder;
 
 /**
  * Compile with JTB action.<br>

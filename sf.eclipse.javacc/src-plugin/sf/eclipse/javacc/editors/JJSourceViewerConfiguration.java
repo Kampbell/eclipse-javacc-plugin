@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -23,7 +24,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.HippieProposalProcessor;
 
-import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.head.Activator;
+
 
 /**
  * ViewerConfiguration for JavaCC code.

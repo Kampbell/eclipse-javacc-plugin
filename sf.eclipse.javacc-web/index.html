@@ -14,12 +14,13 @@ h2 { font-size:12pt; }
 <a href="http://sourceforge.net">
   <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo" border="0" height="62" width="210">
 </a>
-<h1><font color="red">JavaCC Eclipse Plug-in</font> for <font color="green">Eclipse 3.4 - 3.5</font>
- with <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.3</font></h1>
+<h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font> for <font color="green">Eclipse 3.5.2+</font>
+ with <font color="green">JDK 1.6</font> and <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.4</font></h1>
 
-<h2>Last update : march 31th, 2010 - version <font color="red">1.5.22</font></h2>
+<h2>Last update : december 2nd, 2010 - version <font color="red">1.5.24</font></h2>
 
-The JavaCC plug-in is designed to help development of JavaCC applications within the Eclipse IDE.<br>
+The JavaCC plug-in is designed to help development of JavaCC applications within the Eclipse IDE; the headless plug-in is designed
+to allow headless builds.<br>
 License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a href="http://www.cecill.info/">Cecill</a><br>
 
 <h2>How to update / download</h2>
@@ -31,22 +32,17 @@ Or you can download from the
 the (zipped) update site file,<br>
 save it under a local directory, add this directory as a local update site and follow the instructions.<br><br>
 
-Or you can get the source from the CVS repository and recompile the plug-in :<br>
+Or you can get the source from the CVS repository and recompile the plug-ins :<br>
 see the <a href="http://sourceforge.net/scm/?type=cvs&amp;group_id=56876">JavaCC Eclipse Plug-in CVS information</a>
 for accessing the CVS repository.<br>
 You can also look at the following <a href="https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html">
 tutorial on Team development with Eclipse and CVS</a>.<br><br>
 
-Note for Galileo users: we encountered different problems during our tests updating our Eclipse environments,
- which we did not understand in most cases and which seem related to Eclipse and not to the JavaCC Eclipse plug-in:
- so we recommend you to backup your Eclipse environment (eclipse home and .eclipse under user_home) before updating it.<br><br>
-
-The plug-in needs Java 1.5 or 1.6 and Eclipse 3.4.2 or 3.5 to run.<br>
-<font color="red">NOTE : next version will need Java 1.6 and Eclipse3.5 to run.</font>
-<br><br>
+These plug-ins need <font color="red">Java 1.6 and Eclipse 3.5.2+</font> to run.<br>
+<br>
 See <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
-<h2>This plug-in provides</h2>
+<h2>The JavaCC Eclipse Plug-in provides</h2>
 <ul>
   <li>preference pages for JavaCC, JJTree, JJDoc & JTB options setting</li>
   <li>an editor for JavaCC, JJTree and JTB sources, with
@@ -63,12 +59,18 @@ on how to modify the sources.
   <li>JavaCC, JJTree and JTB sources compilation problems reporting</li>
   <li>a console for compilation outputs with hyperlinks to Errors and Warnings</li>
   <li>decoration of generated files</li>
-  <li>support for Eclipse 3.4 & 3.5, Java 1.5 & 1.6, JavaCC5.0, JTB 1.4.1 (JTB 1.3.2 is still provided)</li>
+  <li>support for Eclipse 3.5.2+, Java 1.6, JavaCC5.0, JTB 1.4.4 (JTB 1.3.2 is no longer provided)</li>
   <li>JavaCC launching in the same directory as the grammar files (to facilitate package handling)</li>
   <li>some help through the Eclipse menu Help / Help Contents</li>
 </ul>
-<h2>History</h2>
-xx/04/10 - 1.5.23 : Added spelling problem annotation hover
+<h2>The JavaCC Eclipse Headless Plug-in provides</h2>
+<ul>
+  <li>a builder and a nature to use JavaCC without any UI, for Eclipse "headless" builds (console is on System.out)</li>
+</ul>
+<h2>History (dd/mm/yy)</h2>
+02/12/10 - 1.5.24 : Fixed NPE in JJDecorator; updated with JTB 1.4.4; built over Eclipse 3.5.2<br>
+xx/04/10 - 1.5.23 : Added spelling problem annotation hover; dropped support of Eclipse 3.4 (Galileo) and JDK 1.5;
+refactored packages and added the headless plug-in<br>
 31/03/10 - 1.5.22 : Fixed spell checking issues (non reported bugs + SR 2904433), tab issue (bugs 2961174 & 2958124),
  wizard template files issue (bug 2962672), comments highlighting issue (bug 2961174 + non reported bug),
  files regeneration warnings issue(bug 2903612), folding structure update issue (bug 1975872),

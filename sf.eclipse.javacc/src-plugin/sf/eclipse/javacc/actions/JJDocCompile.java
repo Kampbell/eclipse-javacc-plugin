@@ -11,9 +11,9 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
-import sf.eclipse.javacc.IJJConstants;
-import sf.eclipse.javacc.JJBuilder;
+import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.editors.JJEditor;
+import sf.eclipse.javacc.head.JJBuilder;
 
 /**
  * Compile with JJDoc action.<br>

@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -20,7 +21,7 @@ import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-import sf.eclipse.javacc.Activator;
+import sf.eclipse.javacc.head.Activator;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 

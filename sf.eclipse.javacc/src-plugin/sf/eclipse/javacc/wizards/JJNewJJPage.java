@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.wizards;
 
+
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
@@ -50,8 +51,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.head.Activator;
 
 /**
  * The "New" wizard page allows setting the source directory, the package for the new file, the extension, as
@@ -328,7 +329,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    * @return the status
    */
   IStatus sourceContainerChanged() {
-    final Status status = new Status();
+    final JJStatus status = new JJStatus();
 
     fSrcRootFragment = null;
     final String str = fSrcRootText.getText();
@@ -416,7 +417,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    * @return the status
    */
   IStatus packageChanged() {
-    final Status status = new Status();
+    final JJStatus status = new JJStatus();
     final String packName = getPackage();
 
     if (packName.length() > 0) {
@@ -488,7 +489,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     String fileName = getFileName();
     if (fileName.length() == 0) {
       // if no filename
-      final Status status = new Status();
+      final JJStatus status = new JJStatus();
       status.setError(Activator.getString("JJNewJJPage.File_name_must_be_specified")); //$NON-NLS-1$
       return status;
     }
@@ -499,7 +500,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
           && ext.equalsIgnoreCase("jjt") == false //$NON-NLS-1$
           && ext.equalsIgnoreCase("jtb") == false) { //$NON-NLS-1$
         // if filename with the wrong extension
-        final Status status = new Status();
+        final JJStatus status = new JJStatus();
         status.setError(Activator.getString("JJNewJJPage.File_extension_must_be_jj")); //$NON-NLS-1$
         return status;
       }

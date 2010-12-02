@@ -38,6 +38,10 @@ Features
 
 History (dd/mm/yy)
 
+2/12/10 - version 1.5.24
+- Fixed NPE in JJDecorator
+- Updated with JTB 1.4.4 (Marc Mazas)
+
 31/04/10 - version 1.5.23
 - Added spelling problems hover
 

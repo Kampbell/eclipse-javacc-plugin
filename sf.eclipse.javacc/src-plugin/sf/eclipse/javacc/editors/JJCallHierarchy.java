@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.editors;
 
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -31,9 +32,9 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
 import sf.eclipse.javacc.actions.JJOpenCallHierarchy;
+import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.head.Activator;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**

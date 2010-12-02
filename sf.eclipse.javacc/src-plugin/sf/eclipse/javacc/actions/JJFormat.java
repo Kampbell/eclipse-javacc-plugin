@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.actions;
 
+
 import java.io.StringReader;
 
 import org.eclipse.jface.action.IAction;
@@ -17,10 +18,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-import sf.eclipse.javacc.Activator;
-import sf.eclipse.javacc.IJJConstants;
+import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.editors.JJCodeScanner;
 import sf.eclipse.javacc.editors.JJEditor;
+import sf.eclipse.javacc.head.Activator;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
 import sf.eclipse.javacc.parser.JavaCCParserConstants;
