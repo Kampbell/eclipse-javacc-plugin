@@ -42,8 +42,7 @@ import sf.eclipse.javacc.base.OptionSet;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JJBuilder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor,
-                                                        IJJConstants {
+public class JJBuilder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor, IJJConstants {
 
   // MMa 11/2009 : javadoc and formatting revision ; changed jar names
   // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
@@ -57,19 +56,16 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>.
    * 
-   * @param aArgs a table of builder-specific arguments keyed by argument name (key type: <code>String</code>,
-   *          value type: <code>String</code>); <code>null</code> is equivalent to an empty map
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
-   *          desired
-   * @return the list of projects for which this builder would like deltas the next time it is run or
-   *         <code>null</code> if none
+   * @param aArgs a table of builder-specific arguments keyed by argument name (key type: <code>String</code>, value type:
+   *          <code>String</code>); <code>null</code> is equivalent to an empty map
+   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not desired
+   * @return the list of projects for which this builder would like deltas the next time it is run or <code>null</code> if none
    * @exception CoreException if this build fails.
    * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
    */
-  @SuppressWarnings("unchecked")
   @Override
-  protected IProject[] build(final int aKind, @SuppressWarnings("unused") final Map aArgs,
-                             final IProgressMonitor aMonitor) throws CoreException {
+  protected IProject[] build(final int aKind, @SuppressWarnings({
+      "unused", "rawtypes" }) final Map aArgs, final IProgressMonitor aMonitor) throws CoreException {
     // these are Constants on the build
     fJavaProject = JavaCore.create(getProject());
     fOutputFolder = fJavaProject.getOutputLocation().removeFirstSegments(1);
@@ -79,8 +75,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     if (aKind == IncrementalProjectBuilder.FULL_BUILD) {
       fullBuild(aMonitor);
     }
-    else if (aKind == IncrementalProjectBuilder.INCREMENTAL_BUILD
-             || aKind == IncrementalProjectBuilder.AUTO_BUILD) {
+    else if (aKind == IncrementalProjectBuilder.INCREMENTAL_BUILD || aKind == IncrementalProjectBuilder.AUTO_BUILD) {
       incrementalBuild(aMonitor);
     }
     else if (aKind == IncrementalProjectBuilder.CLEAN_BUILD) {
@@ -94,8 +89,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Performs a full build.
    * 
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
-   *          desired
+   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not desired
    * @exception CoreException if this build fails
    */
   protected void fullBuild(@SuppressWarnings("unused") final IProgressMonitor aMonitor) throws CoreException {
@@ -105,8 +99,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Performs an incremental build or a full build if no delta is available.
    * 
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
-   *          desired
+   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not desired
    * @exception CoreException if this build fails
    */
   public void incrementalBuild(final IProgressMonitor aMonitor) throws CoreException {
@@ -122,8 +115,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Cleans all generated files.
    * 
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
-   *          desired
+   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not desired
    * @exception CoreException if this build fails
    */
   @Override
@@ -134,12 +126,10 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   }
 
   /**
-   * Deletes recursively generated AND derived files. A modified generated file, marked as not derived, shall
-   * not be deleted.
+   * Deletes recursively generated AND derived files. A modified generated file, marked as not derived, shall not be deleted.
    * 
    * @param aMembers the IResource[] to delete
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
-   *          desired
+   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not desired
    * @exception CoreException if this build fails
    */
   private void clean(final IResource[] aMembers, final IProgressMonitor aMonitor) throws CoreException {
@@ -162,6 +152,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @exception CoreException if this visit fails
    * @see IResourceDeltaVisitor#visit(IResourceDelta)
    */
+  @Override
   public boolean visit(final IResourceDelta aDelta) throws CoreException {
     return visit(aDelta.getResource());
   }
@@ -170,11 +161,11 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * Visits the given resource.
    * 
    * @param aRes the IResource to visit
-   * @return <code>true</code> if the resource's members should be visited; <code>false</code> if they should
-   *         be skipped
+   * @return <code>true</code> if the resource's members should be visited; <code>false</code> if they should be skipped
    * @exception CoreException if this visit fails
    * @see IResourceVisitor#visit(IResource)
    */
+  @Override
   public boolean visit(final IResource aRes) throws CoreException {
     if (aRes == null) {
       return false;
@@ -187,8 +178,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     }
 
     // this prevents traversing output directories
-    final boolean isOut = aRes.getProjectRelativePath().equals(fOutputFolder)
-                          & fOutputFolder.toString().length() != 0;
+    final boolean isOut = aRes.getProjectRelativePath().equals(fOutputFolder) & fOutputFolder.toString().length() != 0;
     return !isOut;
   }
 
@@ -309,16 +299,16 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   private final static Pattern pattern = Pattern.compile(regEx, Pattern.MULTILINE | Pattern.DOTALL);
 
   /**
-   * Marks the generated file as derived and suppresses the @SuppressWarnings annotation according to
-   * corresponding preference.
+   * Marks the generated file as derived and suppresses the @SuppressWarnings annotation according to corresponding preference.
    * 
    * @param aProject the IProject the resource belongs to
    * @param aRelPath the path to the grammar file (relative to the project) this resource is generated from
    * @param aRes the IResource to mark and to correct
-   * @throws CoreException see {@link IResource#setDerived(boolean)}
+   * @throws CoreException see {link IResource#setDerived(boolean)}
    */
-  public static void markAndAlter(@SuppressWarnings("unused") final IProject aProject, final String aRelPath,
-                                  final IResource aRes) throws CoreException {
+  @SuppressWarnings("deprecation")
+  public static void markAndAlter(@SuppressWarnings("unused") final IProject aProject, final String aRelPath, final IResource aRes)
+                                                                                                                                   throws CoreException {
     // mark
     aRes.setDerived(true);
     aRes.setPersistentProperty(QN_GENERATED_FILE, aRelPath);
@@ -513,8 +503,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
         }
       }
       try {
-        jarfile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(jarfile,
-                                                                                                    true);
+        jarfile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(jarfile, true);
         // on Windows this returns "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
         // as this will fails, we remove the first "/" if there is ":" at index 2
         if (jarfile.startsWith("/") && jarfile.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$

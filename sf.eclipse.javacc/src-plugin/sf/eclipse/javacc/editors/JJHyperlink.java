@@ -17,53 +17,57 @@ class JJHyperlink implements IHyperlink {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** the region */
-  private final IRegion  fRegion;
+  private final IRegion  jRegion;
   /** the editor */
-  private final JJEditor fEditor;
+  private final JJEditor jJJEditor;
   /** the node */
-  private final JJNode   fNode;
+  private final JJNode   jJJNode;
 
   /**
    * Creates a new Java element hyperlink.
    * 
-   * @param region the region
-   * @param editor the editor
-   * @param node the node
+   * @param aRegion the region
+   * @param aJJEditor the editor
+   * @param aJJNode the node
    */
-  public JJHyperlink(final IRegion region, final JJEditor editor, final JJNode node) {
-    fRegion = region;
-    fEditor = editor;
-    fNode = node;
+  public JJHyperlink(final IRegion aRegion, final JJEditor aJJEditor, final JJNode aJJNode) {
+    jRegion = aRegion;
+    jJJEditor = aJJEditor;
+    jJJNode = aJJNode;
   }
 
   /**
    * @return the region
    * @see IHyperlink#getHyperlinkRegion()
    */
+  @Override
   public IRegion getHyperlinkRegion() {
-    return fRegion;
+    return jRegion;
   }
 
   /**
    * @see IHyperlink#open()
    */
+  @Override
   public void open() {
-    fEditor.setSelection(fNode);
+    jJJEditor.setSelection(jJJNode);
   }
 
   /**
    * @return the node label
    * @see IHyperlink#getTypeLabel()
    */
+  @Override
   public String getTypeLabel() {
-    return fNode.toString();
+    return jJJNode.toString();
   }
 
   /**
    * @return the node text
    * @see IHyperlink#getHyperlinkText()
    */
+  @Override
   public String getHyperlinkText() {
-    return fNode.toString();
+    return jJJNode.toString();
   }
 }

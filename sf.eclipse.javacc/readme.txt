@@ -1,44 +1,20 @@
-Installation 
-
-Use the update site
-1) Menu Help / Software Updates / Find and Install... / Search for new features to install
-2) Next > / New remote site...
- Name : SF Eclipse JavaCC 
- URL : http://eclipse-javacc.sourceforge.net/
-3) Check "SF Eclipse JavaCC" and click Finish
-
-Or use the zip which is the archive of the update site
-1) Menu Help / Install new software... / Add... / Archive...
-   and select the zip file
-
-Features
-
-1) Editor for .jj, .jjt and .jtb files.
-2) Outline.
-   Menu Window->ShowView->Outline
-3) JavaCC Options setting for project.
-   Right click on project->Properties->JavaCC options.
-   There you can set the javacc.jar you wish to use.
-   You can enable builder to compile .jj, .jjt, .jtb on file save.
-4) Once the javacc.jar is defined, you can compile 
-   with a right click on a .jj or .jjt file and choose 
-   "Compile with JavaCC"
-5) Console for JavaCC outputs.
-   Menu Window->ShowView->Others...->JavaCC Console
-   Provides more complete information on errors reported by JavaCC.
-4) Generated files are identified with a small 'G' on top right.
-   Right click on a generated file->Properties->Info, 
-   uncheck Derived to remove this decorator.
-   Open the file, edit, save to see removal of this decorator.
-5) JJDoc compilation is available when a .jj or .jjt file is opened.
-6) JTB compilation is available on a .jtb file
-7) Help navigate into rules definitions
-   click on a rule, and right click to "goto definition"
-   use Workbench "Back" to go back.
-
 History (dd/mm/yy)
 
-2/12/10 - version 1.5.24
+03/02/11 + 31/08/11 + 03/05/12 - version 1.5.25
+- 03/12 : Added in JJReconcilingStrategy Bill Fenlason's hack proposal for syntax coloring problems
+- 02/11 : Updated with JTB 1.4.6 (Marc Mazas / Francis Andre)
+- 02/11 : Fixed bug 3157017 (incorrect package handling)
+- 08/11 : Fixed property error in JJNewPage
+- 08/11 : Fixed NPE in JJCallHierarchy
+- 08/11 : Enhanced Outline view to display identifiers and JJTree Nodes RFE 2968192
+- 08/11 : Added "mark generated files as derived" option RFE 3314103
+- 08/11 : Enhanced display / navigation in Outline & Call Hierarchy views
+- 08/11 : Enhanced hyperlink detection / navigation
+- 08/11 : Added default options display in JavaCC Plugin Preferences
+- 08/11 : Fixed empty default options display in JavaCC Project Options ; changed default JDK version to 1.6
+- 08/11 : Changed plugin dependencies to at least version 3.6.0.
+
+02/12/10 - version 1.5.24
 - Fixed NPE in JJDecorator
 - Updated with JTB 1.4.4 (Marc Mazas)
 
@@ -103,9 +79,9 @@ History (dd/mm/yy)
 - Modified Option, OptionSet, JJAbstractTab and JTBOption to improve JTB preferences tab readability
 
 22/06/08 - version 1.5.12
-- Folding rfe 1786801 Collapse/Expand
-- Hovering rfe 1888744 Quick Outline
-- AutoCompletion rfe 1769382 Auto-Completion for both the defined tokens and nodes ignoring case
+- Folding RFE 1786801 Collapse/Expand
+- Hovering RFE 1888744 Quick Outline
+- AutoCompletion RFE 1769382 Auto-Completion for both the defined tokens and nodes ignoring case
 - bug 1986438 JavaCC options don't save state in the project directory
   now saved in \.settings\sf.eclipse.javacc.prefs
 - bug 1986443  Project->Clean doesn't clean the generated files
@@ -190,7 +166,7 @@ Bug correction
 
 31/10/05 - version 1.3
 - support JTB
-- Ctrl+ clic to open definition
+- Ctrl+ click to open definition
 - corrected bug in outline now showing up the first time
 - removed self-history (now use the Workbench history)
 
@@ -222,21 +198,3 @@ Bug correction
 
 25/07/03 - 1.0 First release for Eclipse 2.1
 
-Caveats
-
-1) Warning: Token.java: File is obsolete. 
-Mark Token.java as derived (a small G appears top right of the icon)
-Project / Clean... will delete and regenerate all files
-Of course if you trigger the compilation manually by a right click Compile with JavaCC
-afterward the warning will reappear.
-
-2) *.jj files are copied into bin directory
-It is a feature of Eclipse which copies all files which are not *.java.
-You have the choice to make Eclipse copy or not copy these files.
-You can disable copy of .jj and .jjt files with :
-Menu "Window" -> "Preferences"
-Choose "Java" -> "Compiler" then "Build path" tab and add in
-Filtered Resources : *.jj,*.jjt
-
-3) Any other bug ?
-Send a mail to remi.koutcherawy@wanadoo.fr

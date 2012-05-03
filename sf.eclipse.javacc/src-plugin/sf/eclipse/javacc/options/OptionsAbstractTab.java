@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.options;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
@@ -30,12 +29,12 @@ import sf.eclipse.javacc.head.Activator;
  * The basic Tab for JavaCC, JJTree, JJDoc and JTB project options.<br>
  * This class is extended by :
  * 
- * @see JavaccOptions
- * @see JjtreeOptions
- * @see JjdocOptions
- * @see JtbOptions
+ * @see JavaCCOptions
+ * @see JJTreeOptions
+ * @see JJDocOptions
+ * @see JTBOptions
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public abstract class OptionsAbstractTab extends Composite implements IPropertyChangeListener, IJJConstants {
 
@@ -44,34 +43,35 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   // MMa 02/2010 : formatting and javadoc revision ; fixed not stored Option.VOID properties issue
   // ... ....... : fixed output file not showing issue ; fixed display true cases for void options
   // MMa 03/2010 : enhanced layout (groups / tool tips) ; renamed preference keys
+  // MMa 08/2011 : fixed empty default value issue
 
   /** The optionSet used as a model */
-  protected OptionSet              fOptionSet;
+  protected OptionSet              jOptionSet;
   // Controls
   /** The command line options control */
-  protected StringFieldEditor      fCmdLnOptField;
+  protected StringFieldEditor      jCmdLnOptField;
   /** The Boolean options control */
-  protected BooleanFieldEditor     fCheckboxField[];
+  protected BooleanFieldEditor     jCheckboxField[];
   /** The Integer options control */
-  protected IntegerFieldEditor     fIntegerField[];
+  protected IntegerFieldEditor     jIntegerField[];
   /** The String options controls */
-  protected StringFieldEditor[]    fStringField;
+  protected StringFieldEditor[]    jStringField;
   /** The Directory options controls */
-  protected DirectoryFieldEditor[] fPathField;
+  protected DirectoryFieldEditor[] jPathField;
   /** The File options controls */
-  protected FileFieldEditor[]      fFileField;
+  protected FileFieldEditor[]      jFileField;
   /** The number of columns to use for boolean options */
-  protected int                    fNbColBooleans     = 1;
+  protected int                    jNbColBooleans     = 1;
   /** The options preference property, defined in subclasses */
-  protected String                 fPreferenceName    = null;
+  protected String                 jPreferenceName    = null;
   /** The flag to prevent loops from user input and change listeners */
-  protected boolean                fIsUpdating;
+  protected boolean                jIsUpdating;
   /** The IResource we are working on */
-  protected IResource              fResource;
+  protected IResource              jResource;
   /** The "default" label */
-  String                           fDefaultLabel      = Activator.getString("JJAbstractTab.default");      //$NON-NLS-1$
+  String                           jDefaultLabel      = Activator.getString("OptionsAbstractTab.default");      //$NON-NLS-1$
   /** The "empty default" label */
-  String                           fEmptyDefaultLabel = Activator.getString("JJAbstractTab.empty_default"); //$NON-NLS-1$
+  String                           jEmptyDefaultLabel = Activator.getString("OptionsAbstractTab.empty_default"); //$NON-NLS-1$
 
   /**
    * Standard constructor.
@@ -81,22 +81,22 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
    */
   public OptionsAbstractTab(final Composite aParent, final IResource aRes) {
     super(aParent, SWT.NONE);
-    fResource = aRes;
+    jResource = aRes;
   }
 
   /**
    * Fills in the control.
    */
   public void createContents() {
-    fIsUpdating = true;
+    jIsUpdating = true;
     // get the global line options string from the resource
     String options = null;
-    if (fResource != null) {
-      final IProject proj = fResource.getProject();
+    if (jResource != null) {
+      final IProject proj = jResource.getProject();
       final IScopeContext projectScope = new ProjectScope(proj);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
-      options = prefs.get(fPreferenceName, ""); //$NON-NLS-1$
-      fOptionSet.configuresFrom(options);
+      options = prefs.get(jPreferenceName, ""); //$NON-NLS-1$
+      jOptionSet.configuresFrom(options);
     }
     // add layout
     final GridLayout layout = new GridLayout();
@@ -107,7 +107,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
     // add group
     final Group resGrp = new Group(this, SWT.NONE);
-    resGrp.setText(Activator.getString("JJAbstractTab.Resulting_group")); //$NON-NLS-1$
+    resGrp.setText(Activator.getString("OptionsAbstractTab.Resulting_group")); //$NON-NLS-1$
     resGrp.setLayout(layout);
     resGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
@@ -116,29 +116,29 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
     // add group
     final Group optGrp = new Group(this, SWT.NONE);
-    optGrp.setText(Activator.getString("JJAbstractTab.Options_group")); //$NON-NLS-1$
+    optGrp.setText(Activator.getString("OptionsAbstractTab.Options_group")); //$NON-NLS-1$
     optGrp.setLayout(layout);
     optGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-    if (fOptionSet.getOptionsSize(Option.INT) != 0) {
+    if (jOptionSet.getOptionsSize(Option.INT) != 0) {
       addIntegerOptSection(optGrp);
     }
-    if (fOptionSet.getOptionsSize(Option.BOOLEAN) != 0 || fOptionSet.getOptionsSize(Option.VOID) != 0) {
+    if (jOptionSet.getOptionsSize(Option.BOOLEAN) != 0 || jOptionSet.getOptionsSize(Option.VOID) != 0) {
       addBooleanOptSection(optGrp);
     }
-    if (fOptionSet.getOptionsSize(Option.STRING) != 0) {
+    if (jOptionSet.getOptionsSize(Option.STRING) != 0) {
       addStringOptSection(optGrp);
     }
-    if (fOptionSet.getOptionsSize(Option.PATH) != 0) {
+    if (jOptionSet.getOptionsSize(Option.PATH) != 0) {
       addPathOptSection(optGrp);
     }
-    if (fOptionSet.getOptionsSize(Option.FILE) != 0) {
+    if (jOptionSet.getOptionsSize(Option.FILE) != 0) {
       //      // not shown when IResource is a project (relevant ... except for CSS for JJDoc)
       //      if (fResource.getType() != IResource.PROJECT) {
       addFileOptSection(optGrp);
       //      }
     }
-    fIsUpdating = false;
+    jIsUpdating = false;
   }
 
   /**
@@ -151,14 +151,14 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    fCmdLnOptField = new StringFieldEditor(
-                                           fPreferenceName, // name
-                                           "(" + Activator.getString("JJAbstractTab.Resulting") + ") " + fPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    jCmdLnOptField = new StringFieldEditor(
+                                           jPreferenceName, // name
+                                           "(" + Activator.getString("OptionsAbstractTab.Resulting") + ") " + jPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                            StringFieldEditor.UNLIMITED, // width
                                            StringFieldEditor.VALIDATE_ON_FOCUS_LOST, // strategy
                                            composite);
-    fCmdLnOptField.setStringValue(aStr);
-    fCmdLnOptField.setPropertyChangeListener(this);
+    jCmdLnOptField.setStringValue(aStr);
+    jCmdLnOptField.setPropertyChangeListener(this);
   }
 
   /**
@@ -177,20 +177,20 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     // Eclipse 3.4
     gd.widthHint = 250;
     composite.setLayoutData(gd);
-    int k = fOptionSet.getOptionsSize(Option.INT);
-    fIntegerField = new IntegerFieldEditor[k];
+    int k = jOptionSet.getOptionsSize(Option.INT);
+    jIntegerField = new IntegerFieldEditor[k];
     k = 0;
-    final int nb = fOptionSet.getOptionsSize();
+    final int nb = jOptionSet.getOptionsSize();
     for (int i = 0; i < nb; i++) {
-      if (fOptionSet.getType(i) != Option.INT) {
+      if (jOptionSet.getType(i) != Option.INT) {
         continue;
       }
-      final String label = fOptionSet.getNameAndDescription(i)
-                           + " (" + fDefaultLabel + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ 
-      fIntegerField[k] = new IntegerFieldEditor(fOptionSet.getName(i), label, composite);
-      fIntegerField[k].setEmptyStringAllowed(true);
-      fIntegerField[k].setStringValue(fOptionSet.getValue(i));
-      fIntegerField[k].setPropertyChangeListener(this);
+      final String label = jOptionSet.getNameAndDescription(i)
+                           + " (" + jDefaultLabel + jOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ 
+      jIntegerField[k] = new IntegerFieldEditor(jOptionSet.getName(i), label, composite);
+      jIntegerField[k].setEmptyStringAllowed(true);
+      jIntegerField[k].setStringValue(jOptionSet.getValue(i));
+      jIntegerField[k].setPropertyChangeListener(this);
       k++;
     }
   }
@@ -203,21 +203,21 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   protected void addBooleanOptSection(final Composite aGrp) {
     // aligns in 2 columns
     final Composite composite = new Composite(aGrp, SWT.NONE);
-    composite.setLayout(new GridLayout(fNbColBooleans, false));
+    composite.setLayout(new GridLayout(jNbColBooleans, false));
     composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-    int k = fOptionSet.getOptionsSize(Option.BOOLEAN) + fOptionSet.getOptionsSize(Option.VOID);
-    fCheckboxField = new BooleanFieldEditor[k];
+    int k = jOptionSet.getOptionsSize(Option.BOOLEAN) + jOptionSet.getOptionsSize(Option.VOID);
+    jCheckboxField = new BooleanFieldEditor[k];
     k = 0;
-    final int nb = fOptionSet.getOptionsSize();
+    final int nb = jOptionSet.getOptionsSize();
     for (int i = 0; i < nb; i++) {
-      if (fOptionSet.getType(i) == Option.BOOLEAN || fOptionSet.getType(i) == Option.VOID) {
-        final String label = fOptionSet.getNameAndDescription(i)
-                             + " (" + fDefaultLabel + fOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ 
+      if (jOptionSet.getType(i) == Option.BOOLEAN || jOptionSet.getType(i) == Option.VOID) {
+        final String label = jOptionSet.getNameAndDescription(i)
+                             + " (" + jDefaultLabel + jOptionSet.getDefaultValue(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ 
         // need to create a new Composite to have 2 columns !
-        fCheckboxField[k] = new BooleanFieldEditor(fOptionSet.getName(i), label, new Composite(composite,
+        jCheckboxField[k] = new BooleanFieldEditor(jOptionSet.getName(i), label, new Composite(composite,
                                                                                                SWT.NONE));
-        fCheckboxField[k].setBooleanValue("true".equals(fOptionSet.getValue(i)) ? true : false); //$NON-NLS-1$
-        fCheckboxField[k].setPropertyChangeListener(this);
+        jCheckboxField[k].setBooleanValue("true".equals(jOptionSet.getValue(i)) ? true : false); //$NON-NLS-1$
+        jCheckboxField[k].setPropertyChangeListener(this);
         k++;
       }
     }
@@ -239,24 +239,24 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     // Eclipse 3.4
     gd.widthHint = 400;
     composite.setLayoutData(gd);
-    int k = fOptionSet.getOptionsSize(Option.STRING);
-    fStringField = new StringFieldEditor[k];
+    int k = jOptionSet.getOptionsSize(Option.STRING);
+    jStringField = new StringFieldEditor[k];
     k = 0;
-    final int nb = fOptionSet.getOptionsSize();
+    final int nb = jOptionSet.getOptionsSize();
     for (int i = 0; i < nb; i++) {
-      if (fOptionSet.getType(i) != Option.STRING) {
+      if (jOptionSet.getType(i) != Option.STRING) {
         continue;
       }
-      final String defVal = fOptionSet.getDefaultValue(i);
-      String defLbl = fEmptyDefaultLabel;
-      if (defVal != null && defVal.length() == 0) {
-        defLbl = fDefaultLabel + defVal;
+      final String defVal = jOptionSet.getDefaultValue(i);
+      String defLbl = jEmptyDefaultLabel;
+      if (defVal != null && defVal.length() != 0) {
+        defLbl = jDefaultLabel + defVal;
       }
-      final String label = fOptionSet.getNameAndDescription(i).concat(" (").concat(defLbl).concat(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
-      fStringField[k] = new StringFieldEditor(fOptionSet.getName(i), label, composite);
-      fStringField[k].setEmptyStringAllowed(true);
-      fStringField[k].setStringValue(fOptionSet.getValueInQuotes(i));
-      fStringField[k].setPropertyChangeListener(this);
+      final String label = jOptionSet.getNameAndDescription(i).concat(" (").concat(defLbl).concat(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+      jStringField[k] = new StringFieldEditor(jOptionSet.getName(i), label, composite);
+      jStringField[k].setEmptyStringAllowed(true);
+      jStringField[k].setStringValue(jOptionSet.getValueInQuotes(i));
+      jStringField[k].setPropertyChangeListener(this);
       k++;
     }
   }
@@ -270,26 +270,22 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL)
-                                                   .setText(Activator
-                                                                     .getString("JJAbstractTab.Select_directory")); //$NON-NLS-1$
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL)
-                                                   .setText(Activator
-                                                                     .getString("JJAbstractTab.Path_can_be_pathSection")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Select_directory")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Path_can_be_pathSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    int k = fOptionSet.getOptionsSize(Option.PATH);
-    fPathField = new DirectoryFieldEditor[k];
+    int k = jOptionSet.getOptionsSize(Option.PATH);
+    jPathField = new DirectoryFieldEditor[k];
     k = 0;
-    final int nb = fOptionSet.getOptionsSize();
+    final int nb = jOptionSet.getOptionsSize();
     for (int i = 0; i < nb; i++) {
-      if (fOptionSet.getType(i) != Option.PATH) {
+      if (jOptionSet.getType(i) != Option.PATH) {
         continue;
       }
-      fPathField[k] = new DirectoryFieldEditor(fOptionSet.getName(i), fOptionSet.getNameAndDescription(i),
-                                               Activator.getString("JJAbstractTab.Choose_a_directory"), //$NON-NLS-1$
-                                               fResource.getProject().getLocation().toOSString(), composite);
-      fPathField[k].setStringValue(fOptionSet.getValueInQuotes(i));
-      fPathField[k].setPropertyChangeListener(this);
+      jPathField[k] = new DirectoryFieldEditor(jOptionSet.getName(i), jOptionSet.getNameAndDescription(i),
+                                               Activator.getString("OptionsAbstractTab.Choose_a_directory"), //$NON-NLS-1$
+                                               jResource.getProject().getLocation().toOSString(), composite);
+      jPathField[k].setStringValue(jOptionSet.getValueInQuotes(i));
+      jPathField[k].setPropertyChangeListener(this);
       k++;
     }
   }
@@ -303,23 +299,21 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("JJAbstractTab.Select_file")); //$NON-NLS-1$
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL)
-                                                   .setText(Activator
-                                                                     .getString("JJAbstractTab.Path_can_be_FileSection")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Select_file")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Path_can_be_FileSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
-    int k = fOptionSet.getOptionsSize(Option.FILE);
-    fFileField = new FileFieldEditor[k];
+    int k = jOptionSet.getOptionsSize(Option.FILE);
+    jFileField = new FileFieldEditor[k];
     k = 0;
-    final int nb = fOptionSet.getOptionsSize();
+    final int nb = jOptionSet.getOptionsSize();
     for (int i = 0; i < nb; i++) {
-      if (fOptionSet.getType(i) != Option.FILE) {
+      if (jOptionSet.getType(i) != Option.FILE) {
         continue;
       }
-      fFileField[k] = new FileFieldEditor(fOptionSet.getName(i), fOptionSet.getNameAndDescription(i),
+      jFileField[k] = new FileFieldEditor(jOptionSet.getName(i), jOptionSet.getNameAndDescription(i),
                                           composite);
-      fFileField[k].setStringValue(fOptionSet.getValueInQuotes(i));
-      fFileField[k].setPropertyChangeListener(this);
+      jFileField[k].setStringValue(jOptionSet.getValueInQuotes(i));
+      jFileField[k].setPropertyChangeListener(this);
       k++;
     }
   }
@@ -330,11 +324,11 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
    * @see PreferencePage
    */
   public void performDefaults() {
-    fIsUpdating = true;
-    fOptionSet.resetToDefaultValues();
+    jIsUpdating = true;
+    jOptionSet.resetToDefaultValues();
     updateFieldsValues();
-    fCmdLnOptField.setStringValue(fOptionSet.buildCmdLine());
-    fIsUpdating = false;
+    jCmdLnOptField.setStringValue(jOptionSet.buildCmdLine());
+    jIsUpdating = false;
   }
 
   /**
@@ -346,21 +340,21 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     int nString = 0;
     int nPath = 0;
     int nFile = 0;
-    final int nb = fOptionSet.getOptionsSize();
+    final int nb = jOptionSet.getOptionsSize();
     for (int i = 0; i < nb; i++) {
-      String txt = fOptionSet.getValue(i);
-      final int type = fOptionSet.getType(i);
+      String txt = jOptionSet.getValue(i);
+      final int type = jOptionSet.getType(i);
       if (type == Option.BOOLEAN || type == Option.VOID) {
         final boolean state = "true".equals(txt) ? true : false; //$NON-NLS-1$
-        fCheckboxField[nBoolean].setBooleanValue(state);
+        jCheckboxField[nBoolean].setBooleanValue(state);
         nBoolean++;
       }
       else if (type == Option.INT) {
-        fIntegerField[nInteger].setStringValue(txt);
+        jIntegerField[nInteger].setStringValue(txt);
         nInteger++;
       }
       else if (type == Option.STRING) {
-        fStringField[nString].setStringValue(txt);
+        jStringField[nString].setStringValue(txt);
         nString++;
       }
       else if (type == Option.PATH) {
@@ -369,7 +363,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
         if ((len > 0) && (txt.charAt(0) == '"') && (txt.charAt(len) == '"')) {
           txt = txt.substring(1, len - 1);
         }
-        fPathField[nPath].setStringValue(txt);
+        jPathField[nPath].setStringValue(txt);
         nPath++;
       }
       else if (type == Option.FILE) {
@@ -378,7 +372,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
         if ((len > 0) && (txt.charAt(0) == '"') && (txt.charAt(len) == '"')) {
           txt = txt.substring(1, len - 1);
         }
-        fFileField[nFile].setStringValue(txt);
+        jFileField[nFile].setStringValue(txt);
         nFile++;
       }
     }
@@ -390,12 +384,12 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
    * @return true if OK, false otherwise
    */
   public boolean performOk() {
-    if (fResource != null) {
-      final IProject project = fResource.getProject();
+    if (jResource != null) {
+      final IProject project = jResource.getProject();
       final IScopeContext projectScope = new ProjectScope(project);
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
       //      prefs.put(fPreferenceName, fCmdLnOptField.getStringValue());
-      prefs.put(fPreferenceName, fOptionSet.buildCmdLine());
+      prefs.put(jPreferenceName, jOptionSet.buildCmdLine());
       try {
         prefs.flush();
       } catch (final BackingStoreException e) {
@@ -412,33 +406,34 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
    * @param aEvent the property change event object describing which property changed and how
    * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
    */
+  @Override
   public void propertyChange(final PropertyChangeEvent aEvent) {
     // don't see what use it is
     //    if (!aEvent.getProperty().equals("field_editor_value")) { //$NON-NLS-1$
     //      return;
     //    }
-    if (fIsUpdating) {
+    if (jIsUpdating) {
       return;
     }
-    fIsUpdating = true;
-    if (aEvent.getSource() == fCmdLnOptField) {
+    jIsUpdating = true;
+    if (aEvent.getSource() == jCmdLnOptField) {
       // handle special case where the command line field is modified
-      fOptionSet.configuresFrom(fCmdLnOptField.getStringValue());
+      jOptionSet.configuresFrom(jCmdLnOptField.getStringValue());
       updateFieldsValues();
     }
     else {
       final FieldEditor field = (FieldEditor) aEvent.getSource();
       // find the option
       int ixOpt;
-      final int nb = fOptionSet.getOptionsSize();
+      final int nb = jOptionSet.getOptionsSize();
       for (ixOpt = 0; ixOpt < nb; ixOpt++) {
-        final String name = fOptionSet.getName(ixOpt);
+        final String name = jOptionSet.getName(ixOpt);
         final String fieldPrefName = field.getPreferenceName();
         if (fieldPrefName.equals(name)) {
           break;
         }
       }
-      final Option opt = fOptionSet.getOption(ixOpt);
+      final Option opt = jOptionSet.getOption(ixOpt);
       // handle a change in an BooleanFieldEditor
       if (aEvent.getSource() instanceof BooleanFieldEditor) {
         final BooleanFieldEditor bfield = (BooleanFieldEditor) aEvent.getSource();
@@ -475,8 +470,8 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
       }
     }
     // update (even back) the command line field
-    fCmdLnOptField.setStringValue(fOptionSet.buildCmdLine());
-    fIsUpdating = false;
+    jCmdLnOptField.setStringValue(jOptionSet.buildCmdLine());
+    jIsUpdating = false;
   }
 
 }

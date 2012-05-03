@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.options;
 
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -10,19 +9,19 @@ import org.eclipse.swt.widgets.Display;
 
 import sf.eclipse.javacc.head.Activator;
 
-
 /**
  * Class used to initialize default preference values.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
-public class JJPreferencesInitializer extends AbstractPreferenceInitializer {
+public class PreferencesInitializer extends AbstractPreferenceInitializer {
 
   // MMa : added / renamed colors and indentation preferences
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : added check spelling
   // MMa 03/2010 : enhanced layout (groups / tool tips) ; renamed preference keys
+  // MMa 08/2011 : renamed
 
   /** JavaCC non automatic indentation preference */
   public static final String P_NO_ADV_AUTO_INDENT = "JavaCCNoAutoIndentPref"; //$NON-NLS-1$

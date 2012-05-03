@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTbnf_production extends JJNode {
   public ASTbnf_production(int id) {
     super(id);

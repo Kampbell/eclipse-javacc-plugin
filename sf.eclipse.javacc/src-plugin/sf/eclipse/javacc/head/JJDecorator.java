@@ -32,9 +32,9 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
   // MMa 12/2010 : fix a NPE in getGeneratedProperty
 
   /** the Image to add on the original if generated */
-  private final Image fImgGeneratedStamp;
+  private final Image imgGeneratedStamp;
   /** the Image to add on the original if excluded */
-  private final Image fImgExcludedJJ;
+  private final Image imgExcludedJJ;
 
   /**
    * JJDecorator provides a small G in top right and <fromFile.jj>, but only if the resource is marked as
@@ -43,9 +43,9 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
   public JJDecorator() {
     super();
     ImageDescriptor desc = Activator.getImageDescriptor("jj_generated.gif"); //$NON-NLS-1$
-    fImgGeneratedStamp = desc.createImage(Display.getDefault());
+    imgGeneratedStamp = desc.createImage(Display.getDefault());
     desc = Activator.getImageDescriptor("jj_file_exclude.gif"); //$NON-NLS-1$
-    fImgExcludedJJ = desc.createImage(Display.getDefault());
+    imgExcludedJJ = desc.createImage(Display.getDefault());
   }
 
   /**
@@ -54,8 +54,8 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
   @Override
   public void dispose() {
     super.dispose();
-    fImgGeneratedStamp.dispose();
-    fImgExcludedJJ.dispose();
+    imgGeneratedStamp.dispose();
+    imgExcludedJJ.dispose();
   }
 
   /**
@@ -67,6 +67,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
    * @return the decorated image
    * @see ILabelDecorator#decorateImage
    */
+  @Override
   public Image decorateImage(final Image aImage, final Object aElement) {
     // the image to decorate is the background we paint on
     Image newImage = aImage;
@@ -82,10 +83,10 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
       final GC gc = new GC(newImage);
       gc.drawImage(aImage, 0, 0);
       if (flagGenerated == true) {
-        gc.drawImage(fImgGeneratedStamp, 10, 0);
+        gc.drawImage(imgGeneratedStamp, 10, 0);
       }
       if (flagExcluded) {
-        gc.drawImage(fImgExcludedJJ, 0, 0);
+        gc.drawImage(imgExcludedJJ, 0, 0);
       }
       gc.dispose();
     }
@@ -100,6 +101,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
    * @return the decorated string
    * @see ILabelDecorator#decorateText
    */
+  @Override
   public String decorateText(final String aStr, final Object aElement) {
     final String generated = getGeneratedProperty(aElement);
     if (generated == null) {

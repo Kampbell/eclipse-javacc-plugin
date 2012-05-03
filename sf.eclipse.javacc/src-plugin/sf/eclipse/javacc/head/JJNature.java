@@ -23,15 +23,16 @@ public class JJNature implements IProjectNature, IJJConstants {
   // MMa 03/2010 : some renamings ; removed reapplying the nature
 
   /** The project */
-  private IProject fProject;
+  private IProject jProject;
 
   /**
    * Returns the project.
    * 
    * @see IProjectNature#getProject()
    */
+  @Override
   public IProject getProject() {
-    return fProject;
+    return jProject;
   }
 
   /**
@@ -39,8 +40,9 @@ public class JJNature implements IProjectNature, IJJConstants {
    * 
    * @see IProjectNature#setProject(IProject)
    */
+  @Override
   public void setProject(final IProject aProject) {
-    fProject = aProject;
+    jProject = aProject;
   }
 
   /**
@@ -51,8 +53,9 @@ public class JJNature implements IProjectNature, IJJConstants {
    * 
    * @see IProjectNature#configure()
    */
+  @Override
   public void configure() throws CoreException {
-    final IProjectDescription desc = fProject.getDescription();
+    final IProjectDescription desc = jProject.getDescription();
     final ICommand[] cmds = desc.getBuildSpec();
     ICommand command = null;
     for (int i = cmds.length - 1; i >= 0; i--) {
@@ -70,7 +73,7 @@ public class JJNature implements IProjectNature, IJJConstants {
       System.arraycopy(cmds, 0, newCommands, 1, cmds.length);
       desc.setBuildSpec(newCommands);
       desc.setComment(Activator.getString("JJNature.JavaCC_nature_description")); //$NON-NLS-1$
-      fProject.setDescription(desc, null);
+      jProject.setDescription(desc, null);
     }
   }
 
@@ -82,8 +85,9 @@ public class JJNature implements IProjectNature, IJJConstants {
    * 
    * @see IProjectNature#deconfigure()
    */
+  @Override
   public void deconfigure() throws CoreException {
-    final IProjectDescription desc = fProject.getDescription();
+    final IProjectDescription desc = jProject.getDescription();
     final ICommand[] cmds = desc.getBuildSpec();
     for (int i = cmds.length - 1; i >= 0; i--) {
       if (cmds[i].getBuilderName().equals(JJ_BUILDER_ID)) {
@@ -92,7 +96,7 @@ public class JJNature implements IProjectNature, IJJConstants {
         System.arraycopy(cmds, 0, newCommands, 0, i);
         System.arraycopy(cmds, i + 1, newCommands, i, cmds.length - i - 1);
         desc.setBuildSpec(newCommands);
-        fProject.setDescription(desc, null);
+        jProject.setDescription(desc, null);
         break;
       }
     }

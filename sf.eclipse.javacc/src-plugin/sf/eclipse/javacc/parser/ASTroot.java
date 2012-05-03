@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTroot extends JJNode {
   public ASTroot(int id) {
     super(id);

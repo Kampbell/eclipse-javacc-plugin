@@ -19,6 +19,7 @@ public class BasicConsole implements IJJConsole {
   /**
    * Clears the console.
    */
+  @Override
   public void clear() {
     /* nothing to do */
   }
@@ -29,14 +30,15 @@ public class BasicConsole implements IJJConsole {
    * @param aFile the file to report on
    * @param aIsJtb true if file is a JTB one, false otherwise.
    */
-  public void endReport(@SuppressWarnings("unused") final IFile aFile,
-                        @SuppressWarnings("unused") final boolean aIsJtb) {
+  @Override
+  public void endReport(@SuppressWarnings("unused") final IFile aFile, @SuppressWarnings("unused") final boolean aIsJtb) {
     /* nothing to do */
   }
 
   /**
    * @return the PrintStream to write to Console
    */
+  @Override
   public PrintStream getPrintStream() {
     return System.out;
   }
@@ -46,6 +48,7 @@ public class BasicConsole implements IJJConsole {
    * 
    * @param aStr the text to print
    */
+  @Override
   public void print(final String aStr) {
     System.out.print(aStr);
   }

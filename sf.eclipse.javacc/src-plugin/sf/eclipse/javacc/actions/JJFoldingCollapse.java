@@ -14,33 +14,36 @@ import sf.eclipse.javacc.editors.JJEditor;
  * Collapse all folding Action.<br>
  * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.editorActions"><br>
- * <action label="%JavaCC_FoldingCollapseAll" class="sf.eclipse.javacc.actions.JJFoldingCollapse"
+ * <action label="%FoldingCollapseAll" class="sf.eclipse.javacc.actions.JJFoldingCollapse"
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public class JJFoldingCollapse implements IEditorActionDelegate {
 
   // MMa 02/2010 : formatting and javadoc revision
 
   /** the current editor */
-  static JJEditor fEditor;
+  static JJEditor sJJEditor;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
-    if (targetEditor == null) {
+  @Override
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
+    if (aTargetEditor == null) {
       return;
     }
-    fEditor = (JJEditor) targetEditor;
+    sJJEditor = (JJEditor) aTargetEditor;
   }
 
   /**
    * @see IActionDelegate#run(IAction)
    */
-  public void run(@SuppressWarnings("unused") final IAction action) {
-    final ISourceViewer sourceViewer = fEditor.getSourceViewerPlease();
+  @Override
+  public void run(@SuppressWarnings("unused") final IAction aAction) {
+    final ISourceViewer sourceViewer = sJJEditor.getSourceViewerPlease();
     if (sourceViewer instanceof ProjectionViewer) {
       final ProjectionViewer pv = (ProjectionViewer) sourceViewer;
       if (pv.isProjectionMode()) {
@@ -54,8 +57,9 @@ public class JJFoldingCollapse implements IEditorActionDelegate {
   /**
    * @see IActionDelegate#selectionChanged(IAction, ISelection)
    */
-  public void selectionChanged(@SuppressWarnings("unused") final IAction action,
-                               @SuppressWarnings("unused") final ISelection selection) {
+  @Override
+  public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
+                               @SuppressWarnings("unused") final ISelection aSelection) {
     //  not used
   }
 }

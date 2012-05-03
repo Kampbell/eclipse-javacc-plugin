@@ -13,20 +13,22 @@ public class JJSMLJCDetector implements IWordDetector {
   // MMa 03/2010 : created
 
   /**
-   * @param c the character
-   * @return true if c is '/', false otherwise
+   * @param aCh the character
+   * @return true if aCh is '/', false otherwise
    * @see IWordDetector#isWordStart
    */
-  public boolean isWordStart(final char c) {
-    return c == '/';
+  @Override
+  public boolean isWordStart(final char aCh) {
+    return aCh == '/';
   }
 
   /**
-   * @param c the character
-   * @return true if c is '*' or '/', false otherwise
+   * @param aCh the character
+   * @return true if aCh is '*' or '/', false otherwise
    * @see IWordDetector#isWordPart
    */
-  public boolean isWordPart(final char c) {
-    return c == '*' || c == '/';
+  @Override
+  public boolean isWordPart(final char aCh) {
+    return aCh == '*' || aCh == '/';
   }
 }

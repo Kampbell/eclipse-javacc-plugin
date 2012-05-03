@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTtoken_manager_decls extends JJNode {
   public ASTtoken_manager_decls(int id) {
     super(id);

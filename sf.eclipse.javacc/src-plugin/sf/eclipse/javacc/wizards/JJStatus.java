@@ -16,9 +16,9 @@ public class JJStatus implements IStatus {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** The status message */
-  private String fStatusMessage;
+  private String jStatusMessage;
   /** The severity */
-  private int    fSeverity;
+  private int    jSeverity;
 
   /**
    * Creates a status set to OK (no message).
@@ -30,99 +30,103 @@ public class JJStatus implements IStatus {
   /**
    * Creates a status of a given severity and message.
    * 
-   * @param severity The status severity: ERROR, WARNING, INFO and OK.
-   * @param message The message of the status for ERROR, WARNING and INFO.
+   * @param aSeverity The status severity: ERROR, WARNING, INFO and OK.
+   * @param aStatusMessage The message of the status for ERROR, WARNING and INFO.
    */
-  public JJStatus(final int severity, final String message) {
-    fStatusMessage = message;
-    fSeverity = severity;
+  public JJStatus(final int aSeverity, final String aStatusMessage) {
+    jStatusMessage = aStatusMessage;
+    jSeverity = aSeverity;
   }
 
   /**
    * @return if the status' severity is OK.
    */
+  @Override
   public boolean isOK() {
-    return fSeverity == IStatus.OK;
+    return jSeverity == IStatus.OK;
   }
 
   /**
    * @return if the status' severity is WARNING.
    */
   public boolean isWarning() {
-    return fSeverity == IStatus.WARNING;
+    return jSeverity == IStatus.WARNING;
   }
 
   /**
    * @return if the status' severity is INFO.
    */
   public boolean isInfo() {
-    return fSeverity == IStatus.INFO;
+    return jSeverity == IStatus.INFO;
   }
 
   /**
    * @return if the status' severity is ERROR.
    */
   public boolean isError() {
-    return fSeverity == IStatus.ERROR;
+    return jSeverity == IStatus.ERROR;
   }
 
   /**
    * @see IStatus#getMessage
    * @return the status message
    */
+  @Override
   public String getMessage() {
-    return fStatusMessage;
+    return jStatusMessage;
   }
 
   /**
    * Sets the status to ERROR.
    * 
-   * @param errorMessage The error message (can be empty, but not null)
+   * @param aErrorMessage The error message (can be empty, but not null)
    */
-  public void setError(final String errorMessage) {
-    fStatusMessage = errorMessage;
-    fSeverity = IStatus.ERROR;
+  public void setError(final String aErrorMessage) {
+    jStatusMessage = aErrorMessage;
+    jSeverity = IStatus.ERROR;
   }
 
   /**
    * Sets the status to WARNING.
    * 
-   * @param warningMessage The warning message (can be empty, but not null)
+   * @param aWarningMessage The warning message (can be empty, but not null)
    */
-  public void setWarning(final String warningMessage) {
-    fStatusMessage = warningMessage;
-    fSeverity = IStatus.WARNING;
+  public void setWarning(final String aWarningMessage) {
+    jStatusMessage = aWarningMessage;
+    jSeverity = IStatus.WARNING;
   }
 
   /**
    * Sets the status to INFO.
    * 
-   * @param infoMessage The info message (can be empty, but not null)
+   * @param aInfoMessage The info message (can be empty, but not null)
    */
-  public void setInfo(final String infoMessage) {
-    fStatusMessage = infoMessage;
-    fSeverity = IStatus.INFO;
+  public void setInfo(final String aInfoMessage) {
+    jStatusMessage = aInfoMessage;
+    jSeverity = IStatus.INFO;
   }
 
   /**
    * Sets the status to OK.
    */
   public void setOK() {
-    fStatusMessage = null;
-    fSeverity = IStatus.OK;
+    jStatusMessage = null;
+    jSeverity = IStatus.OK;
   }
 
   /**
    * @see IStatus#matches(int)
    */
-  public boolean matches(final int severityMask) {
-    return (fSeverity & severityMask) != 0;
+  @Override
+  public boolean matches(final int aSeverityMask) {
+    return (jSeverity & aSeverityMask) != 0;
   }
 
   /**
    * @see IStatus#isMultiStatus()
    * @return always <code>false</code>.
    */
+  @Override
   public boolean isMultiStatus() {
     return false;
   }
@@ -130,13 +134,15 @@ public class JJStatus implements IStatus {
   /**
    * @see IStatus#getSeverity()
    */
+  @Override
   public int getSeverity() {
-    return fSeverity;
+    return jSeverity;
   }
 
   /**
    * @see IStatus#getPlugin()
    */
+  @Override
   public String getPlugin() {
     //    return JavaUI.ID_PLUGIN;
     return IJJConstants.ID;
@@ -146,6 +152,7 @@ public class JJStatus implements IStatus {
    * @see IStatus#getException()
    * @return always <code>null</code>.
    */
+  @Override
   public Throwable getException() {
     return null;
   }
@@ -153,13 +160,15 @@ public class JJStatus implements IStatus {
   /**
    * @see IStatus#getCode()
    */
+  @Override
   public int getCode() {
-    return fSeverity;
+    return jSeverity;
   }
 
   /**
    * @see IStatus#getChildren()
    */
+  @Override
   public IStatus[] getChildren() {
     return new IStatus[0];
   }

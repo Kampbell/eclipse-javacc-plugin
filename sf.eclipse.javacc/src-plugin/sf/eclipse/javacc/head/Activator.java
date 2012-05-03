@@ -32,38 +32,38 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** The shared instance */
-  private static Activator      fPlugin;
+  private static Activator      sActivator;
   /** The resource bundle 'messages_fr.properties' inside the jar */
-  private static ResourceBundle fBundle;
+  private static ResourceBundle sBundle;
   /** The console for JavaCC output */
-  static IJJConsole             fConsole;
+  static IJJConsole             sJJConsole;
 
   /**
    * Standard constructor.
    */
   public Activator() {
-    fPlugin = this;
+    sActivator = this;
   }
 
   /**
    * @return the shared instance
    */
   public static Activator getDefault() {
-    return fPlugin;
+    return sActivator;
   }
 
   /**
    * Called upon plug-in activation.
    */
   @Override
-  public void start(final BundleContext context) throws Exception {
-    super.start(context);
+  public void start(final BundleContext aCtx) throws Exception {
+    super.start(aCtx);
 
     // load bundle messages.properties 
     try {
-      fBundle = ResourceBundle.getBundle("messages"); //$NON-NLS-1$
+      sBundle = ResourceBundle.getBundle("messages"); //$NON-NLS-1$
     } catch (final MissingResourceException x) {
-      fBundle = null;
+      sBundle = null;
     }
   }
 
@@ -71,9 +71,9 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
    * Called upon plug-in termination.
    */
   @Override
-  public void stop(final BundleContext context) throws Exception {
-    super.stop(context);
-    fPlugin = null;
+  public void stop(final BundleContext aCtx) throws Exception {
+    super.stop(aCtx);
+    sActivator = null;
   }
 
   /**
@@ -88,8 +88,9 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
     if (Thread.currentThread() != workbench.getDisplay().getThread()) {
       Display.getDefault().syncExec(new Runnable() {
 
+        @Override
         public void run() {
-          fConsole = getConsole();
+          sJJConsole = getConsole();
         }
       });
     }
@@ -102,55 +103,55 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
       }
       final IWorkbenchPage page = windows[0].getActivePage();
 
-      fConsole = (JJConsole) page.findView(CONSOLE_ID);
-      if (fConsole == null) {
+      sJJConsole = (JJConsoleView) page.findView(CONSOLE_ID);
+      if (sJJConsole == null) {
         // if Console is not up, show it !  (console is doing error reporting, and must be up)
         try {
           page.showView(CONSOLE_ID);
         } catch (final PartInitException e) {
           e.printStackTrace();
         }
-        fConsole = (JJConsole) page.findView(CONSOLE_ID);
+        sJJConsole = (JJConsoleView) page.findView(CONSOLE_ID);
       }
     }
-    return fConsole;
+    return sJJConsole;
   }
 
   /**
-   * @param path the images path
+   * @param aPath the images path
    * @return the image descriptor
    */
-  public static ImageDescriptor getImageDescriptor(final String path) {
-    return AbstractUIPlugin.imageDescriptorFromPlugin("sf.eclipse.javacc", "icons/" + path); //$NON-NLS-1$ //$NON-NLS-2$
+  public static ImageDescriptor getImageDescriptor(final String aPath) {
+    return AbstractUIPlugin.imageDescriptorFromPlugin("sf.eclipse.javacc", "icons/" + aPath); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   /**
-   * @param key the key of a resource in the plugin's resource bundle
+   * @param aKey the key of a resource in the plugin's resource bundle
    * @return the string from the plugin's resource bundle, or 'key' if not found.
    */
-  public static String getString(final String key) {
+  public static String getString(final String aKey) {
     try {
-      return (fBundle != null) ? fBundle.getString(key) : key;
+      return (sBundle != null) ? sBundle.getString(aKey) : aKey;
     } catch (final MissingResourceException e) {
-      return key;
+      return aKey;
     }
   }
 
   /**
-   * @param msg the message to log as an error (no exception thrown to avoid side effects)
+   * @param aMsg the message to log as an error (no exception thrown to avoid side effects)
    */
-  public static void logErr(final String msg) {
-    final Status status = new Status(IStatus.ERROR, "JavaCC", IStatus.OK, msg, //$NON-NLS-1$
+  public static void logErr(final String aMsg) {
+    final Status status = new Status(IStatus.ERROR, "JavaCC", IStatus.OK, aMsg, //$NON-NLS-1$
                                      //                                     new Exception("For information only")); //$NON-NLS-1$
                                      null);
     getDefault().getLog().log(status);
   }
 
   /**
-   * @param msg the message to log as an info
+   * @param aMsg the message to log as an info
    */
-  public static void logInfo(final String msg) {
-    final Status status = new Status(IStatus.INFO, "JavaCC", IStatus.OK, msg, //$NON-NLS-1$
+  public static void logInfo(final String aMsg) {
+    final Status status = new Status(IStatus.INFO, "JavaCC", IStatus.OK, aMsg, //$NON-NLS-1$
                                      null);
     getDefault().getLog().log(status);
   }
@@ -159,6 +160,6 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
    * @return the resource bundle
    */
   public ResourceBundle getResourceBundle() {
-    return fBundle;
+    return sBundle;
   }
 }

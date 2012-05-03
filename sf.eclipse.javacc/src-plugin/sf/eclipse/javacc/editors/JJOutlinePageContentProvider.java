@@ -17,30 +17,33 @@ import sf.eclipse.javacc.parser.Node;
  * Content provider for outline page. Uses JavaCCParser to build the AST used in the Outline.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public class JJOutlinePageContentProvider implements IContentProvider, ITreeContentProvider,
                                          JavaCCParserTreeConstants {
 
   // MMa 11/2009 : javadoc and formatting revision
+  // MMa 08/2011 : modified getChildren() to add identifiers and JJT nodes in Outline view
 
   /** the AST node built from the text */
-  protected JJNode node;
+  protected JJNode jJJNode;
 
   /**
    * @see IContentProvider#dispose()
    */
+  @Override
   public void dispose() {
-    node = null;
+    jJJNode = null;
   }
 
   /**
    * @see IContentProvider#inputChanged(Viewer, Object, Object)
    */
-  public void inputChanged(@SuppressWarnings("unused") final Viewer viewer,
-                           @SuppressWarnings("unused") final Object oldInput, final Object newInput) {
-    if (newInput != null) {
-      final IDocument doc = (IDocument) newInput;
+  @Override
+  public void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
+                           @SuppressWarnings("unused") final Object aOldInput, final Object aNewInput) {
+    if (aNewInput != null) {
+      final IDocument doc = (IDocument) aNewInput;
       parse(doc.get());
     }
   }
@@ -48,28 +51,49 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
   /**
    * @see ITreeContentProvider#getChildren(Object)
    */
+  @Override
   public Object[] getChildren(final Object aObj) {
     if (aObj == null) {
       return null;
     }
     final JJNode nd = (JJNode) aObj;
-    // Remove JJTIDENTIFIER nodes
-    int n = 0;
     final Node[] children = nd.getChildren();
     if (children == null) {
       return null;
     }
-    for (final Node child : children) {
-      if (((JJNode) child).getId() != JJTIDENTIFIER) {
-        n++;
+    int len = children.length;
+    int déb = 0;
+    final int id = nd.getId();
+    if (id == JJTREGEXPR_SPEC) {
+      // remove the node descriptor if there is one
+      final int chId = ((JJNode) children[0]).getId();
+      if (len > 0 && (chId == JJTIDENT_REG_EXPR_LABEL || chId == JJTIDENT_REG_EXPR_PRIVATE_LABEL)) {
+        // remove the first child (as it has the same name)
+        len--;
+        déb = 1;
       }
     }
-    final JJNode[] filteredChildren = new JJNode[n];
-    int j = 0;
-    for (final Node child : children) {
-      if (((JJNode) child).getId() != JJTIDENTIFIER) {
-        filteredChildren[j++] = (JJNode) child;
+    else if (id == JJTCLASSORINTERFACEDECLARATION || id == JJTMETHODDECLARATION || id == JJTPARSER_BEGIN) {
+      // remove the first child (as it has the same name)
+      len--;
+      déb = 1;
+    }
+    else if (id == JJTBNF_PRODUCTION) {
+      // remove the first child (as it has the same name)
+      len--;
+      déb = 1;
+      if (len > 0 && (((JJNode) children[1]).getId() == JJTNODE_DESC_BNF_DECL)) {
+        // remove the node descriptor if there is one
+        len--;
+        déb = 2;
       }
+    }
+    if (len <= 0) {
+      return null;
+    }
+    final JJNode[] filteredChildren = new JJNode[len];
+    for (int j = 0; j < len; j++, déb++) {
+      filteredChildren[j] = (JJNode) children[déb];
     }
     return filteredChildren;
   }
@@ -77,32 +101,35 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
   /**
    * @see ITreeContentProvider#getParent(Object)
    */
-  public Object getParent(final Object obj) {
-    return obj == null ? null : ((JJNode) obj).jjtGetParent();
+  @Override
+  public Object getParent(final Object aObj) {
+    return aObj == null ? null : ((JJNode) aObj).jjtGetParent();
   }
 
   /**
    * @see ITreeContentProvider#hasChildren(Object)
    */
-  public boolean hasChildren(final Object obj) {
-    return getChildren(obj) == null ? false : getChildren(obj).length != 0;
+  @Override
+  public boolean hasChildren(final Object aObj) {
+    return getChildren(aObj) == null ? false : getChildren(aObj).length != 0;
   }
 
   /**
    * @see IStructuredContentProvider#getElements(Object)
    */
-  public Object[] getElements(@SuppressWarnings("unused") final Object obj) {
-    return getChildren(node);
+  @Override
+  public Object[] getElements(@SuppressWarnings("unused") final Object aObj) {
+    return getChildren(jJJNode);
   }
 
   /**
    * Parse a String to build the AST node (saved in the class member).
    * 
-   * @param txt the string to parse
+   * @param aTxt the string to parse
    */
-  protected void parse(final String txt) {
-    final StringReader in = new StringReader(txt);
-    node = JavaCCParser.parse(in);
+  protected void parse(final String aTxt) {
+    final StringReader in = new StringReader(aTxt);
+    jJJNode = JavaCCParser.parse(in);
     in.close();
   }
 
@@ -110,6 +137,6 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
    * @return JJNode (The AST root)
    */
   public JJNode getAST() {
-    return node;
+    return jJJNode;
   }
 }

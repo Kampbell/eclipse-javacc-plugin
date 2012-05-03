@@ -3,6 +3,7 @@ package sf.eclipse.javacc.parser;
 import java.io.Reader;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class JavaCCParserTokenManager implements JavaCCParserConstants
 {
 

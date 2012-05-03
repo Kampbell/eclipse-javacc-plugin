@@ -3,7 +3,7 @@
      Marc Mazas - Sopra Group - 02/2010 -->
 <project name="javacc-web" default="make_zip" basedir=".">
 
-	<property name="javacc-ver" value="1.5.24" />
+	<property name="javacc-ver" value="1.5.25" />
 
 	<target name="make_zip">
 		<zip destfile="sf.eclipse.javacc-${javacc-ver}-updatesite.zip" compress="true" update="true">

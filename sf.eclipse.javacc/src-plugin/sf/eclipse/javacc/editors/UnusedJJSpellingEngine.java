@@ -48,19 +48,19 @@ public class UnusedJJSpellingEngine extends DefaultSpellingEngine {
   //                                                                                      "org.eclipse.jdt.core.javaProperties"); //$NON-NLS-1$
 
   /** Available spelling engines by content type */
-  private final Map<IContentType, SpellingEngine> fEngines          = new HashMap<IContentType, SpellingEngine>();
+  private final Map<IContentType, SpellingEngine> jEngines          = new HashMap<IContentType, SpellingEngine>();
 
   /**
    * Initialize concrete engines.
    */
   public UnusedJJSpellingEngine() {
     if (JAVA_CONTENT_TYPE != null) {
-      fEngines.put(JAVA_CONTENT_TYPE, new JavaSpellingEngine());
+      jEngines.put(JAVA_CONTENT_TYPE, new JavaSpellingEngine());
     }
     //    if (PROPERTIES_CONTENT_TYPE != null)
     //      fEngines.put(PROPERTIES_CONTENT_TYPE, new PropertiesFileSpellingEngine());
     if (TEXT_CONTENT_TYPE != null) {
-      fEngines.put(TEXT_CONTENT_TYPE, new TextSpellingEngine());
+      jEngines.put(TEXT_CONTENT_TYPE, new TextSpellingEngine());
     }
   }
 
@@ -73,33 +73,33 @@ public class UnusedJJSpellingEngine extends DefaultSpellingEngine {
    *      IProgressMonitor)
    */
   @Override
-  public void check(final IDocument document, final IRegion[] regions, final SpellingContext context,
-                    final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
+  public void check(final IDocument aDoc, final IRegion[] aRegions, final SpellingContext aCtx,
+                    final ISpellingProblemCollector aCollector, final IProgressMonitor aMonitor) {
     //    ISpellingEngine engine= getEngine(context.getContentType());
     ISpellingEngine engine = getEngine(JAVA_CONTENT_TYPE);
     if (engine == null) {
       engine = getEngine(TEXT_CONTENT_TYPE);
     }
     if (engine != null) {
-      engine.check(document, regions, context, collector, monitor);
+      engine.check(aDoc, aRegions, aCtx, aCollector, aMonitor);
     }
   }
 
   /**
    * Returns a spelling engine for the given content type or <code>null</code> if none could be found.
    * 
-   * @param contentType the content type
+   * @param aContentType the content type
    * @return a spelling engine for the given content type or <code>null</code> if none could be found
    */
-  private ISpellingEngine getEngine(final IContentType contentType) {
-    if (contentType == null) {
+  private ISpellingEngine getEngine(final IContentType aContentType) {
+    if (aContentType == null) {
       return null;
     }
 
-    if (fEngines.containsKey(contentType)) {
-      return fEngines.get(contentType);
+    if (jEngines.containsKey(aContentType)) {
+      return jEngines.get(aContentType);
     }
 
-    return getEngine(contentType.getBaseType());
+    return getEngine(aContentType.getBaseType());
   }
 }

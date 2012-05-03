@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTClassOrInterfaceDeclaration extends JJNode {
   public ASTClassOrInterfaceDeclaration(int id) {
     super(id);

@@ -20,10 +20,10 @@ public class FilterGeneratedJavaCCFiles extends ViewerFilter implements IJJConst
    * @see ViewerFilter#select(Viewer, Object, Object)
    */
   @Override
-  public boolean select(@SuppressWarnings("unused") final Viewer viewer,
-                        @SuppressWarnings("unused") final Object parentElement, final Object obj) {
-    if (obj instanceof IAdaptable) {
-      final IResource resource = (IResource) ((IAdaptable) obj).getAdapter(IResource.class);
+  public boolean select(@SuppressWarnings("unused") final Viewer aViewer,
+                        @SuppressWarnings("unused") final Object aParentElement, final Object aObj) {
+    if (aObj instanceof IAdaptable) {
+      final IResource resource = (IResource) ((IAdaptable) aObj).getAdapter(IResource.class);
       if (resource != null) {
         try {
           return !(resource.isDerived() && resource.getPersistentProperty(QN_GENERATED_FILE) != null);

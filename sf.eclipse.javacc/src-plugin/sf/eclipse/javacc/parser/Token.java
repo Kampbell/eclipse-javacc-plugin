@@ -6,6 +6,7 @@ package sf.eclipse.javacc.parser;
  * Describes the input token stream.
  */
 
+@SuppressWarnings("all")
 public class Token implements java.io.Serializable {
 
   /**

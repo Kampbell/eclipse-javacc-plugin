@@ -34,7 +34,7 @@ public class JJDocumentProvider extends FileDocumentProvider {
   /** The JJ partitioning id */
   public static final String   JJ_PARTITIONING_ID      = "sf.eclipse.javacc.editors.JJEditor.partitioning"; //$NON-NLS-1$ 
   /** The identifier of the JJ code partition content type */
-  // la coloration syntaxique ne marche pas si le code content type n'est pas le défaut !!!
+  // syntax coloring does not work if the code content type is not the default !!!
   public static final String   JJ_CODE_CONTENT_TYPE    = IDocument.DEFAULT_CONTENT_TYPE;
   //  public static final String   JJ_CODE_CONTENT_TYPE    = "JJ_CODE";
   /** The identifier of the JJ comments partition content type */
@@ -57,12 +57,12 @@ public class JJDocumentProvider extends FileDocumentProvider {
    * @see StorageDocumentProvider#setupDocument(Object, IDocument)
    */
   @Override
-  protected void setupDocument(@SuppressWarnings("unused") final Object element, final IDocument document) {
-    if (document instanceof IDocumentExtension3) {
-      final IDocumentExtension3 ext = (IDocumentExtension3) document;
+  protected void setupDocument(@SuppressWarnings("unused") final Object aElement, final IDocument aDoc) {
+    if (aDoc instanceof IDocumentExtension3) {
+      final IDocumentExtension3 ext = (IDocumentExtension3) aDoc;
       final IDocumentPartitioner partitioner = createJJPartitioner();
       ext.setDocumentPartitioner(JJ_PARTITIONING_ID, partitioner);
-      partitioner.connect(document);
+      partitioner.connect(aDoc);
     }
   }
 
@@ -71,11 +71,11 @@ public class JJDocumentProvider extends FileDocumentProvider {
    *         comments, string and character constants) rules.
    */
   private IDocumentPartitioner createJJPartitioner() {
-    // TODO réécrire un scanner à partir de FastJavaPartitionScanner
+    // TODO rewrite a scanner based on FastJavaPartitionScanner
 
     // code partition
     final IToken constToken = new Token(JJ_CODE_CONTENT_TYPE);
-    // la coloration syntaxique ne marche pas si l'on met ces règles pour le code !
+    // syntax coloring does not work if we put these rules for the code !!!
     // code rules
     //    final DefaultRule code = new DefaultRule(codeToken);
     //    final EOFRule eof = new EOFRule(codeToken);
@@ -108,7 +108,7 @@ public class JJDocumentProvider extends FileDocumentProvider {
   class DefaultRule implements IPredicateRule {
 
     /** The token for java code */
-    IToken fDefaultToken;
+    IToken jDefaultToken;
 
     /**
      * Standard constructor.
@@ -116,34 +116,37 @@ public class JJDocumentProvider extends FileDocumentProvider {
      * @param aDefaultToken The token for java code
      */
     public DefaultRule(final IToken aDefaultToken) {
-      fDefaultToken = aDefaultToken;
+      jDefaultToken = aDefaultToken;
     }
 
     /**
      * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
      */
-    public IToken evaluate(final ICharacterScanner scanner, @SuppressWarnings("unused") final boolean resume) {
+    @Override
+    public IToken evaluate(final ICharacterScanner aScanner, @SuppressWarnings("unused") final boolean aResume) {
 
-      return evaluate(scanner);
+      return evaluate(aScanner);
     }
 
     /**
      * @see IPredicateRule#getSuccessToken()
      */
+    @Override
     public IToken getSuccessToken() {
-      return fDefaultToken;
+      return jDefaultToken;
     }
 
     /**
      * @see IRule#evaluate(ICharacterScanner)
      */
-    public IToken evaluate(final ICharacterScanner scanner) {
-      final int ic = scanner.read();
+    @Override
+    public IToken evaluate(final ICharacterScanner aScanner) {
+      final int ic = aScanner.read();
       if (ic != ICharacterScanner.EOF) {
-        return fDefaultToken;
+        return jDefaultToken;
       }
       else {
-        scanner.unread();
+        aScanner.unread();
         return Token.UNDEFINED;
       }
     }
@@ -156,7 +159,7 @@ public class JJDocumentProvider extends FileDocumentProvider {
   class EOFRule implements IPredicateRule {
 
     /** The token for end of file */
-    IToken fEofToken;
+    IToken jEofToken;
 
     /**
      * Standard constructor.
@@ -164,34 +167,37 @@ public class JJDocumentProvider extends FileDocumentProvider {
      * @param aEofToken The token for end of file
      */
     public EOFRule(final IToken aEofToken) {
-      fEofToken = aEofToken;
+      jEofToken = aEofToken;
     }
 
     /**
      * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
      */
-    public IToken evaluate(final ICharacterScanner scanner, @SuppressWarnings("unused") final boolean resume) {
+    @Override
+    public IToken evaluate(final ICharacterScanner aScanner, @SuppressWarnings("unused") final boolean aResume) {
 
-      return evaluate(scanner);
+      return evaluate(aScanner);
     }
 
     /**
      * @see IPredicateRule#getSuccessToken()
      */
+    @Override
     public IToken getSuccessToken() {
-      return fEofToken;
+      return jEofToken;
     }
 
     /**
      * @see IRule#evaluate(ICharacterScanner)
      */
-    public IToken evaluate(final ICharacterScanner scanner) {
-      final int ic = scanner.read();
+    @Override
+    public IToken evaluate(final ICharacterScanner aScanner) {
+      final int ic = aScanner.read();
       if (ic == ICharacterScanner.EOF) {
-        return fEofToken;
+        return jEofToken;
       }
       else {
-        scanner.unread();
+        aScanner.unread();
         return Token.UNDEFINED;
       }
     }

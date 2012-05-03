@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.editors;
 
-
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -18,89 +17,106 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
  * LabelProvider for JJOutline.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public class JJLabelProvider extends LabelProvider {
 
   // MMa 11/2009 : javadoc and formatting revision ; added javacode and token_mgr_decls entries
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 08/2011 : added identifier and node_descriptor entries
 
   /** The images HashMap */
   private final HashMap<ImageDescriptor, Image> imgHashMap = new HashMap<ImageDescriptor, Image>(16);
   /** The option image descriptor */
-  ImageDescriptor                               fDesc_option;
+  ImageDescriptor                               jDesc_option;
   /** The parser image descriptor */
-  ImageDescriptor                               fDesc_parser;
+  ImageDescriptor                               jDesc_parser;
   /** The token image descriptor */
-  ImageDescriptor                               fDesc_token;
+  ImageDescriptor                               jDesc_token;
   /** The rule image descriptor */
-  ImageDescriptor                               fDesc_rule;
+  ImageDescriptor                               jDesc_rule;
   /** The expression image descriptor */
-  ImageDescriptor                               fDesc_expr;
+  ImageDescriptor                               jDesc_expr;
   /** The class image descriptor */
-  ImageDescriptor                               fDesc_class;
+  ImageDescriptor                               jDesc_class;
   /** The method image descriptor */
-  ImageDescriptor                               fDesc_method;
+  ImageDescriptor                               jDesc_method;
   /** The javacode image descriptor */
-  ImageDescriptor                               fDesc_javacode;
+  ImageDescriptor                               jDesc_javacode;
   /** The token_mgr_decls image descriptor */
-  ImageDescriptor                               fDesc_tmdecl;
+  ImageDescriptor                               jDesc_tmdecl;
+  /** The identifier or pounded identifier image descriptor */
+  ImageDescriptor                               jDesc_identifier;
+  /** The node_descriptor image descriptor */
+  ImageDescriptor                               jDesc_node_desc;
 
   /**
    * To Decorate the Outline View, simply Text and Image
    */
   public JJLabelProvider() {
     super();
-    fDesc_option = Activator.getImageDescriptor("jj_option.gif"); //$NON-NLS-1$
-    fDesc_parser = Activator.getImageDescriptor("jj_parser.gif"); //$NON-NLS-1$
-    fDesc_token = Activator.getImageDescriptor("jj_token.gif"); //$NON-NLS-1$
-    fDesc_rule = Activator.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
-    fDesc_expr = Activator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
-    fDesc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
-    fDesc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
-    fDesc_javacode = Activator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
-    fDesc_tmdecl = Activator.getImageDescriptor("jj_tmd.gif"); //$NON-NLS-1$
+    jDesc_option = Activator.getImageDescriptor("jj_option.gif"); //$NON-NLS-1$
+    jDesc_parser = Activator.getImageDescriptor("jj_parser.gif"); //$NON-NLS-1$
+    jDesc_token = Activator.getImageDescriptor("jj_token.gif"); //$NON-NLS-1$
+    jDesc_rule = Activator.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
+    jDesc_expr = Activator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
+    jDesc_class = Activator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
+    jDesc_method = Activator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
+    jDesc_javacode = Activator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
+    jDesc_tmdecl = Activator.getImageDescriptor("jj_tmd.gif"); //$NON-NLS-1$
+    jDesc_identifier = Activator.getImageDescriptor("jj_identifier.gif"); //$NON-NLS-1$
+    jDesc_node_desc = Activator.getImageDescriptor("jj_node.gif"); //$NON-NLS-1$
   }
 
   /**
    * @see ILabelProvider#getImage(Object)
    */
   @Override
-  public Image getImage(final Object anElement) {
-    ImageDescriptor desc = fDesc_expr;
-    final JJNode node = (JJNode) anElement;
-    if (node.getId() == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS) {
-      desc = fDesc_option;
+  public Image getImage(final Object aElement) {
+    ImageDescriptor desc = jDesc_expr;
+    final JJNode node = (JJNode) aElement;
+    final int id = node.getId();
+    if (id == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS
+        || id == JavaCCParserTreeConstants.JJTOPTION_BINDING) {
+      desc = jDesc_option;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTOPTION_BINDING) {
-      desc = fDesc_option;
+    else if (id == JavaCCParserTreeConstants.JJTPARSER_BEGIN) {
+      desc = jDesc_parser;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTPARSER_BEGIN) {
-      desc = fDesc_parser;
+    else if (id == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION) {
+      desc = jDesc_token;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION) {
-      desc = fDesc_token;
+    else if (id == JavaCCParserTreeConstants.JJTBNF_PRODUCTION) {
+      desc = jDesc_rule;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTBNF_PRODUCTION) {
-      desc = fDesc_rule;
+    else if (id == JavaCCParserTreeConstants.JJTREGEXPR_SPEC) {
+      desc = jDesc_expr;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTREGEXPR_SPEC) {
-      desc = fDesc_expr;
+    else if (id == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION) {
+      desc = jDesc_class;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTCLASSORINTERFACEDECLARATION) {
-      desc = fDesc_class;
+    else if (id == JavaCCParserTreeConstants.JJTMETHODDECLARATION) {
+      desc = jDesc_method;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTMETHODDECLARATION) {
-      desc = fDesc_method;
+    else if (id == JavaCCParserTreeConstants.JJTTOKEN_MANAGER_DECLS) {
+      desc = jDesc_tmdecl;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTTOKEN_MANAGER_DECLS) {
-      desc = fDesc_tmdecl;
+    else if (id == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION) {
+      desc = jDesc_javacode;
     }
-    else if (node.getId() == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION) {
-      desc = fDesc_javacode;
+    else if (id == JavaCCParserTreeConstants.JJTIDENT_BNF_DECL
+             || id == JavaCCParserTreeConstants.JJTIDENT_REG_EXPR_LABEL
+             || id == JavaCCParserTreeConstants.JJTIDENT_REG_EXPR_PRIVATE_LABEL
+             || id == JavaCCParserTreeConstants.JJTIDENT_USE) {
+      desc = jDesc_identifier;
+    }
+    else if (id == JavaCCParserTreeConstants.JJTNODE_DESC_BNF_DECL
+             || id == JavaCCParserTreeConstants.JJTNODE_DESC_IN_EXP
+             || id == JavaCCParserTreeConstants.JJTNODE_DESC_IN_METH) {
+      desc = jDesc_node_desc;
     }
     else {
-      //      System.out.println("JJLabelProvider Id "+node.getId());
+      //      System.out.println("JJLabelProvider Id "+id);
       return null;
     }
     // obtain the cached image corresponding to the descriptor
@@ -114,13 +130,13 @@ public class JJLabelProvider extends LabelProvider {
 
   /**
    * @see ILabelProvider#getText(Object)
-   * @see sf.eclipse.javacc.parser.JJNode#getLabeledName()
-   * @see sf.eclipse.javacc.parser.JJNode#addCaller(JJNode)
+   * @see sf.eclipse.javacc.parser.JJNode#getDisplayName()
+   * @see sf.eclipse.javacc.parser.JJNode#addCaller(JJNode, boolean)
    */
   @Override
   public String getText(final Object aElement) {
     if (aElement instanceof JJNode) {
-      return ((JJNode) aElement).getLabeledName();
+      return ((JJNode) aElement).getDisplayName();
     }
     return aElement.toString();
   }

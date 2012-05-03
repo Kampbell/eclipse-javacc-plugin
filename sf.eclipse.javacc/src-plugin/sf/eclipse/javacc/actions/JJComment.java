@@ -29,42 +29,45 @@ public class JJComment implements IEditorActionDelegate {
   // MMa 12/2009 : formatting and javadoc revision
 
   /** the current editor */
-  static JJEditor  fEditor;
+  static JJEditor  sJJEditor;
   /** the current document */
-  static IDocument fDocument;
+  static IDocument sDocument;
   /** comment prefix */
-  static String    fPrefix = "//"; //$NON-NLS-1$
+  static String    prefix = "//"; //$NON-NLS-1$
 
   /**
    * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
-    if (targetEditor == null) {
+  @Override
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+    if (aTargetEditor == null) {
       return;
     }
-    fEditor = (JJEditor) targetEditor;
-    fDocument = fEditor.getDocument();
+    sJJEditor = (JJEditor) aTargetEditor;
+    sDocument = sJJEditor.getDocument();
   }
 
   /**
    * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
    */
-  public void selectionChanged(@SuppressWarnings("unused") final IAction action,
-                               @SuppressWarnings("unused") final ISelection selection) {
+  @Override
+  public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
+                               @SuppressWarnings("unused") final ISelection aSelection) {
     // not used
   }
 
   /**
    * Performs Comment or UnComment.
    * 
-   * @param action the action
+   * @param aAction the action
    */
-  public void run(@SuppressWarnings("unused") final IAction action) {
-    if (fEditor == null) {
+  @Override
+  public void run(@SuppressWarnings("unused") final IAction aAction) {
+    if (sJJEditor == null) {
       return;
     }
 
-    final ISelection selection = fEditor.getSelectionProvider().getSelection();
+    final ISelection selection = sJJEditor.getSelectionProvider().getSelection();
     if (!(selection instanceof ITextSelection)) {
       return;
     }
@@ -84,43 +87,43 @@ public class JJComment implements IEditorActionDelegate {
       final StringBuffer strbuf = new StringBuffer(128);
 
       // if partial lines are selected, extend selection
-      final IRegion endLine = fDocument.getLineInformation(ts.getEndLine());
-      final IRegion startLine = fDocument.getLineInformation(ts.getStartLine());
-      ts = new TextSelection(fDocument, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
+      final IRegion endLine = sDocument.getLineInformation(ts.getEndLine());
+      final IRegion startLine = sDocument.getLineInformation(ts.getStartLine());
+      ts = new TextSelection(sDocument, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
                                                                - startLine.getOffset());
 
       int i;
-      final String endLineDelim = fDocument.getLegalLineDelimiters()[0];
+      final String endLineDelim = sDocument.getLegalLineDelimiters()[0];
       String line;
       // comment out each line
       for (i = ts.getStartLine(); i < ts.getEndLine(); i++) {
-        final IRegion reg = fDocument.getLineInformation(i);
-        line = fDocument.get(reg.getOffset(), reg.getLength());
+        final IRegion reg = sDocument.getLineInformation(i);
+        line = sDocument.get(reg.getOffset(), reg.getLength());
         if (doComment) {
-          strbuf.append(fPrefix);
+          strbuf.append(prefix);
           strbuf.append(line);
           strbuf.append(endLineDelim);
         }
         else {
-          strbuf.append(line.substring(line.indexOf(fPrefix) + 2));
+          strbuf.append(line.substring(line.indexOf(prefix) + 2));
           strbuf.append(endLineDelim);
         }
       }
       // last line doesn't need line delimiter
-      final IRegion reg = fDocument.getLineInformation(i);
-      line = fDocument.get(reg.getOffset(), reg.getLength());
+      final IRegion reg = sDocument.getLineInformation(i);
+      line = sDocument.get(reg.getOffset(), reg.getLength());
       if (doComment) {
         strbuf.append("//"); //$NON-NLS-1$
         strbuf.append(line);
       }
       else {
-        strbuf.append(line.substring(line.indexOf(fPrefix) + 2));
+        strbuf.append(line.substring(line.indexOf(prefix) + 2));
       }
       // replace the text with the modified version
-      fDocument.replace(startLine.getOffset(), ts.getLength(), strbuf.toString());
+      sDocument.replace(startLine.getOffset(), ts.getLength(), strbuf.toString());
 
       // reselect text... not exactly as JavaEditor... whole text here
-      fEditor.selectAndReveal(startLine.getOffset(), strbuf.length());
+      sJJEditor.selectAndReveal(startLine.getOffset(), strbuf.length());
       return;
 
     } catch (final Exception e) {
@@ -132,24 +135,24 @@ public class JJComment implements IEditorActionDelegate {
   /**
    * Determines whether each line is prefixed by one of the prefixes.
    * 
-   * @param ts the selected text
+   * @param aTextSelection the selected text
    * @return true if all lines of the selected text are commented, false otherwise
    */
-  static boolean isSelectionCommented(final ITextSelection ts) {
-    final int startLine = ts.getStartLine();
-    final int endLine = ts.getEndLine();
+  static boolean isSelectionCommented(final ITextSelection aTextSelection) {
+    final int startLine = aTextSelection.getStartLine();
+    final int endLine = aTextSelection.getEndLine();
     try {
       // check for occurrences of prefix in the given lines
       for (int i = startLine; i <= endLine; i++) {
-        final IRegion line = fDocument.getLineInformation(i);
-        final String text = fDocument.get(line.getOffset(), line.getLength());
-        final int found = text.indexOf(fPrefix, 0);
+        final IRegion line = sDocument.getLineInformation(i);
+        final String text = sDocument.get(line.getOffset(), line.getLength());
+        final int found = text.indexOf(prefix, 0);
         if (found == -1) {
           // found a line which is not commented
           return false;
         }
         // from the start of line up to the prefix
-        String s = fDocument.get(line.getOffset(), found);
+        String s = sDocument.get(line.getOffset(), found);
         s = s.trim();
         if (s.length() != 0) {
           // found a line which is not commented

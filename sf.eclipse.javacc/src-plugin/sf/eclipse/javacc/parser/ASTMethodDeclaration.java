@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTMethodDeclaration extends JJNode {
   public ASTMethodDeclaration(int id) {
     super(id);

@@ -14,7 +14,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  * Expand all folding Action.<br>
  * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.editorActions"><br>
- * <action label="%JavaCC_FoldingExpandAll" class="sf.eclipse.javacc.actions.JJFoldingExpand"
+ * <action label="%FoldingExpandAll" class="sf.eclipse.javacc.actions.JJFoldingExpand"
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
@@ -24,23 +24,26 @@ public class JJFoldingExpand implements IEditorActionDelegate {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** The current editor */
-  static JJEditor fEditor;
+  static JJEditor sJJEditor;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+  @Override
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
     if (aTargetEditor == null) {
       return;
     }
-    fEditor = (JJEditor) aTargetEditor;
+    sJJEditor = (JJEditor) aTargetEditor;
   }
 
   /**
    * @see IActionDelegate#run(IAction)
    */
+  @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
-    final ISourceViewer sourceViewer = fEditor.getSourceViewerPlease();
+    final ISourceViewer sourceViewer = sJJEditor.getSourceViewerPlease();
     if (sourceViewer instanceof ProjectionViewer) {
       final ProjectionViewer pv = (ProjectionViewer) sourceViewer;
       if (pv.isProjectionMode()) {
@@ -54,6 +57,7 @@ public class JJFoldingExpand implements IEditorActionDelegate {
   /**
    * @see IActionDelegate#selectionChanged(IAction, ISelection)
    */
+  @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
                                @SuppressWarnings("unused") final ISelection aSelection) {
     //  not used

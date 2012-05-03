@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.editors;
 
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,32 +35,39 @@ public class JJOutlinePage extends ContentOutlinePage {
   // MMa 11/2009 : javadoc and formatting revision ; changed sorting categories ;
   // ........... : added javacode and token_mgr_decls entries ; moved lexical states at the kind's right
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 08/2011 : added new expand buttons / actions
 
   /** The document to outline */
-  protected IDocument                        fDocument;
+  protected IDocument                        jDocument;
   /** The editor to outline */
-  protected JJEditor                         fEditor;
+  protected JJEditor                         jJJEditor;
   /** The label provider to use */
-  private JJLabelProvider                    fLabelProvider;
+  private JJLabelProvider                    jJJLabelProvider;
   /** The content provider to use */
-  private final JJOutlinePageContentProvider fContentProvider;
+  private final JJOutlinePageContentProvider jJJOutlinePageContentProvider;
+  /** The current expand level : {@link #LEVEL_ALL} : all, {@link #LEVEL_ONE} : first level, ... */
+  int                                        expandLevel = LEVEL_ONE;
+  /** The expand level corresponding to all */
+  private static final int                   LEVEL_ALL   = 0;
+  /** The expand level corresponding to everything collapsed = first level */
+  private static final int                   LEVEL_ONE   = 1;
 
   /**
-   * Inner class to compact the tree
+   * Inner class to collapse the tree.
    */
   public class CollapseAllAction extends Action {
 
     /** The tree viewer to use */
-    private final TreeViewer fTreeViewer;
+    private final TreeViewer jTreeViewer;
 
     /**
-     * Collapses all a branch.
+     * Collapses all.
      * 
-     * @param aViewer the tree viewer to use
+     * @param aTreeViewer the tree viewer to use
      */
-    public CollapseAllAction(final TreeViewer aViewer) {
+    public CollapseAllAction(final TreeViewer aTreeViewer) {
       super(Activator.getString("JJOutlinePage.Collapse_all_Action")); //$NON-NLS-1$
-      fTreeViewer = aViewer;
+      jTreeViewer = aTreeViewer;
       final ImageDescriptor desc = Activator.getImageDescriptor("jj_collapse.gif"); //$NON-NLS-1$
       setImageDescriptor(desc);
       setToolTipText(Activator.getString("JJOutlinePage.Collapse_all_Tooltip")); //$NON-NLS-1$
@@ -72,7 +78,72 @@ public class JJOutlinePage extends ContentOutlinePage {
      */
     @Override
     public void run() {
-      fTreeViewer.collapseAll();
+      jTreeViewer.collapseAll();
+      expandLevel = LEVEL_ONE;
+    }
+  }
+
+  /**
+   * Inner class to fully expand the tree.
+   */
+  public class ExpandAllAction extends Action {
+
+    /** The tree viewer to use */
+    private final TreeViewer jTreeViewer;
+
+    /**
+     * Expands all.
+     * 
+     * @param aTreeViewer the tree viewer to use
+     */
+    public ExpandAllAction(final TreeViewer aTreeViewer) {
+      super(Activator.getString("JJOutlinePage.Expand_all_Action")); //$NON-NLS-1$
+      jTreeViewer = aTreeViewer;
+      final ImageDescriptor desc = Activator.getImageDescriptor("jj_expand_a.gif"); //$NON-NLS-1$
+      setImageDescriptor(desc);
+      setToolTipText(Activator.getString("JJOutlinePage.Expand_all_Tooltip")); //$NON-NLS-1$
+    }
+
+    /**
+     * Runs the action (expand all).
+     */
+    @Override
+    public void run() {
+      jTreeViewer.expandAll();
+      expandLevel = LEVEL_ALL;
+    }
+  }
+
+  /**
+   * Inner class to expand to one level deeper the tree.
+   */
+  public class Expand1LevelAction extends Action {
+
+    /** The tree viewer to use */
+    private final TreeViewer jTreeViewer;
+
+    /**
+     * Expands to one level deeper.
+     * 
+     * @param aTreeViewer the tree viewer to use
+     */
+    public Expand1LevelAction(final TreeViewer aTreeViewer) {
+      super(Activator.getString("JJOutlinePage.Expand_1_Action")); //$NON-NLS-1$
+      jTreeViewer = aTreeViewer;
+      final ImageDescriptor desc = Activator.getImageDescriptor("jj_expand_1.gif"); //$NON-NLS-1$
+      setImageDescriptor(desc);
+      setToolTipText(Activator.getString("JJOutlinePage.Expand_1_Tooltip")); //$NON-NLS-1$
+    }
+
+    /**
+     * Runs the action (expand to one level deeper).
+     */
+    @Override
+    public void run() {
+      if (expandLevel != LEVEL_ALL) {
+        expandLevel++;
+      }
+      jTreeViewer.expandToLevel(expandLevel);
     }
   }
 
@@ -82,23 +153,23 @@ public class JJOutlinePage extends ContentOutlinePage {
   public class AlphabeticSortingAction extends Action {
 
     /** The viewer sorter to use */
-    private final ViewerSorter     sorter   = new JJOutlineSorter();
+    private final ViewerSorter     jViewerSorter   = new JJOutlineSorter();
     /** The structured viewer to use */
-    private final StructuredViewer fViewer;
+    private final StructuredViewer jStructuredViewer;
     /** The previous check status for the action */
     private boolean                oldState = false;
 
     /**
      * Constructor for LexicalSortingAction.
      * 
-     * @param aViewer the structured viewer to use
+     * @param aTreeViewer the structured viewer to use
      */
-    public AlphabeticSortingAction(final StructuredViewer aViewer) {
-      super(Activator.getString("JJOutlinePage.Sort_Action"), AS_RADIO_BUTTON); //$NON-NLS-1$
-      fViewer = aViewer;
+    public AlphabeticSortingAction(final StructuredViewer aTreeViewer) {
+      super(Activator.getString("JJOutlinePage.Sort_Action"), AS_RADIO_BUTTON);
+      jStructuredViewer = aTreeViewer;
       final ImageDescriptor desc = Activator.getImageDescriptor("jj_alphab_sort.gif"); //$NON-NLS-1$
       setImageDescriptor(desc);
-      setToolTipText(Activator.getString("JJOutlinePage.Sort_Tooltip")); //$NON-NLS-1$
+      setToolTipText(Activator.getString("JJOutlinePage.Sort_Tooltip"));
     }
 
     /**
@@ -107,11 +178,11 @@ public class JJOutlinePage extends ContentOutlinePage {
     @Override
     public void run() {
       if (oldState == true) {
-        fViewer.setSorter(null);
+        jStructuredViewer.setSorter(null);
         setChecked(false);
       }
       else {
-        fViewer.setSorter(sorter);
+        jStructuredViewer.setSorter(jViewerSorter);
       }
       oldState = isChecked();
     }
@@ -143,19 +214,20 @@ public class JJOutlinePage extends ContentOutlinePage {
     public int category(final Object aElement) {
       int category = 0;
       final JJNode node = (JJNode) aElement;
-      if (node.getId() == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS) {
+      final int ndId = node.getId();
+      if (ndId == JavaCCParserTreeConstants.JJTJAVACC_OPTIONS) {
         category = OPTIONS;
       }
-      else if (node.getId() == JavaCCParserTreeConstants.JJTPARSER_BEGIN) {
+      else if (ndId == JavaCCParserTreeConstants.JJTPARSER_BEGIN) {
         category = PARSER;
       }
-      else if (node.getId() == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION) {
+      else if (ndId == JavaCCParserTreeConstants.JJTJAVACODE_PRODUCTION) {
         category = JAVACODE;
       }
-      else if (node.getId() == JavaCCParserTreeConstants.JJTTOKEN_MANAGER_DECLS) {
+      else if (ndId == JavaCCParserTreeConstants.JJTTOKEN_MANAGER_DECLS) {
         category = TOKEN_MGR_DECLS;
       }
-      else if (node.getId() == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION) {
+      else if (ndId == JavaCCParserTreeConstants.JJTREGULAR_EXPR_PRODUCTION) {
         category = REGEXPR_KIND;
       }
       else {
@@ -189,12 +261,12 @@ public class JJOutlinePage extends ContentOutlinePage {
   /**
    * Creates a content outline page using the given editor (and a newly created content provider).
    * 
-   * @param aEditor the given editor
+   * @param aTextEditor the given editor
    */
-  public JJOutlinePage(final ITextEditor aEditor) {
+  public JJOutlinePage(final ITextEditor aTextEditor) {
     super();
-    fEditor = (JJEditor) aEditor;
-    fContentProvider = new JJOutlinePageContentProvider();
+    jJJEditor = (JJEditor) aTextEditor;
+    jJJOutlinePageContentProvider = new JJOutlinePageContentProvider();
   }
 
   /**
@@ -204,18 +276,20 @@ public class JJOutlinePage extends ContentOutlinePage {
   public void createControl(final Composite aParent) {
     super.createControl(aParent);
     final TreeViewer viewer = getTreeViewer();
-    viewer.setContentProvider(fContentProvider);
-    fLabelProvider = new JJLabelProvider();
-    viewer.setLabelProvider(fLabelProvider);
+    viewer.setContentProvider(jJJOutlinePageContentProvider);
+    jJJLabelProvider = new JJLabelProvider();
+    viewer.setLabelProvider(jJJLabelProvider);
     viewer.addSelectionChangedListener(this);
 
-    // Adds button to viewer's toolbar
+    // Add the buttons to viewer's toolbar
     final IToolBarManager mgr = getSite().getActionBars().getToolBarManager();
     mgr.add(new CollapseAllAction(viewer));
+    mgr.add(new Expand1LevelAction(viewer));
+    mgr.add(new ExpandAllAction(viewer));
     mgr.add(new AlphabeticSortingAction(viewer));
 
     // This updates the TreeViewer the first time
-    setInput(fDocument);
+    setInput(jDocument);
   }
 
   /**
@@ -226,7 +300,7 @@ public class JJOutlinePage extends ContentOutlinePage {
     super.selectionChanged(aEvent);
     final ISelection selection = aEvent.getSelection();
     if (selection.isEmpty()) {
-      fEditor.resetHighlightRange();
+      jJJEditor.resetHighlightRange();
     }
     else {
       final JJNode node = (JJNode) ((IStructuredSelection) selection).getFirstElement();
@@ -237,10 +311,10 @@ public class JJOutlinePage extends ContentOutlinePage {
   /**
    * Sets the given node as the new selection.
    * 
-   * @param aNode the selected node
+   * @param aJJNode the selected node
    */
-  public void selectionChanged(final JJNode aNode) {
-    fEditor.setSelection(aNode);
+  public void selectionChanged(final JJNode aJJNode) {
+    jJJEditor.setSelection(aJJNode);
   }
 
   /**
@@ -251,7 +325,7 @@ public class JJOutlinePage extends ContentOutlinePage {
    * @param aDoc the given document
    */
   public void setInput(final IDocument aDoc) {
-    fDocument = aDoc;
+    jDocument = aDoc;
     if (aDoc == null) {
       return;
     }
@@ -271,8 +345,8 @@ public class JJOutlinePage extends ContentOutlinePage {
       final Control control = viewer.getControl();
       if (control != null && !control.isDisposed()) {
         control.setRedraw(false);
-        if (this.fDocument != null) {
-          viewer.refresh(this.fDocument, true);
+        if (this.jDocument != null) {
+          viewer.refresh(this.jDocument, true);
         }
         control.setRedraw(true);
       }
@@ -284,9 +358,9 @@ public class JJOutlinePage extends ContentOutlinePage {
    */
   @Override
   public void dispose() {
-    if (fLabelProvider != null) {
-      fLabelProvider.dispose();
-      fLabelProvider = null;
+    if (jJJLabelProvider != null) {
+      jJJLabelProvider.dispose();
+      jJJLabelProvider = null;
     }
     super.dispose();
   }
@@ -295,6 +369,6 @@ public class JJOutlinePage extends ContentOutlinePage {
    * @return IContentProvider
    */
   public IContentProvider getContentProvider() {
-    return fContentProvider;
+    return jJJOutlinePageContentProvider;
   }
 }

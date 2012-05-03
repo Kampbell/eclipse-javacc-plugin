@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 /** Token Manager Error. */
+@SuppressWarnings("all")
 public class TokenMgrError extends Error
 {
 

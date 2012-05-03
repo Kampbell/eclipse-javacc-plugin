@@ -3,7 +3,7 @@
    <description url="http://eclipse-javacc.sourceforge.net">
       Sourceforge JavaCC Eclipse Plug-in Project site
    </description>
-   <feature url="features/sf.eclipse.javacc.feature_1.5.24.jar" id="sf.eclipse.javacc.feature" version="1.5.24">
+   <feature url="features/sf.eclipse.javacc.feature_1.5.25.jar" id="sf.eclipse.javacc.feature" version="1.5.25">
       <category name="JavaCC Eclipse Plug-in"/>
    </feature>
    <category-def name="JavaCC Eclipse Plug-in" label="JavaCC Eclipse Plug-in"/>

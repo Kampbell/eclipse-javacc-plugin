@@ -34,7 +34,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * underlined but... too complex, for me at least.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public class JJConsoleHyperlink implements IJJConstants {
 
@@ -42,27 +42,27 @@ public class JJConsoleHyperlink implements IJJConstants {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** The offset of text to mark */
-  private final int                       fOffset;
+  private final int                       jOffset;
   /** The length of text to mark */
-  private final int                       fLength;
+  private final int                       jLength;
   /** The target of Hyperlink */
-  private final IFile                     fFile;
+  private final IFile                     jFile;
   /** The line number in the target */
-  private final int                       fFileLine;
+  private final int                       jFileLine;
   /** The column number in the target */
-  private final int                       fFileCol;
+  private final int                       jFileCol;
   /** The "hand" cursor reference */
-  static Cursor                           fHandCursor;
+  static Cursor                           sHandCursor;
   /** The "busy" cursor reference */
-  static Cursor                           fBusyCursor;
+  static Cursor                           sBusyCursor;
   /** True if mouse has been clicked down */
-  static boolean                          fMouseDown;
+  static boolean                          sMouseDown;
   /** True if a drag event happened */
-  static boolean                          fDragEvent;
+  static boolean                          sDragEvent;
   /** The list of hyperlinks */
-  static private List<JJConsoleHyperlink> fLinksList = new ArrayList<JJConsoleHyperlink>();
+  static private List<JJConsoleHyperlink> sLinksList = new ArrayList<JJConsoleHyperlink>();
   /** The (single) StyledText console */
-  static private StyledText               fStyledText;
+  static private StyledText               sStyledText;
 
   /**
    * Constructs a hyperlink in the StyledText to the specified file.
@@ -75,11 +75,11 @@ public class JJConsoleHyperlink implements IJJConstants {
    */
   public JJConsoleHyperlink(final int aOffset, final int aLength, final IFile aFile, final int aLine,
                             final int aCol) {
-    fOffset = aOffset;
-    fLength = aLength;
-    fFile = aFile;
-    fFileLine = aLine;
-    fFileCol = aCol;
+    jOffset = aOffset;
+    jLength = aLength;
+    jFile = aFile;
+    jFileLine = aLine;
+    jFileCol = aCol;
     addStyleToStyledText();
   }
 
@@ -88,23 +88,22 @@ public class JJConsoleHyperlink implements IJJConstants {
    */
   public void linkActivated() {
     if (Activator.getDefault() == null) {
-      System.out.println("Link activated: " + fFile + " " + fFileLine + " at " + fOffset); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      System.out.println("Link activated: " + jFile + " " + jFileLine + " at " + jOffset); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       return;
     }
     final IWorkbenchWindow window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow();
     if (window != null) {
       final IWorkbenchPage page = window.getActivePage();
-      if (page != null && fFile != null) {
+      if (page != null && jFile != null) {
         try {
-          // TODO here for jtb we should show the generated file editor, not the jtb file editor !
-          final String edid = "jtb".equals(fFile.getFileExtension()) ? JTBEDITOR_ID : JJEDITOR_ID; //$NON-NLS-1$
-          final IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), edid, true);
+          final String edid = "jtb".equals(jFile.getFileExtension()) ? JTBEDITOR_ID : JJEDITOR_ID; //$NON-NLS-1$
+          final IEditorPart editorPart = page.openEditor(new FileEditorInput(jFile), edid, true);
           final ITextEditor textEditor = (ITextEditor) editorPart;
           final IEditorInput input = editorPart.getEditorInput();
           final IDocumentProvider provider = textEditor.getDocumentProvider();
           provider.connect(input);
           final IDocument doc = provider.getDocument(input);
-          final int offset = doc.getLineOffset(fFileLine) + fFileCol;
+          final int offset = doc.getLineOffset(jFileLine) + jFileCol;
           textEditor.selectAndReveal(offset, 0);
           provider.disconnect(input);
         } catch (final PartInitException e) {
@@ -122,23 +121,23 @@ public class JJConsoleHyperlink implements IJJConstants {
    * Sets the styledtext's link (blue) range.
    */
   private void addStyleToStyledText() {
-    //  Color fg = fStyledText.getDisplay().getSystemColor(SWT.COLOR_BLUE);
-    final Color fg = JFaceColors.getHyperlinkText(fStyledText.getDisplay());
-    final StyleRange style = new StyleRange(fOffset, fLength, fg, null);
+    //  Color color = fStyledText.getDisplay().getSystemColor(SWT.COLOR_BLUE);
+    final Color color = JFaceColors.getHyperlinkText(sStyledText.getDisplay());
+    final StyleRange style = new StyleRange(jOffset, jLength, color, null);
     style.fontStyle = SWT.BOLD;
     style.underline = true; // Only for Eclipse 3.1
-    fStyledText.setStyleRange(style);
+    sStyledText.setStyleRange(style);
     // keep a reference to self, in a List used when activated.
-    fLinksList.add(this);
+    sLinksList.add(this);
   }
 
   /**
-   * @param offset the offset in the text
+   * @param aOffset the offset in the text
    * @return true is this link is at the given character location, false otherwise
    */
-  boolean isLinkAt(final int offset) {
+  boolean isLinkAt(final int aOffset) {
     // check if there is a link at the offset
-    if (offset >= fOffset && offset < fOffset + fLength) {
+    if (aOffset >= jOffset && aOffset < jOffset + jLength) {
       return true;
     }
     return false;
@@ -150,7 +149,7 @@ public class JJConsoleHyperlink implements IJJConstants {
    */
   static JJConsoleHyperlink getLinkAt(final int aOffset) {
     JJConsoleHyperlink link;
-    final Iterator<JJConsoleHyperlink> iter = fLinksList.iterator();
+    final Iterator<JJConsoleHyperlink> iter = sLinksList.iterator();
     while (iter.hasNext()) {
       link = iter.next();
       if (link.isLinkAt(aOffset)) {
@@ -164,8 +163,8 @@ public class JJConsoleHyperlink implements IJJConstants {
    * Clears all links for the StyledText widget.
    */
   static public void clear() {
-    fLinksList.clear();
-    fStyledText.setStyleRanges(new StyleRange[0]);
+    sLinksList.clear();
+    sStyledText.setStyleRanges(new StyleRange[0]);
   }
 
   /**
@@ -175,12 +174,12 @@ public class JJConsoleHyperlink implements IJJConstants {
    */
   static public void setViewer(final StyledText aStyledText) {
     // keep a static reference to used StyledText
-    fStyledText = aStyledText;
+    sStyledText = aStyledText;
 
     // initialize cursors if not already done
-    if (fHandCursor == null) {
-      fHandCursor = aStyledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
-      fBusyCursor = aStyledText.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
+    if (sHandCursor == null) {
+      sHandCursor = aStyledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+      sBusyCursor = aStyledText.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
     }
     // add Listeners to the Viewer
     // activate link on a mouse click
@@ -191,26 +190,26 @@ public class JJConsoleHyperlink implements IJJConstants {
         if (e.button != 1) {
           return;
         }
-        fMouseDown = true;
+        sMouseDown = true;
       }
 
       @Override
       public void mouseUp(final MouseEvent event) {
-        fMouseDown = false;
+        sMouseDown = false;
         final StyledText stTxt = (StyledText) event.widget;
         final int offset = stTxt.getCaretOffset();
         final JJConsoleHyperlink link = getLinkAt(offset);
         if (link == null) {
           return;
         }
-        if (fDragEvent) {
-          fDragEvent = false;
+        if (sDragEvent) {
+          sDragEvent = false;
           if (link.isLinkAt(offset)) {
-            stTxt.setCursor(fHandCursor);
+            stTxt.setCursor(sHandCursor);
           }
         }
         else if (link.isLinkAt(offset)) {
-          stTxt.setCursor(fBusyCursor);
+          stTxt.setCursor(sBusyCursor);
           if (event.button == 1) {
             link.linkActivated();
             stTxt.setCursor(null);
@@ -221,19 +220,20 @@ public class JJConsoleHyperlink implements IJJConstants {
     // change to hand cursor on a link
     aStyledText.addMouseMoveListener(new MouseMoveListener() {
 
-      public void mouseMove(final MouseEvent event) {
-        final StyledText stTxt = (StyledText) event.widget;
+      @Override
+      public void mouseMove(final MouseEvent aEvent) {
+        final StyledText stTxt = (StyledText) aEvent.widget;
         // do not change cursor on drag events
-        if (fMouseDown) {
-          if (!fDragEvent) {
+        if (sMouseDown) {
+          if (!sDragEvent) {
             stTxt.setCursor(null);
           }
-          fDragEvent = true;
+          sDragEvent = true;
           return;
         }
         int offset = -1;
         try {
-          offset = stTxt.getOffsetAtLocation(new Point(event.x, event.y));
+          offset = stTxt.getOffsetAtLocation(new Point(aEvent.x, aEvent.y));
         } catch (final IllegalArgumentException ex) {
           // location is not over a character, leave as -1
         }
@@ -241,7 +241,7 @@ public class JJConsoleHyperlink implements IJJConstants {
           stTxt.setCursor(null);
         }
         else if (getLinkAt(offset) != null) {
-          stTxt.setCursor(fHandCursor);
+          stTxt.setCursor(sHandCursor);
         }
         else {
           stTxt.setCursor(null);

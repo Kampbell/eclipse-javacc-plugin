@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTparser_begin extends JJNode {
   public ASTparser_begin(int id) {
     super(id);

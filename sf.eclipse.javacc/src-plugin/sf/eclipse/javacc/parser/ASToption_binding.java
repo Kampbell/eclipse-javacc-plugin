@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASToption_binding extends JJNode {
   public ASToption_binding(int id) {
     super(id);

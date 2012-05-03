@@ -31,6 +31,7 @@ class JJAnnotationHover implements IAnnotationHover {
    * 
    * @see IAnnotationHover#getHoverInfo(ISourceViewer, int)
    */
+  @Override
   public String getHoverInfo(final ISourceViewer aSourceViewer, final int aLineNumber) {
     String hoverInfo = null;
     final IAnnotationModel model = aSourceViewer.getAnnotationModel();

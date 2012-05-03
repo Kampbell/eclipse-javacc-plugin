@@ -18,20 +18,20 @@ public class OptionSet {
   // ... ....... : fixed display true cases for void options
 
   /** The list of options */
-  protected ArrayList<Option> fList;
+  protected ArrayList<Option> list;
   /** The "equals" flag : true if an '=' is needed, false otherwise */
-  protected boolean           fNeedEqual;
+  protected boolean           needsEqual;
   /** The command line target (after the options) */
-  protected String            fTarget;
+  protected String            target;
 
   /**
    * Standard constructor.
    * 
-   * @param aNeedEqual true if an '=' is needed, false otherwise
+   * @param aNeedsEqual true if an '=' is needed, false otherwise
    */
-  public OptionSet(final boolean aNeedEqual) {
-    fList = new ArrayList<Option>();
-    fNeedEqual = aNeedEqual;
+  public OptionSet(final boolean aNeedsEqual) {
+    list = new ArrayList<Option>();
+    needsEqual = aNeedsEqual;
   }
 
   /**
@@ -39,7 +39,7 @@ public class OptionSet {
    */
   public String buildCmdLine() {
     final StringBuffer sb = new StringBuffer(32);
-    final int len = fList.size();
+    final int len = list.size();
     for (int i = 0; i < len; i++) {
       final String val = getValue(i);
       final String defVal = getDefaultValue(i);
@@ -55,7 +55,7 @@ public class OptionSet {
         // don't show anything for default values for non void options
         continue;
       }
-      sb.append(sb.length() == 0 ? "-" : " -").append(getName(i)).append(fNeedEqual ? "=" : " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      sb.append(sb.length() == 0 ? "-" : " -").append(getName(i)).append(needsEqual ? "=" : " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if (val.indexOf(' ') != -1) {
         // add enclosing quotes if val contains one or more spaces
         sb.append("\"").append(val).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -75,13 +75,13 @@ public class OptionSet {
   /**
    * Splits the command line arguments string into an array of strings.
    * 
-   * @param cmdLineArgs the command line arguments string
+   * @param aCmdLineArgs the command line arguments string
    * @return an array of strings
    */
-  public static String[] tokenize(final String cmdLineArgs) {
+  public static String[] tokenize(final String aCmdLineArgs) {
     int count = 0;
     String[] arguments = new String[10];
-    final StringTokenizer tokenizer = new StringTokenizer(cmdLineArgs, " \"", true); //$NON-NLS-1$
+    final StringTokenizer tokenizer = new StringTokenizer(aCmdLineArgs, " \"", true); //$NON-NLS-1$
     String token;
     boolean insideQuotes = false;
     boolean startNewToken = true;
@@ -139,11 +139,11 @@ public class OptionSet {
    */
   public void configuresFrom(final String aStr) {
 
-    final int nb = fList.size();
+    final int nb = list.size();
 
     // clears all void options
     for (int j = 0; j < nb; j++) {
-      final Option opt = fList.get(j);
+      final Option opt = list.get(j);
       if (opt.getType() == Option.VOID) {
         opt.setValue("false"); //$NON-NLS-1$
       }
@@ -161,7 +161,7 @@ public class OptionSet {
       final String toki = tok[i];
       final boolean startsWithDash = toki.startsWith("-"); //$NON-NLS-1$
       final int indexOfEqual = toki.indexOf("="); //$NON-NLS-1$ 
-      if (fNeedEqual) {
+      if (needsEqual) {
         // JavaCC / JJTree / JJDoc option : '-xx=yy' or '-xx = yy' or '-xx="yy zz"' or '-xx = "yy zz"'
         if (startsWithDash) {
           // '-xx'
@@ -174,7 +174,7 @@ public class OptionSet {
             }
             value = stripEnclosingQuotes(value);
             for (int j = 0; j < nb; j++) {
-              final Option opt = (fList.get(j));
+              final Option opt = (list.get(j));
               if (opt.getName().equals(name)) {
                 opt.setValue(value);
                 lastOpt = null;
@@ -186,7 +186,7 @@ public class OptionSet {
             // first '-xx' of '-xx = yy' or '-xx = "yy zz"' or '-xx =yy' or '-xx ="yy zz"'
             final String name = toki.substring(1);
             for (int j = 0; j < nb; j++) {
-              final Option opt = (fList.get(j));
+              final Option opt = (list.get(j));
               if (opt.getName().equals(name)) {
                 lastOpt = opt;
                 break;
@@ -213,7 +213,7 @@ public class OptionSet {
         if (startsWithDash) {
           final String name = toki.substring(1);
           for (int j = 0; j < nb; j++) {
-            final Option opt = fList.get(j);
+            final Option opt = list.get(j);
             if (opt.getName().equals(name)) {
               if (opt.getType() == Option.VOID) {
                 opt.setValue("true"); //$NON-NLS-1$
@@ -232,7 +232,7 @@ public class OptionSet {
           lastOpt.setValue(value);
         }
         else {
-          fTarget = toki;
+          target = toki;
         }
       }
     }
@@ -257,36 +257,36 @@ public class OptionSet {
    * Resets all options to their default values.
    */
   public void resetToDefaultValues() {
-    final int len = fList.size();
+    final int len = list.size();
     for (int i = 0; i < len; i++) {
       final Option opt = getOption(i);
       opt.setValue(opt.getDefaultValue());
     }
-    fTarget = null;
+    target = null;
   }
 
   /**
    * Adds an Option.
    * 
-   * @param option the option
+   * @param aOption the option
    */
-  public void add(final Option option) {
-    fList.add(option);
+  public void add(final Option aOption) {
+    list.add(aOption);
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option
    */
-  public Option getOption(final int i) {
-    return fList.get(i);
+  public Option getOption(final int aIndex) {
+    return list.get(aIndex);
   }
 
   /**
    * @return the total number of options.
    */
   public int getOptionsSize() {
-    return fList.size();
+    return list.size();
   }
 
   /**
@@ -295,7 +295,7 @@ public class OptionSet {
    */
   public int getOptionsSize(final int aType) {
     int n = 0;
-    final Iterator<Option> it = fList.iterator();
+    final Iterator<Option> it = list.iterator();
     while (it.hasNext()) {
       if (it.next().getType() == aType) {
         n++;
@@ -305,35 +305,35 @@ public class OptionSet {
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option type
    */
-  public int getType(final int i) {
-    return getOption(i).getType();
+  public int getType(final int aIndex) {
+    return getOption(aIndex).getType();
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option name
    */
-  public String getName(final int i) {
-    return getOption(i).getName();
+  public String getName(final int aIndex) {
+    return getOption(aIndex).getName();
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option name and description
    */
-  public String getNameAndDescription(final int i) {
-    return getOption(i).getNameAndDescription();
+  public String getNameAndDescription(final int aIndex) {
+    return getOption(aIndex).getNameAndDescription();
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option value (enclosed in extra quotes if contains one or more spaces)
    */
-  public String getValueInQuotes(final int i) {
-    String val = getOption(i).getValue();
+  public String getValueInQuotes(final int aIndex) {
+    String val = getOption(aIndex).getValue();
     if (val.indexOf(' ') != -1 /*&& !val.startsWith("\"")*/) {
       val = "\"" + val + "\""; //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -341,18 +341,18 @@ public class OptionSet {
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option value (no quotes added)
    */
-  public String getValue(final int i) {
-    return getOption(i).getValue();
+  public String getValue(final int aIndex) {
+    return getOption(aIndex).getValue();
   }
 
   /**
-   * @param i the option index
+   * @param aIndex the option index
    * @return the option default value
    */
-  public String getDefaultValue(final int i) {
-    return getOption(i).getDefaultValue();
+  public String getDefaultValue(final int aIndex) {
+    return getOption(aIndex).getDefaultValue();
   }
 }

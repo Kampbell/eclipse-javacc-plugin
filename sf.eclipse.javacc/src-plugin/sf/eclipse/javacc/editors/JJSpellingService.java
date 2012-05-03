@@ -44,58 +44,60 @@ public class JJSpellingService {
   public static final String     PREFERENCE_SPELLING_ENGINE  = "spellingEngine"; //$NON-NLS-1$
 
   /** Preferences */
-  private final IPreferenceStore fPreferences;
+  private final IPreferenceStore jPrefStore;
 
   /**
    * Initializes the spelling service with the given preferences.
    * 
-   * @param preferences the preferences
+   * @param aPrefStore the preferences
    * @see SpellingService#PREFERENCE_SPELLING_ENABLED
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
-  public JJSpellingService(final IPreferenceStore preferences) {
-    fPreferences = preferences;
+  public JJSpellingService(final IPreferenceStore aPrefStore) {
+    jPrefStore = aPrefStore;
   }
 
   /**
    * Checks the given document. Reports all found spelling problems to the collector. The spelling engine is
    * chosen based on the settings from the given preferences.
    * 
-   * @param document the document to check
-   * @param context the context
-   * @param collector the problem collector
-   * @param monitor the progress monitor, can be <code>null</code>
+   * @param aDoc the document to check
+   * @param aCtx the context
+   * @param aCollector the problem collector
+   * @param aMonitor the progress monitor, can be <code>null</code>
    */
-  public void check(final IDocument document, final SpellingContext context,
-                    final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
-    check(document, new IRegion[] {
-      new Region(0, document.getLength()) }, context, collector, monitor);
+  public void check(final IDocument aDoc, final SpellingContext aCtx,
+                    final ISpellingProblemCollector aCollector, final IProgressMonitor aMonitor) {
+    check(aDoc, new IRegion[] {
+      new Region(0, aDoc.getLength()) }, aCtx, aCollector, aMonitor);
   }
 
   /**
    * Checks the given regions in the given document. Reports all found spelling problems to the collector. The
    * spelling engine is chosen based on the settings from the given preferences.
    * 
-   * @param document the document to check
-   * @param regions the regions to check
-   * @param context the context
-   * @param collector the problem collector
-   * @param monitor the progress monitor, can be <code>null</code>
+   * @param aDoc the document to check
+   * @param aRegions the regions to check
+   * @param aCtx the context
+   * @param aCollector the problem collector
+   * @param aMonitor the progress monitor, can be <code>null</code>
    */
-  public void check(final IDocument document, final IRegion[] regions, final SpellingContext context,
-                    final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
+  public void check(final IDocument aDoc, final IRegion[] aRegions, final SpellingContext aCtx,
+                    final ISpellingProblemCollector aCollector, final IProgressMonitor aMonitor) {
     try {
-      collector.beginCollecting();
-      if (fPreferences.getBoolean(PREFERENCE_SPELLING_ENABLED)) {
+      aCollector.beginCollecting();
+      if (jPrefStore.getBoolean(PREFERENCE_SPELLING_ENABLED)) {
         try {
-          final ISpellingEngine engine = createEngine(fPreferences);
+          final ISpellingEngine engine = createEngine(jPrefStore);
           if (engine != null) {
             final ISafeRunnable runnable = new ISafeRunnable() {
 
+              @Override
               public void run() throws Exception {
-                engine.check(document, regions, context, collector, monitor);
+                engine.check(aDoc, aRegions, aCtx, aCollector, aMonitor);
               }
 
+              @Override
               public void handleException(@SuppressWarnings("unused") final Throwable x) {
                 // swallowed
               }
@@ -107,7 +109,7 @@ public class JJSpellingService {
         }
       }
     } finally {
-      collector.endCollecting();
+      aCollector.endCollecting();
     }
   }
 
@@ -141,19 +143,19 @@ public class JJSpellingService {
    * Returns the descriptor of the active spelling engine based on the value of the
    * <code>PREFERENCE_SPELLING_ENGINE</code> preference in the given preferences.
    * 
-   * @param preferences the preferences
+   * @param aPrefStore the preferences
    * @return the descriptor of the active spelling engine or <code>null</code> if none could be found
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
-  public SpellingEngineDescriptor getActiveSpellingEngineDescriptor(final IPreferenceStore preferences) {
+  public SpellingEngineDescriptor getActiveSpellingEngineDescriptor(final IPreferenceStore aPrefStore) {
     final SpellingEngineRegistry registry = getSpellingEngineRegistry();
     if (registry == null) {
       return null;
     }
 
     SpellingEngineDescriptor descriptor = null;
-    if (preferences.contains(PREFERENCE_SPELLING_ENGINE)) {
-      descriptor = registry.getDescriptor(preferences.getString(PREFERENCE_SPELLING_ENGINE));
+    if (aPrefStore.contains(PREFERENCE_SPELLING_ENGINE)) {
+      descriptor = registry.getDescriptor(aPrefStore.getString(PREFERENCE_SPELLING_ENGINE));
     }
     if (descriptor == null) {
       descriptor = registry.getDefaultDescriptor();
@@ -165,13 +167,13 @@ public class JJSpellingService {
    * Creates a spelling engine based on the value of the <code>PREFERENCE_SPELLING_ENGINE</code> preference in
    * the given preferences.
    * 
-   * @param preferences the preferences
+   * @param aPrefStore the preferences
    * @return the created spelling engine or <code>null</code> if none could be created
    * @throws CoreException if the creation failed
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
-  private ISpellingEngine createEngine(final IPreferenceStore preferences) throws CoreException {
-    final SpellingEngineDescriptor descriptor = getActiveSpellingEngineDescriptor(preferences);
+  private ISpellingEngine createEngine(final IPreferenceStore aPrefStore) throws CoreException {
+    final SpellingEngineDescriptor descriptor = getActiveSpellingEngineDescriptor(aPrefStore);
     if (descriptor != null) {
       return descriptor.createEngine();
       //      return new JJSpellingEngine();

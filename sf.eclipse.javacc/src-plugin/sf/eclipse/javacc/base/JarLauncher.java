@@ -70,13 +70,13 @@ public class JarLauncher {
   /**
    * Launches a command with Runtime.exec().
    * 
-   * @param cmd the command to launch
-   * @param dir the directory where to launch the command
+   * @param aCmd the command to launch
+   * @param aDir the directory where to launch the command
    */
-  public static void launch(final String[] cmd, final String dir) {
+  public static void launch(final String[] aCmd, final String aDir) {
     final Runtime rt = Runtime.getRuntime();
     try {
-      final Process proc = rt.exec(cmd, null, new File(dir));
+      final Process proc = rt.exec(aCmd, null, new File(aDir));
       final StreamGobbler err = new StreamGobbler(proc.getErrorStream());
       final StreamGobbler out = new StreamGobbler(proc.getInputStream());
       err.start();
@@ -90,84 +90,84 @@ public class JarLauncher {
   /**
    * Launches JavaCC with Runtime.exec(), i.e. launches java -classpath javaccJarFile JavaCC args.
    * 
-   * @param javaccJarFile the jar file to use
-   * @param args the arguments
-   * @param dir the directory where to launch the command
+   * @param aJavaCCJarFile the jar file to use
+   * @param aArgs the arguments
+   * @param aDir the directory where to launch the command
    */
-  public static void launchJavaCC(final String javaccJarFile, final String[] args, final String dir) {
-    final String[] cmd = new String[args.length + 4];
+  public static void launchJavaCC(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
+    final String[] cmd = new String[aArgs.length + 4];
     cmd[0] = javaCmd;
     cmd[1] = "-classpath"; //$NON-NLS-1$
-    cmd[2] = javaccJarFile;
+    cmd[2] = aJavaCCJarFile;
     cmd[3] = "javacc"; //$NON-NLS-1$
-    for (int i = 0; i < args.length; i++) {
-      cmd[i + 4] = args[i];
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[i + 4] = aArgs[i];
     }
-    launch(cmd, dir);
+    launch(cmd, aDir);
   }
 
   /**
    * Launches JJTree with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJTree args.
    * 
-   * @param javaccJarFile the jar file to use
-   * @param args the arguments
-   * @param dir the directory where to launch the command
+   * @param aJavaCCJarFile the jar file to use
+   * @param aArgs the arguments
+   * @param aDir the directory where to launch the command
    */
-  public static void launchJJTree(final String javaccJarFile, final String[] args, final String dir) {
-    final String[] cmd = new String[args.length + 4];
+  public static void launchJJTree(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
+    final String[] cmd = new String[aArgs.length + 4];
     cmd[0] = javaCmd;
     cmd[1] = "-classpath"; //$NON-NLS-1$
-    cmd[2] = javaccJarFile;
+    cmd[2] = aJavaCCJarFile;
     cmd[3] = "jjtree"; //$NON-NLS-1$
-    for (int i = 0; i < args.length; i++) {
-      cmd[i + 4] = args[i];
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[i + 4] = aArgs[i];
     }
-    launch(cmd, dir);
+    launch(cmd, aDir);
   }
 
   /**
    * Launches JJDoc with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJDoc args.
    * 
-   * @param javaccJarFile the jar file to use
-   * @param args the arguments
-   * @param dir the directory where to launch the command
+   * @param aJavaCCJarFile the jar file to use
+   * @param aArgs the arguments
+   * @param aDir the directory where to launch the command
    */
-  public static void launchJJDoc(final String javaccJarFile, final String[] args, final String dir) {
-    final String[] cmd = new String[args.length + 4];
+  public static void launchJJDoc(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
+    final String[] cmd = new String[aArgs.length + 4];
     cmd[0] = javaCmd;
     cmd[1] = "-classpath"; //$NON-NLS-1$
-    cmd[2] = javaccJarFile;
+    cmd[2] = aJavaCCJarFile;
     cmd[3] = "jjdoc"; //$NON-NLS-1$
-    for (int i = 0; i < args.length; i++) {
-      cmd[i + 4] = args[i];
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[i + 4] = aArgs[i];
     }
-    launch(cmd, dir);
+    launch(cmd, aDir);
   }
 
   /**
    * Launches JTB with Runtime.exec(), i.e. launches java -jar javaccJarFile args.
    * 
-   * @param jarfile the jar file to use
-   * @param args the arguments
-   * @param dir the directory where to launch the command
+   * @param aJarfile the jar file to use
+   * @param aArgs the arguments
+   * @param aDir the directory where to launch the command
    */
-  public static void launchJTB(final String jarfile, final String[] args, final String dir) {
-    final String[] cmd = new String[args.length + 3];
+  public static void launchJTB(final String aJarfile, final String[] aArgs, final String aDir) {
+    final String[] cmd = new String[aArgs.length + 3];
     cmd[0] = javaCmd;
     cmd[1] = "-jar"; //$NON-NLS-1$
-    cmd[2] = jarfile;
-    for (int i = 0; i < args.length; i++) {
-      cmd[i + 3] = args[i];
+    cmd[2] = aJarfile;
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[i + 3] = aArgs[i];
     }
-    launch(cmd, dir);
+    launch(cmd, aDir);
   }
 
   /**
    * Unit test.
    * 
-   * @param args the arguments
+   * @param aArgs the arguments
    */
-  public static void main(final String args[]) {
+  public static void main(final String aArgs[]) {
     final String jarFile = "C:/java/javacc-3.0/bin/lib/javacc.jar"; //$NON-NLS-1$
     launchJavaCC(jarFile, new String[] {
       "C:/java/javacc-3.0/examples/JavaCCGrammar/JavaCC.jj" }, //$NON-NLS-1$

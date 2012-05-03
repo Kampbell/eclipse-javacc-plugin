@@ -20,36 +20,36 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcilingStrategy {
 
   /** The current JJ editor */
-  private final JJEditor              fJJEditor;
+  private final JJEditor              jJJEditor;
   /** The current JJ Reconciling Strategy */
-  private final JJReconcilingStrategy fJJStrategy;
+  private final JJReconcilingStrategy jJJStrategy;
 
   /**
    * Creates a new Java reconciling strategy.
    * 
-   * @param aViewer the source viewer
-   * @param aEditor the editor of the strategy's reconciler
+   * @param aSourceViewer the source viewer
+   * @param aJJEditor the editor of the strategy's reconciler
    * @param aDocumentPartitioning the document partitioning this strategy uses for configuration
    */
-  public UnusedJJCompositeReconcilingStrategy(final ISourceViewer aViewer, final JJEditor aEditor,
+  public UnusedJJCompositeReconcilingStrategy(final ISourceViewer aSourceViewer, final JJEditor aJJEditor,
                                         final String aDocumentPartitioning) {
-    super(aViewer, aEditor, aDocumentPartitioning);
-    fJJEditor = aEditor;
-    fJJStrategy = new JJReconcilingStrategy(aViewer, aEditor);
+    super(aSourceViewer, aJJEditor, aDocumentPartitioning);
+    jJJEditor = aJJEditor;
+    jJJStrategy = new JJReconcilingStrategy(aSourceViewer, aJJEditor);
     setReconcilingStrategies(new IReconcilingStrategy[] {
-        fJJStrategy, new JavaSpellingReconcileStrategy(aViewer, aEditor) });
+        jJJStrategy, new JavaSpellingReconcileStrategy(aSourceViewer, aJJEditor) });
   }
 
   /**
    * @return the problem requestor for the editor's input element
    */
   private IProblemRequestorExtension getProblemRequestorExtension() {
-    IDocumentProvider p = fJJEditor.getDocumentProvider();
+    IDocumentProvider p = jJJEditor.getDocumentProvider();
     if (p == null) {
       // work around for https://bugs.eclipse.org/bugs/show_bug.cgi?id=51522
       p = JavaPlugin.getDefault().getCompilationUnitDocumentProvider();
     }
-    final IAnnotationModel m = p.getAnnotationModel(fJJEditor.getEditorInput());
+    final IAnnotationModel m = p.getAnnotationModel(jJJEditor.getEditorInput());
     if (m instanceof IProblemRequestorExtension) {
       return (IProblemRequestorExtension) m;
     }

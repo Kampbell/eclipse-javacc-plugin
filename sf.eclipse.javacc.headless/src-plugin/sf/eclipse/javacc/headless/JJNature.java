@@ -30,6 +30,7 @@ public class JJNature implements IProjectNature, IJJConstants {
    * 
    * @see IProjectNature#getProject()
    */
+  @Override
   public IProject getProject() {
     return fProject;
   }
@@ -39,18 +40,19 @@ public class JJNature implements IProjectNature, IJJConstants {
    * 
    * @see IProjectNature#setProject(IProject)
    */
+  @Override
   public void setProject(final IProject aProject) {
     fProject = aProject;
   }
 
   /**
-   * Configures this nature for its project. This is called by the workspace when natures are added to the
-   * project using <code>IProject.setDescription</code> and should not be called directly by clients.<br>
-   * The nature extension id is added to the list of natures before this method is called, and need not be
-   * added here.
+   * Configures this nature for its project. This is called by the workspace when natures are added to the project using
+   * <code>IProject.setDescription</code> and should not be called directly by clients.<br>
+   * The nature extension id is added to the list of natures before this method is called, and need not be added here.
    * 
    * @see IProjectNature#configure()
    */
+  @Override
   public void configure() throws CoreException {
     final IProjectDescription desc = fProject.getDescription();
     final ICommand[] cmds = desc.getBuildSpec();
@@ -75,13 +77,13 @@ public class JJNature implements IProjectNature, IJJConstants {
   }
 
   /**
-   * De-configures this nature for its project. This is called by the workspace when natures are removed from
-   * the project using <code>IProject.setDescription</code> and should not be called directly by clients.<br>
-   * The nature extension id is removed from the list of natures before this method is called, and need not be
-   * removed here.
+   * De-configures this nature for its project. This is called by the workspace when natures are removed from the project using
+   * <code>IProject.setDescription</code> and should not be called directly by clients.<br>
+   * The nature extension id is removed from the list of natures before this method is called, and need not be removed here.
    * 
    * @see IProjectNature#deconfigure()
    */
+  @Override
   public void deconfigure() throws CoreException {
     final IProjectDescription desc = fProject.getDescription();
     final ICommand[] cmds = desc.getBuildSpec();

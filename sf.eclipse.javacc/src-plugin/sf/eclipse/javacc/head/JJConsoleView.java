@@ -39,23 +39,21 @@ import sf.eclipse.javacc.base.IJJConstants;
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010
  */
-public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
+public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole {
 
   // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
   // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix ; change on problems finding, markers & hyperlinks reporting
   // TODO check JJDoc problems handling
 
   /** The viewer control */
-  static StyledText                   fViewer;
+  static StyledText                   sStyledText;
   /** The print stream */
-  private final ByteArrayOutputStream fBaos;
+  private final ByteArrayOutputStream jBaos;
   /** The last parsed position, from where to start when retrieving text from viewer */
-  private int                         fLastOffset;
+  private int                         jLastOffset;
   /** Pattern to extract lines in JavaCC / JJTree compilation messages */
   final static Pattern                jjLinePattern    = Pattern.compile("^.*", Pattern.MULTILINE);                                                     //$NON-NLS-1$
   /** Pattern to find the Error or Warning or ParseException message in JavaCC / JJTree compilation messages */
-  //  final static Pattern                jjPbPattern      = Pattern
-  //                                                                .compile("([eE]rror[: ]|[wW]arning[^s]|ParseException:|Encountered\\s\")(.+)");         //$NON-NLS-1$
   final static Pattern                jjPbPattern      = Pattern
                                                                 .compile("(^Error:|^Warning:|^Error parsing input|Lexical error|Encountered[: ])(.+)$"); //$NON-NLS-1$
   /** Pattern to find the line and column numbers in a JavaCC / JJTree compilation messages line */
@@ -69,8 +67,8 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
   /**
    * Standard constructor. Allocates the print stream.
    */
-  public JJConsole() {
-    fBaos = new ByteArrayOutputStream(1024);
+  public JJConsoleView() {
+    jBaos = new ByteArrayOutputStream(1024);
   }
 
   /**
@@ -81,10 +79,10 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
    */
   @Override
   public void createPartControl(final Composite aParent) {
-    fViewer = new StyledText(aParent, SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
-    fViewer.setEditable(false);
-    fViewer.setDoubleClickEnabled(true);
-    JJConsoleHyperlink.setViewer(fViewer);
+    sStyledText = new StyledText(aParent, SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
+    sStyledText.setEditable(false);
+    sStyledText.setDoubleClickEnabled(true);
+    JJConsoleHyperlink.setViewer(sStyledText);
 
     // add a "Clear console" button on the toolbar
     final Action clear = new Action(Activator.getString("JJConsole.Clear")) { //$NON-NLS-1$
@@ -103,7 +101,7 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
 
       @Override
       public void run() {
-        fViewer.copy();
+        sStyledText.copy();
       }
     };
 
@@ -113,10 +111,10 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
 
     // add context menu
     final MenuManager menuMgr = new MenuManager();
-    final Menu popup = menuMgr.createContextMenu(fViewer);
+    final Menu popup = menuMgr.createContextMenu(sStyledText);
     menuMgr.add(clear);
     menuMgr.add(copy);
-    fViewer.setMenu(popup);
+    sStyledText.setMenu(popup);
   }
 
   /**
@@ -124,33 +122,36 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
    */
   @Override
   public void setFocus() {
-    fViewer.setFocus();
+    sStyledText.setFocus();
   }
 
   /**
    * Clears the console.
    */
+  @Override
   public void clear() {
-    if (Thread.currentThread() != fViewer.getDisplay().getThread()) {
+    if (Thread.currentThread() != sStyledText.getDisplay().getThread()) {
       Display.getDefault().syncExec(new Runnable() {
 
+        @Override
         public void run() {
           clear();
         }
       });
     }
     else {
-      fViewer.setText(""); //$NON-NLS-1$
+      sStyledText.setText(""); //$NON-NLS-1$
       JJConsoleHyperlink.clear();
-      fLastOffset = 0;
+      jLastOffset = 0;
     }
   }
 
   /**
    * @return the PrintStream to write to Console
    */
+  @Override
   public PrintStream getPrintStream() {
-    return new PrintStream(fBaos);
+    return new PrintStream(jBaos);
   }
 
   /**
@@ -158,6 +159,7 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
    * 
    * @param aStr the text to print
    */
+  @Override
   public void print(final String aStr) {
     addText(aStr, true);
   }
@@ -168,9 +170,10 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
    * @param aFile the file to report on
    * @param aIsJtb true if file is a JTB one, false otherwise.
    */
+  @Override
   public void endReport(final IFile aFile, final boolean aIsJtb) {
-    addText(fBaos.toString(), false);
-    fBaos.reset();
+    addText(jBaos.toString(), false);
+    jBaos.reset();
     // add markers and hyperlinks
     markErrors(aFile, aIsJtb);
   }
@@ -183,9 +186,10 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
    */
   void addText(final String aTxt, final boolean aIsRed) {
     // test before updating the viewer
-    if (Thread.currentThread() != fViewer.getDisplay().getThread()) {
+    if (Thread.currentThread() != sStyledText.getDisplay().getThread()) {
       Display.getDefault().asyncExec(new Runnable() {
 
+        @Override
         public void run() {
           addText(aTxt, aIsRed);
         }
@@ -193,17 +197,17 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
     }
     // update the viewer
     else {
-      final int offset = fViewer.getCharCount();
-      fViewer.append(aTxt);
+      final int offset = sStyledText.getCharCount();
+      sStyledText.append(aTxt);
       if (aIsRed) {
-        final Color fg = fViewer.getDisplay().getSystemColor(SWT.COLOR_DARK_RED);
+        final Color fg = sStyledText.getDisplay().getSystemColor(SWT.COLOR_DARK_RED);
         final StyleRange style = new StyleRange(offset, aTxt.length() - 1, fg, null);
         style.fontStyle = SWT.BOLD;
-        fViewer.setStyleRange(style);
+        sStyledText.setStyleRange(style);
       }
       // scroll to end
-      fViewer.setCaretOffset(fViewer.getCharCount());
-      fViewer.showSelection();
+      sStyledText.setCaretOffset(sStyledText.getCharCount());
+      sStyledText.showSelection();
     }
   }
 
@@ -216,9 +220,10 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
    */
   void markErrors(final IFile aFile, final boolean aIsJtb) {
     // test before retrieving text from the viewer
-    if (Thread.currentThread() != fViewer.getDisplay().getThread()) {
+    if (Thread.currentThread() != sStyledText.getDisplay().getThread()) {
       Display.getDefault().asyncExec(new Runnable() {
 
+        @Override
         public void run() {
           markErrors(aFile, aIsJtb);
         }
@@ -226,9 +231,9 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
     }
     else {
       // get the text from the console
-      final StyledTextContent c = fViewer.getContent();
-      final int count = fViewer.getCharCount();
-      final String txt = c.getTextRange(fLastOffset, count - fLastOffset);
+      final StyledTextContent c = sStyledText.getContent();
+      final int count = sStyledText.getCharCount();
+      final String txt = c.getTextRange(jLastOffset, count - jLastOffset);
 
       String report; // the message for the marker
       int line, col; // location of the faulty text in editor
@@ -310,7 +315,7 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
             }
             else {
               // create an hyperlink pointing to the beginning of the file
-              new JJConsoleHyperlink(fLastOffset + offset, length, aFile, 0, 0);
+              new JJConsoleHyperlink(jLastOffset + offset, length, aFile, 0, 0);
               IMarker topMarker = severity == IMarker.SEVERITY_WARNING ? topWarningMarker : topErrorMarker;
               // mark the problem at the beginning of the editor
               if (topMarker == null) {
@@ -370,7 +375,7 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
 
             // add an hyperlink in the console
             // the first line is 1 for JavaCC and 0 for Eclipse editors
-            new JJConsoleHyperlink(fLastOffset + start + offset, length, newFile, line - 1, col - 1);
+            new JJConsoleHyperlink(jLastOffset + start + offset, length, newFile, line - 1, col - 1);
           } // do this for all occurrences on the line.
           while (lineColumnMatcher.find());
         }
@@ -398,12 +403,12 @@ public class JJConsole extends ViewPart implements IJJConstants, IJJConsole {
           // add the problem in the editor problems 
           markProblem(aFile, report, severity, line);
           // the first line is 1 for JTB and 0 for Eclipse editors
-          new JJConsoleHyperlink(fLastOffset + offset, length, aFile, line - 1, col - 1);
+          new JJConsoleHyperlink(jLastOffset + offset, length, aFile, line - 1, col - 1);
         }
       }
 
       // next time the text shall be parsed from lastOffset 
-      fLastOffset = count;
+      jLastOffset = count;
     }
   }
 

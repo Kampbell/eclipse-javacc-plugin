@@ -11,7 +11,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * Content provider for the Call hierarchy view provides callers or callees depending of fMode
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public class JJCallHierarchyContentProvider implements ITreeContentProvider {
 
@@ -19,24 +19,24 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** True for callers mode, false for callees mode */
-  private int fMode;
+  private int mode;
 
   /**
-   * Set the mode, can be JJCallHierarchy.CALLERS or JJCallHierarchy.CALLEES getChildren() then uses
-   * node.getCallers() or node.getCallees()
+   * Set the mode, can be {@link JJCallHierarchyView#CALLERS} or {@link JJCallHierarchyView#CALLEES}.
    * 
-   * @param mode the mode to set
+   * @param aMode the mode to set
    */
-  public void setCallMode(final int mode) {
-    fMode = mode;
+  public void setCallMode(final int aMode) {
+    mode = aMode;
   }
 
   /**
    * @see ITreeContentProvider#getChildren(Object)
    */
-  public Object[] getChildren(final Object obj) {
-    final JJNode node = (JJNode) obj;
-    if (fMode == JJCallHierarchy.CALLERS) {
+  @Override
+  public Object[] getChildren(final Object aObj) {
+    final JJNode node = (JJNode) aObj;
+    if (mode == JJCallHierarchyView.CALLERS) {
       return node.getCallers();
     }
     else {
@@ -47,23 +47,26 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   /**
    * @see IStructuredContentProvider#getElements(Object)
    */
-  public Object[] getElements(final Object inputElement) {
-    return getChildren(inputElement);
+  @Override
+  public Object[] getElements(final Object aInputElement) {
+    return getChildren(aInputElement);
   }
 
   /**
    * @see ITreeContentProvider#getParent(Object)
    */
-  public Object getParent(final Object obj) {
-    return obj == null ? null : ((JJNode) obj).jjtGetParent();
+  @Override
+  public Object getParent(final Object aObj) {
+    return aObj == null ? null : ((JJNode) aObj).jjtGetParent();
   }
 
   /**
    * @see ITreeContentProvider#hasChildren(Object)
    */
-  public boolean hasChildren(final Object obj) {
-    final JJNode node = (JJNode) obj;
-    if (fMode == JJCallHierarchy.CALLERS) {
+  @Override
+  public boolean hasChildren(final Object aObj) {
+    final JJNode node = (JJNode) aObj;
+    if (mode == JJCallHierarchyView.CALLERS) {
       return node.getCallers().length != 0;
     }
     else {
@@ -74,6 +77,7 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   /**
    * @see IContentProvider#dispose()
    */
+  @Override
   public void dispose() {
     // nothing done here
   }
@@ -81,9 +85,10 @@ public class JJCallHierarchyContentProvider implements ITreeContentProvider {
   /**
    * @see IContentProvider#inputChanged(Viewer, Object, Object)
    */
-  public void inputChanged(@SuppressWarnings("unused") final Viewer viewer,
-                           @SuppressWarnings("unused") final Object oldInput,
-                           @SuppressWarnings("unused") final Object newInput) {
+  @Override
+  public void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
+                           @SuppressWarnings("unused") final Object aOldInput,
+                           @SuppressWarnings("unused") final Object aNewInput) {
     // nothing done here
   }
 }

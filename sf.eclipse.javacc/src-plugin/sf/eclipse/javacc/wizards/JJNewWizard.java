@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.wizards;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,11 +49,13 @@ import sf.eclipse.javacc.head.JJNature;
 public class JJNewWizard extends NewElementWizard implements IJJConstants {
 
   // MMa 04/2009 : formatting revision ; changed jar names
-  // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files ; removed SHOW_CONSOLE pref
+  // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files ;
+  //             : removed SHOW_CONSOLE preference ;
   // ... ....... : fixed NPE and added different checks for SR 2956977
+  // MMa 02/2011 : fixed bug #3157017 (incorrect package handling)
 
   /** The wizard page */
-  private JJNewJJPage fPage;
+  private JJNewJJPage jPage;
 
   /**
    * Constructor for JJNewWizard. Provides the image, DialogSetting, and title.
@@ -72,9 +73,9 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
    */
   @Override
   public void addPages() {
-    fPage = new JJNewJJPage();
-    addPage(fPage);
-    fPage.init(getSelection());
+    jPage = new JJNewJJPage();
+    addPage(jPage);
+    jPage.init(getSelection());
   }
 
   /**
@@ -82,14 +83,15 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
    */
   @Override
   public boolean performFinish() {
-    final String srcdir = fPage.getSrcDir();
-    final String packageName = fPage.getPackage();
-    final String fileName = fPage.getFileNameWithoutExtension();
-    final String extension = fPage.getExtension();
-    final boolean staticFlag = fPage.getStaticFalg();
+    final String srcdir = jPage.getSrcDir();
+    final String packageName = jPage.getPackage();
+    final String fileName = jPage.getFileNameWithoutExtension();
+    final String extension = jPage.getExtension();
+    final boolean staticFlag = jPage.getStaticFalg();
 
     final IRunnableWithProgress op = new IRunnableWithProgress() {
 
+      @Override
       public void run(final IProgressMonitor monitor) {
         try {
           doFinish(srcdir, fileName, extension, packageName, staticFlag, monitor);
@@ -187,6 +189,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     }
     wizShell.getDisplay().asyncExec(new Runnable() {
 
+      @Override
       public void run() {
         final IWorkbenchWindow iww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (iww == null) {
@@ -219,12 +222,6 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     if (prefs == null) {
       Activator.logErr(Activator.getString("JJNewWizard.Prefs_null")); //$NON-NLS-1$ 
       return;
-    }
-
-    // tricky part: JTB needs -p packageName, only if there is a package name
-    if (".jtb".equals(aExtension) && aPackageName != null && !"".equals(aPackageName)) //$NON-NLS-1$
-    {
-      prefs.put(JTB_OPTIONS, "-p " + aPackageName); //$NON-NLS-1$
     }
 
     if (prefs.get(RUNTIME_JJJAR, null) == null) {
@@ -320,8 +317,9 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     }
     else {
       // add lines
-      str = str.replaceAll("<\\?package_declare\\?>", "package " + aPackageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      str = str.replaceAll("<\\?package\\?>", aPackageName + "."); //$NON-NLS-1$ //$NON-NLS-2$
+      str = str.replaceAll("<\\?package_decl\\?>", "package " + aPackageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      str = str.replaceAll("<\\?package_dot\\?>", aPackageName + "."); //$NON-NLS-1$ 
+      str = str.replaceAll("<\\?package\\?>", aPackageName); //$NON-NLS-1$ 
     }
 
     // return InputStream

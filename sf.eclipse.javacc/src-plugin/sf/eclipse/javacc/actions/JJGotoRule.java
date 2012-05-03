@@ -3,6 +3,7 @@ package sf.eclipse.javacc.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -11,6 +12,7 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
 import sf.eclipse.javacc.editors.JJEditor;
+import sf.eclipse.javacc.editors.JJHyperlinkDetector;
 import sf.eclipse.javacc.parser.JJNode;
 
 /**
@@ -25,25 +27,28 @@ import sf.eclipse.javacc.parser.JJNode;
 public class JJGotoRule implements IEditorActionDelegate {
 
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 08/2011 : enhanced Call Hierarchy view (changed selection for JJTree node descriptors)
 
   /** the current editor */
-  static JJEditor fEditor;
+  static JJEditor sJJEditor;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
-    if (targetEditor == null) {
+  @Override
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+    if (aTargetEditor == null) {
       return;
     }
-    fEditor = (JJEditor) targetEditor;
+    sJJEditor = (JJEditor) aTargetEditor;
   }
 
   /**
    * @see IActionDelegate#selectionChanged(IAction, ISelection)
    */
-  public void selectionChanged(@SuppressWarnings("unused") final IAction action,
-                               @SuppressWarnings("unused") final ISelection selection) {
+  @Override
+  public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
+                               @SuppressWarnings("unused") final ISelection aSelection) {
     // not used. The selection is got inside run()
   }
 
@@ -54,37 +59,40 @@ public class JJGotoRule implements IEditorActionDelegate {
    * @param aAction the action
    * @see sf.eclipse.javacc.actions.JJGotoRule#run(IAction a)
    */
+  @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
-    ITextSelection selection = (ITextSelection) fEditor.getSelectionProvider().getSelection();
+    ITextSelection selection = (ITextSelection) sJJEditor.getSelectionProvider().getSelection();
     if (selection.getLength() <= 0) {
       selection = selectWord(selection);
     }
     if (!selection.isEmpty()) {
       final String text = selection.getText();
       // search matching node in AST
-      final JJNode node = fEditor.getJJElements().getNonIdentifierNode(text);
+      final JJNode node = sJJEditor.getJJElements().getNonIdentNorNodeDesc(text);
       if (node != null) {
-        fEditor.setSelection(node);
+        sJJEditor.setSelection(node);
       }
     }
   }
 
   /**
-   * Extends Selection to a whole Word static because also used by JJOpenCallHierarchy
+   * Extends Selection to a whole Word (including the '#' for private label identifiers and JJTree node
+   * descriptors).<br>
+   * Quite like {@link JJHyperlinkDetector#selectWord(IDocument, IRegion)}.
    * 
    * @param aSelection the selection
    * @return the extended selection
    */
   static public ITextSelection selectWord(final ITextSelection aSelection) {
     final int caretPos = aSelection.getOffset();
-    final IDocument doc = fEditor.getDocument();
+    final IDocument doc = sJJEditor.getDocument();
     int startPos, endPos;
     try {
       int pos = caretPos;
       char c;
       while (pos >= 0) {
         c = doc.getChar(pos);
-        if (!Character.isJavaIdentifierPart(c)) {
+        if (!Character.isJavaIdentifierPart(c) && c != '#') {
           break;
         }
         pos--;

@@ -1,7 +1,13 @@
 package sf.eclipse.javacc.head;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +46,7 @@ import sf.eclipse.javacc.base.OptionSet;
  * <extension point="org.eclipse.core.resources.builders">.<br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 public class JJBuilder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor,
                                                         IJJConstants {
@@ -48,11 +54,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   // MMa 11/2009 : javadoc and formatting revision ; changed jar names
   // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
   // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix
+  // MMa 08/2011 : added mark generated files as derived option RFE 3314103
+  // MMa 08/2011 : added modification of the JavaCC file generated checksum if suppress warning option set
+  // MMa 08/2011 : fixed use of deprecated method in Eclipse 3.6+
 
   /** The java project (needed to test if the resource is on class path) */
-  protected IJavaProject fJavaProject;
+  protected IJavaProject jJavaProject;
   /** The output folder */
-  protected IPath        fOutputFolder;
+  protected IPath        jOutputFolder;
 
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>.
@@ -66,13 +75,12 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @exception CoreException if this build fails.
    * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
    */
-  @SuppressWarnings("unchecked")
   @Override
-  protected IProject[] build(final int aKind, @SuppressWarnings("unused") final Map aArgs,
-                             final IProgressMonitor aMonitor) throws CoreException {
+  protected IProject[] build(final int aKind, @SuppressWarnings({
+      "unused", "rawtypes" }) final Map aArgs, final IProgressMonitor aMonitor) throws CoreException {
     // these are Constants on the build
-    fJavaProject = JavaCore.create(getProject());
-    fOutputFolder = fJavaProject.getOutputLocation().removeFirstSegments(1);
+    jJavaProject = JavaCore.create(getProject());
+    jOutputFolder = jJavaProject.getOutputLocation().removeFirstSegments(1);
     // clear only once
     clearConsole();
 
@@ -162,6 +170,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @exception CoreException if this visit fails
    * @see IResourceDeltaVisitor#visit(IResourceDelta)
    */
+  @Override
   public boolean visit(final IResourceDelta aDelta) throws CoreException {
     return visit(aDelta.getResource());
   }
@@ -175,20 +184,21 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @exception CoreException if this visit fails
    * @see IResourceVisitor#visit(IResource)
    */
+  @Override
   public boolean visit(final IResource aRes) throws CoreException {
     if (aRes == null) {
       return false;
     }
     final String ext = aRes.getFileExtension();
-    final boolean okToCompile = fJavaProject.isOnClasspath(aRes) && ext != null
+    final boolean okToCompile = jJavaProject.isOnClasspath(aRes) && ext != null
                                 && (ext.equals("jj") || ext.equals("jjt") || ext.equals("jtb")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     if (okToCompile) {
       CompileResource(aRes);
     }
 
     // this prevents traversing output directories
-    final boolean isOut = aRes.getProjectRelativePath().equals(fOutputFolder)
-                          & fOutputFolder.toString().length() != 0;
+    final boolean isOut = aRes.getProjectRelativePath().equals(jOutputFolder)
+                          & jOutputFolder.toString().length() != 0;
     return !isOut;
   }
 
@@ -298,15 +308,22 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     }
   }
 
+  /** The platform line separator */
+  private static final String  LS               = System.getProperty("line.separator");                 //$NON-NLS-1$
   /**
    * Regular expression to capture the class declaration, including potential @SuppressWarnings annotations.<br>
    * (?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)? : non capturing group, once or not at all.<br>
    * ((?:public )?(?:final )?(?:class|interface|enum)) : capturing group $1.<br>
-   * This group $1 will by prefixed by <code>@SuppressWarnings(\"all\")\n</code> and will replace the whole string (group $0).
+   * This group $1 will by prefixed by a new line containing <code>@SuppressWarnings(\"all\")</code> and will
+   * replace the whole string (group $0).
    */
-  private final static String  regEx   = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?((?:public )?(?:final )?(?:class|interface|enum))"; //NON-NLS-1$ //$NON-NLS-1$
+  private final static String  classDeclRegExpr = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?" //$NON-NLS-1$
+                                                  + "((?:public )?(?:final )?(?:class|interface|enum))"; //NON-NLS-1$ //$NON-NLS-1$
   /** Corresponding pattern */
-  private final static Pattern pattern = Pattern.compile(regEx, Pattern.MULTILINE | Pattern.DOTALL);
+  private final static Pattern classDeclPatt    = Pattern.compile(classDeclRegExpr, Pattern.MULTILINE
+                                                                                    | Pattern.DOTALL);
+  /** Replacement string */
+  private final static String  replStr          = "@SuppressWarnings(\"all\")" + LS + "$1";             //$NON-NLS-1$ //$NON-NLS-2$
 
   /**
    * Marks the generated file as derived and suppresses the @SuppressWarnings annotation according to
@@ -315,16 +332,14 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @param aProject the IProject the resource belongs to
    * @param aRelPath the path to the grammar file (relative to the project) this resource is generated from
    * @param aRes the IResource to mark and to correct
-   * @throws CoreException see {@link IResource#setDerived(boolean)}
+   * @throws CoreException see {@link IResource#setDerived(boolean, IProgressMonitor)}
    */
-  public static void markAndAlter(@SuppressWarnings("unused") final IProject aProject, final String aRelPath,
-                                  final IResource aRes) throws CoreException {
+  public static void markAndAlter(final IProject aProject, final String aRelPath, final IResource aRes)
+                                                                                                       throws CoreException {
+    final IEclipsePreferences prefs = new ProjectScope(aProject).getNode(IJJConstants.ID);
     // mark
-    aRes.setDerived(true);
+    aRes.setDerived("true".equals(prefs.get(MARK_GEN_FILES_AS_DERIVED, "true")), null); //$NON-NLS-1$ //$NON-NLS-2$
     aRes.setPersistentProperty(QN_GENERATED_FILE, aRelPath);
-
-    final IEclipsePreferences prefs = new ProjectScope(aRes.getProject()).getNode(IJJConstants.ID);
-
     // alter if set in preferences
     final IJavaElement element = (IJavaElement) aRes.getAdapter(IJavaElement.class);
     if ("true".equals(prefs.get(SUPPRESS_WARNINGS, "false")) //$NON-NLS-1$ //$NON-NLS-2$
@@ -332,11 +347,104 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
       // direct access to the file !
       final String filename = ((IFile) aRes).getLocation().toOSString();
       final String source = FileUtils.getFileContents(filename);
-      final Matcher matcher = pattern.matcher(source);
+      final Matcher matcher = classDeclPatt.matcher(source);
       if (matcher.find()) {
-        final String newsource = matcher.replaceFirst("@SuppressWarnings(\"all\")\n$1"); //$NON-NLS-1$
+        // add the annotation
+        String newsource = matcher.replaceFirst(replStr);
+        final int ix = newsource.indexOf(MD5_LINE_PART_1);
+        if (ix >= 0) {
+          // strip the old checksum line
+          newsource = newsource.substring(0, ix);
+          // compute the new checksum and add a new checksum line
+          newsource = newsource + MD5_LINE_PART_1 + computeCheksum(newsource) + MD5_LINE_PART_2 + LS;
+        }
+        // save the file
         FileUtils.saveFileContents(filename, newsource);
       }
+    }
+  }
+
+  /**
+   * Recomputes the last line checksum.<br>
+   * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.java OutputFile() constructor.
+   * 
+   * @param aSource the source to modify
+   * @return the modified source
+   */
+  private static String computeCheksum(final String aSource) {
+    MessageDigest digest;
+    try {
+      digest = MessageDigest.getInstance(MD5_ALGO);
+    } catch (final NoSuchAlgorithmException e) {
+      Activator.logErr("No MD5 implementation (should not happen as JavaCC should use it also)"); //$NON-NLS-1$
+      // do not modify the source
+      return aSource;
+    }
+    final DigestOutputStream dios = new DigestOutputStream(new NullOutputStream(), digest);
+    final PrintWriter pw = new PrintWriter(dios);
+    pw.print(aSource);
+    pw.close();
+    final byte[] digestStr = dios.getMessageDigest().digest();
+    final String newChecksum = toHexString(digestStr);
+    return newChecksum;
+  }
+
+  /**
+   * Converts a byte array into an hexadecimal string.
+   * 
+   * @param aBytes a byte array
+   * @return the hexadecimal string
+   */
+  private static final String toHexString(final byte[] aBytes) {
+    final StringBuffer sb = new StringBuffer(32);
+    for (int i = 0; i < aBytes.length; i++) {
+      final byte b = aBytes[i];
+      sb.append(HEX_DIGITS[(b & 0xF0) >> 4]).append(HEX_DIGITS[b & 0x0F]);
+    }
+    return sb.toString();
+  }
+
+  /** Array of hexadecimal characters */
+  private final static char[] HEX_DIGITS      = new char[] {
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+  /**
+   * The algorithm used by JavaCC to compute the checksum.<br>
+   * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile constant
+   */
+  private static final String MD5_ALGO        = "MD5";                                 //$NON-NLS-1$
+  /**
+   * Beginning of the checksum line generated by JavaCC.<br>
+   * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.MD5_LINE_PART_1
+   */
+  private static final String MD5_LINE_PART_1 = "/* JavaCC - OriginalChecksum=";       //$NON-NLS-1$
+  /**
+   * End of the checksum line generated by JavaCC.<br>
+   * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.MD5_LINE_PART_2
+   */
+  private static final String MD5_LINE_PART_2 = " (do not edit this line) */";         //$NON-NLS-1$
+
+  /**
+   * A custom OutputStream.
+   */
+  static class NullOutputStream extends OutputStream {
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unused")
+    @Override
+    public void write(final byte[] arg0, final int arg1, final int arg2) throws IOException {
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unused")
+    @Override
+    public void write(final byte[] arg0) throws IOException {
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unused")
+    @Override
+    public void write(final int arg0) throws IOException {
     }
   }
 
@@ -491,30 +599,30 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     try {
       final IEclipsePreferences prefs = new ProjectScope(aFile.getProject()).getNode(IJJConstants.ID);
       // use the path in preferences
-      if (extension.equals("jj") || extension.equals("jjt")) {//$NON-NLS-1$ //$NON-NLS-2$
+      if (extension.equals("jj") || extension.equals("jjt")) {//$NON-NLS-1$ //$NON-NLS-2$ 
         jarfile = prefs.get(RUNTIME_JJJAR, ""); //$NON-NLS-1$
       }
       else if (extension.equals("jtb")) { //$NON-NLS-1$
         jarfile = prefs.get(RUNTIME_JTBJAR, ""); //$NON-NLS-1$
       }
       // else we use the jar in the plug-in
-      if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$
+      if (jarfile == null || jarfile.equals("") || jarfile.startsWith("-")) {//$NON-NLS-1$ //$NON-NLS-2$ 
         final URL installURL = Activator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
         // Eclipse 3.2 way. Only available in Eclipse 3.2
         final URL resolvedURL = org.eclipse.core.runtime.FileLocator.resolve(installURL);
         final String home = org.eclipse.core.runtime.FileLocator.toFileURL(resolvedURL).getFile();
 
         // same for both
-        if (extension.equals("jj") || extension.equals("jjt")) {//$NON-NLS-1$ //$NON-NLS-2$
+        if (extension.equals("jj") || extension.equals("jjt")) { //$NON-NLS-1$ //$NON-NLS-2$
           jarfile = home + JAVACC_JAR_NAME;
         }
-        else if (extension.equals("jtb")) {//$NON-NLS-1$
+        else if (extension.equals("jtb")) { //$NON-NLS-1$
           jarfile = home + JTB_JAR_NAME;
         }
       }
       try {
-        jarfile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(jarfile,
-                                                                                                    true);
+        jarfile = VariablesPlugin.getDefault().getStringVariableManager()
+                                 .performStringSubstitution(jarfile, true);
         // on Windows this returns "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
         // as this will fails, we remove the first "/" if there is ":" at index 2
         if (jarfile.startsWith("/") && jarfile.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -536,7 +644,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * @exception CoreException if this clear fails
    */
   protected void clearConsole() throws CoreException {
-    final boolean clr = ("true").equals(new ProjectScope(getProject()).getNode(IJJConstants.ID).get(CLEAR_CONSOLE, "false")); //$NON-NLS-1$ //$NON-NLS-2$
+    final String str = new ProjectScope(getProject()).getNode(IJJConstants.ID).get(CLEAR_CONSOLE, "false"); //$NON-NLS-1$
+    final boolean clr = ("true").equals(str); //$NON-NLS-1$
     if (clr) {
       final IJJConsole console = Activator.getConsole();
       if (console != null) {

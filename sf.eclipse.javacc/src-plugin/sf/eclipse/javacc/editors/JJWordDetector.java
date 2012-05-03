@@ -13,20 +13,22 @@ public class JJWordDetector implements IWordDetector {
   // MMa 03/2010 : created by extracting from other classes
 
   /**
-   * @param c the character
-   * @return true if c can be the first character of a java identifier, false otherwise
+   * @param aCh the character
+   * @return true if aCh can be the first character of a java identifier, false otherwise
    * @see IWordDetector#isWordStart
    */
-  public boolean isWordStart(final char c) {
-    return Character.isJavaIdentifierStart(c);
+  @Override
+  public boolean isWordStart(final char aCh) {
+    return Character.isJavaIdentifierStart(aCh);
   }
 
   /**
-   * @param c the character
-   * @return true if c can be a character of a java identifier, false otherwise
+   * @param aCh the character
+   * @return true if aCh can be a character of a java identifier, false otherwise
    * @see IWordDetector#isWordPart
    */
-  public boolean isWordPart(final char c) {
-    return Character.isJavaIdentifierPart(c);
+  @Override
+  public boolean isWordPart(final char aCh) {
+    return Character.isJavaIdentifierPart(aCh);
   }
 }

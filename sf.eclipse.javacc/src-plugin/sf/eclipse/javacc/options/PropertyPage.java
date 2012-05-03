@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.options;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -20,7 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.dialogs.PropertyPage;
 
 import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.head.Activator;
@@ -32,40 +30,41 @@ import sf.eclipse.javacc.head.Activator;
  * <extension point="org.eclipse.ui.propertyPages">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
-public class JJPropertyPage extends PropertyPage implements IJJConstants {
+public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements IJJConstants {
 
   // MMa 02/2010 : formatting and javadoc revision ; added some properties
+  // MMa 08/2011 : renamed
 
   /** The current folder */
-  protected TabFolder        fFolder;
+  protected TabFolder     jFolder;
   /** The current global item */
-  protected TabItem          fJJRunItem;
+  protected TabItem       jJJRunItem;
   /** The current JavaCC item */
-  protected TabItem          fJJCCItem;
+  protected TabItem       jJJCCItem;
   /** The current JJTree item */
-  protected TabItem          fJJTreeItem;
+  protected TabItem       jJJTreeItem;
   /** The current JJDoc item */
-  protected TabItem          fJJDocItem;
+  protected TabItem       jJJDocItem;
   /** The current JTB item */
-  protected TabItem          fJTBItem;
+  protected TabItem       jJTBItem;
 
   /** The current global options */
-  protected RuntimeOptions fJJRunOptions;
+  protected GlobalOptions jJJRunOptions;
   /** The current JavaCC options */
-  protected JavaccOptions      fJJCCOptions;
+  protected JavaCCOptions jJJCCOptions;
   /** The current JJTree options */
-  protected JjtreeOptions    fJJTreeOptions;
+  protected JJTreeOptions jJJTreeOptions;
   /** The current JJDoc options */
-  protected JjdocOptions     fJJDocOptions;
+  protected JJDocOptions  jJJDocOptions;
   /** The current JTB options */
-  protected JtbOptions       fJTBOptions;
+  protected JTBOptions    jJTBOptions;
 
   /** The current resource */
-  protected IResource        fResource;
+  protected IResource     jResource;
   /** The current project */
-  protected IProject         fProject;
+  protected IProject      jProject;
 
   /**
    * Creates contents (called from plugin.xml).
@@ -75,23 +74,23 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
   @Override
   protected Control createContents(final Composite aParent) {
     // create a TabFolder
-    fFolder = new TabFolder(aParent, SWT.NONE);
+    jFolder = new TabFolder(aParent, SWT.NONE);
     final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-    fFolder.setLayoutData(gd);
+    jFolder.setLayoutData(gd);
 
     // read configuration from IResource
     final IAdaptable ia = getElement();
-    fResource = (IResource) ia.getAdapter(IResource.class);
-    if (fResource != null) {
-      fProject = fResource.getProject();
+    jResource = (IResource) ia.getAdapter(IResource.class);
+    if (jResource != null) {
+      jProject = jResource.getProject();
     }
 
     // JJRuntime always present
-    fJJRunOptions = new RuntimeOptions(fFolder, fResource);
-    fJJRunItem = new TabItem(fFolder, SWT.NONE);
-    fJJRunItem.setText(Activator.getString("JJPropertyPage.Runtime_options_Tab")); //$NON-NLS-1$
-    fJJRunItem.setToolTipText(Activator.getString("JJPropertyPage.Runtime_options_Tab_TT")); //$NON-NLS-1$
-    fJJRunItem.setControl(fJJRunOptions);
+    jJJRunOptions = new GlobalOptions(jFolder, jResource);
+    jJJRunItem = new TabItem(jFolder, SWT.NONE);
+    jJJRunItem.setText(Activator.getString("PropertyPage.Runtime_options_Tab")); //$NON-NLS-1$
+    jJJRunItem.setToolTipText(Activator.getString("PropertyPage.Runtime_options_Tab_TT")); //$NON-NLS-1$
+    jJJRunItem.setControl(jJJRunOptions);
 
     // for project
     addJCCTab();
@@ -100,7 +99,7 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
     addJTBTab();
 
     // test a property to see if in need of a first initialization
-    final IScopeContext projectScope = new ProjectScope(fProject);
+    final IScopeContext projectScope = new ProjectScope(jProject);
     final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
     if (prefs.get(RUNTIME_JJJAR, null) == null) {
       performDefaults();
@@ -115,44 +114,44 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    * Adds the JavaCC preference tab.
    */
   protected void addJCCTab() {
-    fJJCCOptions = new JavaccOptions(fFolder, fResource);
-    fJJCCItem = new TabItem(fFolder, SWT.NONE);
-    fJJCCItem.setText(Activator.getString("JJPropertyPage.JavaCC_options_Tab")); //$NON-NLS-1$
-    fJJCCItem.setToolTipText(Activator.getString("JJPropertyPage.JavaCC_options_Tab_TT")); //$NON-NLS-1$
-    fJJCCItem.setControl(fJJCCOptions);
+    jJJCCOptions = new JavaCCOptions(jFolder, jResource);
+    jJJCCItem = new TabItem(jFolder, SWT.NONE);
+    jJJCCItem.setText(Activator.getString("PropertyPage.JavaCC_options_Tab")); //$NON-NLS-1$
+    jJJCCItem.setToolTipText(Activator.getString("PropertyPage.JavaCC_options_Tab_TT")); //$NON-NLS-1$
+    jJJCCItem.setControl(jJJCCOptions);
   }
 
   /**
    * Adds the JJTree preference tab.
    */
   protected void addJTreeTab() {
-    fJJTreeOptions = new JjtreeOptions(fFolder, fResource);
-    fJJTreeItem = new TabItem(fFolder, SWT.NONE);
-    fJJTreeItem.setText(Activator.getString("JJPropertyPage.JJTree_options_Tab")); //$NON-NLS-1$
-    fJJTreeItem.setToolTipText(Activator.getString("JJPropertyPage.JJTree_options_Tab_TT")); //$NON-NLS-1$
-    fJJTreeItem.setControl(fJJTreeOptions);
+    jJJTreeOptions = new JJTreeOptions(jFolder, jResource);
+    jJJTreeItem = new TabItem(jFolder, SWT.NONE);
+    jJJTreeItem.setText(Activator.getString("PropertyPage.JJTree_options_Tab")); //$NON-NLS-1$
+    jJJTreeItem.setToolTipText(Activator.getString("PropertyPage.JJTree_options_Tab_TT")); //$NON-NLS-1$
+    jJJTreeItem.setControl(jJJTreeOptions);
   }
 
   /**
    * Adds the JJDoc preference tab.
    */
   protected void addJDocTab() {
-    fJJDocOptions = new JjdocOptions(fFolder, fResource);
-    fJJDocItem = new TabItem(fFolder, SWT.NONE);
-    fJJDocItem.setText(Activator.getString("JJPropertyPage.JJDoc_options_Tab")); //$NON-NLS-1$
-    fJJDocItem.setToolTipText(Activator.getString("JJPropertyPage.JJDoc_options_Tab_TT")); //$NON-NLS-1$
-    fJJDocItem.setControl(fJJDocOptions);
+    jJJDocOptions = new JJDocOptions(jFolder, jResource);
+    jJJDocItem = new TabItem(jFolder, SWT.NONE);
+    jJJDocItem.setText(Activator.getString("PropertyPage.JJDoc_options_Tab")); //$NON-NLS-1$
+    jJJDocItem.setToolTipText(Activator.getString("PropertyPage.JJDoc_options_Tab_TT")); //$NON-NLS-1$
+    jJJDocItem.setControl(jJJDocOptions);
   }
 
   /**
    * Adds the JTB preference tab.
    */
   protected void addJTBTab() {
-    fJTBOptions = new JtbOptions(fFolder, fResource);
-    fJTBItem = new TabItem(fFolder, SWT.NONE);
-    fJTBItem.setText(Activator.getString("JJPropertyPage.JTB_options_Tab")); //$NON-NLS-1$
-    fJTBItem.setToolTipText(Activator.getString("JJPropertyPage.JTB_options_Tab_TT")); //$NON-NLS-1$
-    fJTBItem.setControl(fJTBOptions);
+    jJTBOptions = new JTBOptions(jFolder, jResource);
+    jJTBItem = new TabItem(jFolder, SWT.NONE);
+    jJTBItem.setText(Activator.getString("PropertyPage.JTB_options_Tab")); //$NON-NLS-1$
+    jJTBItem.setToolTipText(Activator.getString("PropertyPage.JTB_options_Tab_TT")); //$NON-NLS-1$
+    jJTBItem.setControl(jJTBOptions);
   }
 
   /**
@@ -160,22 +159,20 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
    */
   @Override
   public boolean performOk() {
-    fJJRunOptions.performOk();
-    fJJCCOptions.performOk();
-    fJJTreeOptions.performOk();
-    fJJDocOptions.performOk();
-    fJTBOptions.performOk();
+    jJJRunOptions.performOk();
+    jJJCCOptions.performOk();
+    jJJTreeOptions.performOk();
+    jJJDocOptions.performOk();
+    jJTBOptions.performOk();
 
     // ask for rebuild (should check if an option has changed)
     try {
-      final IProject proj = fResource.getProject();
+      final IProject proj = jResource.getProject();
       final MessageDialog dialog = new MessageDialog(
                                                      getShell(),
-                                                     Activator
-                                                              .getString("JJPropertyPage.Ask_for_rebuild_title"), //$NON-NLS-1$
+                                                     Activator.getString("PropertyPage.Ask_for_rebuild_title"), //$NON-NLS-1$
                                                      null,
-                                                     Activator
-                                                              .getString("JJPropertyPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
+                                                     Activator.getString("PropertyPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
                                                      MessageDialog.QUESTION, new String[] {
                                                          IDialogConstants.YES_LABEL,
                                                          IDialogConstants.NO_LABEL,
@@ -203,18 +200,18 @@ public class JJPropertyPage extends PropertyPage implements IJJConstants {
   @Override
   protected void performDefaults() {
     super.performDefaults();
-    fJJRunOptions.performDefaults();
-    if (fJJCCOptions != null) {
-      fJJCCOptions.performDefaults();
+    jJJRunOptions.performDefaults();
+    if (jJJCCOptions != null) {
+      jJJCCOptions.performDefaults();
     }
-    if (fJJTreeOptions != null) {
-      fJJTreeOptions.performDefaults();
+    if (jJJTreeOptions != null) {
+      jJJTreeOptions.performDefaults();
     }
-    if (fJJDocOptions != null) {
-      fJJDocOptions.performDefaults();
+    if (jJJDocOptions != null) {
+      jJJDocOptions.performDefaults();
     }
-    if (fJTBOptions != null) {
-      fJTBOptions.performDefaults();
+    if (jJTBOptions != null) {
+      jJTBOptions.performDefaults();
     }
   }
 }

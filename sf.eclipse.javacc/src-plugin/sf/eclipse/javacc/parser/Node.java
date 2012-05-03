@@ -7,6 +7,7 @@ package sf.eclipse.javacc.parser;
    between nodes. */
 
 public
+@SuppressWarnings("all")
 interface Node {
 
   /** This method is called after the node has been made the current

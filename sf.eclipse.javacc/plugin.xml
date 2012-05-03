@@ -26,7 +26,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="sf.eclipse.javacc.options.JJPreferencesInitializer">
+            class="sf.eclipse.javacc.options.PreferencesInitializer">
       </initializer>
    </extension>
 <!-- Filters Extension -->
@@ -120,9 +120,9 @@
       </command>
       <command
             categoryId="JavaCC.category"
-            description="%JavaCC_Format"
+            description="%Format"
             id="commands.jjformat"
-            name="%JavaCC_Format">
+            name="%Format">
       </command>
       <command
             categoryId="JavaCC.category"
@@ -144,15 +144,15 @@
       </command>
       <command
             categoryId="JavaCC.category"
-            description="%JavaCC_FoldingCollapseAll"
+            description="%FoldingCollapseAll"
             id="commands.jjfoldingcollapseall"
-            name="%JavaCC_FoldingCollapseAll">
+            name="%FoldingCollapseAll">
       </command>
       <command
             categoryId="JavaCC.category"
-            description="%JavaCC_FoldingExpandAll"
+            description="%FoldingExpandAll"
             id="commands.jjfoldingexpandall"
-            name="%JavaCC_FoldingExpandAll">
+            name="%FoldingExpandAll">
       </command>
    </extension>
 <!-- Contexts Extension -->
@@ -180,7 +180,7 @@
             </objectClass>
          </enablement>
          <description>
-            %javacc_decorator_description
+            %JavaCC_Decorator_description
          </description>
       </decorator>
    </extension>
@@ -527,7 +527,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="sf.eclipse.javacc.options.JJPreferencesPage"
+            class="sf.eclipse.javacc.options.PreferencesPage"
             id="JJPreferencesPage"
             name="%JavaCC_Preferences_page_name">
       </page>
@@ -536,7 +536,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="sf.eclipse.javacc.options.JJPropertyPage"
+            class="sf.eclipse.javacc.options.PropertyPage"
             id="sf.eclipse.javacc.options.JJPropertyPage"
             name="%JavaCC_Options">
          <enabledWhen>
@@ -559,7 +559,7 @@
       <view           
        name="%JavaCC_Console"
        allowMultiple="false"
-       class="sf.eclipse.javacc.head.JJConsole"
+       class="sf.eclipse.javacc.head.JJConsoleView"
        icon="icons/jj_console.gif"
        category="sf.eclipse.javacc"
        id="sf.eclipse.javacc.Console">
@@ -567,7 +567,7 @@
       <view
         name="%JavaCC_CallHierarchy"
         allowMultiple="false"
-        class="sf.eclipse.javacc.editors.JJCallHierarchy"
+        class="sf.eclipse.javacc.editors.JJCallHierarchyView"
         icon="icons/jj_call_hierarchy.gif"
         category="sf.eclipse.javacc"
         id="sf.eclipse.javacc.CallHierarchy">

@@ -20,22 +20,23 @@ public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
   /**
    * @see ITextDoubleClickStrategy#doubleClicked(ITextViewer)
    */
-  public void doubleClicked(final ITextViewer aViewer) {
-    final int selectionStartPos = aViewer.getSelectedRange().x;
+  @Override
+  public void doubleClicked(final ITextViewer aTextViewer) {
+    final int selectionStartPos = aTextViewer.getSelectedRange().x;
     if (selectionStartPos < 0) {
       return;
     }
-    selectWord(aViewer, selectionStartPos);
+    selectWord(aTextViewer, selectionStartPos);
     return;
   }
 
   /**
-   * @param aViewer the current viewer
+   * @param aTextViewer the current viewer
    * @param aCharPos a character position
    * @return the whole word around the character position
    */
-  public boolean selectWord(final ITextViewer aViewer, final int aCharPos) {
-    final IDocument doc = aViewer.getDocument();
+  public boolean selectWord(final ITextViewer aTextViewer, final int aCharPos) {
+    final IDocument doc = aTextViewer.getDocument();
     int startPos, endPos;
     try {
       int pos = aCharPos;
@@ -58,7 +59,7 @@ public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
         ++pos;
       }
       endPos = pos;
-      selectRange(aViewer, startPos, endPos);
+      selectRange(aTextViewer, startPos, endPos);
       return true;
     } catch (final BadLocationException x) {
       // do nothing, except returning false
@@ -67,13 +68,13 @@ public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
   }
 
   /**
-   * @param aViewer the current viewer
+   * @param aTextViewer the current viewer
    * @param aStartPos the starting position
    * @param aEndPos the ending position
    */
-  private void selectRange(final ITextViewer aViewer, final int aStartPos, final int aEndPos) {
+  private void selectRange(final ITextViewer aTextViewer, final int aStartPos, final int aEndPos) {
     final int offset = aStartPos + 1;
     final int length = aEndPos - offset;
-    aViewer.setSelectedRange(offset, length);
+    aTextViewer.setSelectedRange(offset, length);
   }
 }

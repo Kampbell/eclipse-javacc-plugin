@@ -30,30 +30,32 @@ public class JJDocCompile implements IEditorActionDelegate, IJJConstants {
   // MMa 12/2009 : formatting and javadoc revision
 
   /** the current editor */
-  private JJEditor  editor;
+  private JJEditor  jJJEditor;
   /** the resource to compile */
-  private IResource res;
+  private IResource jRes;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction action, final IEditorPart targetEditor) {
-    if (targetEditor == null) {
+  @Override
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+    if (aTargetEditor == null) {
       return;
     }
-    editor = (JJEditor) targetEditor;
-    final IEditorInput input = editor.getEditorInput();
-    res = (IResource) input.getAdapter(IResource.class);
+    jJJEditor = (JJEditor) aTargetEditor;
+    final IEditorInput input = jJJEditor.getEditorInput();
+    jRes = (IResource) input.getAdapter(IResource.class);
   }
 
   /**
    * @see IActionDelegate#selectionChanged(IAction action, ISelection selection)
    */
-  public void selectionChanged(@SuppressWarnings("unused") final IAction action, final ISelection selection) {
-    if (selection instanceof IStructuredSelection) {
-      final Object obj = ((IStructuredSelection) selection).getFirstElement();
+  @Override
+  public void selectionChanged(@SuppressWarnings("unused") final IAction aAction, final ISelection aSelection) {
+    if (aSelection instanceof IStructuredSelection) {
+      final Object obj = ((IStructuredSelection) aSelection).getFirstElement();
       if (obj != null && obj instanceof IFile) {
-        res = (IFile) obj;
+        jRes = (IFile) obj;
       }
     }
   }
@@ -62,25 +64,26 @@ public class JJDocCompile implements IEditorActionDelegate, IJJConstants {
    * Compile the .jj or .jjt file.
    * 
    * @see IActionDelegate#run(IAction)
-   * @param action the action proxy that handles the presentation portion of the action
+   * @param aAction the action proxy that handles the presentation portion of the action
    */
-  public void run(@SuppressWarnings("unused") final IAction action) {
-    if (res == null) {
+  @Override
+  public void run(@SuppressWarnings("unused") final IAction aAction) {
+    if (jRes == null) {
       return;
     }
 
     // save the file if needed
-    if (editor.isDirty()) {
-      editor.doSave(null);
+    if (jJJEditor.isDirty()) {
+      jJJEditor.doSave(null);
     }
 
     // call GenDoc
-    JJBuilder.GenDocForJJResource(res);
+    JJBuilder.GenDocForJJResource(jRes);
 
     // refreshing the whole project (just to show the generated .html)
-    // has the side effect to clear the Console if autobuild is on
+    // has the side effect to clear the Console if automatic build is on
     try {
-      res.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+      jRes.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
     } catch (final CoreException e) {
       e.printStackTrace();
     }

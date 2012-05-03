@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTregexpr_spec extends JJNode {
   public ASTregexpr_spec(int id) {
     super(id);

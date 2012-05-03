@@ -17,35 +17,37 @@ import sf.eclipse.javacc.parser.JJNode;
  * is null no hover is shown).<br>
  * Text hovers are shown in code sections only for JavaCC non identifier nodes, and they show their
  * definitions.<br>
- * Text hovers are shown in comments sections only for spelling errors, and they show TODO .
+ * Text hovers are shown in comments sections only for spelling errors, and they do not show anything special
+ * (for the moment).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 class JJTextHover implements ITextHover, ITextHoverExtension2 {
 
   // MMa 12/2009 : added getHoverInfo2() and deprecated getHoverInfo ; added spell checking
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 08/2011 : effects of refactoring in JJElements
 
   /** the current editor */
-  private final JJEditor      fEditor;
+  private final JJEditor      jJJEditor;
   /** the current source viewer */
   @SuppressWarnings("unused")
-  private final ISourceViewer fSourceViewer;
+  private final ISourceViewer jSourceViewer;
   /** the current content type */
-  private final String        fContentType;
+  private final String        jContentType;
 
   /**
    * Standard constructor.
    * 
    * @param aSourceViewer the source viewer
    * @param aContentType the content type
-   * @param aEditor the editor
+   * @param aJJEditor the editor
    */
-  public JJTextHover(final ISourceViewer aSourceViewer, final String aContentType, final JJEditor aEditor) {
-    fSourceViewer = aSourceViewer;
-    fContentType = aContentType;
-    fEditor = aEditor;
+  public JJTextHover(final ISourceViewer aSourceViewer, final String aContentType, final JJEditor aJJEditor) {
+    jSourceViewer = aSourceViewer;
+    jContentType = aContentType;
+    jJJEditor = aJJEditor;
   }
 
   /**
@@ -54,6 +56,7 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
    * @return the hover popup display information, or <code>null</code> if none available
    * @deprecated @see ITextHover#getHoverInfo(ITextViewer, IRegion)
    */
+  @Override
   @SuppressWarnings( {
       "deprecation", "dep-ann" })
   public String getHoverInfo(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
@@ -65,21 +68,22 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
    * 
    * @see ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)
    */
+  @Override
   public String getHoverInfo2(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
     String hoverInfo = null;
     final IDocument document = aTextViewer.getDocument();
     try {
       //      if (fContentType.equals(UnusedJJDocumentProvider.JJ_CODE)) {
-      if (fContentType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+      if (jContentType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
         // hover info for code regions (grammar)
         String word;
         word = document.get(aHoverRegion.getOffset(), aHoverRegion.getLength());
-        final JJElements jjElements = fEditor.getJJElements();
-        if (!jjElements.isNonIdentifierElement(word)) {
+        final JJElements jjElements = jJJEditor.getJJElements();
+        if (!jjElements.isNonIdentNorNodeDescElement(word)) {
           return null;
         }
 
-        final JJNode node = jjElements.getNonIdentifierNode(word);
+        final JJNode node = jjElements.getNonIdentNorNodeDesc(word);
         // If the  node is on the same line as the word under the mouse
         // Definition is over itself : do not show it
         if (node.getBeginLine() - 1 == document.getLineOfOffset(aHoverRegion.getOffset())) {
@@ -127,6 +131,7 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
   /**
    * @see ITextHover#getHoverRegion(ITextViewer, int)
    */
+  @Override
   public IRegion getHoverRegion(final ITextViewer aTextViewer, final int aOffset) {
     final IDocument document = aTextViewer.getDocument();
     final IRegion region = findWord(document, aOffset);
@@ -139,18 +144,18 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
   /**
    * Extends the character at a given offset to a whole word.
    * 
-   * @param doc the current document
+   * @param aDoc the current document
    * @param aOffset the offset
    * @return the corresponding region
    */
-  private static final IRegion findWord(final IDocument doc, final int aOffset) {
+  private static final IRegion findWord(final IDocument aDoc, final int aOffset) {
     int start = -1;
     int end = -1;
     try {
       int pos = aOffset;
       char c;
       while (pos >= 0) {
-        c = doc.getChar(pos);
+        c = aDoc.getChar(pos);
         if (!Character.isUnicodeIdentifierPart(c)) {
           break;
         }
@@ -158,9 +163,9 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
       }
       start = pos;
       pos = aOffset;
-      final int length = doc.getLength();
+      final int length = aDoc.getLength();
       while (pos < length) {
-        c = doc.getChar(pos);
+        c = aDoc.getChar(pos);
         if (!Character.isUnicodeIdentifierPart(c)) {
           break;
         }

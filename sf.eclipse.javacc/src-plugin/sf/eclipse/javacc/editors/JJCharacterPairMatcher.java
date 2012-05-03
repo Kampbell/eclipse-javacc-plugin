@@ -18,15 +18,15 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
   // MMa 02/2010 : formatting and javadoc revision
 
   /** The document */
-  protected IDocument     fDocument;
+  protected IDocument     jDocument;
   /** The opening peer character position */
-  protected int           fStartPos;
+  protected int           startPos;
   /** The closing peer character position */
-  protected int           fEndPos;
+  protected int           endPos;
   /** The anchor (left / right) */
-  protected int           fAnchor;
+  protected int           anchor;
   /** The matchable character pairs */
-  protected static char[] fPairs = {
+  protected static char[] sPairs = {
       '{', '}', '<', '>', '[', ']', '(', ')' };
 
   /**
@@ -39,14 +39,15 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
   /**
    * @see ICharacterPairMatcher#match(IDocument, int)
    */
-  public IRegion match(final IDocument aDocument, final int aOffset) {
+  @Override
+  public IRegion match(final IDocument aDoc, final int aOffset) {
 
     if (aOffset < 0) {
       return null;
     }
-    fDocument = aDocument;
-    if (fDocument != null && tryMatchPair(aOffset) && fStartPos != fEndPos) {
-      return new Region(fStartPos, fEndPos - fStartPos + 1);
+    jDocument = aDoc;
+    if (jDocument != null && tryMatchPair(aOffset) && startPos != endPos) {
+      return new Region(startPos, endPos - startPos + 1);
     }
     return null;
   }
@@ -54,21 +55,24 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
   /**
    * @see ICharacterPairMatcher#getAnchor()
    */
+  @Override
   public int getAnchor() {
-    return fAnchor;
+    return anchor;
   }
 
   /**
    * @see ICharacterPairMatcher#dispose()
    */
+  @Override
   public void dispose() {
     clear();
-    fDocument = null;
+    jDocument = null;
   }
 
   /**
    * @see ICharacterPairMatcher#clear()
    */
+  @Override
   public void clear() {
     // does nothing
   }
@@ -81,45 +85,45 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
    */
   protected boolean tryMatchPair(final int aOffset) {
     int i;
-    int pairIndex1 = fPairs.length;
-    int pairIndex2 = fPairs.length;
+    int pairIndex1 = sPairs.length;
+    int pairIndex2 = sPairs.length;
 
-    fStartPos = -1;
-    fEndPos = -1;
+    startPos = -1;
+    endPos = -1;
     // get the character just before the character position
     try {
-      final char prevChar = fDocument.getChar(Math.max(aOffset - 1, 0));
+      final char prevChar = jDocument.getChar(Math.max(aOffset - 1, 0));
       // search for the opening peer character next to the activation point
-      for (i = 0; i < fPairs.length; i = i + 2) {
-        if (prevChar == fPairs[i]) {
-          fStartPos = aOffset - 1;
+      for (i = 0; i < sPairs.length; i = i + 2) {
+        if (prevChar == sPairs[i]) {
+          startPos = aOffset - 1;
           pairIndex1 = i;
           break;
         }
       }
       // search for the closing peer character next to the activation point
-      for (i = 1; i < fPairs.length; i = i + 2) {
-        if (prevChar == fPairs[i]) {
-          fEndPos = aOffset - 1;
+      for (i = 1; i < sPairs.length; i = i + 2) {
+        if (prevChar == sPairs[i]) {
+          endPos = aOffset - 1;
           pairIndex2 = i;
           break;
         }
       }
-      if (fEndPos > -1) {
-        fAnchor = RIGHT;
-        fStartPos = searchForOpeningPeer(fEndPos, fPairs[pairIndex2 - 1], fPairs[pairIndex2]);
-        if (fStartPos > -1) {
+      if (endPos > -1) {
+        anchor = RIGHT;
+        startPos = searchForOpeningPeer(endPos, sPairs[pairIndex2 - 1], sPairs[pairIndex2]);
+        if (startPos > -1) {
           return true;
         }
-        fEndPos = -1;
+        endPos = -1;
       }
-      else if (fStartPos > -1) {
-        fAnchor = LEFT;
-        fEndPos = searchForClosingPeer(fStartPos, fPairs[pairIndex1], fPairs[pairIndex1 + 1]);
-        if (fEndPos > -1) {
+      else if (startPos > -1) {
+        anchor = LEFT;
+        endPos = searchForClosingPeer(startPos, sPairs[pairIndex1], sPairs[pairIndex1 + 1]);
+        if (endPos > -1) {
           return true;
         }
-        fStartPos = -1;
+        startPos = -1;
       }
 
     } catch (final BadLocationException x) {
@@ -142,13 +146,13 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
       int fPos = aStart + 1;
       char fChar = 0;
       while (true) {
-        while (fPos < fDocument.getLength()) {
-          fChar = fDocument.getChar(fPos);
+        while (fPos < jDocument.getLength()) {
+          fChar = jDocument.getChar(fPos);
           if (fChar == '"') {
             boolean found = false;
             char old = '"';
             while (!found) {
-              final char curr = fDocument.getChar(++fPos);
+              final char curr = jDocument.getChar(++fPos);
               if (curr == '"' && old != '\\') {
                 found = true;
               }
@@ -163,7 +167,7 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
           }
           fPos++;
         }
-        if (fPos == fDocument.getLength()) {
+        if (fPos == jDocument.getLength()) {
           return -1;
         }
         if (fChar == aOpening) {
@@ -197,11 +201,11 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
       char fChar = 0;
       while (true) {
         while (fPos > -1) {
-          fChar = fDocument.getChar(fPos);
+          fChar = jDocument.getChar(fPos);
           if (fChar == '"') {
             while (true) {
-              if (fDocument.getChar(--fPos) == '"') {
-                if (fDocument.getChar(fPos - 1) != '\\') {
+              if (jDocument.getChar(--fPos) == '"') {
+                if (jDocument.getChar(fPos - 1) != '\\') {
                   break;
                 }
               }

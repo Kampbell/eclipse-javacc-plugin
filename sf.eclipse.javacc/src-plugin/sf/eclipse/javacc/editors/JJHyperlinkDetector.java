@@ -10,36 +10,41 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 
+import sf.eclipse.javacc.actions.JJGotoRule;
 import sf.eclipse.javacc.parser.JJNode;
+import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
 
 /**
  * JavaCC hyperlink detector. Used in JJSourceViewerConfiguration.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
-public class JJHyperlinkDetector implements IHyperlinkDetector {
+public class JJHyperlinkDetector implements IHyperlinkDetector, JavaCCParserTreeConstants {
 
   // MMa 04/2009 : formatting and javadoc revision
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 08/2011 : effects of refactoring in JJElements
+  // MMa 08/2011 : fixed missing hyperlinks
 
   /** The editor */
-  private final JJEditor fEditor;
+  private final JJEditor jJJEditor;
 
   /**
    * Creates a new JavaCC hyperlink detector.
    * 
-   * @param aEditor the editor in which to detect the hyperlink
+   * @param aJJEditor the editor in which to detect the hyperlink
    */
-  public JJHyperlinkDetector(final JJEditor aEditor) {
-    fEditor = aEditor;
+  public JJHyperlinkDetector(final JJEditor aJJEditor) {
+    jJJEditor = aJJEditor;
   }
 
   /**
    * @see IHyperlinkDetector#detectHyperlinks(ITextViewer, IRegion, boolean)
    */
+  @Override
   public IHyperlink[] detectHyperlinks(final ITextViewer aTextViewer, final IRegion aRegion,
-                                       @SuppressWarnings("unused") final boolean canShowMultipleHyperlinks) {
+                                       @SuppressWarnings("unused") final boolean aCanShowMultipleHyperlinks) {
     if (aRegion == null) {
       return null;
     }
@@ -56,26 +61,35 @@ public class JJHyperlinkDetector implements IHyperlinkDetector {
 
     final String word = textSel.getText();
     // if not in JJElements don't go further
-    final JJElements jjElements = fEditor.getJJElements();
-    if (!jjElements.isNonIdentifierElement(word)) {
+    final JJElements jjElements = jJJEditor.getJJElements();
+    if (!jjElements.isHyperlinkTarget(word)) {
       return null;
     }
     // if JavaCC keyword don't go further
-    for (int i = 0; i < JJCodeScanner.fgJJkeywords.length; i++) {
-      if (word.equals(JJCodeScanner.fgJJkeywords[i])) {
+    for (int i = 0; i < JJCodeScanner.sJJkeywords.length; i++) {
+      if (word.equals(JJCodeScanner.sJJkeywords[i])) {
         return null;
       }
     }
-    // add hyper link for the word associated with the node and the editor
+    // add hyperlink for the word associated with the node and the editor
     final IRegion linkRegion = new Region(textSel.getOffset(), textSel.getLength());
-    final JJNode node = jjElements.getNonIdentifierNode(word);
-    final JJHyperlink link = new JJHyperlink(linkRegion, fEditor, node);
-    return new IHyperlink[] {
-      link };
+    final JJNode node = jjElements.getHyperlinkTarget(word);
+    if (node != null) {
+      //      final int ndId = node.getId();
+      //      if (ndId == JJTIDENT_BNF_DECL || ndId == JJTIDENT_REG_EXPR_LABEL) {
+      //        return null;
+      //      }
+      final JJHyperlink link = new JJHyperlink(linkRegion, jJJEditor, node);
+      return new IHyperlink[] {
+        link };
+    }
+    return null;
   }
 
   /**
-   * Extends the selection to a whole word.
+   * Extends Selection to a whole Word (not including the '#' for private label identifiers and JJTree node
+   * descriptors).<br>
+   * Quite like {@link JJGotoRule#selectWord(ITextSelection)}.
    * 
    * @param aDoc the document
    * @param aSelection the selected text

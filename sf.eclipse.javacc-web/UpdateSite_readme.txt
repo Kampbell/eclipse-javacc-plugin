@@ -65,8 +65,8 @@ For the Headless plug-in:
   * do not use the export wizard
 
 - Update project "sf.eclipse.javacc.headless.feature" through "feature.xml" (mainly version)
-  * use the export wizard to create the "sf.eclipse.javacc-x.y.zz-headless-plugin.zip" file
-    (under project "sf.eclipse.javacc-web") (change version)
+  * use the export wizard to create the "sf.eclipse.javacc.headless-x.y.zz-plugin.zip" file
+    (under project "sf.eclipse.javacc.headless-web") (change version)
 
 - Update project "sf.eclipse.javacc.headless-web" through "site.xml" (mainly features, keep it under the category)
   * copy "jtb_doc.html"
@@ -76,7 +76,7 @@ For the Headless plug-in:
   * in "Site Map" tab remove old version feature, add new version feature (under the site)and use "Build all"
   * check there are no old versions entries in "artifacts.xml" & "content.xml"
   * update "javacc-ver" property in "build_zip.xml"
-  * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml"
+  * create "sf.eclipse.javacc.headless-z.y.xx-updatesite.zip" through "build_zip.xml"
   * upload files to the SF site as below
   * commit files to CVS and tag as a version
 
@@ -87,7 +87,9 @@ How to update the JavaCC Eclipse Plugin SourceForge site
 (for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 18th, 2010
 
 - First update the "to be downloaded by users" zip file on the project file manager page through the web interface
-  (https://sourceforge.net/project/admin/explorer.php?group_id=56876) (Develop -> Project Admin / File Manager)
+  (https://sourceforge.net/project/admin/?group_id=56876) (Menu Files, delete old files, add new files,
+   set default download for all OS for the plugin.zip file, add old files to eclipse-javacc sub folders)
+  
 
 - Second update the update site (http://eclipse-javacc.sourceforge.net/, to be used by the Eclipse Update Manager)
   through WinSCP or Putty PSFTP
@@ -99,11 +101,12 @@ How to update the JavaCC Eclipse Plugin SourceForge site
   * cd /home/groups/e/ec/eclipse-javacc/htdocs to go to the project web directory, where to put the index.html and all files
   current problems :
   - open works with SFTP, not SCP (remote shell restricted to copy operations ?) ;
-  - cannot overwrite not owned files (even if in right group)
+  - cannot overwrite not owned files (even if in right group) : seems to work now
   
   
 + Putty PSFTP :
   * configure putty with host web.sourceforge.net port 22, sf account,project (e.g. mmazas,eclipse-javacc) on Connection / Data
+    add the private key file path on Connection / SSH / Auth, and save session
   * run psftp, open web.sourceforge.net, it takes sf account,project, give pass phrase
   * sftp commands like ftp : ls, lcd, cd, put
 

@@ -32,12 +32,13 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
   /**
    * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
    */
-  public ICompletionProposal[] computeCompletionProposals(final ITextViewer aViewer, final int aDocOffset) {
+  @Override
+  public ICompletionProposal[] computeCompletionProposals(final ITextViewer aTextViewer, final int aDocOffset) {
     // list of Completion proposals to be added
     final List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
 
     // compute the completion proposal place (start, length)
-    final String text = aViewer.getDocument().get();
+    final String text = aTextViewer.getDocument().get();
     int start = aDocOffset - 1;
     while (!Character.isWhitespace(text.charAt(start))) {
       start--;
@@ -53,7 +54,7 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     // TODO choose the keyword from the context
     // TODO alphabetic sort
     // add Keywords
-    for (final String s : JJCodeScanner.fgJJkeywords) {
+    for (final String s : JJCodeScanner.sJJkeywords) {
       if (s.toUpperCase().startsWith(prefix.toUpperCase())) {
         if (s.equals("options")) { //$NON-NLS-1$
           suggestions.add("options{\n  \n}"); //$NON-NLS-1$
@@ -78,7 +79,7 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     }
     // get the editor showing the active document
     JJEditor jjeditor = null;
-    final IDocument currentDocument = aViewer.getDocument();
+    final IDocument currentDocument = aTextViewer.getDocument();
     final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     final IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
     for (int i = 0; i < editorReferences.length; i++) {
@@ -99,8 +100,8 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     }
     // add Elements (method, token)
     final JJElements jjElements = jjeditor.getJJElements();
-    for (final String s : jjElements.getNonIdentifiersMap().keySet()) {
-      final int id = jjElements.getNonIdentifierNode(s).getId();
+    for (final String s : jjElements.getNonIdentNorNodeDescMap().keySet()) {
+      final int id = jjElements.getNonIdentNorNodeDesc(s).getId();
       // nodes and methods
       if (s.toUpperCase().startsWith(prefix.toUpperCase())) {
         if (id == JJTBNF_PRODUCTION || id == JJTMETHODDECLARATION) {
@@ -135,8 +136,9 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
   /**
    * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
    */
+  @Override
   public IContextInformation[] computeContextInformation(
-                                                         @SuppressWarnings("unused") final ITextViewer aViewer,
+                                                         @SuppressWarnings("unused") final ITextViewer aTextViewer,
                                                          @SuppressWarnings("unused") final int aOffset) {
     return null;
   }
@@ -144,6 +146,7 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
   /**
    * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
    */
+  @Override
   public char[] getCompletionProposalAutoActivationCharacters() {
     return new char[] {
       ' ' };
@@ -152,14 +155,16 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
   /**
    * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
    */
+  @Override
   public char[] getContextInformationAutoActivationCharacters() {
     return new char[] {
-      '£' };
+      '?' };
   }
 
   /**
    * @see IContentAssistProcessor#getContextInformationValidator()
    */
+  @Override
   public IContextInformationValidator getContextInformationValidator() {
     return null;
   }
@@ -167,6 +172,7 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
   /**
    * @see IContentAssistProcessor#getErrorMessage()
    */
+  @Override
   public String getErrorMessage() {
     return null;
   }

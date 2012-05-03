@@ -128,6 +128,7 @@ public class JJTokenRule implements IRule {
    * @param scanner the character scanner
    * @return the rule token
    */
+  @Override
   public IToken evaluate(final ICharacterScanner scanner) {
     /** Found a normal label identifier */
     boolean isNoLa = false;

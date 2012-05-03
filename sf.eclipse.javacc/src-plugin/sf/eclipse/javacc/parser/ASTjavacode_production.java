@@ -3,6 +3,7 @@
 package sf.eclipse.javacc.parser;
 
 public
+@SuppressWarnings("all")
 class ASTjavacode_production extends JJNode {
   public ASTjavacode_production(int id) {
     super(id);

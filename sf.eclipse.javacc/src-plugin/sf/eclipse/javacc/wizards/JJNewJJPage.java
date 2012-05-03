@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.wizards;
 
-
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
@@ -59,49 +58,50 @@ import sf.eclipse.javacc.head.Activator;
  * well as the file name. This page handles the file creation.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 @SuppressWarnings("restriction")
 public class JJNewJJPage extends WizardPage implements IJJConstants {
 
   // MMa 11/2009 : javadoc and formatting revision ; changed some modifiers for synthetic accesses
   // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files
+  // MMa 08/2011 : fixed property error
 
   /** The source directory */
-  IPackageFragmentRoot         fSrcRootFragment;
+  IPackageFragmentRoot         jSrcRootFragment;
   /** The package */
-  private IPackageFragment     fPackageFragment;
+  private IPackageFragment     jPackageFragment;
   /** The workspace root directory returned by the plugin */
-  private final IWorkspaceRoot fWorkspaceRoot;
+  private final IWorkspaceRoot jWorkspaceRoot;
   /** The source input */
-  Text                         fSrcRootText;
+  Text                         jSrcRootText;
   /** The package input */
-  Text                         fPackageText;
+  Text                         jPackageText;
   /** The file name input */
-  private Text                 fFileNameText;
+  private Text                 jFileNameText;
   /** The source change status */
-  protected IStatus            fSrcRootStatus;
+  protected IStatus            jSrcRootStatus;
   /** The package change status */
-  protected IStatus            fPackageStatus;
+  protected IStatus            jPackageStatus;
   /** The file name change status */
-  protected IStatus            fFileStatus;
+  protected IStatus            jFileStatus;
   /** The checked source */
-  String                       fSrcRoot;
+  String                       jSrcRoot;
   /** The checked package */
-  private String               fPackage;
+  private String               jPackage;
   /** The checked file name */
-  private String               fFileName;
+  private String               jFileName;
   /** The checked file extension */
-  String                       fExtension;
+  String                       jExtension;
   /** The static / non static flag */
-  boolean                      fStaticFlag;
+  boolean                      jStaticFlag;
 
   /**
    * Creates a new <code>NewJJWizardPage</code>.
    */
   public JJNewJJPage() {
     super("NewJJWizardPage"); //$NON-NLS-1$
-    fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+    jWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
     setDescription(Activator.getString("JJNewJJPage.This_wizard_creates_a_new_file")); //$NON-NLS-1$
     setTitle(Activator.getString("JJNewJJPage.New_javacc_or_jtb_file")); //$NON-NLS-1$
   }
@@ -113,36 +113,39 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    */
   public void init(final IStructuredSelection aSelection) {
     final IJavaElement javaElem = getInitialJavaElement(aSelection);
-    fPackage = ""; //$NON-NLS-1$
-    fSrcRoot = ""; //$NON-NLS-1$
+    //    fPackage = ""; //$NON-NLS-1$
+    //    fSrcRoot = ""; //$NON-NLS-1$
+    jPackage = Activator.getString("JJNewJJPage.New_package"); //$NON-NLS-1$
+    jSrcRoot = Activator.getString("JJNewJJPage.New_root_folder"); //$NON-NLS-1$
     if (javaElem != null) {
       // initialize package name
-      fPackageFragment = (IPackageFragment) javaElem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
-      if (fPackageFragment != null && !fPackageFragment.isDefaultPackage()) {
-        fPackage = fPackageFragment.getElementName();
+      jPackageFragment = (IPackageFragment) javaElem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+      if (jPackageFragment != null && !jPackageFragment.isDefaultPackage()) {
+        jPackage = jPackageFragment.getElementName();
       }
       // initialize fSrcRoot
       final IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElem
                                                                       .getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
       if (pfr != null) {
-        fSrcRoot = pfr.getPath().toString();
-        if (fSrcRoot.startsWith("/")) {
-          fSrcRoot = fSrcRoot.substring(1);
+        jSrcRoot = pfr.getPath().toString();
+        if (jSrcRoot.startsWith("/")) {
+          jSrcRoot = jSrcRoot.substring(1);
         }
       }
     }
     // initialize extension
-    fExtension = ".jj"; //$NON-NLS-1$
+    jExtension = ".jj"; //$NON-NLS-1$
     // initialize static flag
-    fStaticFlag = true;
+    jStaticFlag = true;
     // initialize filename
-    fFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
+    jFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
   }
 
   /**
    * @see WizardPage#createControl
    * @param aParent the parent
    */
+  @Override
   public void createControl(final Composite aParent) {
     final Composite topLevel = new Composite(aParent, SWT.NONE);
     topLevel.setFont(aParent.getFont());
@@ -155,15 +158,16 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     Label label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.Folder")); //$NON-NLS-1$
     // the input field
-    fSrcRootText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
+    jSrcRootText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
     GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
-    fSrcRootText.setLayoutData(gd);
-    fSrcRootText.setText(fSrcRoot);
-    fSrcRootText.addModifyListener(new ModifyListener() {
+    jSrcRootText.setLayoutData(gd);
+    jSrcRootText.setText(jSrcRoot);
+    jSrcRootText.addModifyListener(new ModifyListener() {
 
+      @Override
       public void modifyText(@SuppressWarnings("unused") final ModifyEvent event) {
-        fSrcRootStatus = sourceContainerChanged();
-        if (fSrcRootStatus.isOK()) {
+        jSrcRootStatus = sourceContainerChanged();
+        if (jSrcRootStatus.isOK()) {
           packageChanged(); // Revalidates package
         }
         updateStatus();
@@ -178,10 +182,10 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
       public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final IPackageFragmentRoot root = chooseSourceContainer();
         if (root != null) {
-          fSrcRootFragment = root;
-          fSrcRoot = root.getPath().makeRelative().toString();
-          fSrcRootText.setText(fSrcRoot);
-          fSrcRootStatus = sourceContainerChanged();
+          jSrcRootFragment = root;
+          jSrcRoot = root.getPath().makeRelative().toString();
+          jSrcRootText.setText(jSrcRoot);
+          jSrcRootStatus = sourceContainerChanged();
           updateStatus();
         }
       }
@@ -191,14 +195,15 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.Package_name")); //$NON-NLS-1$
     // the input field
-    fPackageText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
+    jPackageText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
     gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
-    fPackageText.setLayoutData(gd);
-    fPackageText.setText(fPackage);
-    fPackageText.addModifyListener(new ModifyListener() {
+    jPackageText.setLayoutData(gd);
+    jPackageText.setText(jPackage);
+    jPackageText.addModifyListener(new ModifyListener() {
 
+      @Override
       public void modifyText(@SuppressWarnings("unused") final ModifyEvent e) {
-        fPackageStatus = packageChanged();
+        jPackageStatus = packageChanged();
         updateStatus();
       }
     });
@@ -212,8 +217,8 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
         final IPackageFragment pack = choosePackage();
         if (pack != null) {
           final String str = pack.getElementName();
-          fPackageText.setText(str);
-          fPackageStatus = packageChanged();
+          jPackageText.setText(str);
+          jPackageStatus = packageChanged();
           updateStatus();
         }
       }
@@ -233,7 +238,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
 
       @Override
       public void widgetSelected(final SelectionEvent event) {
-        fExtension = (String) event.widget.getData();
+        jExtension = (String) event.widget.getData();
         extensionChanged();
         updateStatus();
       }
@@ -272,7 +277,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
 
       @Override
       public void widgetSelected(final SelectionEvent event) {
-        fStaticFlag = "true".equals(event.widget.getData()); //$NON-NLS-1$
+        jStaticFlag = "true".equals(event.widget.getData()); //$NON-NLS-1$
         updateStatus();
       }
     };
@@ -294,14 +299,15 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     label = new Label(topLevel, SWT.NULL);
     label.setText(Activator.getString("JJNewJJPage.File_name")); //$NON-NLS-1$
     // The input field
-    fFileNameText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
-    fFileNameText.setText(fFileName);
+    jFileNameText = new Text(topLevel, SWT.BORDER | SWT.SINGLE);
+    jFileNameText.setText(jFileName);
     gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-    fFileNameText.setLayoutData(gd);
-    fFileNameText.addModifyListener(new ModifyListener() {
+    jFileNameText.setLayoutData(gd);
+    jFileNameText.addModifyListener(new ModifyListener() {
 
+      @Override
       public void modifyText(@SuppressWarnings("unused") final ModifyEvent event) {
-        fFileStatus = fileNameChanged();
+        jFileStatus = fileNameChanged();
         updateStatus();
       }
     });
@@ -311,11 +317,11 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     setControl(topLevel);
 
     // verify that all this is OK
-    fSrcRootStatus = sourceContainerChanged();
-    fPackageStatus = packageChanged();
-    fFileStatus = fileNameChanged();
-    if (fSrcRootStatus.getSeverity() == IStatus.ERROR || fPackageStatus.getSeverity() == IStatus.ERROR
-        || fFileStatus.getSeverity() == IStatus.ERROR) {
+    jSrcRootStatus = sourceContainerChanged();
+    jPackageStatus = packageChanged();
+    jFileStatus = fileNameChanged();
+    if (jSrcRootStatus.getSeverity() == IStatus.ERROR || jPackageStatus.getSeverity() == IStatus.ERROR
+        || jFileStatus.getSeverity() == IStatus.ERROR) {
       setPageComplete(false);
     }
 
@@ -331,14 +337,14 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
   IStatus sourceContainerChanged() {
     final JJStatus status = new JJStatus();
 
-    fSrcRootFragment = null;
-    final String str = fSrcRootText.getText();
+    jSrcRootFragment = null;
+    final String str = jSrcRootText.getText();
     if (str.length() == 0) {
       status.setError(Activator.getString("JJNewJJPage.Folder_name_is_empty")); //$NON-NLS-1$
       return status;
     }
     final IPath path = new Path(str);
-    final IResource res = fWorkspaceRoot.findMember(path);
+    final IResource res = jWorkspaceRoot.findMember(path);
     if (res != null) {
       final int resType = res.getType();
       if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
@@ -350,7 +356,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
           return status;
         }
         final IJavaProject jproject = JavaCore.create(proj);
-        fSrcRootFragment = jproject.getPackageFragmentRoot(res);
+        jSrcRootFragment = jproject.getPackageFragmentRoot(res);
         if (res.exists()) {
           try {
             if (!proj.hasNature(JavaCore.NATURE_ID)) {
@@ -362,7 +368,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
               }
               return status;
             }
-            if (fSrcRootFragment.isArchive()) {
+            if (jSrcRootFragment.isArchive()) {
               status
                     .setError(MessageFormat
                                            .format(
@@ -371,7 +377,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
                                                      str }));
               return status;
             }
-            if (fSrcRootFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
+            if (jSrcRootFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
               status
                     .setWarning(MessageFormat
                                              .format(
@@ -379,7 +385,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
                                                      new Object[] {
                                                        str }));
             }
-            else if (!jproject.isOnClasspath(fSrcRootFragment)) {
+            else if (!jproject.isOnClasspath(jSrcRootFragment)) {
               status
                     .setWarning(MessageFormat
                                              .format(
@@ -441,7 +447,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
       }
     }
 
-    final IPackageFragmentRoot root = fSrcRootFragment;
+    final IPackageFragmentRoot root = jSrcRootFragment;
     if (root != null && root.getJavaProject().exists()) {
       final IPackageFragment pack = root.getPackageFragment(packName);
       try {
@@ -456,8 +462,9 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
           }
         }
         if (!pack.exists()) {
-          status
-                .setError(Activator.getString("JJNewJJPage.The_package") + " " + pack.getElementName() + " " + Activator.getString(Activator.getString("JJNewJJPage._does_not_exist"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+          status.setError(Activator.getString("JJNewJJPage.The_package") + " " + //$NON-NLS-1$ //$NON-NLS-2$
+                          pack.getElementName() + " " + //$NON-NLS-1$
+                          Activator.getString(Activator.getString("JJNewJJPage.does_not_exist"))); //$NON-NLS-1$
         }
       } catch (final JavaModelException e) {
         Activator.logErr(e.getMessage());
@@ -475,8 +482,8 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     if (dotLoc == -1) {
       dotLoc = fileName.length();
     }
-    fileName = fileName.substring(0, dotLoc) + fExtension;
-    fFileNameText.setText(fileName);
+    fileName = fileName.substring(0, dotLoc) + jExtension;
+    jFileNameText.setText(fileName);
     return;
   }
 
@@ -516,7 +523,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    */
   protected void updateStatus() {
     final IStatus status = StatusUtil.getMostSevere(new IStatus[] {
-        fSrcRootStatus, fPackageStatus, fFileStatus });
+        jSrcRootStatus, jPackageStatus, jFileStatus });
     setPageComplete(!status.matches(IStatus.ERROR));
     StatusUtil.applyToStatusLine(this, status);
   }
@@ -525,28 +532,28 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    * @return the directory input field
    */
   public String getSrcDir() {
-    return fSrcRoot;
+    return jSrcRoot;
   }
 
   /**
    * @return the content of the package input field
    */
   public String getPackage() {
-    return fPackageText.getText();
+    return jPackageText.getText();
   }
 
   /**
    * @return the static flag
    */
   public boolean getStaticFalg() {
-    return fStaticFlag;
+    return jStaticFlag;
   }
 
   /**
    * @return the content of the file input field
    */
   public String getFileName() {
-    return fFileNameText.getText();
+    return jFileNameText.getText();
   }
 
   /**
@@ -571,7 +578,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
       final String ext = fileName.substring(dotLoc);
       return ext;
     }
-    return fExtension;
+    return jExtension;
   }
 
   /**
@@ -632,7 +639,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title);
     dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description);
     dialog.addFilter(filter);
-    dialog.setInput(JavaCore.create(fWorkspaceRoot));
+    dialog.setInput(JavaCore.create(jWorkspaceRoot));
     dialog.setInitialSelection("dummy"); //$NON-NLS-1$
 
     if (dialog.open() == Window.OK) {
@@ -655,7 +662,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    * @return the package
    */
   IPackageFragment choosePackage() {
-    final IPackageFragmentRoot froot = fSrcRootFragment;
+    final IPackageFragmentRoot froot = jSrcRootFragment;
     IJavaElement[] packages = null;
     try {
       if (froot != null && froot.exists()) {
@@ -677,9 +684,9 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     dialog.setMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description);
     dialog.setEmptyListMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty);
     dialog.setElements(packages);
-    if (fPackageFragment != null) {
+    if (jPackageFragment != null) {
       dialog.setInitialSelections(new Object[] {
-        fPackageFragment });
+        jPackageFragment });
     }
 
     if (dialog.open() == Window.OK) {
@@ -734,7 +741,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
 
     if (javaElem == null || javaElem.getElementType() == IJavaElement.JAVA_MODEL) {
       try {
-        final IJavaProject[] projects = JavaCore.create(fWorkspaceRoot).getJavaProjects();
+        final IJavaProject[] projects = JavaCore.create(jWorkspaceRoot).getJavaProjects();
         if (projects.length == 1) {
           javaElem = projects[0];
         }

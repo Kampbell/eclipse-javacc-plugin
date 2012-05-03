@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.editors;
 
-
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -26,7 +25,6 @@ import org.eclipse.ui.texteditor.HippieProposalProcessor;
 
 import sf.eclipse.javacc.head.Activator;
 
-
 /**
  * ViewerConfiguration for JavaCC code.
  * 
@@ -43,28 +41,28 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
   // MMa 03/2010 : fixed bug 2958124 on lost tabs
 
   /** The current presentation reconciler */
-  private PresentationReconciler fReconciler;
+  private PresentationReconciler jReconciler;
   /** The current editor */
-  private final JJEditor         fJJEditor;
+  private final JJEditor         jJJEditor;
   /** The current JavaCC code scanner */
-  private JJCodeScanner          fJJCodeScanner;
+  private JJCodeScanner          jJJCodeScanner;
 
   /**
    * Standard constructor. Configures click, indentation, content assist, format.
    * 
-   * @param aEditor the current editor
+   * @param aJJEditor the current editor
    */
-  public JJSourceViewerConfiguration(final JJEditor aEditor) {
-    fJJEditor = aEditor;
+  public JJSourceViewerConfiguration(final JJEditor aJJEditor) {
+    jJJEditor = aJJEditor;
   }
 
   /**
    * Disposes colors created by CodeScanner.
    */
   public void dispose() {
-    if (fJJCodeScanner != null) {
-      fJJCodeScanner.dispose();
-      fJJCodeScanner = null;
+    if (jJJCodeScanner != null) {
+      jJJCodeScanner.dispose();
+      jJJCodeScanner = null;
     }
   }
 
@@ -72,8 +70,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * Returns a newly created auto indentation strategy.
    */
   @Override
-  public IAutoEditStrategy[] getAutoEditStrategies(
-                                                   @SuppressWarnings("unused") final ISourceViewer aSourceViewer,
+  public IAutoEditStrategy[] getAutoEditStrategies(@SuppressWarnings("unused") final ISourceViewer aSourceViewer,
                                                    @SuppressWarnings("unused") final String aContentType) {
     final IAutoEditStrategy[] ret = {
       new JJAutoIndentStrategy() };
@@ -86,8 +83,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * @see SourceViewerConfiguration#getConfiguredDocumentPartitioning(ISourceViewer)
    */
   @Override
-  public String getConfiguredDocumentPartitioning(
-                                                  @SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public String getConfiguredDocumentPartitioning(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
     return JJDocumentProvider.JJ_PARTITIONING_ID;
   }
 
@@ -129,6 +125,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
     assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
     assistant.setInformationControlCreator(new IInformationControlCreator() {
 
+      @Override
       public IInformationControl createInformationControl(final Shell parent) {
         return new DefaultInformationControl(parent, JavaPlugin.getAdditionalInfoAffordanceString());
       }
@@ -143,8 +140,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * @see SourceViewerConfiguration#getDoubleClickStrategy(ISourceViewer, String)
    */
   @Override
-  public ITextDoubleClickStrategy getDoubleClickStrategy(
-                                                         @SuppressWarnings("unused") final ISourceViewer aSourceViewer,
+  public ITextDoubleClickStrategy getDoubleClickStrategy(@SuppressWarnings("unused") final ISourceViewer aSourceViewer,
                                                          @SuppressWarnings("unused") final String aContentType) {
     return new JJDoubleClickStrategy();
   }
@@ -157,21 +153,21 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    */
   @Override
   public IPresentationReconciler getPresentationReconciler(final ISourceViewer aSourceViewer) {
-    if (fReconciler == null) {
-      fReconciler = new PresentationReconciler();
-      fReconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(aSourceViewer));
+    if (jReconciler == null) {
+      jReconciler = new PresentationReconciler();
+      jReconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(aSourceViewer));
       // JJCodeScanner is used for all partitions
-      fJJCodeScanner = new JJCodeScanner();
-      final DefaultDamagerRepairer dr = new DefaultDamagerRepairer(fJJCodeScanner);
+      jJJCodeScanner = new JJCodeScanner();
+      final DefaultDamagerRepairer dr = new DefaultDamagerRepairer(jJJCodeScanner);
       //      fReconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
       //      fReconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-      fReconciler.setDamager(dr, JJDocumentProvider.JJ_CODE_CONTENT_TYPE);
-      fReconciler.setRepairer(dr, JJDocumentProvider.JJ_CODE_CONTENT_TYPE);
-      fReconciler.setDamager(dr, JJDocumentProvider.JJ_COMMENT_CONTENT_TYPE);
-      fReconciler.setRepairer(dr, JJDocumentProvider.JJ_COMMENT_CONTENT_TYPE);
+      jReconciler.setDamager(dr, JJDocumentProvider.JJ_CODE_CONTENT_TYPE);
+      jReconciler.setRepairer(dr, JJDocumentProvider.JJ_CODE_CONTENT_TYPE);
+      jReconciler.setDamager(dr, JJDocumentProvider.JJ_COMMENT_CONTENT_TYPE);
+      jReconciler.setRepairer(dr, JJDocumentProvider.JJ_COMMENT_CONTENT_TYPE);
 
     }
-    return fReconciler;
+    return jReconciler;
   }
 
   /**
@@ -181,10 +177,10 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    */
   @Override
   public IReconciler getReconciler(final ISourceViewer aSourceViewer) {
-    if (fJJEditor == null) {
+    if (jJJEditor == null) {
       return null;
     }
-    final JJReconcilingStrategy strategy = fJJEditor.getReconcilingStrategy();
+    final JJReconcilingStrategy strategy = jJJEditor.getReconcilingStrategy();
     strategy.setSourceViewer(aSourceViewer);
     return new MonoReconciler(strategy, false);
 
@@ -206,8 +202,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * @see SourceViewerConfiguration#getOverviewRulerAnnotationHover(ISourceViewer)
    */
   @Override
-  public IAnnotationHover getOverviewRulerAnnotationHover(
-                                                          @SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public IAnnotationHover getOverviewRulerAnnotationHover(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
     return new JJAnnotationHover();
   }
 
@@ -218,7 +213,7 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    */
   @Override
   public ITextHover getTextHover(final ISourceViewer aSourceViewer, final String aContentType) {
-    return new JJTextHover(aSourceViewer, aContentType, fJJEditor);
+    return new JJTextHover(aSourceViewer, aContentType, jJJEditor);
   }
 
   /**
@@ -227,10 +222,9 @@ public class JJSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * @see SourceViewerConfiguration#getHyperlinkDetectors(ISourceViewer)
    */
   @Override
-  public IHyperlinkDetector[] getHyperlinkDetectors(
-                                                    @SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public IHyperlinkDetector[] getHyperlinkDetectors(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
     return new JJHyperlinkDetector[] {
-      new JJHyperlinkDetector(fJJEditor) };
+      new JJHyperlinkDetector(jJJEditor) };
   }
 
 }

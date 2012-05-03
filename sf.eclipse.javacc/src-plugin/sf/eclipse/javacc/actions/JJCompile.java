@@ -39,26 +39,28 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
   // MMa 03/2010 : doSave changed into touch
 
   /** The current editor */
-  private JJEditor  fEditor;
+  private JJEditor  jJJEditor;
   /** The resource to compile */
-  private IResource fRes;
+  private IResource jRes;
 
   /**
    * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
    */
+  @Override
   public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
                               final IEditorPart aTargetEditor) {
     if (aTargetEditor == null) {
       return;
     }
-    fEditor = (JJEditor) aTargetEditor;
-    final IEditorInput input = fEditor.getEditorInput();
-    fRes = (IResource) input.getAdapter(IResource.class);
+    jJJEditor = (JJEditor) aTargetEditor;
+    final IEditorInput input = jJJEditor.getEditorInput();
+    jRes = (IResource) input.getAdapter(IResource.class);
   }
 
   /**
    * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
    */
+  @Override
   public void setActivePart(@SuppressWarnings("unused") final IAction aAction,
                             @SuppressWarnings("unused") final IWorkbenchPart aTargetPart) {
     // not used
@@ -67,11 +69,12 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
   /**
    * @see IActionDelegate#selectionChanged(IAction action, ISelection selection)
    */
+  @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction, final ISelection aSelection) {
     if (aSelection instanceof IStructuredSelection) {
       final Object obj = ((IStructuredSelection) aSelection).getFirstElement();
       if (obj != null && obj instanceof IFile) {
-        fRes = (IFile) obj;
+        jRes = (IFile) obj;
       }
     }
   }
@@ -82,8 +85,9 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
    * @see IActionDelegate#run(IAction)
    * @param aAction the action proxy that handles the presentation portion of the action
    */
+  @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
-    if (fRes == null) {
+    if (jRes == null) {
       return;
     }
     try {
@@ -97,18 +101,18 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
       //        fRes.touch(null);
       //      }
       // touch the file 
-      fRes.touch(null);
+      jRes.touch(null);
 
       // force Compile if not triggered
-      final IScopeContext projectScope = new ProjectScope(fRes.getProject());
+      final IScopeContext projectScope = new ProjectScope(jRes.getProject());
       final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
       if (!("true").equals(prefs.get(JJ_NATURE, "false")) //$NON-NLS-1$ //$NON-NLS-2$
-          || !isOnClasspath() || !fRes.getWorkspace().isAutoBuilding()) {
-        JJBuilder.CompileResource(fRes);
+          || !isOnClasspath() || !jRes.getWorkspace().isAutoBuilding()) {
+        JJBuilder.CompileResource(jRes);
       }
 
       // refresh the whole project to trigger compilation of Java files
-      fRes.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+      jRes.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 
     } catch (final CoreException e) {
       e.printStackTrace();
@@ -124,12 +128,12 @@ public class JJCompile implements IObjectActionDelegate, IEditorActionDelegate, 
   protected boolean isOnClasspath() {
     boolean gen = true;
     // look only for jj and jjt files
-    final String ext = fRes.getFullPath().getFileExtension();
+    final String ext = jRes.getFullPath().getFileExtension();
     if ("jj".equals(ext) || "jjt".equals(ext)) { //$NON-NLS-1$ //$NON-NLS-2$
-      final IProject project = fRes.getProject();
+      final IProject project = jRes.getProject();
       final IJavaProject javaProject = JavaCore.create(project);
       if (javaProject != null) {
-        gen = javaProject.isOnClasspath(fRes);
+        gen = javaProject.isOnClasspath(jRes);
       }
     }
     return gen;

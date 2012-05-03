@@ -20,11 +20,11 @@ public class UnusedJavaFormat {
   /**
    * Standard main.
    * 
-   * @param args command line arguments
+   * @param aArgs command line arguments
    * @throws BadLocationException thrown by {@link org.eclipse.text.edits.TextEdit#apply(IDocument)}
    * @throws MalformedTreeException thrown by {@link org.eclipse.text.edits.TextEdit#apply(IDocument)}
    */
-  public static void main(final String[] args) throws MalformedTreeException, BadLocationException {
+  public static void main(final String[] aArgs) throws MalformedTreeException, BadLocationException {
     // source : a String containing your source code
     final String source = "CodeFormatter \nformatter=ToolFactory.createCodeFormatter\n" //$NON-NLS-1$
                           + "(DefaultCodeFormatterConstants.getJavaConventionsSettings());IDocument\n" //$NON-NLS-1$

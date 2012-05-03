@@ -1,6 +1,5 @@
 package sf.eclipse.javacc.editors;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -44,45 +43,45 @@ import sf.eclipse.javacc.parser.JJNode;
  * Inspired from org.eclipse.jdt.internal.ui.callhierarchy and simplified to the minimum required.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011
  */
 @SuppressWarnings("restriction")
-public class JJCallHierarchy extends ViewPart implements ISelectionChangedListener, IJJConstants {
+public class JJCallHierarchyView extends ViewPart implements ISelectionChangedListener, IJJConstants {
 
   // MMa 11/2009 : javadoc and formatting revision ; added automatic expansion when selection is changed ; managed JJEditor / JTBEditor
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 08/2011 : fixed NPE in setSelection() and selectionChanged()
 
   /** Callers mode */
   static final int                       CALLERS = 0;
   /** Callees mode */
   static final int                       CALLEES = 1;
   /** The view's parent */
-  private Composite                      fParent;
+  private Composite                      jParent;
   /** The created parent's tree viewer */
-  private TreeViewer                     fTreeViewer;
+  private TreeViewer                     jTreeViewer;
   /** The created call hierarchy content provider */
-  private JJCallHierarchyContentProvider fContentProvider;
+  private JJCallHierarchyContentProvider jJJCallHierarchyContentProvider;
   /** The selected node */
-  private JJNode                         fNode;
+  private JJNode                         jJJNode;
   /** The selected node's editor */
-  private JJEditor                       fJJEditor;
+  private JJEditor                       jJJEditor;
   /** The edited file */
-  private IFile                          fFile;
+  private IFile                          jFile;
 
   /**
    * @see WorkbenchPart#createPartControl(Composite)
    */
   @Override
-  public void createPartControl(final Composite parent) {
-    fParent = parent;
-    parent.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true));
-
-    fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-    fTreeViewer.setAutoExpandLevel(2);
-    fTreeViewer.addSelectionChangedListener(this);
-    fContentProvider = new JJCallHierarchyContentProvider();
-    fTreeViewer.setContentProvider(fContentProvider);
-    fTreeViewer.setLabelProvider(new JJLabelProvider());
+  public void createPartControl(final Composite aParent) {
+    jParent = aParent;
+    aParent.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true));
+    jTreeViewer = new TreeViewer(aParent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+    jTreeViewer.setAutoExpandLevel(2);
+    jTreeViewer.addSelectionChangedListener(this);
+    jJJCallHierarchyContentProvider = new JJCallHierarchyContentProvider();
+    jTreeViewer.setContentProvider(jJJCallHierarchyContentProvider);
+    jTreeViewer.setLabelProvider(new JJLabelProvider());
     fillActionBars();
     setFocus();
   }
@@ -92,7 +91,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
    */
   @Override
   public void setFocus() {
-    fParent.setFocus();
+    jParent.setFocus();
   }
 
   /**
@@ -100,14 +99,11 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
    */
   private void fillActionBars() {
     final IActionBars actionBars = getViewSite().getActionBars();
-
     final IAction fRefreshAction = new RefreshAction();
     actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
-
     final ToggleCallModeAction toggleCallers = new ToggleCallModeAction(CALLERS);
     final ToggleCallModeAction toggleCallees = new ToggleCallModeAction(CALLEES);
     toggleCallers.setChecked(true);
-
     final IToolBarManager toolBar = actionBars.getToolBarManager();
     toolBar.add(fRefreshAction);
     toolBar.add(toggleCallers);
@@ -117,46 +113,51 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
   /**
    * Called when selection changes.
    * 
-   * @param event the event having changed the selection
+   * @param aEvent the event having changed the selection
    * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
    */
-  public void selectionChanged(final SelectionChangedEvent event) {
-    final ISelection selection = event.getSelection();
+  @Override
+  public void selectionChanged(final SelectionChangedEvent aEvent) {
+    final ISelection selection = aEvent.getSelection();
     if (selection.isEmpty()) {
-      fJJEditor.resetHighlightRange();
+      jJJEditor.resetHighlightRange();
     }
     else {
       final JJNode node = (JJNode) ((IStructuredSelection) selection).getFirstElement();
-      // fJJEditor.setSelection(node); // This is OK only if JJEditor is up
-      showInJJEditor(node); // Bring up JJEditor and select the node 
-      // add children and expand one level
-      node.buildCalleeMap();
-      node.buildCallerMap();
-      fTreeViewer.expandToLevel(node, 1);
-      fTreeViewer.refresh();
+      if (node != null && node != JJNode.getOohsjjnode()) {
+        // This is OK only if JJEditor is up
+        // fJJEditor.setSelection(node); 
+        // Bring up JJEditor and select the node 
+        showInJJEditor(node);
+        // add children and expand one level
+        node.buildCallees();
+        node.buildCallers();
+        jTreeViewer.expandToLevel(node, 1);
+        jTreeViewer.refresh();
+      }
     }
   }
 
   /**
    * Brings back JJEditor if it was closed and selects the node.
    * 
-   * @param node the node to select
+   * @param aJJNode the node to select
    */
-  public void showInJJEditor(final JJNode node) {
+  public void showInJJEditor(final JJNode aJJNode) {
     final IWorkbenchWindow window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow();
     if (window != null) {
       final IWorkbenchPage page = window.getActivePage();
       if (page != null) {
         try {
           // open the editor on the file we got when this JJCallHierary was opened
-          final String edid = "jtb".equals(fFile.getFileExtension()) ? JTBEDITOR_ID : JJEDITOR_ID; //$NON-NLS-1$
-          final IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), edid, true);
+          final String edid = "jtb".equals(jFile.getFileExtension()) ? JTBEDITOR_ID : JJEDITOR_ID; //$NON-NLS-1$
+          final IEditorPart editorPart = page.openEditor(new FileEditorInput(jFile), edid, true);
           final JJEditor jjEditor = (JJEditor) editorPart;
           final IEditorInput input = editorPart.getEditorInput();
           final IDocumentProvider provider = jjEditor.getDocumentProvider();
           provider.connect(input);
           // select the node
-          jjEditor.setSelection(node);
+          jjEditor.setSelection(aJJNode);
           provider.disconnect(input);
         } catch (final PartInitException e) {
           e.printStackTrace();
@@ -171,41 +172,51 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
    * Called from {@link JJOpenCallHierarchy#run(IAction)} on an action and from {@link #refresh()} when input
    * or mode is changed.
    * 
-   * @param node the selected node
-   * @param editor the selected node's editor
+   * @param aJJNode the selected node
+   * @param aJJEditor the selected node's editor
    */
-  public void setSelection(final JJNode node, final JJEditor editor) {
-    fNode = node;
-    fJJEditor = editor;
-    final IEditorInput editorInput = editor.getEditorInput();
-    fFile = ((IFileEditorInput) editorInput).getFile();
+  public void setSelection(final JJNode aJJNode, final JJEditor aJJEditor) {
+    jJJNode = aJJNode;
+    jJJEditor = aJJEditor;
+    if (aJJEditor == null) {
+      return;
+    }
+    final IEditorInput editorInput = aJJEditor.getEditorInput();
+    jFile = ((IFileEditorInput) editorInput).getFile();
 
     // need a root which is not displayed
     final JJNode root = new JJNode(0);
 
-    // add the node to the root as a caller and a callee
-    root.addCaller(node);
-    root.addCallee(node);
-    node.buildCalleeMap();
-    node.buildCallerMap();
-    fTreeViewer.setInput(root);
+    if (aJJNode == null) {
+      // empty view
+      root.clearCallers();
+      root.clearCallees();
+    }
+    else {
+      // add the node to the root as a caller and a callee
+      root.addCaller(aJJNode, true);
+      root.addCallee(aJJNode);
+      aJJNode.buildCallees();
+      aJJNode.buildCallers();
+    }
+    jTreeViewer.setInput(root);
   }
 
   /**
    * Rebuilds the whole AST from the root.
    */
   public void refresh() {
-    setSelection(fNode, fJJEditor);
+    setSelection(jJJNode, jJJEditor);
   }
 
   /**
    * Sets the given mode and refreshes the view.
    * 
-   * @param mode the mode to set
+   * @param aMode the mode to set
    */
-  public void setCallMode(final int mode) {
-    fContentProvider.setCallMode(mode);
-    fTreeViewer.refresh();
+  public void setCallMode(final int aMode) {
+    jJJCallHierarchyContentProvider.setCallMode(aMode);
+    jTreeViewer.refresh();
   }
 
   /**
@@ -217,12 +228,22 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
      * Creates a refresh action.
      */
     public RefreshAction() {
-      setText(CallHierarchyMessages.RefreshAction_text);
-      setToolTipText(CallHierarchyMessages.RefreshAction_tooltip);
+      // for Eclipse 3.5.x
+      //      setText(CallHierarchyMessages.RefreshAction_text);
+      // for Eclipse 3.6+
+      setText(CallHierarchyMessages.RefreshViewAction_text);
+      // for Eclipse 3.5.x
+      //      setToolTipText(CallHierarchyMessages.RefreshAction_tooltip);
+      // for Eclipse 3.6+
+      setToolTipText(CallHierarchyMessages.RefreshViewAction_tooltip);
       JavaPluginImages.setLocalImageDescriptors(this, "refresh_nav.gif"); //$NON-NLS-1$
       setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
-      PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                                                        IJavaHelpContextIds.CALL_HIERARCHY_REFRESH_ACTION);
+      // for Eclipse 3.5.x
+      //      PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+      //                                                        IJavaHelpContextIds.CALL_HIERARCHY_REFRESH_ACTION);
+      // for Eclipse 3.6+
+      PlatformUI.getWorkbench().getHelpSystem()
+                .setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_REFRESH_VIEW_ACTION);
     }
 
     /**
@@ -230,33 +251,33 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
      */
     @Override
     public void run() {
-      JJCallHierarchy.this.refresh();
+      JJCallHierarchyView.this.refresh();
     }
   }
 
   /**
    * Toggle action. Toggles the call direction of the call hierarchy (caller / callee). Calls
-   * {@link JJCallHierarchy#setCallMode(int)} with {@linkJJHierachy.CALLERS} or {@linkJJHierachy.CALLEES}
+   * {@link JJCallHierarchyView#setCallMode(int)} with {@linkJJHierachy.CALLERS} or {@linkJJHierachy.CALLEES}
    */
   class ToggleCallModeAction extends Action {
 
     /** The caller / callee mode */
-    private final int fMode;
+    private final int mode;
 
     /**
      * Toggles the call mode.
      * 
-     * @param mode the caller or callee mode
+     * @param aMode the caller or callee mode
      */
-    public ToggleCallModeAction(final int mode) {
+    public ToggleCallModeAction(final int aMode) {
       super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-      if (mode == CALLERS) {
+      if (aMode == CALLERS) {
         setText(CallHierarchyMessages.ToggleCallModeAction_callers_label);
         setDescription(CallHierarchyMessages.ToggleCallModeAction_callers_description);
         setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callers_tooltip);
         JavaPluginImages.setLocalImageDescriptors(this, "ch_callers.gif"); //$NON-NLS-1$
       }
-      else if (mode == CALLEES) {
+      else if (aMode == CALLEES) {
         setText(CallHierarchyMessages.ToggleCallModeAction_callees_label);
         setDescription(CallHierarchyMessages.ToggleCallModeAction_callees_description);
         setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callees_tooltip);
@@ -265,7 +286,7 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
       else {
         Assert.isTrue(false);
       }
-      fMode = mode;
+      mode = aMode;
       PlatformUI.getWorkbench().getHelpSystem()
                 .setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_TOGGLE_CALL_MODE_ACTION);
     }
@@ -275,8 +296,8 @@ public class JJCallHierarchy extends ViewPart implements ISelectionChangedListen
      */
     @Override
     public void run() {
-      // each button will pass it's value of fMode
-      JJCallHierarchy.this.setCallMode(fMode);
+      // each button will pass it's value of mode
+      JJCallHierarchyView.this.setCallMode(mode);
     }
   }
 }

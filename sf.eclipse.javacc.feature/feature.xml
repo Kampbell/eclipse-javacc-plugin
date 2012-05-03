@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.feature"
       label="SF JavaCC Eclipse Plug-in feature"
-      version="1.5.24"
+      version="1.5.25"
       provider-name="Rémi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
@@ -412,16 +412,16 @@ Version 2.0 dated 2005-05-21.
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.debug.ui" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.variables" version="3.2.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.ui" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.ui" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.6.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
