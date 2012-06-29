@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-
 /**
  * A set of Options ; can parse options on a command line and generate one new set.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class OptionSet {
 
@@ -27,7 +26,7 @@ public class OptionSet {
   /**
    * Standard constructor.
    * 
-   * @param aNeedsEqual true if an '=' is needed, false otherwise
+   * @param aNeedsEqual - true if an '=' is needed, false otherwise
    */
   public OptionSet(final boolean aNeedsEqual) {
     list = new ArrayList<Option>();
@@ -75,7 +74,7 @@ public class OptionSet {
   /**
    * Splits the command line arguments string into an array of strings.
    * 
-   * @param aCmdLineArgs the command line arguments string
+   * @param aCmdLineArgs - the command line arguments string
    * @return an array of strings
    */
   public static String[] tokenize(final String aCmdLineArgs) {
@@ -135,7 +134,7 @@ public class OptionSet {
   /**
    * Configures from a command line.
    * 
-   * @param aStr the command line arguments
+   * @param aStr - the command line arguments
    */
   public void configuresFrom(final String aStr) {
 
@@ -241,7 +240,7 @@ public class OptionSet {
   /**
    * Strips enclosing quotes.
    * 
-   * @param aValue the string
+   * @param aValue - the string
    * @return the string with the enclosing quotes stripped, or the string itself
    */
   private String stripEnclosingQuotes(final String aValue) {
@@ -268,14 +267,14 @@ public class OptionSet {
   /**
    * Adds an Option.
    * 
-   * @param aOption the option
+   * @param aOption - the option
    */
   public void add(final Option aOption) {
     list.add(aOption);
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option
    */
   public Option getOption(final int aIndex) {
@@ -290,7 +289,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aType the given type
+   * @param aType - the given type
    * @return the number of options of the given type
    */
   public int getOptionsSize(final int aType) {
@@ -305,7 +304,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option type
    */
   public int getType(final int aIndex) {
@@ -313,7 +312,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option name
    */
   public String getName(final int aIndex) {
@@ -321,7 +320,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option name and description
    */
   public String getNameAndDescription(final int aIndex) {
@@ -329,7 +328,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option value (enclosed in extra quotes if contains one or more spaces)
    */
   public String getValueInQuotes(final int aIndex) {
@@ -341,7 +340,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option value (no quotes added)
    */
   public String getValue(final int aIndex) {
@@ -349,7 +348,7 @@ public class OptionSet {
   }
 
   /**
-   * @param aIndex the option index
+   * @param aIndex - the option index
    * @return the option default value
    */
   public String getDefaultValue(final int aIndex) {

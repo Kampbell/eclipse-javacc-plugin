@@ -14,7 +14,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * <extension point="org.eclipse.core.resources.natures">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJNature implements IProjectNature, IJJConstants {
 

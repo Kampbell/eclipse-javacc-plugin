@@ -3,7 +3,6 @@ package sf.eclipse.javacc.options;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
-import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.base.Option;
 import sf.eclipse.javacc.base.OptionSet;
 
@@ -11,12 +10,14 @@ import sf.eclipse.javacc.base.OptionSet;
  * The JavaCC options Tab that enables setting the JavaCC options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
-public class JavaCCOptions extends OptionsAbstractTab implements IJJConstants {
+public class JavaCCOptions extends OptionsAbstractTab {
 
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : adapted boolean options sort to 3 columns display
+  // BF  06/2012 : removed redunant superinterface to prevent warning
 
   //	The integer valued options are:
   //	    LOOKAHEAD              (default 1)
@@ -54,8 +55,8 @@ public class JavaCCOptions extends OptionsAbstractTab implements IJJConstants {
   /**
    * Initializes with JavaCC default options.
    * 
-   * @param aParent the parent
-   * @param aRes the resource
+   * @param aParent - the parent
+   * @param aRes - the resource
    */
   public JavaCCOptions(final Composite aParent, final IResource aRes) {
     super(aParent, aRes);

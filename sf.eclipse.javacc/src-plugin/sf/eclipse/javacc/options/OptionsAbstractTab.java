@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -34,7 +33,7 @@ import sf.eclipse.javacc.head.Activator;
  * @see JJDocOptions
  * @see JTBOptions
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public abstract class OptionsAbstractTab extends Composite implements IPropertyChangeListener, IJJConstants {
 
@@ -69,15 +68,15 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /** The IResource we are working on */
   protected IResource              jResource;
   /** The "default" label */
-  String                           jDefaultLabel      = Activator.getString("OptionsAbstractTab.default");      //$NON-NLS-1$
+  String                           jDefaultLabel      = Activator.getString("OptAbsTab.default");      //$NON-NLS-1$
   /** The "empty default" label */
-  String                           jEmptyDefaultLabel = Activator.getString("OptionsAbstractTab.empty_default"); //$NON-NLS-1$
+  String                           jEmptyDefaultLabel = Activator.getString("OptAbsTab.empty_default"); //$NON-NLS-1$
 
   /**
    * Standard constructor.
    * 
-   * @param aParent the parent
-   * @param aRes the resource
+   * @param aParent - the parent
+   * @param aRes - the resource
    */
   public OptionsAbstractTab(final Composite aParent, final IResource aRes) {
     super(aParent, SWT.NONE);
@@ -107,7 +106,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
     // add group
     final Group resGrp = new Group(this, SWT.NONE);
-    resGrp.setText(Activator.getString("OptionsAbstractTab.Resulting_group")); //$NON-NLS-1$
+    resGrp.setText(Activator.getString("OptAbsTab.Resulting_group")); //$NON-NLS-1$
     resGrp.setLayout(layout);
     resGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
@@ -116,7 +115,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
     // add group
     final Group optGrp = new Group(this, SWT.NONE);
-    optGrp.setText(Activator.getString("OptionsAbstractTab.Options_group")); //$NON-NLS-1$
+    optGrp.setText(Activator.getString("OptAbsTab.Options_group")); //$NON-NLS-1$
     optGrp.setLayout(layout);
     optGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
@@ -144,8 +143,8 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /**
    * Shows the resulting command line arguments field.
    * 
-   * @param aStr the command line arguments
-   * @param aGrp the group inside which to add the field
+   * @param aStr - the command line arguments
+   * @param aGrp - the group inside which to add the field
    */
   protected void addCmdLnOptSection(final String aStr, final Composite aGrp) {
     final Composite composite = new Composite(aGrp, SWT.NONE);
@@ -153,7 +152,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     jCmdLnOptField = new StringFieldEditor(
                                            jPreferenceName, // name
-                                           "(" + Activator.getString("OptionsAbstractTab.Resulting") + ") " + jPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                           "(" + Activator.getString("OptAbsTab.Resulting") + ") " + jPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                            StringFieldEditor.UNLIMITED, // width
                                            StringFieldEditor.VALIDATE_ON_FOCUS_LOST, // strategy
                                            composite);
@@ -164,7 +163,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /**
    * Shows integer options with edit fields.
    * 
-   * @param aGrp the group inside which to add the option
+   * @param aGrp - the group inside which to add the option
    */
   protected void addIntegerOptSection(final Composite aGrp) {
     final Composite composite = new Composite(aGrp, SWT.NONE);
@@ -198,7 +197,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /**
    * Shows boolean options with checkboxes.
    * 
-   * @param aGrp the group inside which to add the option
+   * @param aGrp - the group inside which to add the option
    */
   protected void addBooleanOptSection(final Composite aGrp) {
     // aligns in 2 columns
@@ -226,7 +225,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /**
    * Shows string options with edit fields.
    * 
-   * @param aGrp the group inside which to add the option
+   * @param aGrp - the group inside which to add the option
    */
   protected void addStringOptSection(final Composite aGrp) {
     final Composite composite = new Composite(aGrp, SWT.NONE);
@@ -264,14 +263,14 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /**
    * Shows path options with edit fields.
    * 
-   * @param aGrp the group inside which to add the option
+   * @param aGrp - the group inside which to add the option
    */
   protected void addPathOptSection(final Composite aGrp) {
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Select_directory")); //$NON-NLS-1$
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Path_can_be_pathSection")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Select_directory")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Path_can_be_pathSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     int k = jOptionSet.getOptionsSize(Option.PATH);
     jPathField = new DirectoryFieldEditor[k];
@@ -282,7 +281,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
         continue;
       }
       jPathField[k] = new DirectoryFieldEditor(jOptionSet.getName(i), jOptionSet.getNameAndDescription(i),
-                                               Activator.getString("OptionsAbstractTab.Choose_a_directory"), //$NON-NLS-1$
+                                               Activator.getString("OptAbsTab.Choose_a_directory"), //$NON-NLS-1$
                                                jResource.getProject().getLocation().toOSString(), composite);
       jPathField[k].setStringValue(jOptionSet.getValueInQuotes(i));
       jPathField[k].setPropertyChangeListener(this);
@@ -293,14 +292,14 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /**
    * Shows file options with edit fields.
    * 
-   * @param aGrp the group inside which to add the option
+   * @param aGrp - the group inside which to add the option
    */
   protected void addFileOptSection(final Composite aGrp) {
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Select_file")); //$NON-NLS-1$
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptionsAbstractTab.Path_can_be_FileSection")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Select_file")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Path_can_be_FileSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     int k = jOptionSet.getOptionsSize(Option.FILE);
     jFileField = new FileFieldEditor[k];
@@ -320,8 +319,8 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
   /**
    * Resets all fields.
-   * 
-   * @see PreferencePage
+   * <p>
+   * {@inheritDoc}
    */
   public void performDefaults() {
     jIsUpdating = true;
@@ -402,9 +401,8 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
   /**
    * Listens to changes from booleanFields, intFields, stringFields, pathField.
-   * 
-   * @param aEvent the property change event object describing which property changed and how
-   * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void propertyChange(final PropertyChangeEvent aEvent) {

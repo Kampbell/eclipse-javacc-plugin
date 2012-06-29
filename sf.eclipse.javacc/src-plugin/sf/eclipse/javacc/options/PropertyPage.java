@@ -10,8 +10,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,7 +28,7 @@ import sf.eclipse.javacc.head.Activator;
  * <extension point="org.eclipse.ui.propertyPages">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements IJJConstants {
 
@@ -68,8 +66,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
 
   /**
    * Creates contents (called from plugin.xml).
-   * 
-   * @see PreferencePage#createContents(Composite)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   protected Control createContents(final Composite aParent) {
@@ -88,8 +86,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
     // JJRuntime always present
     jJJRunOptions = new GlobalOptions(jFolder, jResource);
     jJJRunItem = new TabItem(jFolder, SWT.NONE);
-    jJJRunItem.setText(Activator.getString("PropertyPage.Runtime_options_Tab")); //$NON-NLS-1$
-    jJJRunItem.setToolTipText(Activator.getString("PropertyPage.Runtime_options_Tab_TT")); //$NON-NLS-1$
+    jJJRunItem.setText(Activator.getString("PropPage.Runtime_options_Tab")); //$NON-NLS-1$
+    jJJRunItem.setToolTipText(Activator.getString("PropPage.Runtime_options_Tab_TT")); //$NON-NLS-1$
     jJJRunItem.setControl(jJJRunOptions);
 
     // for project
@@ -116,8 +114,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
   protected void addJCCTab() {
     jJJCCOptions = new JavaCCOptions(jFolder, jResource);
     jJJCCItem = new TabItem(jFolder, SWT.NONE);
-    jJJCCItem.setText(Activator.getString("PropertyPage.JavaCC_options_Tab")); //$NON-NLS-1$
-    jJJCCItem.setToolTipText(Activator.getString("PropertyPage.JavaCC_options_Tab_TT")); //$NON-NLS-1$
+    jJJCCItem.setText(Activator.getString("PropPage.JavaCC_options_Tab")); //$NON-NLS-1$
+    jJJCCItem.setToolTipText(Activator.getString("PropPage.JavaCC_options_Tab_TT")); //$NON-NLS-1$
     jJJCCItem.setControl(jJJCCOptions);
   }
 
@@ -127,8 +125,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
   protected void addJTreeTab() {
     jJJTreeOptions = new JJTreeOptions(jFolder, jResource);
     jJJTreeItem = new TabItem(jFolder, SWT.NONE);
-    jJJTreeItem.setText(Activator.getString("PropertyPage.JJTree_options_Tab")); //$NON-NLS-1$
-    jJJTreeItem.setToolTipText(Activator.getString("PropertyPage.JJTree_options_Tab_TT")); //$NON-NLS-1$
+    jJJTreeItem.setText(Activator.getString("PropPage.JJTree_options_Tab")); //$NON-NLS-1$
+    jJJTreeItem.setToolTipText(Activator.getString("PropPage.JJTree_options_Tab_TT")); //$NON-NLS-1$
     jJJTreeItem.setControl(jJJTreeOptions);
   }
 
@@ -138,8 +136,8 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
   protected void addJDocTab() {
     jJJDocOptions = new JJDocOptions(jFolder, jResource);
     jJJDocItem = new TabItem(jFolder, SWT.NONE);
-    jJJDocItem.setText(Activator.getString("PropertyPage.JJDoc_options_Tab")); //$NON-NLS-1$
-    jJJDocItem.setToolTipText(Activator.getString("PropertyPage.JJDoc_options_Tab_TT")); //$NON-NLS-1$
+    jJJDocItem.setText(Activator.getString("PropPage.JJDoc_options_Tab")); //$NON-NLS-1$
+    jJJDocItem.setToolTipText(Activator.getString("PropPage.JJDoc_options_Tab_TT")); //$NON-NLS-1$
     jJJDocItem.setControl(jJJDocOptions);
   }
 
@@ -149,14 +147,12 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
   protected void addJTBTab() {
     jJTBOptions = new JTBOptions(jFolder, jResource);
     jJTBItem = new TabItem(jFolder, SWT.NONE);
-    jJTBItem.setText(Activator.getString("PropertyPage.JTB_options_Tab")); //$NON-NLS-1$
-    jJTBItem.setToolTipText(Activator.getString("PropertyPage.JTB_options_Tab_TT")); //$NON-NLS-1$
+    jJTBItem.setText(Activator.getString("PropPage.JTB_options_Tab")); //$NON-NLS-1$
+    jJTBItem.setToolTipText(Activator.getString("PropPage.JTB_options_Tab_TT")); //$NON-NLS-1$
     jJTBItem.setControl(jJTBOptions);
   }
 
-  /**
-   * @see IPreferencePage#performOk()
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean performOk() {
     jJJRunOptions.performOk();
@@ -168,11 +164,10 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
     // ask for rebuild (should check if an option has changed)
     try {
       final IProject proj = jResource.getProject();
-      final MessageDialog dialog = new MessageDialog(
-                                                     getShell(),
-                                                     Activator.getString("PropertyPage.Ask_for_rebuild_title"), //$NON-NLS-1$
+      final MessageDialog dialog = new MessageDialog(getShell(),
+                                                     Activator.getString("PropPage.Ask_for_rebuild_title"), //$NON-NLS-1$
                                                      null,
-                                                     Activator.getString("PropertyPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
+                                                     Activator.getString("PropPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
                                                      MessageDialog.QUESTION, new String[] {
                                                          IDialogConstants.YES_LABEL,
                                                          IDialogConstants.NO_LABEL,
@@ -194,9 +189,7 @@ public class PropertyPage extends org.eclipse.ui.dialogs.PropertyPage implements
     return super.performOk();
   }
 
-  /**
-   * @see PreferencePage#performDefaults()
-   */
+  /** {@inheritDoc} */
   @Override
   protected void performDefaults() {
     super.performDefaults();

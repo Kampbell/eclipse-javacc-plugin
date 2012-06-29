@@ -9,14 +9,14 @@ import java.io.InputStreamReader;
  * Launcher for JavaCC. Uses Runtime.exec().
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JarLauncher {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 02/2010 : formatting and javadoc revision
 
-  /** the java command on the command line */
+  /** The java command on the command line */
   private static String javaCmd;
 
   static {
@@ -36,21 +36,19 @@ public class JarLauncher {
    */
   public static class StreamGobbler extends Thread {
 
-    /** the input stream */
+    /** The input stream */
     InputStream is;
 
     /**
      * Standard constructor.
      * 
-     * @param aIs the input stream
+     * @param aIs - the input stream
      */
     StreamGobbler(final InputStream aIs) {
       is = aIs;
     }
 
-    /**
-     * @see java.lang.Thread#run()
-     */
+    /** {@inheritDoc} */
     @Override
     public void run() {
       try {
@@ -70,8 +68,8 @@ public class JarLauncher {
   /**
    * Launches a command with Runtime.exec().
    * 
-   * @param aCmd the command to launch
-   * @param aDir the directory where to launch the command
+   * @param aCmd - the command to launch
+   * @param aDir - the directory where to launch the command
    */
   public static void launch(final String[] aCmd, final String aDir) {
     final Runtime rt = Runtime.getRuntime();
@@ -90,9 +88,9 @@ public class JarLauncher {
   /**
    * Launches JavaCC with Runtime.exec(), i.e. launches java -classpath javaccJarFile JavaCC args.
    * 
-   * @param aJavaCCJarFile the jar file to use
-   * @param aArgs the arguments
-   * @param aDir the directory where to launch the command
+   * @param aJavaCCJarFile - the jar file to use
+   * @param aArgs - the arguments
+   * @param aDir - the directory where to launch the command
    */
   public static void launchJavaCC(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
     final String[] cmd = new String[aArgs.length + 4];
@@ -109,9 +107,9 @@ public class JarLauncher {
   /**
    * Launches JJTree with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJTree args.
    * 
-   * @param aJavaCCJarFile the jar file to use
-   * @param aArgs the arguments
-   * @param aDir the directory where to launch the command
+   * @param aJavaCCJarFile - the jar file to use
+   * @param aArgs - the arguments
+   * @param aDir - the directory where to launch the command
    */
   public static void launchJJTree(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
     final String[] cmd = new String[aArgs.length + 4];
@@ -128,9 +126,9 @@ public class JarLauncher {
   /**
    * Launches JJDoc with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJDoc args.
    * 
-   * @param aJavaCCJarFile the jar file to use
-   * @param aArgs the arguments
-   * @param aDir the directory where to launch the command
+   * @param aJavaCCJarFile - the jar file to use
+   * @param aArgs - the arguments
+   * @param aDir - the directory where to launch the command
    */
   public static void launchJJDoc(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
     final String[] cmd = new String[aArgs.length + 4];
@@ -147,9 +145,9 @@ public class JarLauncher {
   /**
    * Launches JTB with Runtime.exec(), i.e. launches java -jar javaccJarFile args.
    * 
-   * @param aJarfile the jar file to use
-   * @param aArgs the arguments
-   * @param aDir the directory where to launch the command
+   * @param aJarfile - the jar file to use
+   * @param aArgs - the arguments
+   * @param aDir - the directory where to launch the command
    */
   public static void launchJTB(final String aJarfile, final String[] aArgs, final String aDir) {
     final String[] cmd = new String[aArgs.length + 3];
@@ -165,7 +163,7 @@ public class JarLauncher {
   /**
    * Unit test.
    * 
-   * @param aArgs the arguments
+   * @param aArgs - the arguments
    */
   public static void main(final String aArgs[]) {
     final String jarFile = "C:/java/javacc-3.0/bin/lib/javacc.jar"; //$NON-NLS-1$

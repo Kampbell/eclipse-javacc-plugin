@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.headless.feature"
       label="SF JavaCC Eclipse Headless Plug-in feature"
-      version="1.5.25"
+      version="1.5.26"
       provider-name="Rémi Koutcherawy"
       plugin="sf.eclipse.javacc.headless">
 

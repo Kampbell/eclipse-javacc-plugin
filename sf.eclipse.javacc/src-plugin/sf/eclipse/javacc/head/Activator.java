@@ -25,7 +25,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * Bundle-ClassPath: plugin.jar, javacc.jar
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class Activator extends AbstractUIPlugin implements IJJConstants {
 
@@ -118,7 +118,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   }
 
   /**
-   * @param aPath the images path
+   * @param aPath - the images path
    * @return the image descriptor
    */
   public static ImageDescriptor getImageDescriptor(final String aPath) {
@@ -126,7 +126,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   }
 
   /**
-   * @param aKey the key of a resource in the plugin's resource bundle
+   * @param aKey - the key of a resource in the plugin's resource bundle
    * @return the string from the plugin's resource bundle, or 'key' if not found.
    */
   public static String getString(final String aKey) {
@@ -138,7 +138,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   }
 
   /**
-   * @param aMsg the message to log as an error (no exception thrown to avoid side effects)
+   * @param aMsg - the message to log as an error (no exception thrown to avoid side effects)
    */
   public static void logErr(final String aMsg) {
     final Status status = new Status(IStatus.ERROR, "JavaCC", IStatus.OK, aMsg, //$NON-NLS-1$
@@ -148,7 +148,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
   }
 
   /**
-   * @param aMsg the message to log as an info
+   * @param aMsg - the message to log as an info
    */
   public static void logInfo(final String aMsg) {
     final Status status = new Status(IStatus.INFO, "JavaCC", IStatus.OK, aMsg, //$NON-NLS-1$

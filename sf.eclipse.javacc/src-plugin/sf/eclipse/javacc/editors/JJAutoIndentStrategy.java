@@ -8,32 +8,36 @@ import org.eclipse.jface.text.IDocument;
 
 import sf.eclipse.javacc.actions.JJFormat;
 import sf.eclipse.javacc.head.Activator;
-import sf.eclipse.javacc.options.PreferencesInitializer;
+import sf.eclipse.javacc.preferences.IPrefConstants;
+import sf.eclipse.javacc.scanners.JJCodeScanner;
 
 /**
  * Auto indent strategy sensitive to newlines, braces, parenthesis, vertical bar, angle brackets and colons.
  * 
  * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
-public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
+public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IPrefConstants {
 
   // MMa 11/2009 : javadoc and formatting revision ; removed newlines around '(' and ')'
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : fixed NPE
+  // BF  05/2012 : removed reference to JJTokenRule
+  // BF  06/2012 : removed unnecessary code to avoid warning message
 
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
    * 
    * @see IAutoEditStrategy#customizeDocumentCommand(IDocument, DocumentCommand)
-   * @param aDoc the document
-   * @param aCmd the document command (the last character)
+   * @param aDoc - the document
+   * @param aCmd - the document command (the last character)
    */
   @Override
   public void customizeDocumentCommand(final IDocument aDoc, final DocumentCommand aCmd) {
     final boolean noAdvancedAutoInd = Activator.getDefault().getPreferenceStore()
-                                               .getBoolean(PreferencesInitializer.P_NO_ADV_AUTO_INDENT);
+                                               .getBoolean(P_NO_ADV_AUTO_INDENT);
     if (noAdvancedAutoInd) {
       if (aCmd.length == 0 && aCmd.text != null && endsWithDelimiter(aDoc, aCmd.text)) {
         basicIndentAfterNewLine(aDoc, aCmd);
@@ -525,7 +529,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
             break;
           }
         }
-        if (JJTokenRule.isChoicesPunct(c) || c == '|' || c == '"' || c == '=' || c == ':') {
+        if (c == '(' || c == ')' || c == '*' || c == '+' || c == '?' || c == '|' || c == '"' || c == '='
+            || c == ':') {
           // case after some JavaCC punctuation, so add a space
           // set the replacement document command text
           aCmd.text = "< "; //$NON-NLS-1$
@@ -598,8 +603,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
   /**
    * Returns whether or not the text ends with one of the document end of line delimiters.
    * 
-   * @param aDoc the document
-   * @param aTxt the text
+   * @param aDoc - the document
+   * @param aTxt - the text
    * @return true if the text ends with one of the document end of line delimiters, false otherwise
    */
   boolean endsWithDelimiter(final IDocument aDoc, final String aTxt) {
@@ -620,7 +625,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param aEndPos - the end position to search back from (modified)
    * @param aRightBracesCount - the number of braces to skip
    * @return the line number of the next matching brace after end
-   * @throws BadLocationException if not in the right place
+   * @throws BadLocationException - if not in the right place
    */
   int findMatchingLeftBrace(final IDocument aDoc, final int aStartLine, final int aEndPos,
                             final int aRightBracesCount) throws BadLocationException {
@@ -650,7 +655,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param aEndPos - the end position for the search
    * @param aIgnoreRightBraces - whether or not to ignore right braces in the count
    * @return the line number of the next matching brace after end
-   * @throws BadLocationException if not in the right place
+   * @throws BadLocationException - if not in the right place
    */
   int getBracesCount(final IDocument aDoc, final int aStartPos, final int aEndPos,
                      final boolean aIgnoreRightBraces) throws BadLocationException {
@@ -709,7 +714,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param aDoc - the document being parsed
    * @param aLine - the line being searched
    * @return the line indentation string.
-   * @throws BadLocationException if not in the right place
+   * @throws BadLocationException - if not in the right place
    */
   String getLineIndent(final IDocument aDoc, final int aLine) throws BadLocationException {
     if (aLine < 0) {
@@ -728,7 +733,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param aStartPos - the start position for the search
    * @param aEndPos - the end position for the search
    * @return the end position of a comment starting at the start position
-   * @throws BadLocationException if not in the right place
+   * @throws BadLocationException - if not in the right place
    */
   int getCommentEnd(final IDocument aDoc, final int aStartPos, final int aEndPos) throws BadLocationException {
     int p = aStartPos;
@@ -752,10 +757,10 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * @param aEndPos - the position to end searching to
    * @param aCh - the character to try to find
    * @return the first location of the character searched
-   * @throws BadLocationException if not in the right place
+   * @throws BadLocationException - if not in the right place
    */
   int getStringEnd(final IDocument aDoc, final int aStartPos, final int aEndPos, final char aCh)
-                                                                                            throws BadLocationException {
+                                                                                                throws BadLocationException {
     int p = aStartPos;
     while (p < aEndPos) {
       final char c = aDoc.getChar(p);

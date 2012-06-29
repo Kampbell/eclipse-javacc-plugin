@@ -1,0 +1,295 @@
+This is a summary of the current eclipse-javacc coloring.
+
+There are 5 major parts.  The first is the coloring of information before the
+first production.  The next 4 are the 4 different productions.  The two major
+productions are split into separate sections.
+
+In each case (not whitespace) there are both a foreground and background color.
+There are two background colors - java code and javacc code.  Splitting the
+javacc background into bnf and regex was considered but was not implemented
+(seemed to be overkill).  This could be reconsidered, although it appears that
+there is no black and white distinction between the two.
+
+------------------------- Pre-Production coloring ------------------------------
+
+    FIELD                       FOREGROUND COLOR    BACKGROUND COLOR
+
+Initial whitespace              none                javacc
+options keyword                 javacc keyword      javacc
+whitespace following keyword    none                javacc
+braces around options           bnf coloring        javacc              javacc punctuation / javacc keyword
+whitespace following brace      none                javacc
+options keywords                javacc keyword      javacc
+whitespace following option     none                javacc
+equal sign                      java punctuation    javacc              javacc punctuation / javacc keyword
+whitespace following =          none                javacc
+option value                    java string, ...    javacc
+whitespace following value      none                javacc
+semicolon                       java punctuation    javacc              javacc punctuation / javacc keyword
+whitespace following semicolon  none                javacc
+whitespace follow. right brace  none                javacc
+PARSER_BEGIN keyword            javacc keyword      javacc
+whitespace following keyword    none                java
+Parens following the keyword    java punctuation    java                javacc punctuation / javacc keyword
+ws before and after the name    none                java
+the parser name                 java id             java
+Right parens ?                  java punctuation ?  java                javacc punctuation / javacc keyword
+ws after the right paren        none                java
+everything up to PARSER_END     java coloring       java
+PARSER_END keyword              javacc keyword      javacc
+whitespace following keyword    none                java
+Parens following the keyword    java punctuation    java
+ws before and after the name    none                java
+the parser name                 java id             java
+Right parens ?                  java punctuation ?  java                javacc punctuation / javacc keyword
+ws after the right paren        none                javacc
+
+Note - using java punctuation and coloring for the equal sign, option value and
+semicolon is expedient.  Using a different foreground coloring scheme will add
+considerable work.  Changing the foreground color of the option braces and
+parser name parens to an exising or a new color is less work.
+Using the javacc background color for the entire options block is recommended.
+
+-------------------------- JAVACODE Production ----------------------
+ws before the keyword           none                javacc
+JAVACODE keyword                javacc keyword      javacc
+ws after the keyword            none                java
+java method declaration         java                java
+first java brace                java punctuation    java
+everything up to ending brace   java coloring       java
+closing java brace ?            java punctuation ?  java
+ws following closing brace      none                javacc
+
+-------------------------- TOKEN_MGR_DECLS Production ----------------------
+ws before the keyword           none                javacc
+TOKEN_MGR_DECLS keyword         javacc keyword      javacc
+ws after the keyword            none                javacc
+colon                           regex punctuation   javacc              javacc punctuation / javacc keyword
+ws after the colon              none                javacc
+opening Java block brace        Java keyword        java                java punctuation / specific
+ws following the brace          none                java
+everything up to ending brace   java coloring       java
+closing Java block brace        Java keyword        java                java punctuation / specific
+ws following closing brace      none                javacc
+
+-------------------------- BNF Production -----------------------------------
+initial ws                          none                javacc
+Java declaration                    java coloring       javacc
+ws in java decl up to semicolon     none                javacc
+colon                               bnf coloring        javacc              javacc punctuation / javacc keyword
+ws from colon to brace              none                javacc
+Opening Java block brace            java keyword        java                java punctuation / specific
+contents of java block              java coloring       java
+ending java block brace             java keyword        java                java punctuation / specific
+ws between the braces               none                javacc
+opening brace of bnf choices        bnf punctuation     javacc              javacc punctuation / javacc keyword
+  -- bnf expansion choices, described below --
+closing brace of bnf choices        bnf punctuation     javacc              javacc punctuation / javacc keyword
+
+Note - coloring the java declaration, from the modifier or return type up to
+the colon is expedient, and will require significant work if other coloring
+is needed.
+
+---------------------- BNF Expansion Choices --------------------------------
+
+The bnf choices consist of ebnf punctuation, java blocks, the LOOKAHEAD
+specification, regex expressions, strings, java method calls and java
+assignments.  Except where otherwise noted, the background in a bnf production
+is the javacc background.  bnf choices nest, and no attempt is made to
+distinguish choices by nest level.
+
+ws in the bnf production            none                javacc
+| character (alternatives)          bnf punctuation     javacc              choice punctuation
+( and ) characters (grouping)       bnf punctuation     javacc              choice punctuation
+[ and ] characters (optional)       bnf punctuation     javacc              choice punctuation
+* + and ? characters (repetition)   bnf punctuation     javacc              choice punctuation
+Java block - enclosing braces       java keyword        java                java punctuation / specific
+Java block - contents               java coloring       java
+regex expression - brackets         regex coloring      javacc
+regex contents                      regex coloring      javacc
+strings, characters                 string coloring     javacc
+java method calls - java id         java coloring       javacc
+java method calls - arg list        java coloring       javacc
+java assignments - java lhs         java coloring       javacc
+java assignments - equal sign       java coloring       javacc
+
+The java coloring for the java method calls and assignments is expedient, and
+will require significaant rework if changed.
+
+-------------------- LOOKAHEAD Specification -----------------------------------
+LOOKAHEAD keyword               javacc keyword      javacc
+ws up to left paren             none                javacc
+left and right parens           bnf punctuation     javacc
+integer specification           java number         javacc
+comma                           bnf puncuation      javacc
+semicolon  ? where ?            java punctuation    javacc
+Java block                      same as other java blocks
+
+Except for the keyword, the LOOKAHEAD clause is colored like any other set of
+bnf choices enclosed in parens, with the addition of integer, comma and
+semicolon characters.
+
+----------------------REGEX Production -----------------------------------------
+
+The regex production contains a regex specification which is enclosed in braces.
+In all cases the background color (excluding the regex specification)
+is the javacc background color.
+
+angle brackets in state prefix  regex color             javacc              state name color
+* character in state prefix     state name color        javacc
+state names in state prefix     state name color        javacc
+comma in state prefix           regex color             javacc              state name color
+TOKEN or other keyword          javacc keyword          javacc
+IGNORE_CASE keyword             javacc keyword          javacc
+[ and ] around IGNORE_CASE      regex color             javacc              javacc keyword
+colon                           regex color             javacc
+
+------------------------ REGEX Specification -----------------------------------
+
+The regex specification contains one or more regex expressions, optionally
+separated by the | character.
+
+surrounding left and right braces   regex color         javacc              javacc punctuation / javacc keyword
+Java block within the specification java block coloring javacc
+colon before state name             state name color    javacc
+lexical state name                  state name color    javacc
+| character                         bnf coloring        javacc				???
+strings                             string coloring     javacc
+
+-------------------------- REGEX Expression ------------------------------------
+
+A regex expression is enclosed by angle brackets and contains a defined token
+name, the definition of a token name, and one or more regex choices, optionally
+separated by the | character.
+
+surrounding angle brackets      regex coloring          javacc
+EOF keyword                     javacc keyword          javacc
+token identifier                token identifier        javacc
+token identifier (private)      private token color     javacc
+# character                     private token color     javacc
+colon                           same as token ident.    javacc				???
+| character                     bnf coloring            javacc				???
+
+--------------------------- REGEX Choice ---------------------------------------
+
+( and ) enclosing regex choices bnf punctuation     javacc				???
+* + ? characters                bnf choices         javacc				???
+{ and } enclosing count         java punctuation    javacc				???
+comma in count                  java punctuation    javacc				???
+< and > enclosing token name    regex punctuation   javacc				???
+token name                      token name color    javacc				???
+[ and ] enclosing regex chars   regex punctuation   javacc				???
+~ before specification          regex punctuation   javacc				???
+- and comma in specification    regex punctuation   javacc				???
+
+================================================================================
+
+----------------------- Summary of Multi Use Punctuation -----------------------
+
+Note that all punctuation may also occur in Java code in general, colored as
+Java punctuation.
+
+{ and } braces:
+    Around options block
+    Inside JAVACODE production (part of method definition)
+    Surrounding the Java block in the TOKEN_MGR_DECLS production
+    Surounding the regex specification in a regex production
+    surrounding the Java block in a regex production
+    Surrounding the repetition counts in a regex choice
+    Surrounding the Java block in a bnf production
+    Surrounding the bnf choices in a bnf production
+    Surrounding the Java block in a bnf choice
+    Surrounding the Java block in a LOOKAHEAD specification
+
+( and ) parens:
+    surrounding the parser name in the PARSER_BEGIN clause
+    surrounding the parser name in the PARSER_END clause
+    surrounding the arguments in a java method definition in JAVACODE
+    surrounding regex choices in a regex choice
+    surrounding thearguments in a java method definition in a bnf production
+    surrounding bnf choices in a bnf choice
+    surrounding the arguments in a LOOKAHEAD specification
+    surrounding the arguments in a java method specification in a bnf choice
+    surrounding java code within an assignment LHS in a bnf choice
+    surrounding the specification following a JJT node name
+
+[ and ]
+    Surrounding the IGNORE_CASE keyword in a regex production
+    surrounding the character specifications in a regex choice
+    surrounding an optional bnf choice in a bnfchoice
+
+< and >
+    surrounding the state name list in a regex production
+    surrounding a regex expression
+    surrounding the token name in a regex choice
+
+colon character
+    separating the keyword and java block in a TOKEN_MGR_DECLS production
+    before the left brace in a regex production
+    before a lexical state name in a regex production
+    following a normal token definition name in a regex expression
+    following a private token definition name in a regex expression
+    before the Java block left brace in a bnf production
+
+| character
+    separating regex expressions or strings in a regex specification
+    separating regex choices in a regex expression
+    separating bnf choicesi in a bnf production
+    separating bnf choices in a LOOKAHEAD specification
+
+* character
+    to specify all lexical states in a regex production
+    as a repetition specification for a regex choice
+    as a repetition specification for a bnf choice
+
++ ? characters
+    as a repetition specification for a regex choice
+    as a repetition specification for a bnf choice
+
+= character
+    defining an option value in an options block
+    in an assignment within a bnf choice
+
+comma
+    separating lexical state names in a regex production
+    separating integer values in a repetition specificaation in a regex choice
+    separating character specifications in a regex choice ( in [ ] )
+    separating arguments in a LOOKAHEAD specification
+    separating the arguments in a java method specification in JAVACODE
+    separating arguments in a java method specification in a bnf production
+    separating arguments in a java method specification in a bnf choice
+
+semicolon
+    ending option specifications in an options block
+
+# character
+    before a private token definition in a regex expression
+    before a JJT node name
+
+~ and - characters
+    within a regex choice
+
+strings and quoted characters are always colored with the same color
+
+---------------------------- Summary of Word usage -----------------------------
+
+Java keywords
+Java identifiers
+Java method names in JAVACODE, bnf productions and bnf choices
+JavaCC keywords
+JavaCC parser name
+Lexical state name used in a regex production
+Lexical state name defined in a regex specification
+Token name (either public or private) within a regex choice.
+Token name within definition
+Private token name within definition
+    ==> the three above, if colored differently, may require added lookahead
+
+------------------------ Other Considerations ----------------------------------
+
+Separate coloring for JTB keywords, possibly keyed by file suffix?
+
+Separate coloring of JJT node names and argument specifications
+
+The coloring of the undocumented throws, try, catch and final clauses (if not
+colored as java code) is yet to be determined.

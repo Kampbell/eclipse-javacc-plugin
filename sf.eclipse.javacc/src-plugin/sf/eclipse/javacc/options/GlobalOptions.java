@@ -32,7 +32,7 @@ import sf.eclipse.javacc.head.JJNature;
  * The Tab for the JavaCC global options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class GlobalOptions extends Composite implements IJJConstants {
 
@@ -49,7 +49,7 @@ public class GlobalOptions extends Composite implements IJJConstants {
   protected BooleanFieldEditor jMarkGenFilesAsDerived;
   /** The clear console flag */
   protected BooleanFieldEditor jClearConsole;
-  /** the add JJNature flag */
+  /** The add JJNature flag */
   protected BooleanFieldEditor jJJNature;
   /** The JTB jar file */
   protected Text               jJTBJarFile;
@@ -57,10 +57,10 @@ public class GlobalOptions extends Composite implements IJJConstants {
   protected IResource          jResource;
 
   /**
-   * Constructor for GlobalOptions.
+   * Constructor for GlobOpt.
    * 
-   * @param aParent the parent
-   * @param aResource the resource
+   * @param aParent - the parent
+   * @param aResource - the resource
    */
   public GlobalOptions(final Composite aParent, final IResource aResource) {
     super(aParent, SWT.NONE);
@@ -75,20 +75,20 @@ public class GlobalOptions extends Composite implements IJJConstants {
 
     // add group
     final Group groupProject = new Group(this, SWT.NONE);
-    groupProject.setText(Activator.getString("GlobalOptions.Common_options_Group")); //$NON-NLS-1$
+    groupProject.setText(Activator.getString("GlobOpt.Common_options_Group")); //$NON-NLS-1$
     groupProject.setLayout(layout);
     groupProject.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
     // add runtime_jar selection control
     final Composite subGroup = new Composite(groupProject, SWT.NONE);
     subGroup.setLayout(new GridLayout(4, false));
-    new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("GlobalOptions.Select_jar_files")); //$NON-NLS-1$
+    new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("GlobOpt.Select_jar_files")); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     // add File Field Editor (no more FileFieldEditor)
     // code inspired by org.eclipse.jdt.internal.ui.preferences.OptionsConfigurationBlock
-    new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("GlobalOptions.Set_the_JavaCC_jar_file")); //$NON-NLS-1$
+    new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("GlobOpt.Set_the_JavaCC_jar_file")); //$NON-NLS-1$
     jJavaCCjarFile = new Text(subGroup, SWT.BORDER | SWT.SINGLE);
     GridData gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
@@ -101,13 +101,13 @@ public class GlobalOptions extends Composite implements IJJConstants {
 
     jJavaCCjarFile.setLayoutData(gd);
     Button browse = new Button(subGroup, SWT.PUSH);
-    browse.setText(Activator.getString(Activator.getString("GlobalOptions.Browse"))); //$NON-NLS-1$
+    browse.setText(Activator.getString(Activator.getString("GlobOpt.Browse"))); //$NON-NLS-1$
     browse.addSelectionListener(new SelectionAdapter() {
 
       @Override
       public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final FileDialog dialog = new FileDialog(jJavaCCjarFile.getShell(), SWT.OPEN);
-        dialog.setText(Activator.getString("GlobalOptions.Choose_file")); //$NON-NLS-1$
+        dialog.setText(Activator.getString("GlobOpt.Choose_file")); //$NON-NLS-1$
         dialog.setFilterPath(jJavaCCjarFile.getText());
         final String path = dialog.open();
         if (path != null) {
@@ -117,7 +117,7 @@ public class GlobalOptions extends Composite implements IJJConstants {
     });
     // add "Variables..." button
     Button variables = new Button(subGroup, SWT.PUSH);
-    variables.setText(Activator.getString(Activator.getString("GlobalOptions.Variables"))); //$NON-NLS-1$
+    variables.setText(Activator.getString(Activator.getString("GlobOpt.Variables"))); //$NON-NLS-1$
     variables.addSelectionListener(new SelectionAdapter() {
 
       @Override
@@ -130,7 +130,7 @@ public class GlobalOptions extends Composite implements IJJConstants {
       }
     });
     // add jtb runtime_jar selection control    
-    new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("GlobalOptions.Set_the_jtb_jar_file")); //$NON-NLS-1$
+    new Label(subGroup, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("GlobOpt.Set_the_Jtb_jar_file")); //$NON-NLS-1$
     jJTBJarFile = new Text(subGroup, SWT.BORDER | SWT.SINGLE);
     gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
@@ -143,13 +143,13 @@ public class GlobalOptions extends Composite implements IJJConstants {
 
     jJTBJarFile.setLayoutData(gd);
     browse = new Button(subGroup, SWT.PUSH);
-    browse.setText(Activator.getString(Activator.getString("GlobalOptions.Browse"))); //$NON-NLS-1$
+    browse.setText(Activator.getString(Activator.getString("GlobOpt.Browse"))); //$NON-NLS-1$
     browse.addSelectionListener(new SelectionAdapter() {
 
       @Override
       public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final FileDialog dialog = new FileDialog(jJavaCCjarFile.getShell(), SWT.OPEN);
-        dialog.setText(Activator.getString("GlobalOptions.Choose_file")); //$NON-NLS-1$
+        dialog.setText(Activator.getString("GlobOpt.Choose_file")); //$NON-NLS-1$
         dialog.setFilterPath(jJTBJarFile.getText());
         final String path = dialog.open();
         if (path != null) {
@@ -159,7 +159,7 @@ public class GlobalOptions extends Composite implements IJJConstants {
     });
     // add "Variables..." button
     variables = new Button(subGroup, SWT.PUSH);
-    variables.setText(Activator.getString(Activator.getString("GlobalOptions.Variables"))); //$NON-NLS-1$
+    variables.setText(Activator.getString(Activator.getString("GlobOpt.Variables"))); //$NON-NLS-1$
     variables.addSelectionListener(new SelectionAdapter() {
 
       @Override
@@ -175,22 +175,22 @@ public class GlobalOptions extends Composite implements IJJConstants {
     // add Checkboxes for boolean values
     final Composite checkGroup = new Composite(groupProject, SWT.NONE);
     checkGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-    final String def = " (".concat(Activator.getString(Activator.getString("JJAbstractTab.default"))) //$NON-NLS-1$  //$NON-NLS-2$ 
+    final String def = " (".concat(Activator.getString(Activator.getString("OptAbsTab.default"))) //$NON-NLS-1$  //$NON-NLS-2$ 
                            .concat(" "); //$NON-NLS-1$ 
     String str;
-    str = Activator.getString(Activator.getString("GlobalOptions.Clear_JavaCC_console_before_build")).concat(def) //$NON-NLS-1$
+    str = Activator.getString(Activator.getString("GlobOpt.Clear_JavaCC_console_before_build")).concat(def) //$NON-NLS-1$
                    .concat(DEF_CLEAR_CONSOLE).concat(")"); //$NON-NLS-1$
     jClearConsole = new BooleanFieldEditor(CLEAR_CONSOLE, str, checkGroup);
 
-    str = Activator.getString(Activator.getString("GlobalOptions.Build_automatically_on_save")).concat(def) //$NON-NLS-1$
+    str = Activator.getString(Activator.getString("GlobOpt.Build_automatically_on_save")).concat(def) //$NON-NLS-1$
                    .concat(DEF_JJ_NATURE).concat(")"); //$NON-NLS-1$
     jJJNature = new BooleanFieldEditor(JJ_NATURE_NAME, str, checkGroup);
 
-    str = Activator.getString(Activator.getString("GlobalOptions.Automatically_suppress_warnings")).concat(def) //$NON-NLS-1$
+    str = Activator.getString(Activator.getString("GlobOpt.Automatically_suppress_warnings")).concat(def) //$NON-NLS-1$
                    .concat(DEF_SUPPRESS_WARNINGS).concat(")"); //$NON-NLS-1$
     jSuppressWarnings = new BooleanFieldEditor(SUPPRESS_WARNINGS, str, checkGroup);
 
-    str = Activator.getString(Activator.getString("GlobalOptions.Mark_generated_files_as_derived")).concat(def) //$NON-NLS-1$
+    str = Activator.getString(Activator.getString("GlobOpt.Mark_generated_files_as_derived")).concat(def) //$NON-NLS-1$
                    .concat(DEF_MARK_GEN_FILES_AS_DERIVED).concat(")"); //$NON-NLS-1$
     jMarkGenFilesAsDerived = new BooleanFieldEditor(MARK_GEN_FILES_AS_DERIVED, str, checkGroup);
 
@@ -241,7 +241,7 @@ public class GlobalOptions extends Composite implements IJJConstants {
   }
 
   /**
-   * @param str "true" or "false
+   * @param str - "true" or "false
    * @return true or false
    */
   static boolean isTrue(final String str) {

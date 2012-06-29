@@ -25,19 +25,17 @@ import sf.eclipse.javacc.parser.JJNode;
  * <action class="sf.eclipse.javacc.actions.JJOpenCallHierarchy"><br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 08/2011 : enhanced Call Hierarchy view (changed selection key)
 
-  /** the action's editor */
+  /** The action's editor */
   static JJEditor sJJEditor;
 
-  /**
-   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-   */
+  /** {@inheritDoc} */
   @Override
   public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
                               final IEditorPart aTargetEditor) {
@@ -47,9 +45,7 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
     sJJEditor = (JJEditor) aTargetEditor;
   }
 
-  /**
-   * @see IEditorActionDelegate#run(IAction)
-   */
+  /** {@inheritDoc} */
   @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
     final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -89,9 +85,7 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
     }
   }
 
-  /**
-   * @see IEditorActionDelegate#selectionChanged(IAction, ISelection)
-   */
+  /** {@inheritDoc} */
   @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
                                @SuppressWarnings("unused") final ISelection aSelection) {

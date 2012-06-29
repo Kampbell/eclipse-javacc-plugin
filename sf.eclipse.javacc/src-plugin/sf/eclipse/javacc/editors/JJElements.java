@@ -10,7 +10,7 @@ import sf.eclipse.javacc.parser.Token;
  * Maps of JavaCC elements for one Editor. Used to navigate between declarations.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJElements implements JavaCCParserTreeConstants {
 
@@ -36,8 +36,8 @@ public class JJElements implements JavaCCParserTreeConstants {
    * Adds the node either to the identifier or node descriptor nodes or non identifier nor node descriptor
    * nodes maps.
    * 
-   * @param aImage the node's image
-   * @param aJJNode the node
+   * @param aImage - the node's image
+   * @param aJJNode - the node
    */
   public final void put(final String aImage, final JJNode aJJNode) {
     final int ndId = aJJNode.getId();
@@ -94,7 +94,7 @@ public class JJElements implements JavaCCParserTreeConstants {
    * These nodes are identified in JavaCC15.jjt with a node descriptor '#xxx', except the #identifier and
    * #node_descriptor nodes which are not in this map (they are filtered and added in the other map).
    * 
-   * @param aKey a key
+   * @param aKey - a key
    * @return the JJNode
    */
   public final JJNode getNonIdentNorNodeDesc(final String aKey) {
@@ -106,7 +106,7 @@ public class JJElements implements JavaCCParserTreeConstants {
    * line + '#' + image).<br>
    * These nodes are identified in JavaCC15.jjt with a node descriptor #identifier or #node_descriptor.
    * 
-   * @param aKey a key (must be line + image or line + '#' + image)
+   * @param aKey - a key (must be line + image or line + '#' + image)
    * @return the JJNode
    */
   public JJNode getIdentOrNodeDesc(final String aKey) {
@@ -116,7 +116,7 @@ public class JJElements implements JavaCCParserTreeConstants {
   /**
    * Returns the hyperlink target for a key.
    * 
-   * @param aKey a key (must be image without "#")
+   * @param aKey - a key (must be image without "#")
    * @return the JJNode
    */
   public JJNode getHyperlinkTarget(final String aKey) {
@@ -126,7 +126,7 @@ public class JJElements implements JavaCCParserTreeConstants {
   /**
    * Tells whether the given key appears in the non identifier nor node descriptor nodes map.
    * 
-   * @param aKey a key
+   * @param aKey - a key
    * @return true / false
    */
   public final boolean isNonIdentNorNodeDescElement(final String aKey) {
@@ -136,7 +136,7 @@ public class JJElements implements JavaCCParserTreeConstants {
   /**
    * Tells whether the given key appears in the identifier or node descriptor nodes map.
    * 
-   * @param aKey a key (must be line + image or line + '#' + image)
+   * @param aKey - a key (must be line + image or line + '#' + image)
    * @return true / false
    */
   public final boolean isIdentOrNodeDescElement(final String aKey) {
@@ -146,7 +146,7 @@ public class JJElements implements JavaCCParserTreeConstants {
   /**
    * Tells whether the given key appears in the hyperlinks map.
    * 
-   * @param aKey a key (must be image without "#")
+   * @param aKey - a key (must be image without "#")
    * @return true / false
    */
   public final boolean isHyperlinkTarget(final String aKey) {

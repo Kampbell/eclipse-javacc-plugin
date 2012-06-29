@@ -20,7 +20,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
  * If more than one thread reports problems to this collector in parallel, only the thread which called
  * {@link #beginCollecting()} last will be adhered to.
  * 
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class UnusedJJSpellingProblemCollector implements ISpellingProblemCollector {
 
@@ -38,15 +38,13 @@ public class UnusedJJSpellingProblemCollector implements ISpellingProblemCollect
   /**
    * Initializes this collector with the given annotation model.
    * 
-   * @param aAnnotationModel the annotation model
+   * @param aAnnotationModel - the annotation model
    */
   public UnusedJJSpellingProblemCollector(final IAnnotationModel aAnnotationModel) {
     jAnnotationModel = aAnnotationModel;
   }
 
-  /**
-   * @see ISpellingProblemCollector#accept(SpellingProblem)
-   */
+  /** {@inheritDoc} */
   @Override
   public void accept(final SpellingProblem aProblem) {
     synchronized (this) {
@@ -58,18 +56,14 @@ public class UnusedJJSpellingProblemCollector implements ISpellingProblemCollect
     }
   }
 
-  /**
-   * @see ISpellingProblemCollector#beginCollecting()
-   */
+  /** {@inheritDoc} */
   @Override
   public synchronized void beginCollecting() {
     fThread = Thread.currentThread();
     jAddAnnotations = new HashMap<SpellingAnnotation, Position>();
   }
 
-  /**
-   * @see ISpellingProblemCollector#endCollecting()
-   */
+  /** {@inheritDoc} */
   @Override
   public void endCollecting() {
     synchronized (this) {

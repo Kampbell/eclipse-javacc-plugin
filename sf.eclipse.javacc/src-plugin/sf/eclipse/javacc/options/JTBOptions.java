@@ -3,7 +3,6 @@ package sf.eclipse.javacc.options;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
-import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.base.Option;
 import sf.eclipse.javacc.base.OptionSet;
 import sf.eclipse.javacc.head.Activator;
@@ -12,14 +11,16 @@ import sf.eclipse.javacc.head.Activator;
  * The JTB options Tab that enables setting the JTB options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
-public class JTBOptions extends OptionsAbstractTab implements IJJConstants {
+public class JTBOptions extends OptionsAbstractTab {
 
   // MMa 04/2009 : added description field (for JTB cryptic options)
   // MMa 11/2009 : added -d and -nd and -vd options
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 02/2011 : added -va and -npfx and -nsfx options
+  // BF  06/2012 : removed redundant super interface to prevent warning
 
   // Memo 
   // Usage: jtb [OPTIONS] [inputfile]
@@ -52,8 +53,8 @@ public class JTBOptions extends OptionsAbstractTab implements IJJConstants {
   /**
    * Standard constructor : initializes with known JTB options.
    * 
-   * @param aParent the parent
-   * @param aRes the resource
+   * @param aParent - the parent
+   * @param aRes - the resource
    */
   public JTBOptions(final Composite aParent, final IResource aRes) {
     super(aParent, aRes);
@@ -67,30 +68,30 @@ public class JTBOptions extends OptionsAbstractTab implements IJJConstants {
 
     // boolean options, reordered on two columns
     jNbColBooleans = 2;
-    jOptionSet.add(new Option("cl", Activator.getString("JTBOptions.PrClLst"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("dl", Activator.getString("JTBOptions.GenDpthLvl"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("e", Activator.getString("JTBOptions.SupSemErrChk"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("f", Activator.getString("JTBOptions.GenDescFldNm"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("ia", Activator.getString("JTBOptions.InlnAccStmt"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("jd", Activator.getString("JTBOptions.GenJdocCmt"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("pp", Activator.getString("JTBOptions.GenParPntrs"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("printer", Activator.getString("JTBOptions.GenTDTFVis"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("tk", Activator.getString("JTBOptions.GenSpecTk"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("scheme", Activator.getString("JTBOptions.GenScheme"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("va", Activator.getString("JTBOptions.GenVarargs"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("w", Activator.getString("JTBOptions.NoOvrwrt"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("cl", Activator.getString("JTBOpt.PrClLst"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("dl", Activator.getString("JTBOpt.GenDpthLvl"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("e", Activator.getString("JTBOpt.SupSemErrChk"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("f", Activator.getString("JTBOpt.GenDescFldNm"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("ia", Activator.getString("JTBOpt.InlnAccStmt"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("jd", Activator.getString("JTBOpt.GenJdocCmt"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("pp", Activator.getString("JTBOpt.GenParPntrs"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("printer", Activator.getString("JTBOpt.GenTDTFVis"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("tk", Activator.getString("JTBOpt.GenSpecTk"), "true", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("scheme", Activator.getString("JTBOpt.GenScheme"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("va", Activator.getString("JTBOpt.GenVarargs"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("w", Activator.getString("JTBOpt.NoOvrwrt"), "false", Option.VOID)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     // string options
-    jOptionSet.add(new Option("o", Activator.getString("JTBOptions.GnrtdFlNm"), "jtb.out.jj", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("np", Activator.getString("JTBOptions.GnrtdSTPck"), "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("vp", Activator.getString("JTBOptions.GnrtdVisPck"), "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("p", Activator.getString("JTBOptions.NPVP"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("nd", Activator.getString("JTBOptions.GnrtdSTDir"), "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("vd", Activator.getString("JTBOptions.GnrtdVisDir"), "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("d", Activator.getString("JTBOptions.NDVD"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("ns", Activator.getString("JTBOptions.GnrtdSupCl"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("npfx", Activator.getString("JTBOptions.NodePrefix"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    jOptionSet.add(new Option("nsfx", Activator.getString("JTBOptions.NodeSuffix"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("o", Activator.getString("JTBOpt.GnrtdFlNm"), "jtb.out.jj", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("np", Activator.getString("JTBOpt.GnrtdSTPck"), "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("vp", Activator.getString("JTBOpt.GnrtdVisPck"), "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("p", Activator.getString("JTBOpt.NPVP"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("nd", Activator.getString("JTBOpt.GnrtdSTDir"), "syntaxtree", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("vd", Activator.getString("JTBOpt.GnrtdVisDir"), "visitor", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("d", Activator.getString("JTBOpt.NDVD"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("ns", Activator.getString("JTBOpt.GnrtdSupCl"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("npfx", Activator.getString("JTBOpt.NodePrefix"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    jOptionSet.add(new Option("nsfx", Activator.getString("JTBOpt.NodeSuffix"), "", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     // set values to default values
     jOptionSet.resetToDefaultValues();

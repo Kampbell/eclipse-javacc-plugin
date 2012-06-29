@@ -26,7 +26,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="sf.eclipse.javacc.options.PreferencesInitializer">
+            class="sf.eclipse.javacc.preferences.PreferencesInitializer">
       </initializer>
    </extension>
 <!-- Filters Extension -->
@@ -245,7 +245,7 @@
                class="sf.eclipse.javacc.actions.JJFormat"
                definitionId="commands.jjformat"
                id="javacc.jjformat"
-               label="%JavaCC_Format"
+               label="%Format"
                style="push">
          </action>
          <action
@@ -310,7 +310,7 @@
                class="sf.eclipse.javacc.actions.JJFormat"
                definitionId="commands.jjformat"
                id="javacc.jjformat"
-               label="%JavaCC_Format"
+               label="%Format"
                style="push">
          </action>
          <action
@@ -445,7 +445,7 @@
                class="sf.eclipse.javacc.actions.JJFormat"
                definitionId="commands.jjformat"
                id="javacc.jjformat"
-               label="%JavaCC_Format"
+               label="%Format"
                menubarPath="JJGroup">
          </action>
          <action
@@ -503,7 +503,7 @@
                class="sf.eclipse.javacc.actions.JJFormat"
                definitionId="commands.jjformat"
                id="javacc.jjformat"
-               label="%JavaCC_Format"
+               label="%Format"
                menubarPath="JTBGroup">
          </action>
          <action
@@ -527,8 +527,8 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="sf.eclipse.javacc.options.PreferencesPage"
-            id="JJPreferencesPage"
+            class="sf.eclipse.javacc.preferences.JJPreferencePage"
+            id="sf.eclipse.javacc.page1"
             name="%JavaCC_Preferences_page_name">
       </page>
    </extension>

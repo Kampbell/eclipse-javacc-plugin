@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.scanners;
 
 import java.util.Stack;
 
@@ -15,14 +15,15 @@ import org.eclipse.jface.text.rules.Token;
  * A special IRule for JavaCC syntax.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
-public class JJTokenRule implements IRule {
+public class UnusedJJTokenRule implements IRule {
 
   // MMa 04/2009 : modified : added different rule tokens and changed algorithm by keeping state between invocations
   // MMa 11/2009 : fixed syntax coloring issues in java code
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : minor refactoring / renamings
+  // BF  05/2012 : currently unused - replaced by JJJavaCodeRule and JJJavaCCCodeRule.  To be renamed or deleted.
 
   /** Normal label identifier rule token */
   final IToken         normalLabel;
@@ -66,14 +67,14 @@ public class JJTokenRule implements IRule {
   /**
    * Standard constructor.
    * 
-   * @param aNormalLabel the normal token rule token
-   * @param aPrivateLabel the special token rule token
-   * @param aLexicalState the lexical state rule token
-   * @param aRegexPunct the regular_expression punctuation rule token
-   * @param aChoicesPunct the choices enclosing punctuation rule token
+   * @param aNormalLabel - the normal token rule token
+   * @param aPrivateLabel - the special token rule token
+   * @param aLexicalState - the lexical state rule token
+   * @param aRegexPunct - the regular_expression punctuation rule token
+   * @param aChoicesPunct - the choices enclosing punctuation rule token
    */
-  public JJTokenRule(final IToken aNormalLabel, final IToken aPrivateLabel, final IToken aLexicalState,
-                     final IToken aRegexPunct, final IToken aChoicesPunct) {
+  public UnusedJJTokenRule(final IToken aNormalLabel, final IToken aPrivateLabel, final IToken aLexicalState,
+                           final IToken aRegexPunct, final IToken aChoicesPunct) {
     normalLabel = aNormalLabel;
     privateLabel = aPrivateLabel;
     lexicalState = aLexicalState;
@@ -115,7 +116,7 @@ public class JJTokenRule implements IRule {
    * <p>
    * {@link IRule#evaluate(ICharacterScanner)} is called repeatedly by {@link RuleBasedScanner#nextToken()}
    * (called itself by {@link DefaultDamagerRepairer#createPresentation(TextPresentation, ITypedRegion)} ) on
-   * the different rules set in {@link JJCodeScanner#createRules()}.<br>
+   * the different rules set in {link JJCodeScanner#updateRules()}.<br>
    * So, for {@link #evaluate(ICharacterScanner)}, scans begin with the first non whitespace character after a
    * comment or a string.<br>
    * Also, when modifying a document, {@link IRule#evaluate(ICharacterScanner)} is called only on the tokens
@@ -123,10 +124,8 @@ public class JJTokenRule implements IRule {
    * We memorize some internal state information between each call through class fields.<br>
    * We must return whitespaces and punctuation (word separators) as soon as they are encountered (and without
    * consuming them) in order for the other rules to process the comments anywhere they may appear.
-   * 
-   * @see IRule#evaluate(ICharacterScanner)
-   * @param scanner the character scanner
-   * @return the rule token
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public IToken evaluate(final ICharacterScanner scanner) {
@@ -422,7 +421,7 @@ public class JJTokenRule implements IRule {
    * Returns whether the given character is a whitespace:<br>
    * ' ', '\t', '\n', '\r', '\f'.
    * 
-   * @param ic the character
+   * @param ic - the character
    * @return true if the character is a whitespace, false otherwise
    */
   public static boolean isWhitespace(final int ic) {
@@ -433,7 +432,7 @@ public class JJTokenRule implements IRule {
    * Returns whether the given character is a whitespace or the beginning of a comment:<br>
    * ' ', '\t', '\n', '\r', '\f', '/'.
    * 
-   * @param ic the character
+   * @param ic - the character
    * @return true if the character is a whitespace or the beginning of a comment, false otherwise
    */
   public static boolean isWhitespaceOrComment1stChar(final int ic) {
@@ -444,7 +443,7 @@ public class JJTokenRule implements IRule {
    * Returns whether the given character is a choices enclosing punctuation:<br>
    * '(', ')', '*', '+', '?'.
    * 
-   * @param ic the character
+   * @param ic - the character
    * @return true if the character is a choices enclosing punctuation, false otherwise
    */
   public static boolean isChoicesPunct(final int ic) {

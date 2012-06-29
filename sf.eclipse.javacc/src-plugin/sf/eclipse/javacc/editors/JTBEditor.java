@@ -5,7 +5,7 @@ package sf.eclipse.javacc.editors;
  * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.editors">
  * 
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JTBEditor extends JJEditor {
 

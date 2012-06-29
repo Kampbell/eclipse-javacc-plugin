@@ -14,4 +14,4 @@ class ASTregexpr_kind extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=6c127f092f02de5b4ce6a5c04b198894 (do not edit this line) */
+/* JavaCC - OriginalChecksum=feed066abbf92c2c7260d041fb7d938b (do not edit this line) */

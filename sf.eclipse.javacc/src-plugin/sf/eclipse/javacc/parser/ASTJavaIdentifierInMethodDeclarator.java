@@ -14,4 +14,4 @@ class ASTJavaIdentifierInMethodDeclarator extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=7943837594f73c34083dc5d46fd92e92 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e4294e8629d033e599d8c5f449b346c5 (do not edit this line) */

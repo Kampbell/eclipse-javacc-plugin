@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle_name
 Bundle-SymbolicName: sf.eclipse.javacc.headless;singleton:=true
-Bundle-Version: 1.5.25
+Bundle-Version: 1.5.26
 Bundle-Activator: sf.eclipse.javacc.headless.Activator
 Bundle-Vendor: %Bundle_Vendor_name
 Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
@@ -13,6 +13,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: sf.eclipse.javacc.headless;
   uses:="org.osgi.framework,
+   org.eclipse.jdt.core,
    org.eclipse.core.resources,
-   sf.eclipse.javacc.core,
-   org.eclipse.core.runtime"
+   org.eclipse.core.runtime,
+   sf.eclipse.javacc.base"

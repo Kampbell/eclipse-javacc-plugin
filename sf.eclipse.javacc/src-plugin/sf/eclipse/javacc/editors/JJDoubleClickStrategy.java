@@ -10,16 +10,14 @@ import org.eclipse.jface.text.ITextViewer;
  * identifier around the first character of the selected text.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
 
   // MMa 12/2009 : javadoc and formatting revision ; some refactoring
   // MMa 02/2010 : formatting and javadoc revision
 
-  /**
-   * @see ITextDoubleClickStrategy#doubleClicked(ITextViewer)
-   */
+  /** {@inheritDoc} */
   @Override
   public void doubleClicked(final ITextViewer aTextViewer) {
     final int selectionStartPos = aTextViewer.getSelectedRange().x;
@@ -31,8 +29,8 @@ public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
   }
 
   /**
-   * @param aTextViewer the current viewer
-   * @param aCharPos a character position
+   * @param aTextViewer - the current viewer
+   * @param aCharPos - a character position
    * @return the whole word around the character position
    */
   public boolean selectWord(final ITextViewer aTextViewer, final int aCharPos) {
@@ -68,9 +66,9 @@ public class JJDoubleClickStrategy implements ITextDoubleClickStrategy {
   }
 
   /**
-   * @param aTextViewer the current viewer
-   * @param aStartPos the starting position
-   * @param aEndPos the ending position
+   * @param aTextViewer - the current viewer
+   * @param aStartPos - the starting position
+   * @param aEndPos - the ending position
    */
   private void selectRange(final ITextViewer aTextViewer, final int aStartPos, final int aEndPos) {
     final int offset = aStartPos + 1;

@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.scanners;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,12 +29,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * A JavaCC & Java code scanner.
  * 
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 @SuppressWarnings("restriction")
 public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
 
   // MMa 12/2009 : added to project (but not used)
+  // BF  05/2012 : removed else clauses to prevent warning
 
   /**
    * Rule to detect java operators.
@@ -53,7 +54,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     /**
      * Creates a new operator rule.
      * 
-     * @param aToken Token to use for this rule
+     * @param aToken - Token to use for this rule
      */
     public OperatorRule(final IToken aToken) {
       jToken = aToken;
@@ -62,7 +63,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     /**
      * Is this character an operator character?
      * 
-     * @param aCh Character to determine whether it is an operator character
+     * @param aCh - Character to determine whether it is an operator character
      * @return <code>true</code> if the character is an operator, <code>false</code> otherwise.
      */
     public boolean isOperator(final char aCh) {
@@ -74,9 +75,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       return false;
     }
 
-    /**
-     * @see IRule#evaluate(ICharacterScanner)
-     */
+    /** {@inheritDoc} */
     @Override
     public IToken evaluate(final ICharacterScanner aScanner) {
 
@@ -88,10 +87,8 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
         aScanner.unread();
         return jToken;
       }
-      else {
-        aScanner.unread();
-        return Token.UNDEFINED;
-      }
+      aScanner.unread();
+      return Token.UNDEFINED;
     }
   }
 
@@ -111,7 +108,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     /**
      * Creates a new bracket rule.
      * 
-     * @param aToken Token to use for this rule
+     * @param aToken - Token to use for this rule
      */
     public BracketRule(final IToken aToken) {
       jToken = aToken;
@@ -120,7 +117,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     /**
      * Is this character a bracket character?
      * 
-     * @param aCh Character to determine whether it is a bracket character
+     * @param aCh - Character to determine whether it is a bracket character
      * @return <code>true</code> if the character is a bracket, <code>false</code> otherwise.
      */
     public boolean isBracket(final char aCh) {
@@ -132,9 +129,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       return false;
     }
 
-    /**
-     * @see IRule#evaluate(ICharacterScanner)
-     */
+    /** {@inheritDoc} */
     @Override
     public IToken evaluate(final ICharacterScanner aScanner) {
 
@@ -146,10 +141,8 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
         aScanner.unread();
         return jToken;
       }
-      else {
-        aScanner.unread();
-        return Token.UNDEFINED;
-      }
+      aScanner.unread();
+      return Token.UNDEFINED;
     }
   }
 
@@ -159,37 +152,34 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
   private static class VersionedWordMatcher extends CombinedWordRule.WordMatcher implements
                                                                                 ISourceVersionDependent {
 
-    /** the default token for a word */
+    /** The default token for a word */
     private final IToken jDefaultToken;
-    /** the target Java version */
+    /** The target Java version */
     private final String jVersion;
-    /** true if the source version matches the target version, false otherwise */
+    /** True if the source version matches the target version, false otherwise */
     private boolean      jIsVersionMatch;
 
     /**
      * Standard constructor which initializes the fields.
      * 
-     * @param aDefaultToken the default token for a word
-     * @param aVersion the target JDK version
-     * @param aCurrentVersion the source current version
+     * @param aDefaultToken - the default token for a word
+     * @param aVersion - the target JDK version
+     * @param aCurrentVersion - the source current version
      */
-    public VersionedWordMatcher(final IToken aDefaultToken, final String aVersion, final String aCurrentVersion) {
+    public VersionedWordMatcher(final IToken aDefaultToken, final String aVersion,
+                                final String aCurrentVersion) {
       jDefaultToken = aDefaultToken;
       jVersion = aVersion;
       setSourceVersion(aCurrentVersion);
     }
 
-    /**
-     * @see ISourceVersionDependent#setSourceVersion(java.lang.String)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setSourceVersion(final String aVersion) {
       jIsVersionMatch = jVersion.compareTo(aVersion) <= 0;
     }
 
-    /**
-     * @see CombinedWordRule.WordMatcher#evaluate(ICharacterScanner, CombinedWordRule.CharacterBuffer)
-     */
+    /** {@inheritDoc} */
     @Override
     public IToken evaluate(final ICharacterScanner aScanner, final CombinedWordRule.CharacterBuffer aWord) {
       final IToken token = super.evaluate(aScanner, aWord);
@@ -217,16 +207,16 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
      */
     private static final class ResettableScanner implements ICharacterScanner {
 
-      /** the character scanner */
+      /** The character scanner */
       private final ICharacterScanner jCharacterScanner;
-      /** the number of characters read before marking them */
+      /** The number of characters read before marking them */
       private int                     readCount;
 
       /**
        * Creates a new resettable scanner that will forward calls to <code>scanner</code>, but store a marked
        * position.
        * 
-       * @param aScanner the delegate scanner
+       * @param aScanner - the delegate scanner
        */
       public ResettableScanner(final ICharacterScanner aScanner) {
         Assert.isNotNull(aScanner);
@@ -234,25 +224,19 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
         mark();
       }
 
-      /**
-       * @see ICharacterScanner#getColumn()
-       */
+      /** {@inheritDoc} */
       @Override
       public int getColumn() {
         return jCharacterScanner.getColumn();
       }
 
-      /**
-       * @see ICharacterScanner#getLegalLineDelimiters()
-       */
+      /** {@inheritDoc} */
       @Override
       public char[][] getLegalLineDelimiters() {
         return jCharacterScanner.getLegalLineDelimiters();
       }
 
-      /**
-       * @see ICharacterScanner#read()
-       */
+      /** {@inheritDoc} */
       @Override
       public int read() {
         final int ch = jCharacterScanner.read();
@@ -262,9 +246,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
         return ch;
       }
 
-      /**
-       * @see ICharacterScanner#unread()
-       */
+      /** {@inheritDoc} */
       @Override
       public void unread() {
         if (readCount > 0) {
@@ -294,26 +276,27 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       }
     }
 
-    /** the current whitespace detector */
+    /** The current whitespace detector */
     private final IWhitespaceDetector jWhitespaceDetector = new JavaWhitespaceDetector();
-    /** the current Java word detector */
+    /** The current Java word detector */
     private final IWordDetector       jWordDetector       = new JavaWordDetector();
-    /** the token for the '@interface' annotation */
+    /** The token for the '@interface' annotation */
     private final IToken              jInterfaceToken;
-    /** the token for other annotations than the '@interface' annotation */
+    /** The token for other annotations than the '@interface' annotation */
     private final IToken              jAtToken;
-    /** the target Java version */
+    /** The target Java version */
     private final String              jVersion;
-    /** true if the source version matches the target version, false otherwise */
+    /** True if the source version matches the target version, false otherwise */
     private boolean                   jIsVersionMatch;
 
     /**
      * Creates a new rule.
      * 
-     * @param aInterfaceToken the token to return if <code>'@\s*interface'</code> is matched
-     * @param aAtToken the token to return if <code>'@'</code> is matched, but not <code>'@\s*interface'</code>
-     * @param aVersion the lowest <code>JavaCore.COMPILER_SOURCE</code> version that this rule is enabled
-     * @param aCurrentVersion the current <code>JavaCore.COMPILER_SOURCE</code> version
+     * @param aInterfaceToken - the token to return if <code>'@\s*interface'</code> is matched
+     * @param aAtToken - the token to return if <code>'@'</code> is matched, but not
+     *          <code>'@\s*interface'</code>
+     * @param aVersion - the lowest <code>JavaCore.COMPILER_SOURCE</code> version that this rule is enabled
+     * @param aCurrentVersion - the current <code>JavaCore.COMPILER_SOURCE</code> version
      */
     public AnnotationRule(final IToken aInterfaceToken, final Token aAtToken, final String aVersion,
                           final String aCurrentVersion) {
@@ -323,9 +306,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       setSourceVersion(aCurrentVersion);
     }
 
-    /**
-     * @see IRule#evaluate(ICharacterScanner)
-     */
+    /** {@inheritDoc} */
     @Override
     public IToken evaluate(final ICharacterScanner aScanner) {
       if (!jIsVersionMatch) {
@@ -344,7 +325,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     /**
      * Reads an annotation and returns the matching token.
      * 
-     * @param aScanner the resettable character scanner
+     * @param aScanner - the resettable character scanner
      * @return the token matching the annotation
      */
     private IToken readAnnotation(final ResettableScanner aScanner) {
@@ -353,16 +334,14 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       if (readInterface(aScanner)) {
         return jInterfaceToken;
       }
-      else {
-        aScanner.reset();
-        return jAtToken;
-      }
+      aScanner.reset();
+      return jAtToken;
     }
 
     /**
      * Reads an '@interface' annotation and returns the matching token.
      * 
-     * @param aScanner the resettable character scanner
+     * @param aScanner - the resettable character scanner
      * @return the token matching the annotation
      */
     private boolean readInterface(final ICharacterScanner aScanner) {
@@ -390,7 +369,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     /**
      * Skips all following whitespaces.
      * 
-     * @param aScanner the resettable character scanner
+     * @param aScanner - the resettable character scanner
      * @return the token matching the annotation
      */
     private boolean skipWhitespace(final ICharacterScanner aScanner) {
@@ -402,9 +381,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       return true;
     }
 
-    /**
-     * @see ISourceVersionDependent#setSourceVersion(java.lang.String)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setSourceVersion(final String aVersion) {
       jIsVersionMatch = jVersion.compareTo(aVersion) <= 0;
@@ -412,11 +389,11 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
 
   }
 
-  /** the target Java version as set in the preferences */
+  /** The target Java version as set in the preferences */
   private static final String                 SOURCE_VERSION         = JavaCore.COMPILER_SOURCE;
 
-  /** the Java keywords */
-  static String[]                             sKeywords             = {
+  /** The Java keywords */
+  static String[]                             sKeywords              = {
       "abstract", //$NON-NLS-1$
       "break", //$NON-NLS-1$
       "case", "catch", "class", "const", "continue", //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
@@ -433,64 +410,60 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
       "while" //$NON-NLS-1$
                                                                      };
 
-  /** the 'interface' annotation keyword */
+  /** The 'interface' annotation keyword */
   private static final String                 INTERFACE              = "interface";                                                    //$NON-NLS-1$
-  /** the 'return' keyword */
+  /** The 'return' keyword */
   private static final String                 RETURN                 = "return";                                                       //$NON-NLS-1$
-  /** the Java 1.4 additional keywords */
-  private static String[]                     sJava14Keywords       = {
+  /** The Java 1.4 additional keywords */
+  private static String[]                     sJava14Keywords        = {
                                                                        "assert" };                                                     //$NON-NLS-1$
-  /** the Java 1.5 additional keywords */
-  private static String[]                     sJava15Keywords       = {
+  /** The Java 1.5 additional keywords */
+  private static String[]                     sJava15Keywords        = {
                                                                        "enum" };                                                       //$NON-NLS-1$
 
-  /** the Java types */
-  private static String[]                     sTypes                = {
+  /** The Java types */
+  private static String[]                     sTypes                 = {
       "void", "boolean", "char", "byte", "short", "strictfp", "int", "long", "float", "double" };                                      //$NON-NLS-1$ //$NON-NLS-5$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-8$ //$NON-NLS-9$  //$NON-NLS-10$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-2$
 
-  /** the Java constants */
-  private static String[]                     sConstants            = {
+  /** The Java constants */
+  private static String[]                     sConstants             = {
       "false", "null", "true"                                       };                                                                //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
-  /** the annotation base preferences key */
+  /** The annotation base preferences key */
   private static final String                 ANNOTATION_BASE_KEY    = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
                                                                        + SemanticHighlightings.ANNOTATION;
-  /** the annotation color preferences key */
+  /** The annotation color preferences key */
   private static final String                 ANNOTATION_COLOR_KEY   = ANNOTATION_BASE_KEY
                                                                        + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
 
-  /** the array of token colors */
-  private static String[]                     sTokenProperties      = {
+  /** The array of token colors */
+  private static String[]                     sTokenProperties       = {
       IJavaColorConstants.JAVA_KEYWORD, IJavaColorConstants.JAVA_STRING, IJavaColorConstants.JAVA_DEFAULT,
       IJavaColorConstants.JAVA_KEYWORD_RETURN, IJavaColorConstants.JAVA_OPERATOR,
       IJavaColorConstants.JAVA_BRACKET, ANNOTATION_COLOR_KEY,       };
 
-  /** the version dependent rules list */
+  /** The version dependent rules list */
   private final List<ISourceVersionDependent> jVersionDependentRules = new ArrayList<ISourceVersionDependent>(
                                                                                                               3);
 
   /**
    * Creates a Java code scanner
    * 
-   * @param aColorManager the color manager
-   * @param aPrefStore the preference store
+   * @param aColorManager - the color manager
+   * @param aPrefStore - the preference store
    */
   public UnusedJJJavaCodeScanner(final IColorManager aColorManager, final IPreferenceStore aPrefStore) {
     super(aColorManager, aPrefStore);
     initialize();
   }
 
-  /**
-   * @see AbstractJavaScanner#getTokenProperties()
-   */
+  /** {@inheritDoc} */
   @Override
   protected String[] getTokenProperties() {
     return sTokenProperties;
   }
 
-  /**
-   * @see AbstractJavaScanner#createRules()
-   */
+  /** {@inheritDoc} */
   @Override
   protected List<IRule> createRules() {
 
@@ -573,9 +546,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     return rules;
   }
 
-  /**
-   * @see AbstractJavaScanner#getBoldKey(java.lang.String)
-   */
+  /** {@inheritDoc} */
   @Override
   protected String getBoldKey(final String aColorKey) {
     if ((ANNOTATION_COLOR_KEY).equals(aColorKey)) {
@@ -584,9 +555,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     return super.getBoldKey(aColorKey);
   }
 
-  /**
-   * @see AbstractJavaScanner#getItalicKey(java.lang.String)
-   */
+  /** {@inheritDoc} */
   @Override
   protected String getItalicKey(final String aColorKey) {
     if ((ANNOTATION_COLOR_KEY).equals(aColorKey)) {
@@ -595,9 +564,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     return super.getItalicKey(aColorKey);
   }
 
-  /**
-   * @see AbstractJavaScanner#getStrikethroughKey(java.lang.String)
-   */
+  /** {@inheritDoc} */
   @Override
   protected String getStrikethroughKey(final String aColorKey) {
     if ((ANNOTATION_COLOR_KEY).equals(aColorKey)) {
@@ -606,9 +573,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     return super.getStrikethroughKey(aColorKey);
   }
 
-  /**
-   * @see AbstractJavaScanner#getUnderlineKey(java.lang.String)
-   */
+  /** {@inheritDoc} */
   @Override
   protected String getUnderlineKey(final String aColorKey) {
     if ((ANNOTATION_COLOR_KEY).equals(aColorKey)) {
@@ -617,17 +582,13 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     return super.getUnderlineKey(aColorKey);
   }
 
-  /**
-   * @see AbstractJavaScanner#affectsBehavior(PropertyChangeEvent)
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean affectsBehavior(final PropertyChangeEvent aEvent) {
     return aEvent.getProperty().equals(SOURCE_VERSION) || super.affectsBehavior(aEvent);
   }
 
-  /**
-   * @see AbstractJavaScanner#adaptToPreferenceChange(PropertyChangeEvent)
-   */
+  /** {@inheritDoc} */
   @Override
   public void adaptToPreferenceChange(final PropertyChangeEvent aEvent) {
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/sf.eclipse.javacc.headless.feature_1.5.25.jar" id="sf.eclipse.javacc.headless.feature" version="1.5.25">
+   <feature url="features/sf.eclipse.javacc.headless.feature_1.5.26.jar" id="sf.eclipse.javacc.headless.feature" version="1.5.26">
       <category name="JavaCC Eclipse Headless Plug-in"/>
    </feature>
    <category-def name="JavaCC Eclipse Headless Plug-in" label="JavaCC Eclipse Headless Plug-in"/>

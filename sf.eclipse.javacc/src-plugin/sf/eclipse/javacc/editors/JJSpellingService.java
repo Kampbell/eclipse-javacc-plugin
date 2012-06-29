@@ -19,12 +19,14 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
 /**
  * JJ spelling service copied from the System wide spelling service {@link SpellingService}.
  * 
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
 public class JJSpellingService {
 
   // MMa 12/2009 : added to project for spell checking
+  // BF  06/2012 : added unused tag for unused exception
 
   /**
    * A named preference that controls if spelling is enabled or disabled.
@@ -49,7 +51,7 @@ public class JJSpellingService {
   /**
    * Initializes the spelling service with the given preferences.
    * 
-   * @param aPrefStore the preferences
+   * @param aPrefStore - the preferences
    * @see SpellingService#PREFERENCE_SPELLING_ENABLED
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
@@ -61,10 +63,10 @@ public class JJSpellingService {
    * Checks the given document. Reports all found spelling problems to the collector. The spelling engine is
    * chosen based on the settings from the given preferences.
    * 
-   * @param aDoc the document to check
-   * @param aCtx the context
-   * @param aCollector the problem collector
-   * @param aMonitor the progress monitor, can be <code>null</code>
+   * @param aDoc - the document to check
+   * @param aCtx - the context
+   * @param aCollector - the problem collector
+   * @param aMonitor - the progress monitor, can be <code>null</code>
    */
   public void check(final IDocument aDoc, final SpellingContext aCtx,
                     final ISpellingProblemCollector aCollector, final IProgressMonitor aMonitor) {
@@ -76,11 +78,11 @@ public class JJSpellingService {
    * Checks the given regions in the given document. Reports all found spelling problems to the collector. The
    * spelling engine is chosen based on the settings from the given preferences.
    * 
-   * @param aDoc the document to check
-   * @param aRegions the regions to check
-   * @param aCtx the context
-   * @param aCollector the problem collector
-   * @param aMonitor the progress monitor, can be <code>null</code>
+   * @param aDoc - the document to check
+   * @param aRegions - the regions to check
+   * @param aCtx - the context
+   * @param aCollector - the problem collector
+   * @param aMonitor - the progress monitor, can be <code>null</code>
    */
   public void check(final IDocument aDoc, final IRegion[] aRegions, final SpellingContext aCtx,
                     final ISpellingProblemCollector aCollector, final IProgressMonitor aMonitor) {
@@ -143,7 +145,7 @@ public class JJSpellingService {
    * Returns the descriptor of the active spelling engine based on the value of the
    * <code>PREFERENCE_SPELLING_ENGINE</code> preference in the given preferences.
    * 
-   * @param aPrefStore the preferences
+   * @param aPrefStore - the preferences
    * @return the descriptor of the active spelling engine or <code>null</code> if none could be found
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
@@ -167,9 +169,9 @@ public class JJSpellingService {
    * Creates a spelling engine based on the value of the <code>PREFERENCE_SPELLING_ENGINE</code> preference in
    * the given preferences.
    * 
-   * @param aPrefStore the preferences
+   * @param aPrefStore - the preferences
    * @return the created spelling engine or <code>null</code> if none could be created
-   * @throws CoreException if the creation failed
+   * @throws CoreException - if the creation failed
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
   private ISpellingEngine createEngine(final IPreferenceStore aPrefStore) throws CoreException {

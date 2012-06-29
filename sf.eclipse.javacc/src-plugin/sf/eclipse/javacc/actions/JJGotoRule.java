@@ -7,7 +7,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
@@ -22,30 +21,27 @@ import sf.eclipse.javacc.parser.JJNode;
  * <extension point="org.eclipse.ui.editorActions"> for key binding
  * 
  * @author Remi Koutcherawy 2003-2006 CeCILL license http://www.cecill.info/index.en.html
+ * @author Marc Mazas 2009-2010-2011-2012
  */
-
 public class JJGotoRule implements IEditorActionDelegate {
 
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 08/2011 : enhanced Call Hierarchy view (changed selection for JJTree node descriptors)
 
-  /** the current editor */
+  /** The current editor */
   static JJEditor sJJEditor;
 
-  /**
-   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-   */
+  /** {@inheritDoc} */
   @Override
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
     if (aTargetEditor == null) {
       return;
     }
     sJJEditor = (JJEditor) aTargetEditor;
   }
 
-  /**
-   * @see IActionDelegate#selectionChanged(IAction, ISelection)
-   */
+  /** {@inheritDoc} */
   @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
                                @SuppressWarnings("unused") final ISelection aSelection) {
@@ -55,9 +51,8 @@ public class JJGotoRule implements IEditorActionDelegate {
   /**
    * Gets Selection from Editor, searches matching node in AST then select node corresponding text, puts last
    * selection in History.
-   * 
-   * @param aAction the action
-   * @see sf.eclipse.javacc.actions.JJGotoRule#run(IAction a)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
@@ -80,7 +75,7 @@ public class JJGotoRule implements IEditorActionDelegate {
    * descriptors).<br>
    * Quite like {@link JJHyperlinkDetector#selectWord(IDocument, IRegion)}.
    * 
-   * @param aSelection the selection
+   * @param aSelection - the selection
    * @return the extended selection
    */
   static public ITextSelection selectWord(final ITextSelection aSelection) {

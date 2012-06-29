@@ -10,7 +10,7 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
  * Helper class to match pairs of characters.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJCharacterPairMatcher implements ICharacterPairMatcher {
 
@@ -36,9 +36,7 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
     // does nothing
   }
 
-  /**
-   * @see ICharacterPairMatcher#match(IDocument, int)
-   */
+  /** {@inheritDoc} */
   @Override
   public IRegion match(final IDocument aDoc, final int aOffset) {
 
@@ -52,26 +50,20 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
     return null;
   }
 
-  /**
-   * @see ICharacterPairMatcher#getAnchor()
-   */
+  /** {@inheritDoc} */
   @Override
   public int getAnchor() {
     return anchor;
   }
 
-  /**
-   * @see ICharacterPairMatcher#dispose()
-   */
+  /** {@inheritDoc} */
   @Override
   public void dispose() {
     clear();
     jDocument = null;
   }
 
-  /**
-   * @see ICharacterPairMatcher#clear()
-   */
+  /** {@inheritDoc} */
   @Override
   public void clear() {
     // does nothing
@@ -80,7 +72,7 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
   /**
    * Tries to match a pair of characters just before a character position.
    * 
-   * @param aOffset a character position
+   * @param aOffset - a character position
    * @return true if successful, false otherwise
    */
   protected boolean tryMatchPair(final int aOffset) {
@@ -135,9 +127,9 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
   /**
    * Searches for ClosingPeer.
    * 
-   * @param aStart the starting position
-   * @param aOpening the opening character
-   * @param aClosing the closing character
+   * @param aStart - the starting position
+   * @param aOpening - the opening character
+   * @param aClosing - the closing character
    * @return the ClosingPeer paired character position
    */
   protected int searchForClosingPeer(final int aStart, final char aOpening, final char aClosing) {
@@ -189,9 +181,9 @@ public class JJCharacterPairMatcher implements ICharacterPairMatcher {
   /**
    * Searches for OpeningPeer.
    * 
-   * @param aStart the starting position
-   * @param aOpening the opening character
-   * @param aClosing the closing character
+   * @param aStart - the starting position
+   * @param aOpening - the opening character
+   * @param aClosing - the closing character
    * @return the OpeningPeer paired character position
    */
   protected int searchForOpeningPeer(final int aStart, final char aOpening, final char aClosing) {

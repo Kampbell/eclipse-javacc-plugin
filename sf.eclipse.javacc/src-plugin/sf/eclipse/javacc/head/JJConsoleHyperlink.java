@@ -34,7 +34,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * underlined but... too complex, for me at least.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJConsoleHyperlink implements IJJConstants {
 
@@ -67,11 +67,11 @@ public class JJConsoleHyperlink implements IJJConstants {
   /**
    * Constructs a hyperlink in the StyledText to the specified file.
    * 
-   * @param aOffset the offset of text to mark
-   * @param aLength the length of text to mark
-   * @param aFile the target of Hyperlink
-   * @param aLine the line number in the target
-   * @param aCol the column number in the target
+   * @param aOffset - the offset of text to mark
+   * @param aLength - the length of text to mark
+   * @param aFile - the target of Hyperlink
+   * @param aLine - the line number in the target
+   * @param aCol - the column number in the target
    */
   public JJConsoleHyperlink(final int aOffset, final int aLength, final IFile aFile, final int aLine,
                             final int aCol) {
@@ -132,7 +132,7 @@ public class JJConsoleHyperlink implements IJJConstants {
   }
 
   /**
-   * @param aOffset the offset in the text
+   * @param aOffset - the offset in the text
    * @return true is this link is at the given character location, false otherwise
    */
   boolean isLinkAt(final int aOffset) {
@@ -144,7 +144,7 @@ public class JJConsoleHyperlink implements IJJConstants {
   }
 
   /**
-   * @param aOffset the offset in the text
+   * @param aOffset - the offset in the text
    * @return the link if any at the given character location
    */
   static JJConsoleHyperlink getLinkAt(final int aOffset) {
@@ -170,7 +170,7 @@ public class JJConsoleHyperlink implements IJJConstants {
   /**
    * Adds listeners on the StyledText.
    * 
-   * @param aStyledText the StyledText to listen to
+   * @param aStyledText - the StyledText to listen to
    */
   static public void setViewer(final StyledText aStyledText) {
     // keep a static reference to used StyledText

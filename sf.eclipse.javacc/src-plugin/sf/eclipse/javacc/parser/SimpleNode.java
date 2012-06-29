@@ -66,7 +66,7 @@ class SimpleNode implements Node {
      customize the way the node appears when the tree is dumped.  If
      your output uses more than one line you should override
      toString(String), otherwise overriding toString() is probably all
-     you need to do. */
+     you need to do */
 
   public String toString() {
     return JavaCCParserTreeConstants.jjtNodeName[id];
@@ -77,7 +77,7 @@ class SimpleNode implements Node {
   }
 
   /* Override this method if you want to customize how the node dumps
-     out its children. */
+     out its children */
 
   public void dump(final String prefix) {
     System.out.println(toString(prefix));

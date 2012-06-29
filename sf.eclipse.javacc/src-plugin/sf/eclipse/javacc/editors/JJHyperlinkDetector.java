@@ -13,12 +13,13 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import sf.eclipse.javacc.actions.JJGotoRule;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
+import sf.eclipse.javacc.scanners.JJJavaCCCodeRule;
 
 /**
  * JavaCC hyperlink detector. Used in JJSourceViewerConfiguration.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJHyperlinkDetector implements IHyperlinkDetector, JavaCCParserTreeConstants {
 
@@ -26,6 +27,7 @@ public class JJHyperlinkDetector implements IHyperlinkDetector, JavaCCParserTree
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 08/2011 : effects of refactoring in JJElements
   // MMa 08/2011 : fixed missing hyperlinks
+  // BF  05/2012 : rename and change location of JavaCC keyword table
 
   /** The editor */
   private final JJEditor jJJEditor;
@@ -33,15 +35,13 @@ public class JJHyperlinkDetector implements IHyperlinkDetector, JavaCCParserTree
   /**
    * Creates a new JavaCC hyperlink detector.
    * 
-   * @param aJJEditor the editor in which to detect the hyperlink
+   * @param aJJEditor - the editor in which to detect the hyperlink
    */
   public JJHyperlinkDetector(final JJEditor aJJEditor) {
     jJJEditor = aJJEditor;
   }
 
-  /**
-   * @see IHyperlinkDetector#detectHyperlinks(ITextViewer, IRegion, boolean)
-   */
+  /** {@inheritDoc} */
   @Override
   public IHyperlink[] detectHyperlinks(final ITextViewer aTextViewer, final IRegion aRegion,
                                        @SuppressWarnings("unused") final boolean aCanShowMultipleHyperlinks) {
@@ -66,8 +66,8 @@ public class JJHyperlinkDetector implements IHyperlinkDetector, JavaCCParserTree
       return null;
     }
     // if JavaCC keyword don't go further
-    for (int i = 0; i < JJCodeScanner.sJJkeywords.length; i++) {
-      if (word.equals(JJCodeScanner.sJJkeywords[i])) {
+    for (int i = 0; i < JJJavaCCCodeRule.sJavaCCAssistKeywords.length; i++) {
+      if (word.equals(JJJavaCCCodeRule.sJavaCCAssistKeywords[i])) {
         return null;
       }
     }
@@ -91,8 +91,8 @@ public class JJHyperlinkDetector implements IHyperlinkDetector, JavaCCParserTree
    * descriptors).<br>
    * Quite like {@link JJGotoRule#selectWord(ITextSelection)}.
    * 
-   * @param aDoc the document
-   * @param aSelection the selected text
+   * @param aDoc - the document
+   * @param aSelection - the selected text
    * @return the extended selection (up to a whole word)
    */
   public static final ITextSelection selectWord(final IDocument aDoc, final IRegion aSelection) {

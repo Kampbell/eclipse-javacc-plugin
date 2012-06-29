@@ -1,5 +1,10 @@
 History (dd/mm/yy)
 
+29/06/12 - version 1.5.26
+- New contributor Bill Fenlason ; added Bill's syntax coloring rewritten code
+- Updated javadoc (- in @param & @throws, {@inheritdoc} instead of @see, ...)
+- Fixed some properties issues
+
 03/02/11 + 31/08/11 + 03/05/12 - version 1.5.25
 - 03/12 : Added in JJReconcilingStrategy Bill Fenlason's hack proposal for syntax coloring problems
 - 02/11 : Updated with JTB 1.4.6 (Marc Mazas / Francis Andre)

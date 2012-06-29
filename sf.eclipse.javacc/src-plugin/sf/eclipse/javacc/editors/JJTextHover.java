@@ -21,7 +21,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * (for the moment).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 class JJTextHover implements ITextHover, ITextHoverExtension2 {
 
@@ -29,20 +29,20 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 08/2011 : effects of refactoring in JJElements
 
-  /** the current editor */
+  /** The current editor */
   private final JJEditor      jJJEditor;
-  /** the current source viewer */
+  /** The current source viewer */
   @SuppressWarnings("unused")
   private final ISourceViewer jSourceViewer;
-  /** the current content type */
+  /** The current content type */
   private final String        jContentType;
 
   /**
    * Standard constructor.
    * 
-   * @param aSourceViewer the source viewer
-   * @param aContentType the content type
-   * @param aJJEditor the editor
+   * @param aSourceViewer - the source viewer
+   * @param aContentType - the content type
+   * @param aJJEditor - the editor
    */
   public JJTextHover(final ISourceViewer aSourceViewer, final String aContentType, final JJEditor aJJEditor) {
     jSourceViewer = aSourceViewer;
@@ -50,23 +50,18 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
     jJJEditor = aJJEditor;
   }
 
-  /**
-   * @param aTextViewer the viewer on which the hover popup should be shown
-   * @param aHoverRegion the text range in the viewer which is used to determine the hover display information
-   * @return the hover popup display information, or <code>null</code> if none available
-   * @deprecated @see ITextHover#getHoverInfo(ITextViewer, IRegion)
-   */
+  /** {@inheritDoc} */
   @Override
-  @SuppressWarnings( {
-      "deprecation", "dep-ann" })
+  @SuppressWarnings({
+    "deprecation" })
   public String getHoverInfo(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
     return getHoverInfo2(aTextViewer, aHoverRegion);
   }
 
   /**
    * (Old {@link #getHoverInfo(ITextViewer, IRegion)}).
-   * 
-   * @see ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public String getHoverInfo2(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
@@ -128,9 +123,7 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
     return hoverInfo;
   }
 
-  /**
-   * @see ITextHover#getHoverRegion(ITextViewer, int)
-   */
+  /** {@inheritDoc} */
   @Override
   public IRegion getHoverRegion(final ITextViewer aTextViewer, final int aOffset) {
     final IDocument document = aTextViewer.getDocument();
@@ -144,8 +137,8 @@ class JJTextHover implements ITextHover, ITextHoverExtension2 {
   /**
    * Extends the character at a given offset to a whole word.
    * 
-   * @param aDoc the current document
-   * @param aOffset the offset
+   * @param aDoc - the current document
+   * @param aOffset - the offset
    * @return the corresponding region
    */
   private static final IRegion findWord(final IDocument aDoc, final int aOffset) {

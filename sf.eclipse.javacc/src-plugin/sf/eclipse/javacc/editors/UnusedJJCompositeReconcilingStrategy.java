@@ -14,7 +14,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 /**
  * The JJ Composite Reconciling strategy.
  * 
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 @SuppressWarnings("restriction")
 public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcilingStrategy {
@@ -27,12 +27,12 @@ public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcili
   /**
    * Creates a new Java reconciling strategy.
    * 
-   * @param aSourceViewer the source viewer
-   * @param aJJEditor the editor of the strategy's reconciler
-   * @param aDocumentPartitioning the document partitioning this strategy uses for configuration
+   * @param aSourceViewer - the source viewer
+   * @param aJJEditor - the editor of the strategy's reconciler
+   * @param aDocumentPartitioning - the document partitioning this strategy uses for configuration
    */
   public UnusedJJCompositeReconcilingStrategy(final ISourceViewer aSourceViewer, final JJEditor aJJEditor,
-                                        final String aDocumentPartitioning) {
+                                              final String aDocumentPartitioning) {
     super(aSourceViewer, aJJEditor, aDocumentPartitioning);
     jJJEditor = aJJEditor;
     jJJStrategy = new JJReconcilingStrategy(aSourceViewer, aJJEditor);
@@ -56,9 +56,7 @@ public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcili
     return null;
   }
 
-  /**
-   * @see JavaCompositeReconcilingStrategy#reconcile(DirtyRegion, IRegion)
-   */
+  /** {@inheritDoc} */
   @Override
   public void reconcile(final DirtyRegion aDirtyRegion, final IRegion aSubRegion) {
     try {
@@ -79,9 +77,7 @@ public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcili
     }
   }
 
-  /**
-   * @see JavaCompositeReconcilingStrategy#reconcile(IRegion)
-   */
+  /** {@inheritDoc} */
   @Override
   public void reconcile(final IRegion aPartition) {
     try {
@@ -105,16 +101,14 @@ public class UnusedJJCompositeReconcilingStrategy extends JavaCompositeReconcili
   /**
    * Tells this strategy whether to inform its listeners.
    * 
-   * @param aNotify <code>true</code> if listeners should be notified
+   * @param aNotify - <code>true</code> if listeners should be notified
    */
   @Override
   public void notifyListeners(@SuppressWarnings("unused") final boolean aNotify) {
     //    fJJStrategy.notifyListeners(notify);
   }
 
-  /**
-   * @see JavaCompositeReconcilingStrategy#initialReconcile()
-   */
+  /** {@inheritDoc} */
   @Override
   public void initialReconcile() {
     try {

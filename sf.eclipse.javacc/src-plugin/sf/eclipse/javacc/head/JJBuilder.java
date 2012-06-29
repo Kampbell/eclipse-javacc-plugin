@@ -46,7 +46,8 @@ import sf.eclipse.javacc.base.OptionSet;
  * <extension point="org.eclipse.core.resources.builders">.<br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 public class JJBuilder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor,
                                                         IJJConstants {
@@ -57,6 +58,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   // MMa 08/2011 : added mark generated files as derived option RFE 3314103
   // MMa 08/2011 : added modification of the JavaCC file generated checksum if suppress warning option set
   // MMa 08/2011 : fixed use of deprecated method in Eclipse 3.6+
+  // BF  06/2012 : documented empty block to prevent warning message
 
   /** The java project (needed to test if the resource is on class path) */
   protected IJavaProject jJavaProject;
@@ -65,15 +67,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
 
   /**
    * Invoked in response to a call to one of the <code>IProject.build</code>.
-   * 
-   * @param aArgs a table of builder-specific arguments keyed by argument name (key type: <code>String</code>,
-   *          value type: <code>String</code>); <code>null</code> is equivalent to an empty map
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
-   *          desired
-   * @return the list of projects for which this builder would like deltas the next time it is run or
-   *         <code>null</code> if none
-   * @exception CoreException if this build fails.
-   * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   protected IProject[] build(final int aKind, @SuppressWarnings({
@@ -102,7 +97,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Performs a full build.
    * 
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
+   * @param aMonitor - a progress monitor, or <code>null</code> if progress reporting and cancellation are not
    *          desired
    * @exception CoreException if this build fails
    */
@@ -113,7 +108,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Performs an incremental build or a full build if no delta is available.
    * 
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
+   * @param aMonitor - a progress monitor, or <code>null</code> if progress reporting and cancellation are not
    *          desired
    * @exception CoreException if this build fails
    */
@@ -130,7 +125,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Cleans all generated files.
    * 
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
+   * @param aMonitor - a progress monitor, or <code>null</code> if progress reporting and cancellation are not
    *          desired
    * @exception CoreException if this build fails
    */
@@ -145,8 +140,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * Deletes recursively generated AND derived files. A modified generated file, marked as not derived, shall
    * not be deleted.
    * 
-   * @param aMembers the IResource[] to delete
-   * @param aMonitor a progress monitor, or <code>null</code> if progress reporting and cancellation are not
+   * @param aMembers - the IResource[] to delete
+   * @param aMonitor - a progress monitor, or <code>null</code> if progress reporting and cancellation are not
    *          desired
    * @exception CoreException if this build fails
    */
@@ -164,26 +159,13 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     }
   }
 
-  /**
-   * Visits the given resource delta.
-   * 
-   * @exception CoreException if this visit fails
-   * @see IResourceDeltaVisitor#visit(IResourceDelta)
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean visit(final IResourceDelta aDelta) throws CoreException {
     return visit(aDelta.getResource());
   }
 
-  /**
-   * Visits the given resource.
-   * 
-   * @param aRes the IResource to visit
-   * @return <code>true</code> if the resource's members should be visited; <code>false</code> if they should
-   *         be skipped
-   * @exception CoreException if this visit fails
-   * @see IResourceVisitor#visit(IResource)
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean visit(final IResource aRes) throws CoreException {
     if (aRes == null) {
@@ -205,7 +187,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Compiles a .jj, .jjt or .jtb file given its IResource.
    * 
-   * @param aRes the IResource to compile
+   * @param aRes - the IResource to compile
    * @exception CoreException if this compile fails
    */
   public static void CompileResource(final IResource aRes) throws CoreException {
@@ -329,10 +311,10 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * Marks the generated file as derived and suppresses the @SuppressWarnings annotation according to
    * corresponding preference.
    * 
-   * @param aProject the IProject the resource belongs to
-   * @param aRelPath the path to the grammar file (relative to the project) this resource is generated from
-   * @param aRes the IResource to mark and to correct
-   * @throws CoreException see {@link IResource#setDerived(boolean, IProgressMonitor)}
+   * @param aProject - the IProject the resource belongs to
+   * @param aRelPath - the path to the grammar file (relative to the project) this resource is generated from
+   * @param aRes - the IResource to mark and to correct
+   * @throws CoreException - see {@link IResource#setDerived(boolean, IProgressMonitor)}
    */
   public static void markAndAlter(final IProject aProject, final String aRelPath, final IResource aRes)
                                                                                                        throws CoreException {
@@ -368,7 +350,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
    * Recomputes the last line checksum.<br>
    * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.java OutputFile() constructor.
    * 
-   * @param aSource the source to modify
+   * @param aSource - the source to modify
    * @return the modified source
    */
   private static String computeCheksum(final String aSource) {
@@ -392,7 +374,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Converts a byte array into an hexadecimal string.
    * 
-   * @param aBytes a byte array
+   * @param aBytes - a byte array
    * @return the hexadecimal string
    */
   private static final String toHexString(final byte[] aBytes) {
@@ -433,25 +415,28 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
     @SuppressWarnings("unused")
     @Override
     public void write(final byte[] arg0, final int arg1, final int arg2) throws IOException {
+      // No action
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unused")
     @Override
     public void write(final byte[] arg0) throws IOException {
+      // No action
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unused")
     @Override
     public void write(final int arg0) throws IOException {
+      // No action
     }
   }
 
   /**
    * Calls JJDoc for a .jj, .jjt or .jtb file given its IResource.
    * 
-   * @param aRes the IResource to JJDoc
+   * @param aRes - the IResource to JJDoc
    */
   public static void GenDocForJJResource(final IResource aRes) {
     if (!(aRes instanceof IFile)) {
@@ -498,8 +483,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Builds the array of options to call the JavaCC, JJTree or JTB Compiler with.
    * 
-   * @param aFile the resource to get the options for
-   * @param aName the file name to compile
+   * @param aFile - the resource to get the options for
+   * @param aName - the file name to compile
    * @return String[] the options to call the JavaCC / JJTree / JTB compiler with
    */
   @SuppressWarnings("null")
@@ -562,8 +547,8 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Builds the array of options to call the JJDoc Compiler with.
    * 
-   * @param aFile the resource to get the options for
-   * @param aName the file name to compile
+   * @param aFile - the resource to get the options for
+   * @param aName - the file name to compile
    * @return String[] the array of options to call the JJDoc Compiler with
    */
   protected static String[] getJJDocArgs(final IResource aFile, final String aName) {
@@ -590,7 +575,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
   /**
    * Retrieves the path to the jar file (from the preferences or from the plug-in).
    * 
-   * @param aFile the IResource to get the jar file for
+   * @param aFile - the IResource to get the jar file for
    * @return String the path to the jar file
    */
   protected static String getJarFile(final IResource aFile) {

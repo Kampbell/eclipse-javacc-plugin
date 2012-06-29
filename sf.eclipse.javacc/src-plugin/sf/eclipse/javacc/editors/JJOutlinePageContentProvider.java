@@ -3,8 +3,6 @@ package sf.eclipse.javacc.editors;
 import java.io.StringReader;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -17,28 +15,25 @@ import sf.eclipse.javacc.parser.Node;
  * Content provider for outline page. Uses JavaCCParser to build the AST used in the Outline.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
-public class JJOutlinePageContentProvider implements IContentProvider, ITreeContentProvider,
-                                         JavaCCParserTreeConstants {
+public class JJOutlinePageContentProvider implements ITreeContentProvider, JavaCCParserTreeConstants {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 08/2011 : modified getChildren() to add identifiers and JJT nodes in Outline view
+  // BF  06/2012 : removed redundant superinterface to prevent warning
 
-  /** the AST node built from the text */
+  /** The AST node built from the text */
   protected JJNode jJJNode;
 
-  /**
-   * @see IContentProvider#dispose()
-   */
+  /** {@inheritDoc} */
   @Override
   public void dispose() {
     jJJNode = null;
   }
 
-  /**
-   * @see IContentProvider#inputChanged(Viewer, Object, Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
                            @SuppressWarnings("unused") final Object aOldInput, final Object aNewInput) {
@@ -48,9 +43,7 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
     }
   }
 
-  /**
-   * @see ITreeContentProvider#getChildren(Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public Object[] getChildren(final Object aObj) {
     if (aObj == null) {
@@ -98,25 +91,19 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
     return filteredChildren;
   }
 
-  /**
-   * @see ITreeContentProvider#getParent(Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public Object getParent(final Object aObj) {
     return aObj == null ? null : ((JJNode) aObj).jjtGetParent();
   }
 
-  /**
-   * @see ITreeContentProvider#hasChildren(Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean hasChildren(final Object aObj) {
     return getChildren(aObj) == null ? false : getChildren(aObj).length != 0;
   }
 
-  /**
-   * @see IStructuredContentProvider#getElements(Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public Object[] getElements(@SuppressWarnings("unused") final Object aObj) {
     return getChildren(jJJNode);
@@ -125,7 +112,7 @@ public class JJOutlinePageContentProvider implements IContentProvider, ITreeCont
   /**
    * Parse a String to build the AST node (saved in the class member).
    * 
-   * @param aTxt the string to parse
+   * @param aTxt - the string to parse
    */
   protected void parse(final String aTxt) {
     final StringReader in = new StringReader(aTxt);

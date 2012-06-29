@@ -14,4 +14,4 @@ class ASTident_reg_expr_label extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=28da13107d77f61505f5081a0f10febd (do not edit this line) */
+/* JavaCC - OriginalChecksum=c7fe98a6ff044c362d46b68a3b52b7ae (do not edit this line) */

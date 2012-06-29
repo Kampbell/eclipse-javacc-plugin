@@ -11,20 +11,19 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import sf.eclipse.javacc.base.IJJConstants;
-import sf.eclipse.javacc.editors.JJCodeScanner;
 import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.head.Activator;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
 import sf.eclipse.javacc.parser.JavaCCParserConstants;
 import sf.eclipse.javacc.parser.Token;
+import sf.eclipse.javacc.scanners.JJCodeScanner;
 
 /**
  * Format action.<br>
@@ -35,21 +34,21 @@ import sf.eclipse.javacc.parser.Token;
  * <extension point="org.eclipse.ui.editorActions">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, IJJConstants {
 
   // MMa 04/2009 : performance improvements and enhanced reformatting
   // MMa 11/2009 : javadoc and formatting revision ; fixed formatting issues in java code
+  // BF  06/2012 : import statement change due to movement of JJCodeScanner
 
   /** The editor */
   static JJEditor  sJJEditor;
   /** The document */
   static IDocument sDoc;
 
-  /**
-   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-   */
+  /** {@inheritDoc} */
   @Override
   public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
                               final IEditorPart aTargetEditor) {
@@ -60,9 +59,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     sDoc = sJJEditor.getDocument();
   }
 
-  /**
-   * @see IActionDelegate#selectionChanged(IAction, ISelection)
-   */
+  /** {@inheritDoc} */
   @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
                                @SuppressWarnings("unused") final ISelection aSelection) {
@@ -72,8 +69,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
 
   /**
    * Performs formatting.
-   * 
-   * @see IActionDelegate#run(IAction)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
@@ -138,8 +135,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
   /**
    * Formats the stacktrace in lines.
    * 
-   * @param aEx the exception
-   * @param aEol the end of line string
+   * @param aEx - the exception
+   * @param aEol - the end of line string
    * @return the formatted stacktrace
    */
   static String fmtStackTrace(final Exception aEx, final String aEol) {
@@ -152,19 +149,19 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     return sb.toString();
   }
 
-  /** empty string */
+  /** Empty string */
   public static final String EMPTY = "";  //$NON-NLS-1$
-  /** space string */
+  /** Space string */
   public static final String SPACE = " "; //$NON-NLS-1$
-  /** tab string */
+  /** Tab string */
   public static final String TAB   = "\t"; //$NON-NLS-1$
-  /** carriage return string */
+  /** Carriage return string */
   public static final String CR    = "\r"; //$NON-NLS-1$
-  /** line feed string */
+  /** Line feed string */
   public static final String LF    = "\n"; //$NON-NLS-1$
-  /** form feed string */
+  /** Form feed string */
   public static final String FF    = "\f"; //$NON-NLS-1$
-  /** number sign string */
+  /** Number sign string */
   public static final String NB    = "#"; //$NON-NLS-1$
 
   /**
@@ -173,11 +170,11 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
    * It reformats the indentation and spacing : it uses spaces to distinct constructs, and it tries to keep
    * comments and newlines (except around braces and parenthesis) as they are
    * 
-   * @param aTxt the text to format
-   * @param aEndLineDelim the end of line delimiter string
-   * @param aFirstLine the line number of the first character of the selected text
-   * @param aLastLine the line number of the last character of the selected text
-   * @param aSb the StringBuffer to receive the formatted text
+   * @param aTxt - the text to format
+   * @param aEndLineDelim - the end of line delimiter string
+   * @param aFirstLine - the line number of the first character of the selected text
+   * @param aLastLine - the line number of the last character of the selected text
+   * @param aSb - the StringBuffer to receive the formatted text
    * @return true if successful, false otherwise
    */
   protected boolean formatSelection(final String aTxt, final String aEndLineDelim, final int aFirstLine,
@@ -212,84 +209,84 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
      *   * within a conditional node : yes
      *   * within everything else : yes if bracesIndentLevel >= 2
      */
-    /** the current token */
+    /** The current token */
     Token currToken = node.getFirstToken();
-    /** the next token */
+    /** The next token */
     Token nextToken = (currToken == null ? null : currToken.next);
-    /** a special token */
+    /** A special token */
     Token specToken = null;
-    /** the last token kind */
+    /** The last token kind */
     int lastKind = -1;
-    /** the current token kind */
+    /** The current token kind */
     int currKind = (currToken == null ? -1 : currToken.kind);
-    /** the next token kind */
+    /** The next token kind */
     int nextKind = (nextToken == null ? -1 : nextToken.kind);
-    /** the special token kind */
+    /** The special token kind */
     int specKind;
-    /** the current token image */
+    /** The current token image */
     String currImage;
-    /** the next token image */
+    /** The next token image */
     String nextImage = EMPTY;
-    /** the special token image */
+    /** The special token image */
     String specImage;
-    /** number of (next token's) special tokens up to the end of line already processed */
+    /** Number of (next token's) special tokens up to the end of line already processed */
     int nbSpecialToken = 0;
-    /** the current line indentation */
+    /** The current line indentation */
     final StringBuffer currLineIndent = new StringBuffer(64);
-    /** the next line indentation */
+    /** The next line indentation */
     final StringBuffer nextLineIndent = new StringBuffer(64);
-    /** debug newlines */
+    /** Debug newlines */
     final boolean debugNL = false;
-    /** debug indentation */
+    /** Debug indentation */
     final boolean debugInd = false;
-    /** flag telling if at least one newline is needed after the current token */
+    /** Flag telling if at least one newline is needed after the current token */
     boolean needOneNewline = false;
-    /** flag telling if two newlines are needed after the current token */
+    /** Flag telling if two newlines are needed after the current token */
     boolean needTwoNewlines = false;
-    /** flag telling if one newline will be needed at the end of the current line */
+    /** Flag telling if one newline will be needed at the end of the current line */
     boolean willNeedOneNewline = false;
-    /** flag telling if two newlines will be needed at the end of the current line */
+    /** Flag telling if two newlines will be needed at the end of the current line */
     boolean willNeedTwoNewlines = false;
-    /** flag telling that a newline has just been written after the last token */
+    /** Flag telling that a newline has just been written after the last token */
     boolean newlineJustWritten = false;
-    /** flag telling that the need for a newline is postponed after encountering some token */
+    /** Flag telling that the need for a newline is postponed after encountering some token */
     boolean newLinePostponed = false;
-    /** flag memorizing the need for a newline in case it is postponed */
+    /** Flag memorizing the need for a newline in case it is postponed */
     boolean prevNeedOneNewline = false;
     /**
-     * flag memorizing the need to not output the first newlines & special tokens at the beginning of the
+     * Flag memorizing the need to not output the first newlines & special tokens at the beginning of the
      * selection if the selection does not start at the first line of the document
      */
     boolean careFirstLine = (aFirstLine > 1);
-    /** flag telling to not output anything because of outside the selected text */
+    /** Flag telling to not output anything because of outside the selected text */
     boolean skipOutput;
-    /** buffer length at the last line */
+    /** Buffer length at the last line */
     int lastSbLength = 0;
-    /** flag telling if a space is needed after the current token */
+    /** Flag telling if a space is needed after the current token */
     boolean needSpace = false;
-    /** flag telling if no space is needed for some special cases */
+    /** Flag telling if no space is needed for some special cases */
     boolean needNoSpace = false;
     /**
-     * false if in JavaCC / JJTree "sections" before parser_end (options, parser_begin), true otherwise
+     * False if in JavaCC / JJTree "sections" before parser_end (options, parser_begin), true otherwise
      * (token, special_token, skip, more, productions)
      */
     boolean isAfterParserEnd = false;
     /**
-     * parenthesis level in lookahead constraints : -1 : outside ; 0 : at lookahead token ; >= 1 : inside, '('
+     * Parenthesis level in lookahead constraints : -1 : outside ; 0 : at lookahead token ; >= 1 : inside, '('
      * and ')' included
      */
     int parLevelInLAC = -1;
-    /** parenthesis level in for loops : 0 : outside ; 1, 2, ... : inside */
+    /** Parenthesis level in for loops : 0 : outside ; 1, 2, ... : inside */
     int parLevelInFL = 0;
-    /** parenthesis level in JJTree nodes : -1 : outside ; 0 : found a node ; 1, 2, ... : inside */
+    /** Parenthesis level in JJTree nodes : -1 : outside ; 0 : found a node ; 1, 2, ... : inside */
     int parLevelInJN = 0;
-    /** true from the 'for' keyword to the enclosing parenthesis, false otherwise */
+    /** True from the 'for' keyword to the enclosing parenthesis, false otherwise */
     boolean inForLoop = false;
-    /** last parenthesis is LPAREN, not RPAREN nor BIT_OR */
+    /** Last parenthesis is LPAREN, not RPAREN nor BIT_OR */
     boolean lastParLPnotRPnorBO = false;
-    /** last straight bracket is LBRACKET, not RBRACKET nor BIT_OR not LOOKAHEAD nor 2 LPAREN */
+    /** Last straight bracket is LBRACKET, not RBRACKET nor BIT_OR not LOOKAHEAD nor 2 LPAREN */
     boolean lastBraLBnotOthers = false;
-    /** current braces indentation level (changed at each '{' and '}') */
+    /** Current braces indentation level (changed at each '{' and '}') */
     int bracesIndentLevel = 0;
     // main loop on all tokens
     while (currToken != null && currToken.kind != EOF) {
@@ -952,7 +949,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
   /**
    * Decrements indentation by shortening the given StringBuffer with the given indentation String.
    * 
-   * @param aSb the indentation StringBuffer
+   * @param aSb - the indentation StringBuffer
    */
   void decrementIndent(final StringBuffer aSb) {
     final int len = aSb.length() - JJCodeScanner.getIndentString().length();

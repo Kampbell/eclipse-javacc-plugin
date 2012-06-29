@@ -10,7 +10,8 @@ import sf.eclipse.javacc.head.Activator;
  * The JJNode is a SimpleNode to which have been added all the methods not starting with "jjt". </ul>
  * 
  * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserConstants {
 
@@ -20,48 +21,49 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   // MMa 08/2011 : fixed NPE in buildCalleeMap()
   // MMa 08/2011 : enhanced Call Hierarchy view (to display JJTree node descriptors)
   // MMa 08/2011 : enhanced Outline view (to display JJTree node descriptors and to fix regexpr_spec)
+  // BF  06/2012 : added nls tags and eliminated else clauses to prevent warning messages
   // TODO add methods and classes call hierarchy callers and callees
 
-  /** the node's parent */
+  /** The node's parent */
   protected Node              parent;
-  /** the parser */
+  /** The parser */
   protected JavaCCParser      parser;
-  /** the node's children */
+  /** The node's children */
   protected Node[]            children;
-  /** the node's id */
+  /** The node's id */
   protected int               id;
-  /** the node's name */
+  /** The node's name */
   protected String            name;
-  /** the node's display name */
+  /** The node's display name */
   protected String            displayName;
-  /** the first node */
+  /** The first node */
   protected Token             first;
-  /** the last node */
+  /** The last node */
   protected Token             last;
-  /** the JavaCC elements */
+  /** The JavaCC elements */
   private JJElements          jjElements;
-  /** the callers */
+  /** The callers */
   private JJNode[]            callers   = new JJNode[0];
-  /** the callees */
+  /** The callees */
   private JJNode[]            callees   = new JJNode[0];
-  /** the separator string for display names */
-  public static final String  DASH_SEP  = " - ";
-  /** the separator string for lexical states */
-  private static final String COLON_SEP = " : ";
+  /** The separator string for display names */
+  public static final String  DASH_SEP  = " - ";        //$NON-NLS-1$
+  /** The separator string for lexical states */
+  private static final String COLON_SEP = " : ";        //$NON-NLS-1$
 
   /** An fake node to display an out of hierarchy selection */
   static final JJNode         oohsJJNode;
 
   static {
     oohsJJNode = new JJNode(-1);
-    oohsJJNode.name = Activator.getString("JJRuntimeOptions.Out_of_hierarchy_selection"); //$NON-NLS-1$
+    oohsJJNode.name = Activator.getString("GlobOpt.Out_of_hierarchy_selection"); //$NON-NLS-1$
     oohsJJNode.displayName = oohsJJNode.name;
   }
 
   /**
    * Creates a node with a given id.
    * 
-   * @param aId the given id
+   * @param aId - the given id
    */
   public JJNode(final int aId) {
     id = aId;
@@ -70,8 +72,8 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * Creates a node with a given parser and a given id.
    * 
-   * @param aParser the given parser
-   * @param aId the given id
+   * @param aParser - the given parser
+   * @param aId - the given id
    */
   public JJNode(final JavaCCParser aParser, final int aId) {
     this(aId);
@@ -111,7 +113,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * Sets the parent. Comes from SimpleNode.
    * 
-   * @param aParent the parent
+   * @param aParent - the parent
    */
   @Override
   public void jjtSetParent(final Node aParent) {
@@ -135,16 +137,14 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     if (parent instanceof JJNode) {
       return (JJNode) parent;
     }
-    else {
-      return null;
-    }
+    return null;
   }
 
   /**
    * Adds a child. Comes from SimpleNode.
    * 
-   * @param aNode the child's node
-   * @param aId the child's id
+   * @param aNode - the child's node
+   * @param aId - the child's id
    */
   @Override
   public void jjtAddChild(final Node aNode, final int aId) {
@@ -162,7 +162,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * Gets the child of a given index. Comes from SimpleNode.
    * 
-   * @param i the child's index
+   * @param i - the child's index
    * @return the child's node
    */
   @Override
@@ -211,7 +211,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * Sets the node's first token.
    * 
-   * @param aToken the first token
+   * @param aToken - the first token
    */
   public void setFirstToken(final Token aToken) {
     first = aToken;
@@ -220,7 +220,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * Sets the node's last token.
    * 
-   * @param aToken the last token
+   * @param aToken - the last token
    */
   public void setLastToken(final Token aToken) {
     last = aToken;
@@ -355,7 +355,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
         }
         else {
           // "<" complex_regular_expression_choices ">"
-          name = displayName = "< ... >";
+          name = displayName = "< ... >"; //$NON-NLS-1$
         }
         // skip up to last ">"
         int lvl = 1;
@@ -402,7 +402,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * To buildHashMap each JJNode needs to know where to put Name / Node associations.
    * 
-   * @param aJjElements the JavaCC elements
+   * @param aJjElements - the JavaCC elements
    */
   public void setJJElementsToUpdate(final JJElements aJjElements) {
     jjElements = aJjElements;
@@ -492,8 +492,8 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
    * Adds a given node at the beginning or the end of the array of callers of this node only if it does not
    * exist yet in the array.<br>
    * 
-   * @param aNode the node to add
-   * @param toTop true if at the beginning, false if at the end
+   * @param aNode - the node to add
+   * @param toTop - true if at the beginning, false if at the end
    */
   public void addCaller(final JJNode aNode, final boolean toTop) {
     for (final JJNode caller : callers) {
@@ -584,7 +584,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   /**
    * Adds a given node at the end of the array of callees of this node.
    * 
-   * @param aNode the node to add
+   * @param aNode - the node to add
    */
   public void addCallee(final JJNode aNode) {
     final JJNode newCallees[] = new JJNode[callees.length + 1];

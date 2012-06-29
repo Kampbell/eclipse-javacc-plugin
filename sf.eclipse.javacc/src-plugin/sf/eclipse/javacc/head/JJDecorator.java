@@ -23,7 +23,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * <extension point="org.eclipse.ui.decorators">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJConstants {
 
@@ -31,9 +31,9 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
   // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix
   // MMa 12/2010 : fix a NPE in getGeneratedProperty
 
-  /** the Image to add on the original if generated */
+  /** The Image to add on the original if generated */
   private final Image imgGeneratedStamp;
-  /** the Image to add on the original if excluded */
+  /** The Image to add on the original if excluded */
   private final Image imgExcludedJJ;
 
   /**
@@ -48,9 +48,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
     imgExcludedJJ = desc.createImage(Display.getDefault());
   }
 
-  /**
-   * @see ILabelDecorator#dispose
-   */
+  /** {@inheritDoc} */
   @Override
   public void dispose() {
     super.dispose();
@@ -58,15 +56,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
     imgExcludedJJ.dispose();
   }
 
-  /**
-   * Decorates a given image of a given element with a small image (showing "generated" or "excluded") on the
-   * top right
-   * 
-   * @param aImage the given image
-   * @param aElement the given element
-   * @return the decorated image
-   * @see ILabelDecorator#decorateImage
-   */
+  /** {@inheritDoc} */
   @Override
   public Image decorateImage(final Image aImage, final Object aElement) {
     // the image to decorate is the background we paint on
@@ -93,14 +83,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
     return newImage;
   }
 
-  /**
-   * Decorates a given string of a given element with a reference <...> to a .jj file if generated.
-   * 
-   * @param aStr the given Text
-   * @param aElement the given element
-   * @return the decorated string
-   * @see ILabelDecorator#decorateText
-   */
+  /** {@inheritDoc} */
   @Override
   public String decorateText(final String aStr, final Object aElement) {
     final String generated = getGeneratedProperty(aElement);
@@ -117,7 +100,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
   /**
    * Retrieves the .jj file name if the file is derived.
    * 
-   * @param aElement the given element
+   * @param aElement - the given element
    * @return the .jj file name
    */
   protected String getGeneratedProperty(final Object aElement) {
@@ -145,7 +128,7 @@ public class JJDecorator extends LabelProvider implements ILabelDecorator, IJJCo
   /**
    * Checks if a given element is a .jj, .jjt, .jtb file and is on the classpath.
    * 
-   * @param aElement the given element
+   * @param aElement - the given element
    * @return true if a given element is a .jj, .jjt, .jtb file and is on the classpath, false otherwise
    */
   protected boolean isOnClasspath(final Object aElement) {

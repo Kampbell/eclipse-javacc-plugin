@@ -18,7 +18,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
  * corresponding annotation type in the Preferences > General > Editors > TextEditors > Annotations page.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 class JJAnnotationHover implements IAnnotationHover {
 
@@ -28,8 +28,8 @@ class JJAnnotationHover implements IAnnotationHover {
   /**
    * Returns the text (to be shown in the hover) corresponding to the annotation at a given line (if null no
    * hover is shown).
-   * 
-   * @see IAnnotationHover#getHoverInfo(ISourceViewer, int)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public String getHoverInfo(final ISourceViewer aSourceViewer, final int aLineNumber) {

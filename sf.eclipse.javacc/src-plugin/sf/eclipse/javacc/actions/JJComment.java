@@ -21,25 +21,24 @@ import sf.eclipse.javacc.editors.JJEditor;
  * for key binding<br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 
 public class JJComment implements IEditorActionDelegate {
 
   // MMa 12/2009 : formatting and javadoc revision
 
-  /** the current editor */
+  /** The current editor */
   static JJEditor  sJJEditor;
-  /** the current document */
+  /** The current document */
   static IDocument sDocument;
-  /** comment prefix */
+  /** Comment prefix */
   static String    prefix = "//"; //$NON-NLS-1$
 
-  /**
-   * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-   */
+  /** {@inheritDoc} */
   @Override
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
     if (aTargetEditor == null) {
       return;
     }
@@ -47,9 +46,7 @@ public class JJComment implements IEditorActionDelegate {
     sDocument = sJJEditor.getDocument();
   }
 
-  /**
-   * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
-   */
+  /** {@inheritDoc} */
   @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
                                @SuppressWarnings("unused") final ISelection aSelection) {
@@ -59,7 +56,7 @@ public class JJComment implements IEditorActionDelegate {
   /**
    * Performs Comment or UnComment.
    * 
-   * @param aAction the action
+   * @param aAction - the action
    */
   @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {
@@ -135,7 +132,7 @@ public class JJComment implements IEditorActionDelegate {
   /**
    * Determines whether each line is prefixed by one of the prefixes.
    * 
-   * @param aTextSelection the selected text
+   * @param aTextSelection - the selected text
    * @return true if all lines of the selected text are commented, false otherwise
    */
   static boolean isSelectionCommented(final ITextSelection aTextSelection) {

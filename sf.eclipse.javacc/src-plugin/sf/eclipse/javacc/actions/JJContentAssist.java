@@ -4,7 +4,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
@@ -20,30 +19,27 @@ import sf.eclipse.javacc.editors.JJSourceViewerConfiguration;
  * <extension point="org.eclipse.ui.bindings"> as a key binding<br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJContentAssist implements IEditorActionDelegate {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 12/2009 : removed unused superclass
 
-  /** the current editor */
+  /** The current editor */
   static JJEditor sJJEditor;
 
-  /**
-   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-   */
+  /** {@inheritDoc} */
   @Override
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
     if (aTargetEditor == null) {
       return;
     }
     sJJEditor = (JJEditor) aTargetEditor;
   }
 
-  /**
-   * @see IActionDelegate#selectionChanged(IAction, ISelection)
-   */
+  /** {@inheritDoc} */
   @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction,
                                @SuppressWarnings("unused") final ISelection aSelection) {
@@ -54,13 +50,10 @@ public class JJContentAssist implements IEditorActionDelegate {
    * Performs Content Assist.<br>
    * The assistant is created by {@link JJSourceViewerConfiguration#getContentAssistant(ISourceViewer)}<br>
    * The processor is defined by {@link JJCompletionProcessor}<br>
-   * 
-   * @param aAction the corresponding action
-   * @see org.eclipse.jdt.internal.ui.text.java.JavaContentAssistHandler
-   * @see org.eclipse.jdt.internal.ui.javaeditor.SpecificContentAssistExecutor
+   * <p>
+   * {@inheritDoc}
    */
   @Override
-  @SuppressWarnings("restriction")
   public void run(@SuppressWarnings("unused") final IAction aAction) {
     if (sJJEditor == null) {
       return;

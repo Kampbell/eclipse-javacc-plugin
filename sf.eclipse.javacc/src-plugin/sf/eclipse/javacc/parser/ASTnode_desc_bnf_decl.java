@@ -14,4 +14,4 @@ class ASTnode_desc_bnf_decl extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=336f561dc6d91a29fa850c9f6de998d4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=121ab2d48e1f90b99f8c1b04289f3943 (do not edit this line) */

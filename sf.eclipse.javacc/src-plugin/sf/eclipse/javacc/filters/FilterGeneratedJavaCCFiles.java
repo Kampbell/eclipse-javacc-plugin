@@ -12,13 +12,11 @@ import sf.eclipse.javacc.base.IJJConstants;
  * Filters the generated JavaCC files.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class FilterGeneratedJavaCCFiles extends ViewerFilter implements IJJConstants {
 
-  /**
-   * @see ViewerFilter#select(Viewer, Object, Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean select(@SuppressWarnings("unused") final Viewer aViewer,
                         @SuppressWarnings("unused") final Object aParentElement, final Object aObj) {

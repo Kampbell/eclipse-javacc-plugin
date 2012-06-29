@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -22,23 +21,22 @@ import sf.eclipse.javacc.head.JJBuilder;
  * for popup menu on Editor (only)
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 
 public class JJDocCompile implements IEditorActionDelegate, IJJConstants {
 
   // MMa 12/2009 : formatting and javadoc revision
 
-  /** the current editor */
+  /** The current editor */
   private JJEditor  jJJEditor;
-  /** the resource to compile */
+  /** The resource to compile */
   private IResource jRes;
 
-  /**
-   * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-   */
+  /** {@inheritDoc} */
   @Override
-  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction, final IEditorPart aTargetEditor) {
+  public void setActiveEditor(@SuppressWarnings("unused") final IAction aAction,
+                              final IEditorPart aTargetEditor) {
     if (aTargetEditor == null) {
       return;
     }
@@ -47,9 +45,7 @@ public class JJDocCompile implements IEditorActionDelegate, IJJConstants {
     jRes = (IResource) input.getAdapter(IResource.class);
   }
 
-  /**
-   * @see IActionDelegate#selectionChanged(IAction action, ISelection selection)
-   */
+  /** {@inheritDoc} */
   @Override
   public void selectionChanged(@SuppressWarnings("unused") final IAction aAction, final ISelection aSelection) {
     if (aSelection instanceof IStructuredSelection) {
@@ -62,9 +58,8 @@ public class JJDocCompile implements IEditorActionDelegate, IJJConstants {
 
   /**
    * Compile the .jj or .jjt file.
-   * 
-   * @see IActionDelegate#run(IAction)
-   * @param aAction the action proxy that handles the presentation portion of the action
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void run(@SuppressWarnings("unused") final IAction aAction) {

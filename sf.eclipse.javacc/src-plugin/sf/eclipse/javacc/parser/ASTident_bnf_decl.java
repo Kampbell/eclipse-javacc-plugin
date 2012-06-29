@@ -14,4 +14,4 @@ class ASTident_bnf_decl extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=654b80be0b34b31833cffe8a25da9442 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3923333758c98401c776f221091f43c4 (do not edit this line) */

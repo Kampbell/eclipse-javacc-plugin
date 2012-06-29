@@ -13,16 +13,16 @@ import org.eclipse.text.edits.TextEdit;
  * Test class to call the Eclipse formatter.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class UnusedJavaFormat {
 
   /**
    * Standard main.
    * 
-   * @param aArgs command line arguments
-   * @throws BadLocationException thrown by {@link org.eclipse.text.edits.TextEdit#apply(IDocument)}
-   * @throws MalformedTreeException thrown by {@link org.eclipse.text.edits.TextEdit#apply(IDocument)}
+   * @param aArgs - command line arguments
+   * @throws BadLocationException - thrown by {@link org.eclipse.text.edits.TextEdit#apply(IDocument)}
+   * @throws MalformedTreeException - thrown by {@link org.eclipse.text.edits.TextEdit#apply(IDocument)}
    */
   public static void main(final String[] aArgs) throws MalformedTreeException, BadLocationException {
     // source : a String containing your source code

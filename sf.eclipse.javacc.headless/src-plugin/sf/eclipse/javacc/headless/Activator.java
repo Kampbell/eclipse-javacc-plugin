@@ -17,7 +17,7 @@ import sf.eclipse.javacc.base.IJJConsole;
  * Bundle-ClassPath: plugin.jar, javacc.jar
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class Activator extends Plugin {
 

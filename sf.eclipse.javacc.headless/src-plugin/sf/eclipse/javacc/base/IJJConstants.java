@@ -6,7 +6,8 @@ import org.eclipse.core.runtime.QualifiedName;
  * Defines all the Properties names and Qualified Names.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 public interface IJJConstants {
 
@@ -16,6 +17,7 @@ public interface IJJConstants {
   // MMa 03/2010 : added IDs; changed JTB version
   // MMa 08/2011 : added mark generated files as derived option RFE 3314103
   // MMa 08/2011 : changed JTB revision
+  // BF  06/2012 : added missing //$NON-NLS-1$ tags
 
   /** Debug mode flag (not used) */
   public static final boolean       DEBUG                         = false;
@@ -45,21 +47,21 @@ public interface IJJConstants {
   /** Suppress warnings run-time option qualified name suffix */
   public static final String        SUPPRESS_WARNINGS             = "SUPPRESS_WARNINGS";                    //$NON-NLS-1$  
   /** Default value for {@link #SUPPRESS_WARNINGS} */
-  static final String               DEF_SUPPRESS_WARNINGS         = "false";
+  static final String               DEF_SUPPRESS_WARNINGS         = "false";                                //$NON-NLS-1$
   /** Mark generated files as derived run-time option qualified name suffix */
   public static final String        MARK_GEN_FILES_AS_DERIVED     = "MARK_GEN_FILES_AS_DERIVED";            //$NON-NLS-1$  
   /** Default value for {@link #MARK_GEN_FILES_AS_DERIVED} */
-  static final String               DEF_MARK_GEN_FILES_AS_DERIVED = "true";
+  static final String               DEF_MARK_GEN_FILES_AS_DERIVED = "true";                                 //$NON-NLS-1$
   /** Show console run-time option qualified name suffix */
   public static final String        SHOW_CONSOLE                  = "SHOW_CONSOLE";                         //$NON-NLS-1$
   /** Clear console run-time option qualified name suffix */
   public static final String        CLEAR_CONSOLE                 = "CLEAR_CONSOLE";                        //$NON-NLS-1$
   /** Default value for {@link #CLEAR_CONSOLE} */
-  static final String               DEF_CLEAR_CONSOLE             = "true";
+  static final String               DEF_CLEAR_CONSOLE             = "true";                                 //$NON-NLS-1$
   /** JJ nature run-time option qualified name suffix */
   public static final String        JJ_NATURE                     = "JJ_NATURE";                            //$NON-NLS-1$
   /** Default value for {@link #JJ_NATURE} */
-  static final String               DEF_JJ_NATURE                 = "true";
+  static final String               DEF_JJ_NATURE                 = "true";                                 //$NON-NLS-1$
   /** Runtime JavaCC jar run-time option qualified name suffix */
   public static final String        RUNTIME_JJJAR                 = "RUNTIME_JJJAR";                        //$NON-NLS-1$
   /** Runtime jtb jar run-time option qualified name suffix */

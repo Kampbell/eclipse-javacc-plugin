@@ -18,20 +18,20 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
+import sf.eclipse.javacc.scanners.JJJavaCCCodeRule;
 
 /**
  * The JJ content assist processor for completions in java or javacc code (not in java & javadoc comments).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCParserTreeConstants {
 
   // MMa 02/2010 : formatting and javadoc revision
+  // BF  05/2012 : rename and change location of JavaCC keyword table
 
-  /**
-   * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
-   */
+  /** {@inheritDoc} */
   @Override
   public ICompletionProposal[] computeCompletionProposals(final ITextViewer aTextViewer, final int aDocOffset) {
     // list of Completion proposals to be added
@@ -54,7 +54,7 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     // TODO choose the keyword from the context
     // TODO alphabetic sort
     // add Keywords
-    for (final String s : JJCodeScanner.sJJkeywords) {
+    for (final String s : JJJavaCCCodeRule.sJavaCCAssistKeywords) {
       if (s.toUpperCase().startsWith(prefix.toUpperCase())) {
         if (s.equals("options")) { //$NON-NLS-1$
           suggestions.add("options{\n  \n}"); //$NON-NLS-1$
@@ -133,45 +133,34 @@ public class JJCompletionProcessor implements IContentAssistProcessor, JavaCCPar
     return proposals.toArray(new ICompletionProposal[proposals.size()]);
   }
 
-  /**
-   * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
-   */
+  /** {@inheritDoc} */
   @Override
-  public IContextInformation[] computeContextInformation(
-                                                         @SuppressWarnings("unused") final ITextViewer aTextViewer,
+  public IContextInformation[] computeContextInformation(@SuppressWarnings("unused") final ITextViewer aTextViewer,
                                                          @SuppressWarnings("unused") final int aOffset) {
     return null;
   }
 
-  /**
-   * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-   */
+  /** {@inheritDoc} */
   @Override
   public char[] getCompletionProposalAutoActivationCharacters() {
     return new char[] {
       ' ' };
   }
 
-  /**
-   * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-   */
+  /** {@inheritDoc} */
   @Override
   public char[] getContextInformationAutoActivationCharacters() {
     return new char[] {
       '?' };
   }
 
-  /**
-   * @see IContentAssistProcessor#getContextInformationValidator()
-   */
+  /** {@inheritDoc} */
   @Override
   public IContextInformationValidator getContextInformationValidator() {
     return null;
   }
 
-  /**
-   * @see IContentAssistProcessor#getErrorMessage()
-   */
+  /** {@inheritDoc} */
   @Override
   public String getErrorMessage() {
     return null;

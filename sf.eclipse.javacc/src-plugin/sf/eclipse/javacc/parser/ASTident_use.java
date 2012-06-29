@@ -14,4 +14,4 @@ class ASTident_use extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=ca52f503a1fbf47864c9088af4fe9a87 (do not edit this line) */
+/* JavaCC - OriginalChecksum=aa8c0ea91a59b704c075dee0cd77da79 (do not edit this line) */

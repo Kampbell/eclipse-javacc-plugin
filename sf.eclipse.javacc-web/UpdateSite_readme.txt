@@ -20,7 +20,7 @@ How to set up the admin & security requirements for the JavaCC Eclipse Plugin up
 
 How to create the JavaCC Eclipse Plugin update site zip file
 ------------------------------------------------------------
-(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010 / Mar 31th, 2010
+(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010 / Mar 31th, 2010 / Jun 29th, 2012
 
 
 - Build JTB Project, check that "Release_Notes.txt" and "jtb_doc.html" are up to date
@@ -30,11 +30,10 @@ For the normal plug-in:
 - Build project "sf.eclipse.javacc" ;
   * copy "jtb-x.y.z.jar" and remove old one
   * update JTB_JAR_NAME in "IJJConstants"
-  * review "plugin.xml" (change JTB jar name in "build.properties" tab)
+  * review "plugin.xml" (change JTB jar name in "build.properties" tab, update version in overview tab)
   * update "readme.txt"
   * update dependencies if dropping support of some Eclipse version
   * do not use the export wizard
-  * commit files to SVN and tag as a version
 
 - Update project "sf.eclipse.javacc.feature" through "feature.xml" (mainly version)
   * use the export wizard to create the "sf.eclipse.javacc-x.y.zz-plugin.zip" file
@@ -46,11 +45,11 @@ For the normal plug-in:
   * update "index.html"
   * delete "artifacts.jar" & "content.jar"
   * in "Site Map" tab remove old version feature, add new version feature (under the site)and use "Build all"
-  * check there are no old versions entries in "artifacts.xml" & "content.xml"
+  *  (the new plugin jar is created)
+  * check there are no old versions entries in "artifacts.xml" & "content.xml" (hum now we have jar files, not xml files)
   * update "javacc-ver" property in "build_zip.xml"
-  * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml"
+  * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml" (Run As ...)
   * upload files to the SF site as below
-  * commit files to CVS and tag as a version
 
 For the Headless plug-in:
 
@@ -60,7 +59,6 @@ For the Headless plug-in:
   * copy "jtb-x.y.z.jar" and remove old one
   * update JTB_JAR_NAME in "IJJConstants"
   * review "plugin.xml" (change JTB jar name in "build.properties" tab)
-  * update "readme.txt"
   * update dependencies if dropping support of some Eclipse version
   * do not use the export wizard
 
@@ -69,17 +67,17 @@ For the Headless plug-in:
     (under project "sf.eclipse.javacc.headless-web") (change version)
 
 - Update project "sf.eclipse.javacc.headless-web" through "site.xml" (mainly features, keep it under the category)
-  * copy "jtb_doc.html"
   * move to folder "old_versions" previous jars from folders "plugins" and "features"
   * update "index.html"
   * delete "artifacts.jar" & "content.jar"
   * in "Site Map" tab remove old version feature, add new version feature (under the site)and use "Build all"
-  * check there are no old versions entries in "artifacts.xml" & "content.xml"
+  *  (the new plugin jar is created)
+  * check there are no old versions entries in "artifacts.xml" & "content.xml" (hum now we have jar files, not xml files)
   * update "javacc-ver" property in "build_zip.xml"
   * create "sf.eclipse.javacc.headless-z.y.xx-updatesite.zip" through "build_zip.xml"
   * upload files to the SF site as below
-  * commit files to CVS and tag as a version
 
+- Commit files for the 6 projects to CVS and tag as a version
 
 
 How to update the JavaCC Eclipse Plugin SourceForge site

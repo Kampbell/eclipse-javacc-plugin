@@ -9,26 +9,26 @@ import sf.eclipse.javacc.parser.JJNode;
  * JavaCC element hyperlink.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 class JJHyperlink implements IHyperlink {
 
   // MMa 11/2009 : formatting and javadoc revision
   // MMa 02/2010 : formatting and javadoc revision
 
-  /** the region */
+  /** The region */
   private final IRegion  jRegion;
-  /** the editor */
+  /** The editor */
   private final JJEditor jJJEditor;
-  /** the node */
+  /** The node */
   private final JJNode   jJJNode;
 
   /**
    * Creates a new Java element hyperlink.
    * 
-   * @param aRegion the region
-   * @param aJJEditor the editor
-   * @param aJJNode the node
+   * @param aRegion - the region
+   * @param aJJEditor - the editor
+   * @param aJJNode - the node
    */
   public JJHyperlink(final IRegion aRegion, final JJEditor aJJEditor, final JJNode aJJNode) {
     jRegion = aRegion;
@@ -37,25 +37,25 @@ class JJHyperlink implements IHyperlink {
   }
 
   /**
-   * @return the region
-   * @see IHyperlink#getHyperlinkRegion()
+   * Return the region.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public IRegion getHyperlinkRegion() {
     return jRegion;
   }
 
-  /**
-   * @see IHyperlink#open()
-   */
+  /** {@inheritDoc} */
   @Override
   public void open() {
     jJJEditor.setSelection(jJJNode);
   }
 
   /**
-   * @return the node label
-   * @see IHyperlink#getTypeLabel()
+   * Return the node label.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public String getTypeLabel() {
@@ -63,8 +63,9 @@ class JJHyperlink implements IHyperlink {
   }
 
   /**
-   * @return the node text
-   * @see IHyperlink#getHyperlinkText()
+   * Return the node text.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public String getHyperlinkText() {

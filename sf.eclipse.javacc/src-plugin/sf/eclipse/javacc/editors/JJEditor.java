@@ -22,19 +22,16 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import sf.eclipse.javacc.base.IJJConstants;
 import sf.eclipse.javacc.head.Activator;
-import sf.eclipse.javacc.options.PreferencesInitializer;
 import sf.eclipse.javacc.parser.JJNode;
+import sf.eclipse.javacc.preferences.IPrefConstants;
 
 /**
  * Editor designed for JavaCC files.<br>
@@ -42,37 +39,46 @@ import sf.eclipse.javacc.parser.JJNode;
  * <extension point="org.eclipse.ui.editors">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
-public class JJEditor extends TextEditor implements IJJConstants, INavigationLocationProvider {
+public class JJEditor extends TextEditor implements IJJConstants, IPrefConstants {
 
   // MMa 11/2009 : formatting and javadoc revision ; added constructor for subclass
   // MMa 12/2009 : added spell checking ; some renaming
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : refactoring / renamings
   // MMa 08/2011 : impacts of Call Hierarchy view enhancements
+  // BF  05/2012 : refresh the presentation and check spelling when a color or spelling preference changes
+  // BF  06/2012 : replaced see tags with inheritDoc tags
 
   /** The JJ outline page */
   protected JJOutlinePage                               jJJOutlinePage;
+
   /** The JJ reconciling strategy */
   protected JJReconcilingStrategy                       jJJReconcilingStrategy;
 
   /** The JJ source viewer configuration */
   protected JJSourceViewerConfiguration                 jJJSourceViewerConfiguration;
+
   /** The projection support */
   private ProjectionSupport                             jProjectionSupport;
+
   /** The (previous / current) projection annotations */
   private final HashMap<ProjectionAnnotation, Position> jProjectionAnnotations = new HashMap<ProjectionAnnotation, Position>();
+
   /** The projection annotation model */
   private ProjectionAnnotationModel                     jAnnotationModel;
 
   /** The editor's pair Parent Matcher */
   private final JJCharacterPairMatcher                  jJJParentMatcher       = new JJCharacterPairMatcher();
+
   /** The pair matching char color */
   private Color                                         jColorMatchingChar;
 
   /** The editor's peer character painter */
   private MatchingCharacterPainter                      jMatchingCharacterPainter;
+
   /** The JJ elements */
   private JJElements                                    jJJElements;
 
@@ -88,7 +94,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Customized constructor for subclass.
    * 
-   * @param aCtx the context menu id (from plugin.xml)
+   * @param aCtx - the context menu id (from plugin.xml)
    */
   public JJEditor(final String aCtx) {
     super();
@@ -98,6 +104,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
 
   /**
    * Initializes this editor.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   protected void initializeEditor() {
@@ -106,11 +114,14 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
     // JJ DocumentProvider
     //    setDocumentProvider(new FileDocumentProvider());
     setDocumentProvider(new JJDocumentProvider());
+
     // JJ CodeScanner, Formatter, IndentStrategy, ContentAssist,...
     jJJSourceViewerConfiguration = new JJSourceViewerConfiguration(this);
     setSourceViewerConfiguration(jJJSourceViewerConfiguration);
+
     // used to synchronize Outline and Editor
     jJJReconcilingStrategy = new JJReconcilingStrategy(null, this);
+
     // used to retrieve JJElements (methods, tokens, class) updated at each document parsing
     jJJElements = new JJElements();
 
@@ -119,6 +130,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
 
   /**
    * Disposes the colors and the code scanner.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void dispose() {
@@ -134,7 +147,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * @see TextEditor#initializeKeyBindingScopes()
+   * {@inheritDoc}
    */
   @Override
   protected void initializeKeyBindingScopes() {
@@ -143,7 +156,9 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * Overridden in order to add MatchingCharacterPainter to install ProjectionSupport
+   * Overridden in order to add MatchingCharacterPainter to install ProjectionSupport.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void createPartControl(final Composite aParent) {
@@ -161,6 +176,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
 
   /**
    * Overridden to return a ProjectionViewer instead of a SourceViewer.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   protected ISourceViewer createSourceViewer(final Composite aParent, final IVerticalRuler aRuler,
@@ -185,7 +202,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Tells the editor which regions are expanded or collapsed.
    * 
-   * @param aPositions the folding positions
+   * @param aPositions - the folding positions
    */
   public void updateFoldingStructure(final ArrayList<Position> aPositions) {
     final HashMap<ProjectionAnnotation, Position> additions = new HashMap<ProjectionAnnotation, Position>(
@@ -205,7 +222,10 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
       additions.put(new ProjectionAnnotation(collapsed), pos);
     }
     final Annotation[] deletions = (jProjectionAnnotations.keySet().toArray(new Annotation[jProjectionAnnotations.size()]));
-    jAnnotationModel.modifyAnnotations(deletions, additions, null);
+    if (jAnnotationModel != null) {
+      jAnnotationModel.modifyAnnotations(deletions, additions, null);
+    }
+
     // now we can add additions to current annotations
     jProjectionAnnotations.clear();
     jProjectionAnnotations.putAll(additions);
@@ -220,9 +240,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
         jMatchingCharacterPainter = new MatchingCharacterPainter(getSourceViewer(), jJJParentMatcher);
         final Display display = Display.getCurrent();
         final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-        jColorMatchingChar = new Color(display,
-                                       PreferenceConverter.getColor(store,
-                                                                    PreferencesInitializer.P_MATCHING_CHAR));
+        jColorMatchingChar = new Color(display, PreferenceConverter.getColor(store, P_MATCHING_CHAR));
         jMatchingCharacterPainter.setColor(jColorMatchingChar);
         final ITextViewerExtension2 extension = (ITextViewerExtension2) getSourceViewer();
         extension.addPainter(jMatchingCharacterPainter);
@@ -232,6 +250,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
 
   /**
    * Returns the JJOutlinePage declared on IAdaptable.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public Object getAdapter(@SuppressWarnings("rawtypes") final Class aRequiredClass) {
@@ -297,7 +317,7 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Sets the Selection given a Node of the AST.
    * 
-   * @param aNode the JJNode to set the selection on
+   * @param aNode - the JJNode to set the selection on
    */
   public void setSelection(final JJNode aNode) {
     if (aNode != null && aNode != JJNode.getOohsjjnode()) {
@@ -327,6 +347,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
 
   /**
    * Overridden to add edit location in History. Alt + left arrow should jump back to correct position.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   protected void updateContentDependentActions() {
@@ -337,8 +359,8 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   /**
    * Highlights a range and selects a text.
    * 
-   * @param aRange the range to highlight
-   * @param aSelection the text to select
+   * @param aRange - the range to highlight
+   * @param aSelection - the text to select
    */
   public void setSelection(final IRegion aRange, final ITextSelection aSelection) {
     if (aRange != null) {
@@ -353,30 +375,12 @@ public class JJEditor extends TextEditor implements IJJConstants, INavigationLoc
   }
 
   /**
-   * Updates spelling and colors. Currently does nothing as the editor is not redrawn.
+   * Updates spelling and colors presentation when preference changes.
    */
   public void updateSpellingAndColors() {
-    //    Display display = Display.getCurrent();
-    //    IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-    //    Color color = new Color(display, PreferenceConverter.getColor(store, JJPreferences.P_JJKEYWORD));
-    //    getSourceViewer().getTextWidget().setBackground(color);
-    //    fJJReconcilingStrategy.performUpdates();
+    getReconcilingStrategy().checkSpelling();
+    jMatchingCharacterPainter = null;
+    showMatchingCharacters();
+    getSourceViewer().invalidateTextPresentation();
   }
-
-  /**
-   * Triggers viewer updates if the check spelling preference has changed. Currently this is ineffective as
-   * there are no listeners.
-   * 
-   * @see AbstractDecoratedTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
-   * @since 3.3
-   */
-  @Override
-  protected void handlePreferenceStoreChanged(final PropertyChangeEvent aEvent) {
-    //    if (event.getProperty().equals(JJPreferences.P_CHECK_SPELLING)) {
-    //      fJJReconcilingStrategy.performUpdates(true);
-    //      return;
-    //    }
-    super.handlePreferenceStoreChanged(aEvent);
-  }
-
 }

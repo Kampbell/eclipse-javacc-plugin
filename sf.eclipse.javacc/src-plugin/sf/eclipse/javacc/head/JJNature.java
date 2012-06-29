@@ -14,7 +14,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * <extension point="org.eclipse.core.resources.natures">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJNature implements IProjectNature, IJJConstants {
 
@@ -25,21 +25,13 @@ public class JJNature implements IProjectNature, IJJConstants {
   /** The project */
   private IProject jProject;
 
-  /**
-   * Returns the project.
-   * 
-   * @see IProjectNature#getProject()
-   */
+  /** {@inheritDoc} */
   @Override
   public IProject getProject() {
     return jProject;
   }
 
-  /**
-   * Sets the project.
-   * 
-   * @see IProjectNature#setProject(IProject)
-   */
+  /** {@inheritDoc} */
   @Override
   public void setProject(final IProject aProject) {
     jProject = aProject;
@@ -50,8 +42,8 @@ public class JJNature implements IProjectNature, IJJConstants {
    * project using <code>IProject.setDescription</code> and should not be called directly by clients.<br>
    * The nature extension id is added to the list of natures before this method is called, and need not be
    * added here.
-   * 
-   * @see IProjectNature#configure()
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void configure() throws CoreException {
@@ -82,8 +74,8 @@ public class JJNature implements IProjectNature, IJJConstants {
    * the project using <code>IProject.setDescription</code> and should not be called directly by clients.<br>
    * The nature extension id is removed from the list of natures before this method is called, and need not be
    * removed here.
-   * 
-   * @see IProjectNature#deconfigure()
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void deconfigure() throws CoreException {
@@ -105,8 +97,8 @@ public class JJNature implements IProjectNature, IJJConstants {
   /**
    * Adds or removes a JavaCC Nature (nature id only) to the project.
    * 
-   * @param aJJNature adds if true, removes if false
-   * @param aProject to change
+   * @param aJJNature - adds if true, removes if false
+   * @param aProject - to change
    */
   static public void setJJNature(final boolean aJJNature, final IProject aProject) {
     if (aProject == null) {

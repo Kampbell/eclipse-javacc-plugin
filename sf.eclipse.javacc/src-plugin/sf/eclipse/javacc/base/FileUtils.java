@@ -18,7 +18,7 @@ import java.io.Writer;
  * 
  * @author Tim Hanson 2007
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class FileUtils {
 
@@ -29,7 +29,7 @@ public class FileUtils {
   /**
    * Reads a file contents.
    * 
-   * @param aFileName a file name
+   * @param aFileName - a file name
    * @return the file contents
    */
   public static StringBuilder getFileContentsSB(final String aFileName) {
@@ -59,7 +59,7 @@ public class FileUtils {
   /**
    * Reads a file contents.
    * 
-   * @param aFileName a file name
+   * @param aFileName - a file name
    * @return the file contents
    */
   public static String getFileContents(final String aFileName) {
@@ -89,8 +89,8 @@ public class FileUtils {
   /**
    * Saves a string to a file.
    * 
-   * @param aFileName a file name
-   * @param aStr a string
+   * @param aFileName - a file name
+   * @param aStr - a string
    */
   public static void saveFileContents(final String aFileName, final String aStr) {
     Writer w = null;
@@ -113,8 +113,8 @@ public class FileUtils {
   /**
    * Appends a string to a file.
    * 
-   * @param aFileName a file name
-   * @param aStr a string
+   * @param aFileName - a file name
+   * @param aStr - a string
    */
   public static void appendFileContents(final String aFileName, final String aStr) {
     Writer w = null;

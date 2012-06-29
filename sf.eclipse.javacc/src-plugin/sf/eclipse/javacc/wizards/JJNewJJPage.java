@@ -58,7 +58,8 @@ import sf.eclipse.javacc.head.Activator;
  * well as the file name. This page handles the file creation.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
 public class JJNewJJPage extends WizardPage implements IJJConstants {
@@ -66,6 +67,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
   // MMa 11/2009 : javadoc and formatting revision ; changed some modifiers for synthetic accesses
   // MMa 02/2010 : formatting and javadoc revision ; differentiate static / non static files
   // MMa 08/2011 : fixed property error
+  // BF  06/2012 : added NON-NLS tag, added unused tag and removed else to prevent warnings 
 
   /** The source directory */
   IPackageFragmentRoot         jSrcRootFragment;
@@ -102,14 +104,14 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
   public JJNewJJPage() {
     super("NewJJWizardPage"); //$NON-NLS-1$
     jWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-    setDescription(Activator.getString("JJNewJJPage.This_wizard_creates_a_new_file")); //$NON-NLS-1$
+    setDescription(Activator.getString("JJNewJJPage.Wizard_creates_a_new_file")); //$NON-NLS-1$
     setTitle(Activator.getString("JJNewJJPage.New_javacc_or_jtb_file")); //$NON-NLS-1$
   }
 
   /**
    * Initializes the fields.
    * 
-   * @param aSelection used to initialize the fields
+   * @param aSelection - used to initialize the fields
    */
   public void init(final IStructuredSelection aSelection) {
     final IJavaElement javaElem = getInitialJavaElement(aSelection);
@@ -124,11 +126,10 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
         jPackage = jPackageFragment.getElementName();
       }
       // initialize fSrcRoot
-      final IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElem
-                                                                      .getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+      final IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElem.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
       if (pfr != null) {
         jSrcRoot = pfr.getPath().toString();
-        if (jSrcRoot.startsWith("/")) {
+        if (jSrcRoot.startsWith("/")) { //$NON-NLS-1$
           jSrcRoot = jSrcRoot.substring(1);
         }
       }
@@ -141,10 +142,8 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     jFileName = Activator.getString("JJNewJJPage.New_file"); //$NON-NLS-1$
   }
 
-  /**
-   * @see WizardPage#createControl
-   * @param aParent the parent
-   */
+  /** {@inheritDoc} */
+  @SuppressWarnings("unused")
   @Override
   public void createControl(final Composite aParent) {
     final Composite topLevel = new Composite(aParent, SWT.NONE);
@@ -165,7 +164,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     jSrcRootText.addModifyListener(new ModifyListener() {
 
       @Override
-      public void modifyText(@SuppressWarnings("unused") final ModifyEvent event) {
+      public void modifyText(final ModifyEvent event) {
         jSrcRootStatus = sourceContainerChanged();
         if (jSrcRootStatus.isOK()) {
           packageChanged(); // Revalidates package
@@ -179,7 +178,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     button.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
+      public void widgetSelected(final SelectionEvent event) {
         final IPackageFragmentRoot root = chooseSourceContainer();
         if (root != null) {
           jSrcRootFragment = root;
@@ -202,7 +201,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     jPackageText.addModifyListener(new ModifyListener() {
 
       @Override
-      public void modifyText(@SuppressWarnings("unused") final ModifyEvent e) {
+      public void modifyText(final ModifyEvent e) {
         jPackageStatus = packageChanged();
         updateStatus();
       }
@@ -213,7 +212,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     button.addSelectionListener(new SelectionAdapter() {
 
       @Override
-      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
+      public void widgetSelected(final SelectionEvent event) {
         final IPackageFragment pack = choosePackage();
         if (pack != null) {
           final String str = pack.getElementName();
@@ -306,7 +305,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
     jFileNameText.addModifyListener(new ModifyListener() {
 
       @Override
-      public void modifyText(@SuppressWarnings("unused") final ModifyEvent event) {
+      public void modifyText(final ModifyEvent event) {
         jFileStatus = fileNameChanged();
         updateStatus();
       }
@@ -369,27 +368,18 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
               return status;
             }
             if (jSrcRootFragment.isArchive()) {
-              status
-                    .setError(MessageFormat
-                                           .format(
-                                                   NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary,
+              status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ContainerIsBinary,
                                                    new Object[] {
                                                      str }));
               return status;
             }
             if (jSrcRootFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
-              status
-                    .setWarning(MessageFormat
-                                             .format(
-                                                     NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder,
+              status.setWarning(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_warning_inside_classfolder,
                                                      new Object[] {
                                                        str }));
             }
             else if (!jproject.isOnClasspath(jSrcRootFragment)) {
-              status
-                    .setWarning(MessageFormat
-                                             .format(
-                                                     NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath,
+              status.setWarning(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_warning_NotOnClassPath,
                                                      new Object[] {
                                                        str }));
             }
@@ -399,22 +389,15 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
         }
         return status;
       }
-      else {
-        status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_NotAFolder,
-                                             new Object[] {
-                                               str }));
-        return status;
-      }
-    }
-    else {
-      status
-            .setError(MessageFormat
-                                   .format(
-                                           NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist,
+      status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_NotAFolder,
                                            new Object[] {
                                              str }));
       return status;
     }
+    status.setError(MessageFormat.format(NewWizardMessages.NewContainerWizardPage_error_ContainerDoesNotExist,
+                                         new Object[] {
+                                           str }));
+    return status;
   }
 
   /**
@@ -438,10 +421,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
         return status;
       }
       else if (val.getSeverity() == IStatus.WARNING) {
-        status
-              .setWarning(MessageFormat
-                                       .format(
-                                               NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
+        status.setWarning(MessageFormat.format(NewWizardMessages.NewPackageWizardPage_warning_DiscouragedPackageName,
                                                new Object[] {
                                                  val.getMessage() }));
       }
@@ -698,7 +678,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
   /**
    * Inspects a selection to find a Java element.
    * 
-   * @param aSelection the selection to be inspected
+   * @param aSelection - the selection to be inspected
    * @return a Java element to be used as the initial selection, or <code>null</code>, if no Java element
    *         exists in the given selection
    */
@@ -731,8 +711,7 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
       }
 
       if (part instanceof org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider) {
-        final Object elem = ((org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider) part)
-                                                                                                   .getViewPartInput();
+        final Object elem = ((org.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider) part).getViewPartInput();
         if (elem instanceof IJavaElement) {
           javaElem = (IJavaElement) elem;
         }

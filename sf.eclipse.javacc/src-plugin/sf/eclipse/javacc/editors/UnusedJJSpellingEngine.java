@@ -20,26 +20,24 @@ import org.eclipse.ui.texteditor.spelling.SpellingContext;
 
 /**
  * JJ spelling engine, copied from the default spelling engine {@link DefaultSpellingEngine} and modified to
- * use a {@link JavaSpellingEngine} to process {@link JJDocumentProvider#JJ_COMMENT_CONTENT_TYPE} partitions.
+ * use a {@link JavaSpellingEngine} to process {@link JJDocumentProvider#JJ_JAVADOC_CONTENT_TYPE} partitions.
  * 
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
 public class UnusedJJSpellingEngine extends DefaultSpellingEngine {
 
   // MMa 12/2009 : added to project for spell checking (but not used)
+  // BF  06/2012 : changed content type to remove warning message
 
   /** Text content type */
-  private static final IContentType               TEXT_CONTENT_TYPE = Platform
-                                                                              .getContentTypeManager()
-                                                                              .getContentType(
-                                                                                              IContentTypeManager.CT_TEXT);
+  private static final IContentType               TEXT_CONTENT_TYPE = Platform.getContentTypeManager()
+                                                                              .getContentType(IContentTypeManager.CT_TEXT);
 
   /** Java source content type */
-  private static final IContentType               JAVA_CONTENT_TYPE = Platform
-                                                                              .getContentTypeManager()
-                                                                              .getContentType(
-                                                                                              JavaCore.JAVA_SOURCE_CONTENT_TYPE);
+  private static final IContentType               JAVA_CONTENT_TYPE = Platform.getContentTypeManager()
+                                                                              .getContentType(JavaCore.JAVA_SOURCE_CONTENT_TYPE);
 
   //  /** Java properties content type */
   //  private static final IContentType PROPERTIES_CONTENT_TYPE = Platform
@@ -68,9 +66,8 @@ public class UnusedJJSpellingEngine extends DefaultSpellingEngine {
    * Modified from
    * {@link DefaultSpellingEngine#check(IDocument, IRegion[], SpellingContext, ISpellingProblemCollector, IProgressMonitor)}
    * to return the {@link JavaSpellingEngine}.
-   * 
-   * @see ISpellingEngine#check(IDocument, IRegion[], SpellingContext, ISpellingProblemCollector,
-   *      IProgressMonitor)
+   * <p>*
+   * {@inheritDoc}
    */
   @Override
   public void check(final IDocument aDoc, final IRegion[] aRegions, final SpellingContext aCtx,
@@ -88,7 +85,7 @@ public class UnusedJJSpellingEngine extends DefaultSpellingEngine {
   /**
    * Returns a spelling engine for the given content type or <code>null</code> if none could be found.
    * 
-   * @param aContentType the content type
+   * @param aContentType - the content type
    * @return a spelling engine for the given content type or <code>null</code> if none could be found
    */
   private ISpellingEngine getEngine(final IContentType aContentType) {

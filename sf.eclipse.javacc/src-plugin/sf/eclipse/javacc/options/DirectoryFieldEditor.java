@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  * I found no way but sub-classing to allow adding the last path and the label.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class DirectoryFieldEditor extends StringButtonFieldEditor {
 
@@ -25,14 +25,14 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
   /**
    * Creates a directory field editor.
    * 
-   * @param aName the name of the preference this field editor works on
-   * @param aLabel the label text of the field editor
-   * @param aInfo the label text of the Directory chooser
-   * @param aPath the path this editor opens in
-   * @param aParent the parent of the field editor's control
+   * @param aName - the name of the preference this field editor works on
+   * @param aLabel - the label text of the field editor
+   * @param aInfo - the label text of the Directory chooser
+   * @param aPath - the path this editor opens in
+   * @param aParent - the parent of the field editor's control
    */
-  public DirectoryFieldEditor(final String aName, final String aLabel, final String aInfo, final String aPath,
-                              final Composite aParent) {
+  public DirectoryFieldEditor(final String aName, final String aLabel, final String aInfo,
+                              final String aPath, final Composite aParent) {
     jLabel = aInfo;
     init(aName, aLabel);
     setErrorMessage(JFaceResources.getString("DirectoryFieldEditor.errorMessage")); //$NON-NLS-1$
@@ -45,9 +45,9 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
   /**
    * Creates a label field editor.
    * 
-   * @param aName the name of the preference this field editor works on
-   * @param aLabel the label text of the field editors
-   * @param aParent the parent of the field editor's control
+   * @param aName - the name of the preference this field editor works on
+   * @param aLabel - the label text of the field editors
+   * @param aParent - the parent of the field editor's control
    */
   public DirectoryFieldEditor(final String aName, final String aLabel, final Composite aParent) {
     super(aName, aLabel, aParent);
@@ -67,9 +67,7 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
     return file.isDirectory();
   }
 
-  /**
-   * @see StringButtonFieldEditor#changePressed()
-   */
+  /** {@inheritDoc} */
   @Override
   protected String changePressed() {
     final DirectoryDialog dialog = new DirectoryDialog(getShell());

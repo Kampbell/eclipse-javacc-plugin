@@ -8,7 +8,7 @@ import sf.eclipse.javacc.base.IJJConstants;
  * An IStatus which can be set. Can be an error, warning, info or OK.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 
 public class JJStatus implements IStatus {
@@ -30,8 +30,8 @@ public class JJStatus implements IStatus {
   /**
    * Creates a status of a given severity and message.
    * 
-   * @param aSeverity The status severity: ERROR, WARNING, INFO and OK.
-   * @param aStatusMessage The message of the status for ERROR, WARNING and INFO.
+   * @param aSeverity - The status severity: ERROR, WARNING, INFO and OK.
+   * @param aStatusMessage - The message of the status for ERROR, WARNING and INFO.
    */
   public JJStatus(final int aSeverity, final String aStatusMessage) {
     jStatusMessage = aStatusMessage;
@@ -67,10 +67,7 @@ public class JJStatus implements IStatus {
     return jSeverity == IStatus.ERROR;
   }
 
-  /**
-   * @see IStatus#getMessage
-   * @return the status message
-   */
+  /** {@inheritDoc} */
   @Override
   public String getMessage() {
     return jStatusMessage;
@@ -79,7 +76,7 @@ public class JJStatus implements IStatus {
   /**
    * Sets the status to ERROR.
    * 
-   * @param aErrorMessage The error message (can be empty, but not null)
+   * @param aErrorMessage - The error message (can be empty, but not null)
    */
   public void setError(final String aErrorMessage) {
     jStatusMessage = aErrorMessage;
@@ -89,7 +86,7 @@ public class JJStatus implements IStatus {
   /**
    * Sets the status to WARNING.
    * 
-   * @param aWarningMessage The warning message (can be empty, but not null)
+   * @param aWarningMessage - The warning message (can be empty, but not null)
    */
   public void setWarning(final String aWarningMessage) {
     jStatusMessage = aWarningMessage;
@@ -99,7 +96,7 @@ public class JJStatus implements IStatus {
   /**
    * Sets the status to INFO.
    * 
-   * @param aInfoMessage The info message (can be empty, but not null)
+   * @param aInfoMessage - The info message (can be empty, but not null)
    */
   public void setInfo(final String aInfoMessage) {
     jStatusMessage = aInfoMessage;
@@ -114,34 +111,25 @@ public class JJStatus implements IStatus {
     jSeverity = IStatus.OK;
   }
 
-  /**
-   * @see IStatus#matches(int)
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean matches(final int aSeverityMask) {
     return (jSeverity & aSeverityMask) != 0;
   }
 
-  /**
-   * @see IStatus#isMultiStatus()
-   * @return always <code>false</code>.
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean isMultiStatus() {
     return false;
   }
 
-  /**
-   * @see IStatus#getSeverity()
-   */
+  /** {@inheritDoc} */
   @Override
   public int getSeverity() {
     return jSeverity;
   }
 
-  /**
-   * @see IStatus#getPlugin()
-   */
+  /** {@inheritDoc} */
   @Override
   public String getPlugin() {
     //    return JavaUI.ID_PLUGIN;
@@ -149,25 +137,22 @@ public class JJStatus implements IStatus {
   }
 
   /**
-   * @see IStatus#getException()
-   * @return always <code>null</code>.
+   * Return always <code>null</code>.
+   * <p>
+   * * {@inheritDoc}
    */
   @Override
   public Throwable getException() {
     return null;
   }
 
-  /**
-   * @see IStatus#getCode()
-   */
+  /** {@inheritDoc} */
   @Override
   public int getCode() {
     return jSeverity;
   }
 
-  /**
-   * @see IStatus#getChildren()
-   */
+  /** {@inheritDoc} */
   @Override
   public IStatus[] getChildren() {
     return new IStatus[0];

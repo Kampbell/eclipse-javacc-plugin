@@ -25,7 +25,6 @@ import org.eclipse.jdt.internal.compiler.util.Util;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -43,7 +42,8 @@ import sf.eclipse.javacc.head.JJNature;
  * Referenced by plugin.xml <extension point="org.eclipse.ui.newWizards">
  * 
  * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
 public class JJNewWizard extends NewElementWizard implements IJJConstants {
@@ -53,6 +53,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   //             : removed SHOW_CONSOLE preference ;
   // ... ....... : fixed NPE and added different checks for SR 2956977
   // MMa 02/2011 : fixed bug #3157017 (incorrect package handling)
+  // BF  06/2012 : added NON-NLS tag
 
   /** The wizard page */
   private JJNewJJPage jPage;
@@ -78,9 +79,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     jPage.init(getSelection());
   }
 
-  /**
-   * @see IWizard#performFinish()
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean performFinish() {
     final String srcdir = jPage.getSrcDir();
@@ -120,13 +119,13 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   /**
    * Creates the file and open the editor on the file.
    * 
-   * @param aSrcDir the source directory
-   * @param aFileName the file name
-   * @param aExtension the file extension
-   * @param aPackageName the package name
-   * @param aStaticFlag the static / non static flag
-   * @param aMonitor the progress monitor
-   * @throws CoreException if any problem
+   * @param aSrcDir - the source directory
+   * @param aFileName - the file name
+   * @param aExtension - the file extension
+   * @param aPackageName - the package name
+   * @param aStaticFlag - the static / non static flag
+   * @param aMonitor - the progress monitor
+   * @throws CoreException - if any problem
    */
   void doFinish(final String aSrcDir, final String aFileName, final String aExtension,
                 final String aPackageName, final boolean aStaticFlag, final IProgressMonitor aMonitor)
@@ -175,8 +174,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
       stream.close();
     } catch (final IOException e) {
       e.printStackTrace();
-      Activator
-               .logErr(Activator.getString("JJNewWizard.Creation_of") + " (" + file + ") " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+      Activator.logErr(Activator.getString("JJNewWizard.Creation_of") + " (" + file + ") " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       return;
     }
     aMonitor.worked(1);
@@ -205,8 +203,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
           IDE.openEditor(wpage, file, true);
         } catch (final PartInitException e) {
           e.printStackTrace();
-          Activator
-                   .logErr(Activator.getString("JJNewWizard.Opening_of") + " " + file + " " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+          Activator.logErr(Activator.getString("JJNewWizard.Opening_of") + " " + file + " " + Activator.getString("JJNewWizard.failed") + " : " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
       }
     });
@@ -264,9 +261,9 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   /**
    * Initializes file contents with a sample .jj or .jjt file.
    * 
-   * @param aExtension "jj" or "jjt"
-   * @param aPackageName the package name
-   * @param aStaticFlag the static / non static flag
+   * @param aExtension - "jj" or "jjt"
+   * @param aPackageName - the package name
+   * @param aStaticFlag - the static / non static flag
    * @return the file input stream
    */
   private InputStream openTemplateContentStream(final String aExtension, final String aPackageName,
@@ -290,8 +287,8 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
   /**
    * This could have been a FilterInputStream.
    * 
-   * @param aInputStream the input stream
-   * @param aPackageName the package name
+   * @param aInputStream - the input stream
+   * @param aPackageName - the package name
    * @return stream the updated input stream
    */
   private InputStream makeInputStream(final InputStream aInputStream, final String aPackageName) {
@@ -318,7 +315,7 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     else {
       // add lines
       str = str.replaceAll("<\\?package_decl\\?>", "package " + aPackageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      str = str.replaceAll("<\\?package_dot\\?>", aPackageName + "."); //$NON-NLS-1$ 
+      str = str.replaceAll("<\\?package_dot\\?>", aPackageName + "."); //$NON-NLS-1$ //$NON-NLS-2$ 
       str = str.replaceAll("<\\?package\\?>", aPackageName); //$NON-NLS-1$ 
     }
 
@@ -328,17 +325,13 @@ public class JJNewWizard extends NewElementWizard implements IJJConstants {
     return baif;
   }
 
-  /**
-   * @see NewElementWizard#finishPage(IProgressMonitor)
-   */
+  /** {@inheritDoc} */
   @Override
   protected void finishPage(@SuppressWarnings("unused") final IProgressMonitor aMonitor) /*throws InterruptedException, CoreException*/{
     // nothing done here
   }
 
-  /**
-   * @see NewElementWizard#getCreatedElement()
-   */
+  /** {@inheritDoc} */
   @Override
   public IJavaElement getCreatedElement() {
     return null;

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -17,7 +15,7 @@ import sf.eclipse.javacc.parser.JavaCCParserTreeConstants;
  * LabelProvider for JJOutline.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 public class JJLabelProvider extends LabelProvider {
 
@@ -68,9 +66,7 @@ public class JJLabelProvider extends LabelProvider {
     jDesc_node_desc = Activator.getImageDescriptor("jj_node.gif"); //$NON-NLS-1$
   }
 
-  /**
-   * @see ILabelProvider#getImage(Object)
-   */
+  /** {@inheritDoc} */
   @Override
   public Image getImage(final Object aElement) {
     ImageDescriptor desc = jDesc_expr;
@@ -128,11 +124,7 @@ public class JJLabelProvider extends LabelProvider {
     return image;
   }
 
-  /**
-   * @see ILabelProvider#getText(Object)
-   * @see sf.eclipse.javacc.parser.JJNode#getDisplayName()
-   * @see sf.eclipse.javacc.parser.JJNode#addCaller(JJNode, boolean)
-   */
+  /** {@inheritDoc} */
   @Override
   public String getText(final Object aElement) {
     if (aElement instanceof JJNode) {
@@ -141,9 +133,7 @@ public class JJLabelProvider extends LabelProvider {
     return aElement.toString();
   }
 
-  /**
-   * @see IBaseLabelProvider#dispose()
-   */
+  /** {@inheritDoc} */
   @Override
   public void dispose() {
     super.dispose();

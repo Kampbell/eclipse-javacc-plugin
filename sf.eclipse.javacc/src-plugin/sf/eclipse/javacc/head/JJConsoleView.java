@@ -14,11 +14,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -27,6 +31,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import sf.eclipse.javacc.base.IJJConsole;
 import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.preferences.IPrefConstants;
 
 /**
  * Console for JavaCC output for normal usage (ie non headless builds).<br>
@@ -37,32 +42,38 @@ import sf.eclipse.javacc.base.IJJConstants;
  * Since 1.3 this console is used for reporting errors, so must be.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010
+ * @author Marc Mazas 2009-2010-2011-2012
+ * @author Bill Fenlason 2012
  */
-public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole {
+public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole, IPrefConstants {
 
   // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
   // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix ; change on problems finding, markers & hyperlinks reporting
+  // BF  06/2012 : added missing NON-NLS tag, suppress unused warning for JJConsoleHyperlink in markErrors
+  // BF  06/2012 : Added use of preference color and attribute for console commands
+
   // TODO check JJDoc problems handling
 
+  /** The preference store */
+  private final static IPreferenceStore sStore           = Activator.getDefault().getPreferenceStore();
   /** The viewer control */
-  static StyledText                   sStyledText;
+  static StyledText                     sStyledText;
+  /** The console command color */
+  Color                                 fCommandColor    = null;
   /** The print stream */
-  private final ByteArrayOutputStream jBaos;
+  private final ByteArrayOutputStream   jBaos;
   /** The last parsed position, from where to start when retrieving text from viewer */
-  private int                         jLastOffset;
+  private int                           jLastOffset;
   /** Pattern to extract lines in JavaCC / JJTree compilation messages */
-  final static Pattern                jjLinePattern    = Pattern.compile("^.*", Pattern.MULTILINE);                                                     //$NON-NLS-1$
+  final static Pattern                  jjLinePattern    = Pattern.compile("^.*", Pattern.MULTILINE);                                                     //$NON-NLS-1$
   /** Pattern to find the Error or Warning or ParseException message in JavaCC / JJTree compilation messages */
-  final static Pattern                jjPbPattern      = Pattern
-                                                                .compile("(^Error:|^Warning:|^Error parsing input|Lexical error|Encountered[: ])(.+)$"); //$NON-NLS-1$
+  final static Pattern                  jjPbPattern      = Pattern.compile("(^Error:|^Warning:|^Error parsing input|Lexical error|Encountered[: ])(.+)$"); //$NON-NLS-1$
   /** Pattern to find the line and column numbers in a JavaCC / JJTree compilation messages line */
-  final static Pattern                jjLineColPattern = Pattern.compile("[lL]ine (\\d+), [cC]olumn (\\d+)");                                           //$NON-NLS-1$
+  final static Pattern                  jjLineColPattern = Pattern.compile("[lL]ine (\\d+), [cC]olumn (\\d+)");                                           //$NON-NLS-1$
   /** Pattern to find the Info or Warning message in a JTB compilation messages line */
-  final static Pattern                jtbPbPattern     = Pattern
-                                                                .compile("\\((\\d+)\\)(:  (warning|info|soft error|unexpected program error):  (.*))?"); //$NON-NLS-1$
-  /** The platform line separator (should be taken from Eclipse ???) */
-  String                              SEP              = System.getProperty("line.separator");
+  final static Pattern                  jtbPbPattern     = Pattern.compile("\\((\\d+)\\)(:  (warning|info|soft error|unexpected program error):  (.*))?"); //$NON-NLS-1$
+  /** The platform line separator (should be taken from Eclipse ??) */
+  String                                SEP              = System.getProperty("line.separator");                                                          //$NON-NLS-1$
 
   /**
    * Standard constructor. Allocates the print stream.
@@ -74,8 +85,8 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
   /**
    * Creates the SWT controls for this workbench part. Called by Workbench to initialize the
    * org.eclipse.ui.views extension TextConsoleViewer(). Does most of the job.
-   * 
-   * @see ViewPart#createPartControl
+   * <p>
+   * * {@inheritDoc}
    */
   @Override
   public void createPartControl(final Composite aParent) {
@@ -83,6 +94,17 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
     sStyledText.setEditable(false);
     sStyledText.setDoubleClickEnabled(true);
     JJConsoleHyperlink.setViewer(sStyledText);
+    sStyledText.addDisposeListener(new DisposeListener() {
+
+      @Override
+      public void widgetDisposed(@SuppressWarnings("unused") final DisposeEvent e) {
+        if (fCommandColor != null) {
+          fCommandColor.dispose();
+          fCommandColor = null;
+        }
+
+      }
+    });
 
     // add a "Clear console" button on the toolbar
     final Action clear = new Action(Activator.getString("JJConsole.Clear")) { //$NON-NLS-1$
@@ -117,17 +139,13 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
     sStyledText.setMenu(popup);
   }
 
-  /**
-   * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-   */
+  /** {@inheritDoc} */
   @Override
   public void setFocus() {
     sStyledText.setFocus();
   }
 
-  /**
-   * Clears the console.
-   */
+  /** {@inheritDoc} */
   @Override
   public void clear() {
     if (Thread.currentThread() != sStyledText.getDisplay().getThread()) {
@@ -141,6 +159,10 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
     }
     else {
       sStyledText.setText(""); //$NON-NLS-1$
+      if (fCommandColor != null) {
+        fCommandColor.dispose();
+        fCommandColor = null;
+      }
       JJConsoleHyperlink.clear();
       jLastOffset = 0;
     }
@@ -155,9 +177,9 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
   }
 
   /**
-   * Prints to Console in Bold Red.
+   * Prints to Console using the current color and font attribute preference.
    * 
-   * @param aStr the text to print
+   * @param aStr - the text to print
    */
   @Override
   public void print(final String aStr) {
@@ -167,8 +189,8 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
   /**
    * Ends reporting. Called when JJBuilder has finished.
    * 
-   * @param aFile the file to report on
-   * @param aIsJtb true if file is a JTB one, false otherwise.
+   * @param aFile - the file to report on
+   * @param aIsJtb - true if file is a JTB one, false otherwise.
    */
   @Override
   public void endReport(final IFile aFile, final boolean aIsJtb) {
@@ -181,17 +203,17 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
   /**
    * Adds this text to the Console.
    * 
-   * @param aTxt the text to add
-   * @param aIsRed if the text is to be displayed in Dark Red
+   * @param aTxt - the text to add
+   * @param aIsConsoleCommand - if the text is to be displayed using the console command color preference
    */
-  void addText(final String aTxt, final boolean aIsRed) {
+  void addText(final String aTxt, final boolean aIsConsoleCommand) {
     // test before updating the viewer
     if (Thread.currentThread() != sStyledText.getDisplay().getThread()) {
       Display.getDefault().asyncExec(new Runnable() {
 
         @Override
         public void run() {
-          addText(aTxt, aIsRed);
+          addText(aTxt, aIsConsoleCommand);
         }
       });
     }
@@ -199,10 +221,13 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
     else {
       final int offset = sStyledText.getCharCount();
       sStyledText.append(aTxt);
-      if (aIsRed) {
-        final Color fg = sStyledText.getDisplay().getSystemColor(SWT.COLOR_DARK_RED);
-        final StyleRange style = new StyleRange(offset, aTxt.length() - 1, fg, null);
-        style.fontStyle = SWT.BOLD;
+      if (aIsConsoleCommand) {
+        if (fCommandColor == null) {
+          fCommandColor = new Color(Display.getCurrent(), PreferenceConverter.getColor(sStore,
+                                                                                       P_CONSOLE_COMMAND));
+        }
+        final StyleRange style = new StyleRange(offset, aTxt.length() - 1, fCommandColor, null,
+                                                sStore.getInt(P_CONSOLE_COMMAND_ATR));
         sStyledText.setStyleRange(style);
       }
       // scroll to end
@@ -215,8 +240,8 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
    * Decodes console output, catches lines reporting problems (warnings / errors), adds hyperlinks and problem
    * markers for them.
    * 
-   * @param aFile the file to report on
-   * @param aIsJtb true if file is a JTB one, false otherwise.
+   * @param aFile - the file to report on
+   * @param aIsJtb - true if file is a JTB one, false otherwise.
    */
   void markErrors(final IFile aFile, final boolean aIsJtb) {
     // test before retrieving text from the viewer
@@ -415,10 +440,10 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
   /**
    * Add a marker to signal a problem. Hover tips are managed by JJSourceViewerConfiguration.
    * 
-   * @param aFile the file to report on
-   * @param aMsg the marker message
-   * @param aSeverity the marker severity
-   * @param aLine the marker line
+   * @param aFile - the file to report on
+   * @param aMsg - the marker message
+   * @param aSeverity - the marker severity
+   * @param aLine - the marker line
    * @return the created marker
    */
   private IMarker markProblem(final IFile aFile, final String aMsg, final int aSeverity, final int aLine) {
@@ -439,8 +464,8 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole 
   /**
    * Updates a current marker by adding a new line with a given new message.
    * 
-   * @param aMarker the marker to update
-   * @param aMsg the message to add
+   * @param aMarker - the marker to update
+   * @param aMsg - the message to add
    */
   private void addProblem(final IMarker aMarker, final String aMsg) {
     try {

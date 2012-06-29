@@ -28,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import sf.eclipse.javacc.actions.JJOpenCallHierarchy;
@@ -43,7 +42,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * Inspired from org.eclipse.jdt.internal.ui.callhierarchy and simplified to the minimum required.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011
+ * @author Marc Mazas 2009-2010-2011-2012
  */
 @SuppressWarnings("restriction")
 public class JJCallHierarchyView extends ViewPart implements ISelectionChangedListener, IJJConstants {
@@ -69,9 +68,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
   /** The edited file */
   private IFile                          jFile;
 
-  /**
-   * @see WorkbenchPart#createPartControl(Composite)
-   */
+  /** {@inheritDoc} */
   @Override
   public void createPartControl(final Composite aParent) {
     jParent = aParent;
@@ -86,9 +83,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
     setFocus();
   }
 
-  /**
-   * @see WorkbenchPart#setFocus()
-   */
+  /** {@inheritDoc} */
   @Override
   public void setFocus() {
     jParent.setFocus();
@@ -112,9 +107,8 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
 
   /**
    * Called when selection changes.
-   * 
-   * @param aEvent the event having changed the selection
-   * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void selectionChanged(final SelectionChangedEvent aEvent) {
@@ -141,7 +135,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
   /**
    * Brings back JJEditor if it was closed and selects the node.
    * 
-   * @param aJJNode the node to select
+   * @param aJJNode - the node to select
    */
   public void showInJJEditor(final JJNode aJJNode) {
     final IWorkbenchWindow window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -172,8 +166,8 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
    * Called from {@link JJOpenCallHierarchy#run(IAction)} on an action and from {@link #refresh()} when input
    * or mode is changed.
    * 
-   * @param aJJNode the selected node
-   * @param aJJEditor the selected node's editor
+   * @param aJJNode - the selected node
+   * @param aJJEditor - the selected node's editor
    */
   public void setSelection(final JJNode aJJNode, final JJEditor aJJEditor) {
     jJJNode = aJJNode;
@@ -212,7 +206,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
   /**
    * Sets the given mode and refreshes the view.
    * 
-   * @param aMode the mode to set
+   * @param aMode - the mode to set
    */
   public void setCallMode(final int aMode) {
     jJJCallHierarchyContentProvider.setCallMode(aMode);
@@ -246,9 +240,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
                 .setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_REFRESH_VIEW_ACTION);
     }
 
-    /**
-     * @see Action#run()
-     */
+    /** {@inheritDoc} */
     @Override
     public void run() {
       JJCallHierarchyView.this.refresh();
@@ -267,7 +259,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
     /**
      * Toggles the call mode.
      * 
-     * @param aMode the caller or callee mode
+     * @param aMode - the caller or callee mode
      */
     public ToggleCallModeAction(final int aMode) {
       super("", AS_RADIO_BUTTON); //$NON-NLS-1$
@@ -291,9 +283,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
                 .setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_TOGGLE_CALL_MODE_ACTION);
     }
 
-    /**
-     * @see Action#run()
-     */
+    /** {@inheritDoc} */
     @Override
     public void run() {
       // each button will pass it's value of mode
