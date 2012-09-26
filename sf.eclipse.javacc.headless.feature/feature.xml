@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="sf.eclipse.javacc.headless.feature"
-      label="SF JavaCC Eclipse Headless Plug-in feature"
-      version="1.5.26"
-      provider-name="Rémi Koutcherawy"
+      label="JavaCC Eclipse Headless Plug-in (Sourceforge)"
+      version="1.5.27"
+      provider-name="Remi Koutcherawy, Marc Mazas"
       plugin="sf.eclipse.javacc.headless">
 
    <description url="http://www.example.com/description">
@@ -12,7 +12,7 @@ for installation through the Eclipse Update manager.
    </description>
 
    <copyright url="http://www.example.com/copyright">
-      (c) Rémi Koutcherawy
+      (c) Remi Koutcherawy, Marc Mazas
    </copyright>
 
    <license url="http://www.cecill.info/index.en.html">
@@ -412,10 +412,10 @@ Version 2.0 dated 2005-05-21.
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.5.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.variables" version="3.2.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.6.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

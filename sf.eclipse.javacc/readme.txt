@@ -1,5 +1,13 @@
 History (dd/mm/yy)
 
+25/09/12 - version 1.5.27
+- Localized Call Hierarchy view tooltip texts and removed related compatibility issue with Eclipse 3.5
+- updated with JTB 1.4.7
+- managed new column numbers in JTB messages
+- managed multiple messages on the same line in editors
+- upgraded the internal JTB grammar and the syntax coloring to handle the JTB 1.4.7 new '!' syntax
+  for not generating a node creation<p>
+
 29/06/12 - version 1.5.26
 - New contributor Bill Fenlason ; added Bill's syntax coloring rewritten code
 - Updated javadoc (- in @param & @throws, {@inheritdoc} instead of @see, ...)

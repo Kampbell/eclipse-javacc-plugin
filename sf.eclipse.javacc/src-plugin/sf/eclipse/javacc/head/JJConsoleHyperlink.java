@@ -127,7 +127,7 @@ public class JJConsoleHyperlink implements IJJConstants {
     style.fontStyle = SWT.BOLD;
     style.underline = true; // Only for Eclipse 3.1
     sStyledText.setStyleRange(style);
-    // keep a reference to self, in a List used when activated.
+    // keep a reference to self, in a List used when activated
     sLinksList.add(this);
   }
 

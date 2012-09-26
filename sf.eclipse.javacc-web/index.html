@@ -14,10 +14,11 @@ h2 { font-size:12pt; }
 <a href="http://sourceforge.net">
   <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo" border="0" height="62" width="210">
 </a>
-<h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font> for <font color="green">Eclipse 3.6+</font>
- with <font color="green">JDK 1.6</font> and <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.6</font></h1>
+<h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font><br>
+for <font color="green">Eclipse 3.6+</font>
+ with <font color="green">JDK 1.6</font> and <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.7</font></h1>
 
-<h2>Last update : june 29th, 2012 - version <font color="red">1.5.26</font></h2>
+<h2>Last update : sept 25th, 2012 - version <font color="red">1.5.27</font></h2>
 
 The JavaCC plug-in is designed to help development of JavaCC / JTB applications within the Eclipse IDE; the headless plug-in is designed
 to allow headless builds.<br>
@@ -39,8 +40,8 @@ You can also look at the following <a href="https://eclipse-tutorial.dev.java.ne
 tutorial on Team development with Eclipse and CVS</a>.<br><br>
 
 These plug-ins need <font color="red">Java 1.6</font> and <font color="red">Eclipse 3.6+</font> to run.<br>
-They have been tested with Eclipse Classic 3.6, 3.6.2, 3.7 (but they do not work with 3.5.x for compatibility issues with dependencies)<br>
-They are shipped with <a href="https://javacc.dev.java.net/">JavaCC 5.0</a> and <a href="jtb_doc.html">JTB 1.4.6</a><br><br>
+They have been tested with Eclipse Classic 3.6, 3.6.2, 3.7, 3.7.2<br>
+They are shipped with <a href="https://javacc.dev.java.net/">JavaCC 5.0</a> and <a href="jtb_doc.html">JTB 1.4.7</a><br><br>
 
 See (the old) <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
@@ -69,6 +70,11 @@ on how to modify the sources.
   <li>a builder and a nature to use JavaCC without any UI, for Eclipse "headless" builds (console is on System.out)</li>
 </ul>
 <h2>History (dd/mm/yy)</h2>
+25/09/12 - 1.5.27 : Localized Call Hierarchy view tooltip texts ; updated with JTB 1.4.7 ; managed new column
+ numbers in JTB messages ; managed multiple messages on the same line in editors ; upgraded the internal JTB
+ grammar and the syntax coloring to handle the JTB 1.4.7 new '!' syntax for not generating a node creation ;
+ tested on Eclipse 3.7 / 3.7.2 ; fixed properties for the wizard<p>
+
 29/06/12 - 1.5.26 : New contributor Bill Fenlason ; added Bill's syntax coloring rewritten code ;
  updated javadoc (- in @param & @throws, {@inheritdoc} instead of @see, ...) ;
  fixed some properties issues<p>

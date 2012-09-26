@@ -14,4 +14,4 @@ class ASTClassOrInterfaceDeclaration extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=0be9b478709699fccbf6b8f2eef86b96 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3a9feffa6adcd7ca623ee4144160fc07 (do not edit this line) */

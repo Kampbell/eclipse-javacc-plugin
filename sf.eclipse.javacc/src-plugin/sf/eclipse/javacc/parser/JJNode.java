@@ -21,7 +21,7 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   // MMa 08/2011 : fixed NPE in buildCalleeMap()
   // MMa 08/2011 : enhanced Call Hierarchy view (to display JJTree node descriptors)
   // MMa 08/2011 : enhanced Outline view (to display JJTree node descriptors and to fix regexpr_spec)
-  // BF  06/2012 : added nls tags and eliminated else clauses to prevent warning messages
+  // BF  06/2012 : added NLS tags and eliminated else clauses to prevent warning messages
   // TODO add methods and classes call hierarchy callers and callees
 
   /** The node's parent */

@@ -25,7 +25,7 @@ public interface IJJConstants {
   /** Default JavaCC jar name */
   public static final String        JAVACC_JAR_NAME               = "javacc.jar";                           //$NON-NLS-1$
   /** Default JTB jar name */
-  public static final String        JTB_JAR_NAME                  = "jtb-1.4.6.jar";                        //$NON-NLS-1$
+  public static final String        JTB_JAR_NAME                  = "jtb-1.4.7.jar";                        //$NON-NLS-1$
 
   /** Prefix for qualified names */
   public static final String        ID                            = "sf.eclipse.javacc";                    //$NON-NLS-1$

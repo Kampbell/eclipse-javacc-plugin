@@ -246,10 +246,10 @@ public interface IPrefConstants {
   /** JJTree node name font attribute preference */
   public static final String P_JJTREE_NODE_NAME_ATR                  = "JJTreeNodeNameFontAtrPref";                                     //$NON-NLS-1$
 
-  /** JJTree node expression paren color preference */
+  /** JJTree node expression parentheses color preference */
   public static final String P_JJTREE_NODE_EXPR_PAREN                = "JJTreeNodeExprParenPref";                                       //$NON-NLS-1$
 
-  /** JJTree node expression paren font attribute preference */
+  /** JJTree node expression parentheses font attribute preference */
   public static final String P_JJTREE_NODE_EXPR_PAREN_ATR            = "JJTreeNodeExprParenFontAtrPref";                                //$NON-NLS-1$
 
   // -------------------- others -----------------------------------------------
@@ -362,10 +362,10 @@ public interface IPrefConstants {
   public static final String NLS_HYPERLINK_COLOR                     = Activator.getString("JJPrefPage.Label_hyperlink");               //$NON-NLS-1$  
 
   /** The Constant NLS_LABEL_APPLY_ON_TAB_SWITCH */
-  public static final String NLS_LABEL_APPLY_ON_TAB_SWITCH           = Activator.getString("JJPrefPage.Label_apply_on_tab");     //$NON-NLS-1$
+  public static final String NLS_LABEL_APPLY_ON_TAB_SWITCH           = Activator.getString("JJPrefPage.Label_apply_on_tab");            //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_COMMENT_BACKGROUND */
-  public static final String NLS_LABEL_COMMENT_BACKGROUND            = Activator.getString("JJPrefPage.Label_comment_bg");      //$NON-NLS-1$
+  public static final String NLS_LABEL_COMMENT_BACKGROUND            = Activator.getString("JJPrefPage.Label_comment_bg");              //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_COMMENT_LINE */
   public static final String NLS_LABEL_COMMENT_LINE                  = Activator.getString("JJPrefPage.Label_comment_line");            //$NON-NLS-1$
@@ -386,13 +386,13 @@ public interface IPrefConstants {
   public static final String NLS_LABEL_INDENT_CHAR_NB                = Activator.getString("JJPrefPage.Label_indent_char_nb");          //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_JAVA_BACKGROUND */
-  public static final String NLS_LABEL_JAVA_BACKGROUND               = Activator.getString("JJPrefPage.Label_java_bg");         //$NON-NLS-1$
+  public static final String NLS_LABEL_JAVA_BACKGROUND               = Activator.getString("JJPrefPage.Label_java_bg");                 //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_JAVA_BLOCK */
   public static final String NLS_LABEL_JAVA_BLOCK                    = Activator.getString("JJPrefPage.Label_java_block");              //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_JAVA_BLOCK_BRACE_ALT_BG */
-  public static final String NLS_LABEL_JAVA_BLOCK_BRACE_ALT_BG       = Activator.getString("JJPrefPage.Label_java_block_brace_bg"); //$NON-NLS-1$
+  public static final String NLS_LABEL_JAVA_BLOCK_BRACE_ALT_BG       = Activator.getString("JJPrefPage.Label_java_block_brace_bg");     //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_JAVA_DEFAULT */
   public static final String NLS_LABEL_JAVA_DEFAULT_TEXT             = Activator.getString("JJPrefPage.Label_java_default_text");       //$NON-NLS-1$
@@ -413,7 +413,7 @@ public interface IPrefConstants {
   public static final String NLS_LABEL_JAVA_STRING                   = Activator.getString("JJPrefPage.Label_java_string");             //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_JAVACC_BACKGROUND */
-  public static final String NLS_LABEL_JAVACC_BACKGROUND             = Activator.getString("JJPrefPage.Label_javacc_bg");       //$NON-NLS-1$
+  public static final String NLS_LABEL_JAVACC_BACKGROUND             = Activator.getString("JJPrefPage.Label_javacc_bg");               //$NON-NLS-1$
 
   /** The Constant NLS_LABEL_JAVACC_CHOICE_PUNCT */
   public static final String NLS_LABEL_JAVACC_CHOICE_PUNCT           = Activator.getString("JJPrefPage.Label_javacc_choice_punct");     //$NON-NLS-1$
@@ -524,7 +524,7 @@ public interface IPrefConstants {
   public static final String NLS_TITLE_PREF_PAGE                     = Activator.getString("JJPrefPage.Title_pref_page");               //$NON-NLS-1$
 
   /** The Constant NLS_TT_APPLY_ON_TAB_SWITCH */
-  public static final String NLS_TT_APPLY_ON_TAB_SWITCH              = Activator.getString("JJPrefPage.Tt_apply_on_tab");        //$NON-NLS-1$
+  public static final String NLS_TT_APPLY_ON_TAB_SWITCH              = Activator.getString("JJPrefPage.Tt_apply_on_tab");               //$NON-NLS-1$
 
   /** The Constant NLS_TT_BUTTON_APPLY */
   public static final String NLS_TT_BUTTON_APPLY                     = Activator.getString("JJPrefPage.Tt_button_apply");               //$NON-NLS-1$
@@ -533,10 +533,10 @@ public interface IPrefConstants {
   public static final String NLS_TT_BUTTON_DEFAULTS                  = Activator.getString("JJPrefPage.Tt_button_defaults");            //$NON-NLS-1$
 
   /** The Constant NLS_TT_COMMENT_BACKGROUND */
-  public static final String NLS_TT_COMMENT_BACKGROUND               = Activator.getString("JJPrefPage.Tt_comment_bg");         //$NON-NLS-1$
+  public static final String NLS_TT_COMMENT_BACKGROUND               = Activator.getString("JJPrefPage.Tt_comment_bg");                 //$NON-NLS-1$
 
   /** The Constant NLS_TT_COMMENT_BACKGROUND_BUTTON */
-  public static final String NLS_TT_COMMENT_BACKGROUND_BUTTON        = Activator.getString("JJPrefPage.Tt_comment_bg_button");  //$NON-NLS-1$
+  public static final String NLS_TT_COMMENT_BACKGROUND_BUTTON        = Activator.getString("JJPrefPage.Tt_comment_bg_button");          //$NON-NLS-1$
 
   /** The Constant NLS_TT_COMMENT_BLOCK */
   public static final String NLS_TT_COMMENT_BLOCK                    = Activator.getString("JJPrefPage.Tt_comment_block");              //$NON-NLS-1$

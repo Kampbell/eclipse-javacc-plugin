@@ -30,8 +30,8 @@ public class JJStatus implements IStatus {
   /**
    * Creates a status of a given severity and message.
    * 
-   * @param aSeverity - The status severity: ERROR, WARNING, INFO and OK.
-   * @param aStatusMessage - The message of the status for ERROR, WARNING and INFO.
+   * @param aSeverity - The status severity: ERROR, WARNING, INFO and OK
+   * @param aStatusMessage - The message of the status for ERROR, WARNING and INFO
    */
   public JJStatus(final int aSeverity, final String aStatusMessage) {
     jStatusMessage = aStatusMessage;
@@ -39,7 +39,7 @@ public class JJStatus implements IStatus {
   }
 
   /**
-   * @return if the status' severity is OK.
+   * @return if the status' severity is OK
    */
   @Override
   public boolean isOK() {
@@ -47,21 +47,21 @@ public class JJStatus implements IStatus {
   }
 
   /**
-   * @return if the status' severity is WARNING.
+   * @return if the status' severity is WARNING
    */
   public boolean isWarning() {
     return jSeverity == IStatus.WARNING;
   }
 
   /**
-   * @return if the status' severity is INFO.
+   * @return if the status' severity is INFO
    */
   public boolean isInfo() {
     return jSeverity == IStatus.INFO;
   }
 
   /**
-   * @return if the status' severity is ERROR.
+   * @return if the status' severity is ERROR
    */
   public boolean isError() {
     return jSeverity == IStatus.ERROR;

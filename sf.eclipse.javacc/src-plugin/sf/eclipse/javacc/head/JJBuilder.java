@@ -279,7 +279,7 @@ public class JJBuilder extends IncrementalProjectBuilder implements IResourceDel
         // compile .jj only if .jjt or .jtb was compiled and .jj was generated
         if (genFileName.endsWith(".jj") && (resExt.equals("jjt") || resExt.equals("jtb"))) { //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
           // compile .jj if project has not JavaCC Nature, i.e. no automatic build
-          // well seems Eclipse has a small bug here, it doesn't recompile...
+          // well seems Eclipse has a small bug here, it doesn't recompile ...
           //          if (!project.getDescription().hasNature(JJ_NATURE_ID))
           CompileResource(genFileRes);
         }

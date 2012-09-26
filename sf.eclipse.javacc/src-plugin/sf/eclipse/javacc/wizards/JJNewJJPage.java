@@ -115,8 +115,8 @@ public class JJNewJJPage extends WizardPage implements IJJConstants {
    */
   public void init(final IStructuredSelection aSelection) {
     final IJavaElement javaElem = getInitialJavaElement(aSelection);
-    //    fPackage = ""; //$NON-NLS-1$
-    //    fSrcRoot = ""; //$NON-NLS-1$
+    //    jPackage = ""; //$NON-NLS-1$
+    //    jSrcRoot = ""; //$NON-NLS-1$
     jPackage = Activator.getString("JJNewJJPage.New_package"); //$NON-NLS-1$
     jSrcRoot = Activator.getString("JJNewJJPage.New_root_folder"); //$NON-NLS-1$
     if (javaElem != null) {

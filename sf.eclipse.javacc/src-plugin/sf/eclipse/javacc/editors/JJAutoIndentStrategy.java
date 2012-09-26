@@ -26,6 +26,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
   // MMa 03/2010 : fixed NPE
   // BF  05/2012 : removed reference to JJTokenRule
   // BF  06/2012 : removed unnecessary code to avoid warning message
+  // MMa 07/2012 : fixed < < and > > to << and >>
 
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link JJFormat}
@@ -515,8 +516,8 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
       final int line = aDoc.getLineOfOffset(p);
       // startPos is the offset of the first character of the line
       final int startPos = aDoc.getLineOffset(line);
-      // firstNonWS is the offset of the next character after the last character of the line leading
-      // whitespaces
+      // firstNonWS is the offset of the next character
+      // after the last character of the line leading whitespaces
       final int firstNonWS = findEndOfWhiteSpace(aDoc, startPos, p);
       if (firstNonWS < p) {
         // case line has characters others than spaces and tabs before the '<'
@@ -534,6 +535,10 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
           // case after some JavaCC punctuation, so add a space
           // set the replacement document command text
           aCmd.text = "< "; //$NON-NLS-1$
+        }
+        else if (c == '<') {
+          // case < < or <<, so remove possible space
+          aCmd.offset = p;
         }
         else {
           // case probably in a Java expression, so do nothing
@@ -580,7 +585,11 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
             break;
           }
         }
-        if (c == '(') {
+        if (c == '>') {
+          // case > > or >>, so remove possible space
+          aCmd.offset = p;
+        }
+        else if (c == '(') {
           // case in a Greater-than node, so do nothing
         }
         else {
@@ -713,7 +722,7 @@ public class JJAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy impl
    * 
    * @param aDoc - the document being parsed
    * @param aLine - the line being searched
-   * @return the line indentation string.
+   * @return the line indentation string
    * @throws BadLocationException - if not in the right place
    */
   String getLineIndent(final IDocument aDoc, final int aLine) throws BadLocationException {

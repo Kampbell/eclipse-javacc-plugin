@@ -14,4 +14,4 @@ class ASTtoken_manager_decls extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=167df29c2d3d13f776f3a9051e5f4846 (do not edit this line) */
+/* JavaCC - OriginalChecksum=d18b3d0563146df268fdbff99fde35d8 (do not edit this line) */

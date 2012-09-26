@@ -33,7 +33,7 @@ public interface IJJConsole {
    * Ends reporting. Called when JJBuilder has finished.
    * 
    * @param aFile - the file to report on
-   * @param aIsJtb - true if file is a JTB one, false otherwise.
+   * @param aIsJtb - true if file is a JTB one, false otherwise
    */
   public abstract void endReport(IFile aFile, boolean aIsJtb);
 

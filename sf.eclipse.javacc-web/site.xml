@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://eclipse-javacc.sourceforge.net">
-      Sourceforge JavaCC Eclipse Plug-in Project site
+   <description name="JavaCC Eclipse Plug-in" url="http://eclipse-javacc.sourceforge.net">
+      JavaCC Eclipse Plug-in Project update site hosted at Sourceforge
    </description>
-   <feature url="features/sf.eclipse.javacc.feature_1.5.26.jar" id="sf.eclipse.javacc.feature" version="1.5.26">
+   <feature url="features/sf.eclipse.javacc.feature_1.5.27.jar" id="sf.eclipse.javacc.feature" version="1.5.27">
       <category name="JavaCC Eclipse Plug-in"/>
    </feature>
    <category-def name="JavaCC Eclipse Plug-in" label="JavaCC Eclipse Plug-in"/>

@@ -73,14 +73,14 @@ public class Option {
   }
 
   /**
-   * @return the name.
+   * @return the name
    */
   String getName() {
     return name;
   }
 
   /**
-   * @return the name and the description.
+   * @return the name and the description
    */
   String getNameAndDescription() {
     if (description.length() == 0) {
@@ -90,14 +90,14 @@ public class Option {
   }
 
   /**
-   * @return the value.
+   * @return the value
    */
   String getValue() {
     return value;
   }
 
   /**
-   * Sets the value.
+   * Sets the value
    * 
    * @param aValue - the value to be set
    */
@@ -111,7 +111,7 @@ public class Option {
   }
 
   /**
-   * @return the default value.
+   * @return the default value
    */
   String getDefaultValue() {
     return defaultValue;

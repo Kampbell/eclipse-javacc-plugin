@@ -14,4 +14,4 @@ class ASTparser_begin extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=49cacdda19687f8202647ff2f81b5b78 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6ac6bd5c26109a2d20e0f81e91cdd561 (do not edit this line) */

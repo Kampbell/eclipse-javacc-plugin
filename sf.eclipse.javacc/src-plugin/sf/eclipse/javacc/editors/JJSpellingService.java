@@ -31,7 +31,7 @@ public class JJSpellingService {
   /**
    * A named preference that controls if spelling is enabled or disabled.
    * <p>
-   * Value is of type <code>Boolean</code>.
+   * Value is of type <code>Boolean</code>
    * </p>
    */
   public static final String     PREFERENCE_SPELLING_ENABLED = "spellingEnabled"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class JJSpellingService {
    * A named preference that controls which spelling engine is used. The value is the spelling engine's
    * extension id.
    * <p>
-   * Value is of type <code>String</code>.
+   * Value is of type <code>String</code>
    * </p>
    */
   public static final String     PREFERENCE_SPELLING_ENGINE  = "spellingEngine"; //$NON-NLS-1$

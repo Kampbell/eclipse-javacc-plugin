@@ -67,7 +67,8 @@ public class JJOpenCallHierarchy implements IEditorActionDelegate, IJJConstants 
       final String text = sel.getText();
       // Search matching node in AST
       // The line is prepended to the text to distinguish between multiples occurrences
-      // TODO this does not work for cases where 2 or more occurrences of the same production appear on the same line
+      // TODO this does not work for cases where 2 or more occurrences of the same production
+      //  appear on the same line
       // Note that unlike in JDT the cursor is kept on the clicked identifier
       final int start = sel.getStartLine() + 1;
       final JJNode node = sJJEditor.getJJElements().getIdentOrNodeDesc(start + text);

@@ -319,8 +319,6 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
   /**
    * Resets all fields.
-   * <p>
-   * {@inheritDoc}
    */
   public void performDefaults() {
     jIsUpdating = true;

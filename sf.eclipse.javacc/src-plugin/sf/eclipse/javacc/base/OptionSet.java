@@ -34,7 +34,7 @@ public class OptionSet {
   }
 
   /**
-   * @return the set of options as in a command line string.
+   * @return the set of options as in a command line string
    */
   public String buildCmdLine() {
     final StringBuffer sb = new StringBuffer(32);
@@ -282,7 +282,7 @@ public class OptionSet {
   }
 
   /**
-   * @return the total number of options.
+   * @return the total number of options
    */
   public int getOptionsSize() {
     return list.size();

@@ -20,7 +20,8 @@ How to set up the admin & security requirements for the JavaCC Eclipse Plugin up
 
 How to create the JavaCC Eclipse Plugin update site zip file
 ------------------------------------------------------------
-(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010 / Mar 31th, 2010 / Jun 29th, 2012
+(for project admins) - Marc Mazas - Nov 22th, 2009 / Feb 17th, 2010 / Feb 25th, 2010 / Mar 31th, 2010 /
+ Jun 29th, 2012, Sept 26th, 2012
 
 
 - Build JTB Project, check that "Release_Notes.txt" and "jtb_doc.html" are up to date
@@ -40,15 +41,16 @@ For the normal plug-in:
     (under project "sf.eclipse.javacc-web") (change version)
 
 - Update project "sf.eclipse.javacc-web" through "site.xml" (mainly features, keep it under the category)
-  * copy "jtb_doc.html"
+  * copy "jtb_doc.html" from "jtb/doc/jtb_doc.html"
   * move to folder "old_versions" previous jars from folders "plugins" and "features"
   * update "index.html"
   * delete "artifacts.jar" & "content.jar"
   * in "Site Map" tab remove old version feature, add new version feature (under the site)and use "Build all"
   *  (the new plugin jar is created)
-  * check there are no old versions entries in "artifacts.xml" & "content.xml" (hum now we have jar files, not xml files)
+  * (it seems it is no longer needed to check there are no old versions entries in "artifacts.jar" &
+     "content.jar")
   * update "javacc-ver" property in "build_zip.xml"
-  * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml" (Run As ...)
+  * create "sf.eclipse.javacc-z.y.xx-updatesite.zip" through "build_zip.xml" (Run As ... / Ant Build)
   * upload files to the SF site as below
 
 For the Headless plug-in:
@@ -72,9 +74,10 @@ For the Headless plug-in:
   * delete "artifacts.jar" & "content.jar"
   * in "Site Map" tab remove old version feature, add new version feature (under the site)and use "Build all"
   *  (the new plugin jar is created)
-  * check there are no old versions entries in "artifacts.xml" & "content.xml" (hum now we have jar files, not xml files)
+  * (it seems it is no longer needed to check there are no old versions entries in "artifacts.jar" &
+     "content.jar")
   * update "javacc-ver" property in "build_zip.xml"
-  * create "sf.eclipse.javacc.headless-z.y.xx-updatesite.zip" through "build_zip.xml"
+  * create "sf.eclipse.javacc.headless-z.y.xx-updatesite.zip" through "build_zip.xml" (Run As ... / Ant Build)
   * upload files to the SF site as below
 
 - Commit files for the 6 projects to CVS and tag as a version

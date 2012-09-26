@@ -127,7 +127,7 @@ public class Activator extends AbstractUIPlugin implements IJJConstants {
 
   /**
    * @param aKey - the key of a resource in the plugin's resource bundle
-   * @return the string from the plugin's resource bundle, or 'key' if not found.
+   * @return the string from the plugin's resource bundle, or 'key' if not found
    */
   public static String getString(final String aKey) {
     try {

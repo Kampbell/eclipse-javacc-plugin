@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="sf.eclipse.javacc.feature"
-      label="SF JavaCC Eclipse Plug-in feature"
-      version="1.5.26"
-      provider-name="Rémi Koutcherawy"
+      label="JavaCC Eclipse Plug-in"
+      version="1.5.27"
+      provider-name="Remi Koutcherawy, Marc Mazas"
       plugin="sf.eclipse.javacc">
 
    <description url="http://eclipse-javacc.sourceforge.net/">
@@ -12,7 +12,7 @@ for installation through the Eclipse Update manager.
    </description>
 
    <copyright>
-      (c) Rémi Koutcherawy
+      (c) Remi Koutcherawy, Marc Mazas
    </copyright>
 
    <license url="http://www.cecill.info/index.en.html">
@@ -422,6 +422,7 @@ Version 2.0 dated 2005-05-21.
       <import plugin="org.eclipse.ui.ide" version="3.6.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt"/>
    </requires>
 
    <plugin

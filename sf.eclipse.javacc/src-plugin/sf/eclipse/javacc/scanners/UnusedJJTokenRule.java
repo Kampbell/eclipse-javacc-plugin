@@ -23,7 +23,7 @@ public class UnusedJJTokenRule implements IRule {
   // MMa 11/2009 : fixed syntax coloring issues in java code
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : minor refactoring / renamings
-  // BF  05/2012 : currently unused - replaced by JJJavaCodeRule and JJJavaCCCodeRule.  To be renamed or deleted.
+  // BF  05/2012 : old class, replaced by JJJavaCodeRule and JJJavaCCCodeRule, currently unused
 
   /** Normal label identifier rule token */
   final IToken         normalLabel;

@@ -3,6 +3,7 @@ package sf.eclipse.javacc.head;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,8 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
   // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
   // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix ; change on problems finding, markers & hyperlinks reporting
   // BF  06/2012 : added missing NON-NLS tag, suppress unused warning for JJConsoleHyperlink in markErrors
-  // BF  06/2012 : Added use of preference color and attribute for console commands
+  // BF  06/2012 : added use of preference color and attribute for console commands
+  // MMa 09/2012 : added column numbers to JTB messages, managed multiple messages on the same line
 
   // TODO check JJDoc problems handling
 
@@ -65,21 +67,24 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
   /** The last parsed position, from where to start when retrieving text from viewer */
   private int                           jLastOffset;
   /** Pattern to extract lines in JavaCC / JJTree compilation messages */
-  final static Pattern                  jjLinePattern    = Pattern.compile("^.*", Pattern.MULTILINE);                                                     //$NON-NLS-1$
+  final static Pattern                  jjLinePattern    = Pattern.compile("^.*", Pattern.MULTILINE);                                                         //$NON-NLS-1$
   /** Pattern to find the Error or Warning or ParseException message in JavaCC / JJTree compilation messages */
-  final static Pattern                  jjPbPattern      = Pattern.compile("(^Error:|^Warning:|^Error parsing input|Lexical error|Encountered[: ])(.+)$"); //$NON-NLS-1$
+  final static Pattern                  jjPbPattern      = Pattern.compile("(^Error:|^Warning:|^Error parsing input|Lexical error|Encountered[: ])(.+)$");    //$NON-NLS-1$
   /** Pattern to find the line and column numbers in a JavaCC / JJTree compilation messages line */
-  final static Pattern                  jjLineColPattern = Pattern.compile("[lL]ine (\\d+), [cC]olumn (\\d+)");                                           //$NON-NLS-1$
+  final static Pattern                  jjLineColPattern = Pattern.compile("[lL]ine (\\d+), [cC]olumn (\\d+)");                                               //$NON-NLS-1$
   /** Pattern to find the Info or Warning message in a JTB compilation messages line */
-  final static Pattern                  jtbPbPattern     = Pattern.compile("\\((\\d+)\\)(:  (warning|info|soft error|unexpected program error):  (.*))?"); //$NON-NLS-1$
+  final static Pattern                  jtbPbPattern     = Pattern.compile("\\((\\d+),(\\d+)\\):  (warning|info|soft error|unexpected program error):  (.*)"); //$NON-NLS-1$
   /** The platform line separator (should be taken from Eclipse ??) */
-  String                                SEP              = System.getProperty("line.separator");                                                          //$NON-NLS-1$
+  String                                SEP              = System.getProperty("line.separator");                                                              //$NON-NLS-1$
+  /** Table to manage multiple messages on the same line : key = line, val = marker */
+  Hashtable<Integer, IMarker>           fMarkersHT;
 
   /**
    * Standard constructor. Allocates the print stream.
    */
   public JJConsoleView() {
     jBaos = new ByteArrayOutputStream(1024);
+    fMarkersHT = new Hashtable<Integer, IMarker>();
   }
 
   /**
@@ -190,7 +195,7 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
    * Ends reporting. Called when JJBuilder has finished.
    * 
    * @param aFile - the file to report on
-   * @param aIsJtb - true if file is a JTB one, false otherwise.
+   * @param aIsJtb - true if file is a JTB one, false otherwise
    */
   @Override
   public void endReport(final IFile aFile, final boolean aIsJtb) {
@@ -237,11 +242,11 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
   }
 
   /**
-   * Decodes console output, catches lines reporting problems (warnings / errors), adds hyperlinks and problem
-   * markers for them.
+   * Decodes console output, catches lines reporting problems (infos / warnings / errors), adds hyperlinks and
+   * problem markers for them.
    * 
    * @param aFile - the file to report on
-   * @param aIsJtb - true if file is a JTB one, false otherwise.
+   * @param aIsJtb - true if file is a JTB one, false otherwise
    */
   void markErrors(final IFile aFile, final boolean aIsJtb) {
     // test before retrieving text from the viewer
@@ -255,6 +260,9 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
       });
     }
     else {
+      if (fMarkersHT != null) {
+        fMarkersHT.clear();
+      }
       // get the text from the console
       final StyledTextContent c = sStyledText.getContent();
       final int count = sStyledText.getCharCount();
@@ -341,7 +349,7 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
             else {
               // create an hyperlink pointing to the beginning of the file
               new JJConsoleHyperlink(jLastOffset + offset, length, aFile, 0, 0);
-              IMarker topMarker = severity == IMarker.SEVERITY_WARNING ? topWarningMarker : topErrorMarker;
+              IMarker topMarker = (severity == IMarker.SEVERITY_WARNING ? topWarningMarker : topErrorMarker);
               // mark the problem at the beginning of the editor
               if (topMarker == null) {
                 // create the marker
@@ -401,16 +409,16 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
             // add an hyperlink in the console
             // the first line is 1 for JavaCC and 0 for Eclipse editors
             new JJConsoleHyperlink(jLastOffset + start + offset, length, newFile, line - 1, col - 1);
-          } // do this for all occurrences on the line.
+          } // do this for all occurrences on the line
           while (lineColumnMatcher.find());
         }
       }
       else {
-        // .jtb file : we get outputs like : 
-        // new.jtb (406):  warning:  Non initialized user variable 'isTypedef'. May lead to compiler error(s) (specially for 'Token' variables). Check in generated parser.
-        // new.jtb (461):  info:  Non "void" BNFProduction. Result type 'boolean' will be changed into 'type_modifiers', and a parser class variable 'jtbrt_type_modifiers' of type 'boolean' will be added to hold the return values.
-        // new.jtb (340):  soft error:  Empty BNF expansion in "<production>()", 345
-        // new.jtb (234):  unexpected program error:  <exception / throwable message>
+        // .jtb file : we get in the console outputs like : 
+        // new.jtb (406,3):  warning:  Non initialized user variable 'isTypedef'. May lead to compiler error(s) (specially for 'Token' variables). Check in generated parser.
+        // new.jtb (461,2):  info:  Non "void" BNFProduction. Result type 'boolean' will be changed into 'type_modifiers', and a parser class variable 'jtbrt_type_modifiers' of type 'boolean' will be added to hold the return values.
+        // new.jtb (340,3):  soft error:  Empty BNF expansion in "<production>()", 345
+        // new.jtb (234,8):  unexpected program error:  <exception / throwable message>
 
         final Matcher jtbPbMatcher = jtbPbPattern.matcher(txt);
         while (jtbPbMatcher.find()) {
@@ -421,13 +429,13 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
                                                                               : IMarker.SEVERITY_ERROR;
 
           line = Integer.parseInt(jtbPbMatcher.group(1));
-          col = 1;
+          col = Integer.parseInt(jtbPbMatcher.group(2));
           offset = jtbPbMatcher.start(0);
           // show the hyperlink only up to "info" or "warning" or "error" to increase Console readability
           length = jtbPbMatcher.end(3) - offset;
           // add the problem in the editor problems 
           markProblem(aFile, report, severity, line);
-          // the first line is 1 for JTB and 0 for Eclipse editors
+          // the first line or column is 1 for JTB and 0 for Eclipse editors
           new JJConsoleHyperlink(jLastOffset + offset, length, aFile, line - 1, col - 1);
         }
       }
@@ -443,18 +451,30 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
    * @param aFile - the file to report on
    * @param aMsg - the marker message
    * @param aSeverity - the marker severity
-   * @param aLine - the marker line
+   * @param aLine - the marker line number
    * @return the created marker
    */
   private IMarker markProblem(final IFile aFile, final String aMsg, final int aSeverity, final int aLine) {
     try {
-      final IMarker marker = aFile.createMarker(IMarker.PROBLEM);
-      final HashMap<String, Comparable<?>> attributes = new HashMap<String, Comparable<?>>(4);
-      attributes.put(IMarker.MESSAGE, aMsg);
-      attributes.put(IMarker.SEVERITY, new Integer(aSeverity));
-      attributes.put(IMarker.LINE_NUMBER, new Integer(aLine));
-      marker.setAttributes(attributes);
-      return marker;
+      final Integer line = Integer.valueOf(aLine);
+      final IMarker oldMarker = fMarkersHT.get(line);
+      if (oldMarker == null) {
+        // no marker already on this line
+        final IMarker newMarker = aFile.createMarker(IMarker.PROBLEM);
+        final HashMap<String, Comparable<?>> attributes = new HashMap<String, Comparable<?>>(3, 1);
+        attributes.put(IMarker.MESSAGE, aMsg);
+        attributes.put(IMarker.SEVERITY, new Integer(aSeverity));
+        attributes.put(IMarker.LINE_NUMBER, new Integer(aLine));
+        newMarker.setAttributes(attributes);
+        fMarkersHT.put(line, newMarker);
+        return newMarker;
+      }
+      else {
+        // marker already on this line ; assumes that the new severity is not higher than the old one
+        final String msg = (((String) oldMarker.getAttribute(IMarker.MESSAGE))).concat(SEP).concat(aMsg);
+        oldMarker.setAttribute(IMarker.MESSAGE, msg);
+        return oldMarker;
+      }
     } catch (final CoreException ex) {
       ex.printStackTrace();
       return null;
@@ -469,8 +489,8 @@ public class JJConsoleView extends ViewPart implements IJJConstants, IJJConsole,
    */
   private void addProblem(final IMarker aMarker, final String aMsg) {
     try {
-      aMarker.setAttribute(IMarker.MESSAGE, (((String) aMarker.getAttribute(IMarker.MESSAGE))).concat(SEP)
-                                                                                              .concat(aMsg));
+      final String msg = (((String) aMarker.getAttribute(IMarker.MESSAGE))).concat(SEP).concat(aMsg);
+      aMarker.setAttribute(IMarker.MESSAGE, msg);
     } catch (final CoreException ex) {
       ex.printStackTrace();
     }

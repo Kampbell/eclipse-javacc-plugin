@@ -2,53 +2,88 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle_name
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.26
+Bundle-Version: 1.5.27
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.head.Activator
 Bundle-Vendor: %Bundle_Vendor_name
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",org.ec
- lipse.core.variables;bundle-version="3.2.400",org.eclipse.debug.ui;bu
- ndle-version="3.6.0",org.eclipse.jdt.ui;bundle-version="3.6.0",org.ec
- lipse.jdt.core;bundle-version="3.6.0",org.eclipse.jface.text;bundle-v
- ersion="3.6.0",org.eclipse.ui.editors;bundle-version="3.6.0",org.ecli
- pse.ui.ide;bundle-version="3.6.0",org.eclipse.ui.views.properties.tab
- bed;bundle-version="3.5.100",org.eclipse.ui.workbench.texteditor;bund
- le-version="3.6.0"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.core.variables;bundle-version="3.2.400",
+ org.eclipse.debug.ui;bundle-version="3.6.0",
+ org.eclipse.jdt.ui;bundle-version="3.6.0",
+ org.eclipse.jdt.core;bundle-version="3.6.0",
+ org.eclipse.jface.text;bundle-version="3.6.0",
+ org.eclipse.ui.editors;bundle-version="3.6.0",
+ org.eclipse.ui.ide;bundle-version="3.6.0",
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.100",
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.6.0"
 Eclipse-LazyStart: true
 Comment: For Eclipse 3.1
 Bundle-ActivationPolicy: lazy
-Export-Package: sf.eclipse.javacc.actions; uses:="org.eclipse.jface.te
- xt,  org.eclipse.ui,  sf.eclipse.javacc.parser,  org.eclipse.jface.vi
- ewers,  sf.eclipse.javacc.base,  sf.eclipse.javacc.editors,  org.ecli
- pse.jface.action",sf.eclipse.javacc.base;uses:="org.eclipse.core.reso
- urces,org.eclipse.core.runtime",sf.eclipse.javacc.editors; uses:="org
- .eclipse.ui.texteditor,  org.eclipse.jface.text,  org.eclipse.ui.text
- editor.spelling,  sf.eclipse.javacc.parser,  org.eclipse.jface.viewer
- s,  org.eclipse.jface.text.rules,  org.eclipse.jface.action,  org.ecl
- ipse.ui.views.contentoutline,  org.eclipse.jface.util,  org.eclipse.c
- ore.runtime,  org.eclipse.jdt.internal.ui.text,  org.eclipse.ui.part,
-   org.eclipse.ui.editors.text,  org.eclipse.swt.widgets,  org.eclipse
- .jdt.ui.text,  org.eclipse.jface.text.presentation,  org.eclipse.jfac
- e.text.source,  org.eclipse.ui,  org.eclipse.jface.resource,  org.ecl
- ipse.jdt.internal.ui.text.spelling,  org.eclipse.jface.text.reconcile
- r,  org.eclipse.jface.preference,  org.eclipse.jface.text.contentassi
- st,  org.eclipse.swt.graphics,  sf.eclipse.javacc.base,  org.eclipse.
- jface.text.hyperlink",sf.eclipse.javacc.filters;uses:="org.eclipse.jf
- ace.viewers,sf.eclipse.javacc.base",sf.eclipse.javacc.head; uses:="or
- g.osgi.framework,  org.eclipse.swt.custom,  org.eclipse.swt.widgets, 
-  org.eclipse.jdt.core,  org.eclipse.jface.resource,  org.eclipse.core
- .resources,  org.eclipse.jface.viewers,  org.eclipse.core.runtime,  o
- rg.eclipse.swt.graphics,  sf.eclipse.javacc.base,  org.eclipse.ui.par
- t,  org.eclipse.ui.plugin",sf.eclipse.javacc.options; uses:="org.ecli
- pse.swt.widgets,  org.eclipse.ui.dialogs,  org.eclipse.jface.preferen
- ce,  org.eclipse.core.runtime.preferences,  org.eclipse.ui,  org.ecli
- pse.core.resources,  org.eclipse.jface.util,  sf.eclipse.javacc.base"
- ,sf.eclipse.javacc.parser;uses:="sf.eclipse.javacc.editors",sf.eclips
- e.javacc.wizards; uses:="org.eclipse.swt.widgets,  org.eclipse.jface.
- wizard,  org.eclipse.jdt.core,  org.eclipse.jface.viewers,  org.eclip
- se.jdt.internal.ui.wizards,  org.eclipse.core.runtime,  sf.eclipse.ja
- vacc.base"
+Export-Package: sf.eclipse.javacc.actions;
+  uses:="org.eclipse.jface.text,
+   org.eclipse.jface.action,
+   sf.eclipse.javacc.base,
+   sf.eclipse.javacc.editors,
+   org.eclipse.ui,
+   org.eclipse.jface.viewers,
+   sf.eclipse.javacc.parser",
+ sf.eclipse.javacc.base;uses:="org.eclipse.core.runtime,org.eclipse.core.resources",
+ sf.eclipse.javacc.editors;
+  uses:="org.eclipse.jface.text,
+   org.eclipse.core.runtime,
+   org.eclipse.jdt.internal.ui.text.spelling,
+   sf.eclipse.javacc.parser,
+   org.eclipse.jdt.internal.ui.text,
+   org.eclipse.jface.action,
+   org.eclipse.ui.texteditor.spelling,
+   org.eclipse.ui.views.contentoutline,
+   org.eclipse.jface.viewers,
+   org.eclipse.jface.text.hyperlink,
+   org.eclipse.ui.texteditor,
+   org.eclipse.jface.text.reconciler,
+   org.eclipse.jface.text.source,
+   sf.eclipse.javacc.preferences,
+   sf.eclipse.javacc.base,
+   org.eclipse.jface.resource,
+   org.eclipse.ui.part,
+   org.eclipse.jface.text.contentassist,
+   org.eclipse.jface.preference,
+   org.eclipse.jface.text.presentation,
+   org.eclipse.swt.graphics,
+   org.eclipse.swt.widgets,
+   org.eclipse.ui.editors.text",
+ sf.eclipse.javacc.filters;uses:="sf.eclipse.javacc.base,org.eclipse.jface.viewers",
+ sf.eclipse.javacc.head;
+  uses:="org.eclipse.core.runtime,
+   sf.eclipse.javacc.preferences,
+   org.eclipse.jface.resource,
+   sf.eclipse.javacc.base,
+   org.eclipse.swt.custom,
+   org.eclipse.ui.plugin,
+   org.eclipse.ui.part,
+   org.eclipse.jdt.core,
+   org.eclipse.core.resources,
+   org.eclipse.swt.graphics,
+   org.eclipse.jface.viewers,
+   org.osgi.framework,
+   org.eclipse.swt.widgets",
+ sf.eclipse.javacc.options;
+  uses:="org.eclipse.jface.preference,
+   sf.eclipse.javacc.base,
+   org.eclipse.core.resources,
+   org.eclipse.jface.util,
+   org.eclipse.ui.dialogs,
+   org.eclipse.swt.widgets",
+ sf.eclipse.javacc.parser;uses:="sf.eclipse.javacc.editors",
+ sf.eclipse.javacc.wizards;
+  uses:="org.eclipse.jface.wizard,
+   org.eclipse.core.runtime,
+   sf.eclipse.javacc.base,
+   org.eclipse.jdt.core,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.widgets,
+   org.eclipse.jdt.internal.ui.wizards"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: sf.eclipse.javacc.editors
 

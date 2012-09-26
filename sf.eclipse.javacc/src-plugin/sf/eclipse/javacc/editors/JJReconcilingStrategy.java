@@ -322,8 +322,6 @@ public class JJReconcilingStrategy implements IReconcilingStrategy, IReconciling
 
   /**
    * Inner class as a bridge with the infrastructure when collecting the spelling problems.
-   * <p>
-   * {@inheritDoc}
    */
   class SpellingProblemCollector implements ISpellingProblemCollector {
 

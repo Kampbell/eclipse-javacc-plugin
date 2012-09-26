@@ -42,6 +42,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
   // MMa 04/2009 : performance improvements and enhanced reformatting
   // MMa 11/2009 : javadoc and formatting revision ; fixed formatting issues in java code
   // BF  06/2012 : import statement change due to movement of JJCodeScanner
+  // MMa 07/2012 : fixed initial space and 2 or 3 greater than or lower than character problems
 
   /** The editor */
   static JJEditor  sJJEditor;
@@ -107,7 +108,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // Format the selection full text
       // The tricky part is to replace only part of the full text
       // we need to process the editor full text using the JavaCC grammar
-      // and we have to replace only part of it.
+      // and we have to replace only part of it
       final String endLineDelim = sDoc.getLegalLineDelimiters()[0];
       final StringBuffer strbuf = new StringBuffer(2 * tslen);
       final String docText = sDoc.get();
@@ -168,7 +169,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
    * Formats the selected text.
    * <p>
    * It reformats the indentation and spacing : it uses spaces to distinct constructs, and it tries to keep
-   * comments and newlines (except around braces and parenthesis) as they are
+   * comments and newlines (except around braces and parenthesis) as they are.
    * 
    * @param aTxt - the text to format
    * @param aEndLineDelim - the end of line delimiter string
@@ -184,7 +185,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     final JJNode node = JavaCCParser.parse(in);
     in.close();
     if (node.getFirstToken().next == null) {
-      // Warn Nothing shall be done if parsing failed.
+      // Warn Nothing shall be done if parsing failed
       final IWorkbench workbench = PlatformUI.getWorkbench();
       final Shell shell = workbench.getDisplay().getActiveShell();
       final MessageDialog dialog = new MessageDialog(shell, Activator.getString("JJFormat.Title"), //$NON-NLS-1$
@@ -248,7 +249,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
     /** Flag telling if two newlines will be needed at the end of the current line */
     boolean willNeedTwoNewlines = false;
     /** Flag telling that a newline has just been written after the last token */
-    boolean newlineJustWritten = false;
+    boolean newlineJustWritten = true;
     /** Flag telling that the need for a newline is postponed after encountering some token */
     boolean newLinePostponed = false;
     /** Flag memorizing the need for a newline in case it is postponed */
@@ -651,7 +652,6 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // after some JavaCC operators or punctuation or construct '#', '^','(>' in last sections
       // before some JavaCC operators '?', '*', '+' in expansion units 
       // before and after the JavaCC operator '-' in regular expression
-      // TODO for "Generics" syntax, boolean expressions with '<' or '>'
       // TODO for the JavaCC operators '?', '*', '+' in expansion_unit try syntax : try { (production)+ } catch : no space after the ')'
       if (needOneNewline
           || (currKind == LBRACE && nextKind == RBRACE)
@@ -671,6 +671,8 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
           || currKind == _PARSER_BEGIN
           || currKind == _PARSER_END
           || currKind == _LOOKAHEAD
+          || (currKind == GT && nextKind == GT)
+          || (currKind == LT && nextKind == LT)
           || (currKind == COLON && nextKind == LBRACE)
           || ((NB.equals(currImage) || nextKind == XOR || (lastKind == LPAREN && currKind == GT)) && isAfterParserEnd)
           || ((nextKind == HOOK || nextKind == STAR || nextKind == PLUS || currKind == MINUS || nextKind == MINUS)
@@ -707,7 +709,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
         }
         if (willNeedTwoNewlines && parLevelInLAC < 0) {
           if (debugNL) {
-            aSb.append("\t\t/* rp,  W n 2 n l A */"); // $NON-NLS-1$ //$NON-NLS-1$
+            aSb.append("\t\t/* rp,  W n 2 n l A */"); // $NON-NLS-1$
           }
           if (!skipOutput) {
             aSb.append(aEndLineDelim);
@@ -779,7 +781,7 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
       // for a previous ';', if memorized, output the newline
       if (lastKind == SEMICOLON && willNeedOneNewline) {
         if (debugNL) {
-          aSb.append("\t\t/* sc, W n 1 n l A */"); // $NON-NLS-1$ //$NON-NLS-1$
+          aSb.append("\t\t/* sc, W n 1 n l A */"); // $NON-NLS-1$
         }
         if (!skipOutput) {
           aSb.append(aEndLineDelim);
@@ -815,9 +817,9 @@ public class JJFormat implements IEditorActionDelegate, JavaCCParserConstants, I
             if (len >= 0 && aSb.substring(len).equals(aEndLineDelim)) {
               aSb.setLength(len);
             }
-            aSb.append("\t\t/* nenl, ").append(currLineIndent.length()); // $NON-NLS-1$ //$NON-NLS-1$
-            aSb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$ //$NON-NLS-1$
-            aSb.append(" */").append(aEndLineDelim); // $NON-NLS-1$ //$NON-NLS-1$
+            aSb.append("\t\t/* nenl, ").append(currLineIndent.length()); // $NON-NLS-1$
+            aSb.append(", ").append(nextLineIndent.length()); // $NON-NLS-1$
+            aSb.append(" */").append(aEndLineDelim); // $NON-NLS-1$
           }
           if (!skipOutput) {
             aSb.append(nextLineIndent);

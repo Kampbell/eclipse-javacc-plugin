@@ -72,7 +72,7 @@ public class JJDocumentProvider extends FileDocumentProvider {
   /**
    * Creates the partitioner.
    * 
-   * @return a FastPartitioner set with a RuleBasedPartitionScanner set with code and comment partitions.
+   * @return a FastPartitioner set with a RuleBasedPartitionScanner set with code and comment partitions
    */
   private IDocumentPartitioner createJJPartitioner() {
     final IToken codeToken = new Token(JJ_CODE_CONTENT_TYPE);

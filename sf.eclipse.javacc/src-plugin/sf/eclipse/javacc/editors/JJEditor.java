@@ -115,7 +115,7 @@ public class JJEditor extends TextEditor implements IJJConstants, IPrefConstants
     //    setDocumentProvider(new FileDocumentProvider());
     setDocumentProvider(new JJDocumentProvider());
 
-    // JJ CodeScanner, Formatter, IndentStrategy, ContentAssist,...
+    // JJ CodeScanner, Formatter, IndentStrategy, ContentAssist, ...
     jJJSourceViewerConfiguration = new JJSourceViewerConfiguration(this);
     setSourceViewerConfiguration(jJJSourceViewerConfiguration);
 

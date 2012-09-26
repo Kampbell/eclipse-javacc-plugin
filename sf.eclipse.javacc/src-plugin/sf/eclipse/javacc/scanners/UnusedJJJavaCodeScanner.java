@@ -118,7 +118,7 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
      * Is this character a bracket character?
      * 
      * @param aCh - Character to determine whether it is a bracket character
-     * @return <code>true</code> if the character is a bracket, <code>false</code> otherwise.
+     * @return <code>true</code> if the character is a bracket, <code>false</code> otherwise
      */
     public boolean isBracket(final char aCh) {
       for (int index = 0; index < JAVA_BRACKETS.length; index++) {
@@ -469,11 +469,11 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
 
     final List<IRule> rules = new ArrayList<IRule>();
 
-    // Add rule for character constants.
+    // Add rule for character constants
     Token token = getToken(IJavaColorConstants.JAVA_STRING);
     rules.add(new SingleLineRule("'", "'", token, '\\')); //$NON-NLS-2$ //$NON-NLS-1$
 
-    // Add generic whitespace rule.
+    // Add generic whitespace rule
     rules.add(new WhitespaceRule(new JavaWhitespaceDetector()));
 
     final String version = getPreferenceStore().getString(SOURCE_VERSION);
@@ -519,13 +519,13 @@ public final class UnusedJJJavaCodeScanner extends AbstractJavaScanner {
     token = getToken(IJavaColorConstants.JAVA_BRACKET);
     rules.add(new BracketRule(token));
 
-    // Add word rule for keyword 'return'.
+    // Add word rule for keyword 'return'
     final CombinedWordRule.WordMatcher returnWordRule = new CombinedWordRule.WordMatcher();
     token = getToken(IJavaColorConstants.JAVA_KEYWORD_RETURN);
     returnWordRule.addWord(RETURN, token);
     combinedWordRule.addWordMatcher(returnWordRule);
 
-    // Add word rule for keywords, types, and constants.
+    // Add word rule for keywords, types, and constants
     final CombinedWordRule.WordMatcher wordRule = new CombinedWordRule.WordMatcher();
     token = getToken(IJavaColorConstants.JAVA_KEYWORD);
     for (int i = 0; i < sKeywords.length; i++) {

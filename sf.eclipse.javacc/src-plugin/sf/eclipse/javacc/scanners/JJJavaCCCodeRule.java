@@ -26,6 +26,7 @@ import sf.eclipse.javacc.preferences.IPrefConstants;
 public class JJJavaCCCodeRule implements IRule, IPrefConstants {
 
   // BF  05/2012 : created
+  // MMa 09/2012 : modified colors for ":" ; added "!" as a JavaCC punctuation character (JTB specific syntax)
 
   /** The preference store */
   private final IPreferenceStore         preferenceStore;
@@ -85,13 +86,13 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   private IRule[]                        tokenMgrDeclsRules;
 
   /** The regular expression production rules array */
-  private IRule[]                        regExProductionRules;
+  private IRule[]                        regularExprProductionRules;
 
   /** The regular expression specification rules array */
-  private IRule[]                        regExSpecificationRules;
+  private IRule[]                        regExprSpecRules;
 
   /** The regular expression rules array */
-  private IRule[]                        regExExpressionRules;
+  private IRule[]                        regularExpressionRules;
 
   /** The BNF production rules array */
   private IRule[]                        bnfProductionRules;
@@ -99,7 +100,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   /** The BNF expansion choice rules array */
   private IRule[]                        bnfChoiceRules;
 
-  /** The unexpected character rules array */
+  /** The whitespace rules array */
   private IRule[]                        whitespaceRules;
 
   /** The JJTree node rules array */
@@ -139,7 +140,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   }
 
   /**
-   * Initialize to color from the start of the file.
+   * Initializes the context to the start of the file.
    */
   public void initialize() {
     fStateStack.clear();
@@ -147,7 +148,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   }
 
   /**
-   * Update the rules after a preference change.
+   * Updates the rules after a preference change.
    * 
    * @param preferenceName - the changed preference name
    */
@@ -241,7 +242,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
         unexpectedCharacterRule, //
     };
 
-    regExProductionRules = new IRule[] {
+    regularExprProductionRules = new IRule[] {
         whitespaceRule, //
         javaCCKeywordRule, //
         new WordRule(new JJWordDetector(), fTokenMap.get(P_LEXICAL_STATE)), //
@@ -250,21 +251,27 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
         new JJSimpleRule(">", fTokenMap.get(P_LEXICAL_STATE_PUNCT)), //$NON-NLS-1$ 
         new JJSimpleRule("[", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
         new JJSimpleRule("]", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
-        new JJSimpleRule(":", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
+        // MMa one line modified
+        //        new JJSimpleRule(":", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
+        new JJSimpleRule(":", fTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$ 
         new JJSimpleRule(",", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
         unexpectedCharacterRule, //
     };
 
-    regExSpecificationRules = new IRule[] {
+    regExprSpecRules = new IRule[] {
         whitespaceRule, //
         new WordRule(new JJWordDetector(), fTokenMap.get(P_LEXICAL_STATE_NEXT)), //
         new JJSimpleRule("|", fTokenMap.get(P_REG_EX_CHOICE_PUNCT)), //$NON-NLS-1$ 
-        new JJSimpleRule(":", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
+        // MMa added 1 line
+        new JJSimpleRule("!", fTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$ 
+        // MMa one line modified
+        //        new JJSimpleRule(":", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$ 
+        new JJSimpleRule(":", fTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$ 
         stringRule, //
         unexpectedCharacterRule, //
     };
 
-    regExExpressionRules = new IRule[] {
+    regularExpressionRules = new IRule[] {
         whitespaceRule, //
         new JJSimpleRule("EOF", fTokenMap.get(P_JAVACC_KEYWORD)), //$NON-NLS-1$ 
         new WordRule(new JJWordDetector(), fTokenMap.get(P_TOKEN_LABEL)), //
@@ -278,6 +285,8 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
 
     bnfProductionRules = new IRule[] {
         whitespaceRule, //
+        // MMa : 1 line added
+        new JJSimpleRule("!", fTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$ 
         new JJSimpleRule(":", fTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$ 
         javaCodeAltRule, //
     };
@@ -421,7 +430,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
             resetState(Context.AT_REGULAR_EXPRESSION_SPECIFICATION);
             return nextToken(P_REG_EX_BRACE);
           }
-          return nextToken(regExProductionRules);
+          return nextToken(regularExprProductionRules);
         }
 
         case AT_REGULAR_EXPRESSION_SPECIFICATION: {
@@ -444,7 +453,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
             popState();
             return nextToken(P_REG_EX_BRACE);
           }
-          return nextToken(regExSpecificationRules);
+          return nextToken(regExprSpecRules);
         }
 
         case AT_REGULAR_EXPRESSION: {
@@ -467,14 +476,14 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
           else if (isAt("<")) { //$NON-NLS-1$
             pushState(Context.AT_REGULAR_EXPRESSION_LABEL);
           }
-          return nextToken(regExExpressionRules);
+          return nextToken(regularExpressionRules);
         }
 
         case AT_REGULAR_EXPRESSION_LABEL: {
           if (isAt(">")) { //$NON-NLS-1$
             popState();
           }
-          return nextToken(regExExpressionRules);
+          return nextToken(regularExpressionRules);
         }
 
         case AT_BNF_PRODUCTION: {
@@ -718,7 +727,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   // --------------- Convenience methods ---------------------------------------
 
   /**
-   * Reset the current state.
+   * Resets the current state.
    * 
    * @param state - the new current state
    */
@@ -728,7 +737,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   }
 
   /**
-   * Push the current state.
+   * Pushes the current state.
    * 
    * @param state - the state to be pushed
    */
@@ -737,14 +746,14 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   }
 
   /**
-   * Pop the current state.
+   * Pops the current state.
    */
   private void popState() {
     fStateStack.pop();
   }
 
   /**
-   * Evaluate a rule and return the token.
+   * Evaluates a rule and return the token.
    * 
    * @param rule - the rule
    * @return the token for the rule
@@ -754,7 +763,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   }
 
   /**
-   * Evaluate a set of rules and return the token.
+   * Evaluates a set of rules and return the token.
    * 
    * @param rules - the rules
    * @return the token for the rules
@@ -764,7 +773,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
   }
 
   /**
-   * Return the token for a specified preference.
+   * Returns the token for a specified preference.
    * 
    * @param preference - the preference
    * @return the token for the preference
@@ -930,18 +939,18 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
       "+", //$NON-NLS-1$
       "?", //$NON-NLS-1$
       "-", //$NON-NLS-1$
-      "~", //$NON-NLS-1$   
+      "~", //$NON-NLS-1$
       ":", //$NON-NLS-1$
       ",", //$NON-NLS-1$
       "#", //$NON-NLS-1$
+      "!", //$NON-NLS-1$
                                                 };
   // "=", //$NON-NLS-1$
   // ";", //$NON-NLS-1$
   // ".", //$NON-NLS-1$
   // "/", //$NON-NLS-1$
   // "\\", //$NON-NLS-1$
-  // "!", //$NON-NLS-1$
-  // "&", //$NON-NLS-1$      
+  // "&", //$NON-NLS-1$
   // "^", //$NON-NLS-1$
   // "%", //$NON-NLS-1$
   // "$", //$NON-NLS-1$
@@ -971,6 +980,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
       P_REG_EX_OTHER_PUNCT, //        :
       P_REG_EX_OTHER_PUNCT, //        ,
       P_TOKEN_LABEL_PRIVATE_DEF_PUNCT, // #
+      P_REG_EX_OTHER_PUNCT, //        !
                                                 };
 
   /** BNF expansion punctuation preferences */
@@ -993,6 +1003,7 @@ public class JJJavaCCCodeRule implements IRule, IPrefConstants {
       P_JAVACC_OTHER_PUNCT, //        :
       P_JAVACC_OTHER_PUNCT, //        ,
       P_JAVACC_OTHER_PUNCT, //        #
+      P_JAVACC_OTHER_PUNCT, //        !
                                                 };
 
   /** The JavaCC reserved keywords */

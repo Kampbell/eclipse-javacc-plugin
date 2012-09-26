@@ -14,4 +14,4 @@ class ASTMethodDeclaration extends JJNode {
   }
 
 }
-/* JavaCC - OriginalChecksum=14acb4d4356d1b356938f7e770990ca0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=8d29152cea3b68b9fab44c26df1837d6 (do not edit this line) */

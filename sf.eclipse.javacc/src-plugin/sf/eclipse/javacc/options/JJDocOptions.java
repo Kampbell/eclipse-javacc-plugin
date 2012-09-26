@@ -19,15 +19,15 @@ public class JJDocOptions extends OptionsAbstractTab {
   // BF  06/2012 : removed redundant superinterface to prevent warning
 
   // TEXT (default false) 
-  //     Setting TEXT to true causes JJDoc to generate a plain text.
+  //     Setting TEXT to true causes JJDoc to generate a plain text
   // BNF (default false)
-  //     Setting BNF to true causes JJDoc to generate a pure BNF document.
+  //     Setting BNF to true causes JJDoc to generate a pure BNF document
   // ONE_TABLE (default true) 
-  //     The default value of ONE_TABLE is used to generate a single HTML table.
+  //     The default value of ONE_TABLE is used to generate a single HTML table
   // OUTPUT_FILE 
-  //     You can supply a different file name with this option. 
+  //     You can supply a different file name with this option
   // CSS (default "")
-  //     This option allows you to specify a CSS file name. 
+  //     This option allows you to specify a CSS file name
 
   /**
    * Initializes with JJDoc known options.

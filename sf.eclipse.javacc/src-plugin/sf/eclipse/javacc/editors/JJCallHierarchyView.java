@@ -50,6 +50,7 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
   // MMa 11/2009 : javadoc and formatting revision ; added automatic expansion when selection is changed ; managed JJEditor / JTBEditor
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 08/2011 : fixed NPE in setSelection() and selectionChanged()
+  // MMa 09/2012 : localized tooltip texts
 
   /** Callers mode */
   static final int                       CALLERS = 0;
@@ -222,14 +223,16 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
      * Creates a refresh action.
      */
     public RefreshAction() {
-      // for Eclipse 3.5.x
-      //      setText(CallHierarchyMessages.RefreshAction_text);
-      // for Eclipse 3.6+
-      setText(CallHierarchyMessages.RefreshViewAction_text);
-      // for Eclipse 3.5.x
-      //      setToolTipText(CallHierarchyMessages.RefreshAction_tooltip);
-      // for Eclipse 3.6+
-      setToolTipText(CallHierarchyMessages.RefreshViewAction_tooltip);
+      // changed, our own tooltip text
+      //      // for Eclipse 3.5.x
+      //      //      setText(CallHierarchyMessages.RefreshAction_text);
+      //      // for Eclipse 3.6+
+      //      setText(CallHierarchyMessages.RefreshViewAction_text);
+      //      // for Eclipse 3.5.x
+      //      //      setToolTipText(CallHierarchyMessages.RefreshAction_tooltip);
+      //      // for Eclipse 3.6+
+      //      setToolTipText(CallHierarchyMessages.RefreshViewAction_tooltip);
+      setToolTipText(Activator.getString("JJCallHierarchy.RefreshViewAction_tooltip"));
       JavaPluginImages.setLocalImageDescriptors(this, "refresh_nav.gif"); //$NON-NLS-1$
       setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
       // for Eclipse 3.5.x
@@ -266,13 +269,15 @@ public class JJCallHierarchyView extends ViewPart implements ISelectionChangedLi
       if (aMode == CALLERS) {
         setText(CallHierarchyMessages.ToggleCallModeAction_callers_label);
         setDescription(CallHierarchyMessages.ToggleCallModeAction_callers_description);
-        setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callers_tooltip);
+        //        setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callers_tooltip);
+        setToolTipText(Activator.getString("JJCallHierarchy.ToggleCallModeAction_callers_tooltip"));
         JavaPluginImages.setLocalImageDescriptors(this, "ch_callers.gif"); //$NON-NLS-1$
       }
       else if (aMode == CALLEES) {
         setText(CallHierarchyMessages.ToggleCallModeAction_callees_label);
         setDescription(CallHierarchyMessages.ToggleCallModeAction_callees_description);
-        setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callees_tooltip);
+        //        setToolTipText(CallHierarchyMessages.ToggleCallModeAction_callees_tooltip);
+        setToolTipText(Activator.getString("JJCallHierarchy.ToggleCallModeAction_callees_tooltip"));
         JavaPluginImages.setLocalImageDescriptors(this, "ch_callees.gif"); //$NON-NLS-1$
       }
       else {
