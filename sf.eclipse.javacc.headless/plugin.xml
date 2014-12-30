@@ -2,23 +2,23 @@
 <?eclipse version="3.4"?>
 <plugin>
 <!-- Natures Extension -->
-   <extension point="org.eclipse.core.resources.natures"
-         name="%JavaCC_Nature"
-         id="javaccnature" >
-      <runtime>
-         <run
-          class="sf.eclipse.javacc.headless.JJNature">
-         </run>
-      </runtime>
-   </extension>
-<!-- Builders Extension -->
    <extension point="org.eclipse.core.resources.builders"
          name="%JavaCC_Builder"
          id="javaccbuilder">
       <builder>
          <run
-          class="sf.eclipse.javacc.headless.JJBuilder" >
+          class="sf.eclipse.javacc.base.Builder" >
          </run>
       </builder>
    </extension>
+   <extension point="org.eclipse.core.resources.natures"
+         name="%JavaCC_Nature"
+         id="javaccnature" >
+      <runtime>
+         <run
+          class="sf.eclipse.javacc.base.Nature">
+         </run>
+      </runtime>
+   </extension>
+<!-- Builders Extension -->
 </plugin>

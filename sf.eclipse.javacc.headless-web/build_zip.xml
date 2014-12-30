@@ -3,7 +3,7 @@
      Marc Mazas - Sopra Group - 02/2010 -->
 <project name="javacc-headless-web" default="make_zip" basedir=".">
 
-	<property name="javacc-ver" value="1.5.27" />
+	<property name="javacc-ver" value="1.5.28" />
 
 	<target name="make_zip">
 		<zip destfile="sf.eclipse.javacc.headless-${javacc-ver}-updatesite.zip" compress="true" update="true">

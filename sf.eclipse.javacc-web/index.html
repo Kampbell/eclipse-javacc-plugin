@@ -8,50 +8,62 @@
 BODY { font-family:Arial,Helvetica,sans-serif; font-size:10pt; color:#006666; }
 h1 { font-size:14pt; }
 h2 { font-size:12pt; }
+h3 { font-size:10pt; }
 </STYLE>
 </head>
 <body>
 <a href="http://sourceforge.net">
-  <img src="http://sourceforge.net/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo" border="0" height="62" width="210">
+  <img src="http://sourceforge.net/images/sflogo.php?group_id=56876&amp;type=5" alt="SourceForge Logo"
+   border="0" height="62" width="210">
 </a>
 <h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font><br>
-for <font color="green">Eclipse 3.6+</font>
- with <font color="green">JDK 1.6</font> and <font color="green">JavaCC 5.0</font> and <font color="green">JTB 1.4.7</font></h1>
+for <font color="green">Eclipse 3.7+</font>
+ with <font color="green">JDK 1.6+</font> and <font color="green">JavaCC 5.0+</font> and
+  <font color="green">JTB 1.4.8</font></h1>
 
-<h2>Last update : sept 25th, 2012 - version <font color="red">1.5.27</font></h2>
+<h2>Last update: dec 30th, 2014 - version <font color="red">1.5.28</font></h2>
 
-The JavaCC plug-in is designed to help development of JavaCC / JTB applications within the Eclipse IDE; the headless plug-in is designed
-to allow headless builds.<br>
-License : <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> / <a href="http://www.cecill.info/">Cecill</a><br>
+The JavaCC plug-in is designed to help development of JavaCC / JTB applications within the Eclipse IDE;
+ the headless plug-in is designed to allow headless builds.<br>
+License: <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> /
+ <a href="http://www.cecill.info/">Cecill</a><br>
 
 <h2>How to update / download</h2>
-You can use this site as an update site in Eclipse :<br>
-add <font color="red">http://eclipse-javacc.sourceforge.net/</font> to your software update sites and follow the instructions.<br><br>
+You can use this site as an update site in Eclipse:<br>
+add <font color="red">http://eclipse-javacc.sourceforge.net/</font> to your software update sites
+ and follow the instructions.<br><br>
 
 Or you can download from the
  <a href="http://sourceforge.net/projects/eclipse-javacc">JavaCC Eclipse Plug-in site on SourceForge</a>
 the (zipped) update site file (<font color="red">sf.eclipse.javacc-x.y.z-updatesite.zip</font>),<br>
-save it under a local directory, add this directory as a local update site or add this file as an archive update site and follow the instructions.<br><br>
+save it under a local directory, add this directory as a local update site or add this file as an archive
+ update site and follow the instructions.<br><br>
 
-Or you can get the source from the CVS repository and recompile the plug-ins :<br>
-see the <a href="http://sourceforge.net/scm/?type=cvs&amp;group_id=56876">JavaCC Eclipse Plug-in CVS information</a>
-for accessing the CVS repository.<br>
+Or you can get the source from the CVS repository and recompile the plug-ins:<br>
+see the <a href="http://sourceforge.net/scm/?type=cvs&amp;group_id=56876">JavaCC Eclipse Plug-in CVS
+ information</a> for accessing the CVS repository.<br>
 You can also look at the following <a href="https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html">
 tutorial on Team development with Eclipse and CVS</a>.<br><br>
 
-These plug-ins need <font color="red">Java 1.6</font> and <font color="red">Eclipse 3.6+</font> to run.<br>
-They have been tested with Eclipse Classic 3.6, 3.6.2, 3.7, 3.7.2<br>
-They are shipped with <a href="https://javacc.dev.java.net/">JavaCC 5.0</a> and <a href="jtb_doc.html">JTB 1.4.7</a><br><br>
+The plug-in needs <font color="red">Java 1.6+</font> and <font color="red">Eclipse 3.7+</font> to run.<br>
+It has been tested with Eclipse Classic 3.7.2 (Indigo), 4.2.2 (Juno), 4.3.2 (Kepler), 4.4.0 (Luna).<br>
+It has some compatibility issues with Eclipse 3.6- and 4.1.2.<br>
+It is shipped with <a href="https://javacc.dev.java.net/">JavaCC 5.0</a> and with
+ <a href="jtb_doc.html">JTB 1.4.8</a>.<br>
+Also are shipped  JavaCC 4.2, JavaCC 6.0 and JTB 1.4.7 for the ones who need different versions.<br><br>
 
 See (the old) <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
 <h2>The JavaCC Eclipse Plug-in provides</h2>
 <ul>
-  <li>preference pages for the plugin, JavaCC, JJTree, JJDoc & JTB options setting (with the ability to use other external versions of JavaCC and JTB)</li>
+  <li>preference pages for the plugin, JavaCC, JJTree, JJDoc & JTB options setting (with the ability to use
+       other external versions of JavaCC and JTB)</li>
   <li>an editor for JavaCC, JJTree and JTB sources, with
-  <ul><li>formatting, syntax coloring, automatic indentation, matching punctuation highlighting, spell checking (but not spell correction)</li>
+  <ul><li>formatting, syntax coloring, automatic indentation, matching punctuation highlighting,
+           spell checking (but not spell correction)</li>
       <li>navigation to elements declaration / uses (open declaration and back / forth)</li>
-      <li>keyboard shortcuts : Comment lines Ctrl+/, Open declaration F3 & Ctrl+click, Format Ctrl+Shift+F, Open Call Hierarchy Ctrl+Alt+H</li>
+      <li>keyboard shortcuts (Comment lines Ctrl+/, Open declaration F3 & Ctrl+click, Format Ctrl+Shift+F,
+           Open Call Hierarchy Ctrl+Alt+H; can be customized through the standard mechanism)</li>
   </ul></li>
   <li>an outline view for JavaCC, JJTree and JTB sources</li>
   <li>a call hierarchy view for JavaCC, JJTree and JTB sources</li>
@@ -62,136 +74,227 @@ on how to modify the sources.
   <li>JavaCC, JJTree and JTB sources compilation problems reporting</li>
   <li>a console for compilation outputs with hyperlinks to Errors and Warnings</li>
   <li>decoration of generated files</li>
+  <li>JavaCC menu and toolbar buttons</li>
   <li>JavaCC launching in the same directory as the grammar files (to facilitate package handling)</li>
   <li>some (rather old) help through the Eclipse menu Help / Help Contents</li>
 </ul>
-<h2>The JavaCC Eclipse Headless Plug-in provides</h2>
+<h2>The JavaCC Eclipse Headless Plug-in depends since 1.5.28 from the JavaCC Plug-in, and provides</h2>
 <ul>
-  <li>a builder and a nature to use JavaCC without any UI, for Eclipse "headless" builds (console is on System.out)</li>
+  <li>a builder and a nature to use JavaCC without any UI, for Eclipse "headless" builds
+       (console is on System.out but nothing is printed on it)</li>
 </ul>
-<h2>History (dd/mm/yy)</h2>
-25/09/12 - 1.5.27 : Localized Call Hierarchy view tooltip texts ; updated with JTB 1.4.7 ; managed new column
- numbers in JTB messages ; managed multiple messages on the same line in editors ; upgraded the internal JTB
- grammar and the syntax coloring to handle the JTB 1.4.7 new '!' syntax for not generating a node creation ;
- tested on Eclipse 3.7 / 3.7.2 ; fixed properties for the wizard<p>
+<h2>Changes history (dd/mm/yy)</h2>
+<b>08/11/12-30/12/14 - 1.5.28</b><br>
+ updated with JTB 1.4.8;<br>
+ added the "JVM Options" option and the "Keep deleted files in history" option (default set
+  to false) in the Global Options Tab of the project preferences;<br>
+ added (JavaCC) parsing problems in JTB hyperlink reporting;<br>
+ fixed problems markers not showing in derived .jj file issue;<br>
+ fixed cursor position issue in content assist;<br>
+ sorted and revised (to be much more accurate and context dependent) the content assist proposals list;<br>
+ revised the outline view (added nodes and the no node creation flags, added synchronization with the editor,
+ added node highlighting in the outline when double-clicking and modifying in the editor);<br>
+ revised the call hierarchy view, added synchronization with the editor;<br>
+ revised the icons transparency;<br>
+ internal refactoring on file names and package contents; removed JTBEditor subclasse; switched from actions,
+ actionSets, actionSetPartAssociations, editorActions, viewActions and popupMenus to expressions, handlers
+ and menus; added a JavaCC menu in the menu bar and in the toolbar;<br>
+ made the annotation markers summarizable ; fixed markers deletion;<br>
+ added the PARSER_BEGIN node to and removed the JAVACODE node from the foldable nodes set;<br>
+ fixed nature and builder ids (seen in .project);<br>
+ added next/previous navigation for annotations;<br>
+ rewrote logs, produced them in the Error Log, added the plugin's version, the stacktrace and context data;<br>
+ added the generated file filter in the Project Explorer view and removed it from the Outline view;<br>
+ added in Package and Project Explorer view a button to suppress all generated files in the selected package;<br>
+ fixed some issues on clearing the JavaCC console after file deletions on automatic builds;<br>
+ improved displays in the JavaCC console (timestamp, messages);<br>
+ fixed issues in the JavaCC "options" section (display in the Outline, completion proposals);<br>
+ added comments folding and fixed the other foldings in one line instead of two;<br>
+ fixed the templates to reflect the change of the parser name;<br>
+ fixed some icons in the Outline and the Call Hierarchy views;<br>
+ fixed some synchronization and display issues (highlight, background color) around selections in the
+ JJEditor, Outline and Call Hierarchy views;<br>
+ changed the action (from double-click to single-click) in the JJEditor to display a node in the Outline view;<br>
+ fixed bug #56 "NPE dragging a jj/jjt/jtb file in Eclipse plugin" by adding the drag and drop capability
+ (opening of JJEditor, proper interaction with the Call Hierarchy view, and disabling of compile commands;)<br>
+ added the OUTPUT_LANGUAGE option (form JavaCC 6.0+; but not yet the ability for JTB to generate C++ classes);<br>
+ improved displaying the line in error in the JJEditor when clicking on the error in the Outline view;<br>
+ fixed issues in the completion proposals computation when the grammar file is empty or almost empty;<br>
+ refactored some packages and classes to simplify the common and different code from the normal and the
+ headless plugin<br>
+ <br>
+ <p>
 
-29/06/12 - 1.5.26 : New contributor Bill Fenlason ; added Bill's syntax coloring rewritten code ;
- updated javadoc (- in @param & @throws, {@inheritdoc} instead of @see, ...) ;
+<b>25/09/12 - 1.5.27</b><br>
+ localized Call Hierarchy view tooltip texts;<br>
+ updated with JTB 1.4.7;<br>
+ managed new column numbers in JTB messages;<br>
+ managed multiple messages on the same line in editors;<br>
+ upgraded the internal JTB grammar and the syntax coloring to handle the JTB 1.4.7 new '!' syntax
+  for not generating a node creation;
+ tested on Eclipse 3.7 / 3.7.2;<br>
+ fixed properties for the wizard<p>
+
+<b>29/06/12 - 1.5.26</b><br>
+ new contributor Bill Fenlason;<br>
+ added Bill's syntax coloring rewritten code;<br>
+ updated javadoc (- in @param & @throws, {@inheritDoc} instead of @see, ...);<br>
  fixed some properties issues<p>
 
-03/05/12 - 1.5.25 : Added in JJReconcilingStrategy Bill Fenlason's hack proposal for syntax coloring problems ;
- fixed property error in JJNewPage ; fixed NPE in JJCallHierarchy ;
- enhanced Outline view to display identifiers and JJTree Nodes RFE 2968192 ;
- added "mark generated files as derived" option RFE 3314103 ;
- enhanced display / navigation in Outline & Call Hierarchy views ;
- enhanced hyperlink detection / navigation ;
- added default options display in JavaCC Plugin Preferences ;
- fixed empty default options display in JavaCC Project Options ;
- changed default JDK version to 1.6 ;
- changed plugin dependencies to at least version 3.6.0 ;
- updated with JTB 1.4.6 ; fixed bug 3157017<p>
+<b>03/05/12 - 1.5.25</b><br>
+ added in JJReconcilingStrategy Bill Fenlason's hack proposal for syntax coloring problems;<br>
+ fixed property error in JJNewPage; fixed NPE in JJCallHierarchy;<br>
+ enhanced Outline view to display identifiers and JJTree Nodes RFE 2968192;<br>
+ added "mark generated files as derived" option RFE 3314103;<br>
+ enhanced display / navigation in Outline & Call Hierarchy views;<br>
+ enhanced hyperlink detection / navigation;<br>
+ added default options display in JavaCC Plugin Preferences;<br>
+ fixed empty default options display in JavaCC Project Options;<br>
+ changed default JDK version to 1.6;<br>
+ changed plugin dependencies to at least version 3.6.0;<br>
+ updated with JTB 1.4.6; fixed bug 3157017<p>
 
-02/12/10 - 1.5.24 : Fixed NPE in JJDecorator; updated with JTB 1.4.4; built over Eclipse 3.5.2<p>
+<b>02/12/10 - 1.5.24</b><br>
+ fixed NPE in JJDecorator; updated with JTB 1.4.4; built over Eclipse 3.5.2<p>
 
-xx/04/10 - 1.5.23 : Added spelling problem annotation hover; dropped support of Eclipse 3.4 (Galileo) and JDK 1.5 ;
+<b>xx/04/10 - 1.5.23</b><br>
+ added spelling problem annotation hover; dropped support of Eclipse 3.4 (Galileo) and JDK 1.5;<br>
  refactored packages and added the headless plug-in<p>
 
-31/03/10 - 1.5.22 : Fixed spell checking issues (non reported bugs + SR 2904433), tab issue (bugs 2961174 & 2958124),
- wizard template files issue (bug 2962672), comments highlighting issue (bug 2961174 + non reported bug),
- files regeneration warnings issue(bug 2903612), folding structure update issue (bug 1975872),
- refactored layouts of Preferences and Project Properties pages (added groups and tooltips),
+<b>31/03/10 - 1.5.22</b><br>
+ fixed spell checking issues (non reported bugs + SR 2904433);<br>
+ fixed tab issue (bugs 2961174 & 2958124);<br>
+ fixed wizard template files issue (bug 2962672);<br>
+ fixed comments highlighting issue (bug 2961174 + non reported bug);<br>
+ fixed files regeneration warnings issue(bug 2903612);<br>
+ fixed folding structure update issue (bug 1975872);<br>
+ refactored layouts of Preferences and Project Properties pages (added groups and tooltips);<br>
  updated with JTB 1.4.3<p>
 
-26/02/10 - 1.5.21 : Fixed Wizard not closing on error (bug RK and SR 2956977)<p>
+<b>26/02/10 - 1.5.21</b><br>
+ fixed Wizard not closing on error (bug RK and SR 2956977)<p>
 
-25/02/10 - 1.5.20 : Fixed JTB preferences issue (for options defaulting to true), fixed extra quote in command line (bug RK and SR 2956977)<p>
+<b>25/02/10 - 1.5.20</b><br>
+ fixed JTB preferences issue (for options defaulting to true);<br>
+ fixed extra quote in command line (bug RK and SR 2956977)<p>
 
-19/02/10 - 1.5.19 : Fixed project preferences issues with resulting command line options field / specific options fields
- / enclosing quotes for paths and files<p>
+<b>19/02/10 - 1.5.19</b><br>
+ fixed project preferences issues with resulting command line options field /
+ specific options fields / enclosing quotes for paths and files<p>
 
-17/02/10 - 1.5.18 : Fixed /**/ syntax coloring issue (bug 2946447), fixed missing french JTB preferences issue,
- fixed JTB preferences not stored issue, fixed compile annotations and hyperlink issues in JTB Editor / Console,
- splitted templates for static = true and static = false (bug 2951454), added spell checking (but not spell correction...),
+<b>17/02/10 - 1.5.18</b><br>
+ fixed /**/ syntax coloring issue (bug 2946447);<br>
+ fixed missing french JTB preferences issue;<br>
+ fixed JTB preferences not stored issue;<br>
+ fixed compile annotations and hyperlink issues in JTB Editor / Console;<br>
+ splitted templates for static = true and static = false (bug 2951454);<br>
+ added spell checking (but not spell correction...);<br>
  updated with JTB 1.4.1<p>
 
-13/11/09 - 1.5.17 : Fixed formatting / syntax coloring / outline / autoindent / call hierarchy / context menus / messages issues ;
+<b>13/11/09 - 1.5.17</b><br>
+ fixed formatting / syntax coloring / outline / autoindent / call hierarchy /
+ context menus / messages issues;<br>
  updated with JTB 1.4.0 and new options (Marc Mazas)<p>
 
-04/10/09 - 1.5.16 : Added support for Eclipse variables in Builder and Options ; fixed JTB jar store bug in preferences and
- added use of default jar when no jar is set<p>
+<b>04/10/09 - 1.5.16</b><br>
+ added support for Eclipse variables in Builder and Options;<br>
+ fixed JTB jar store bug in preferences and added use of default jar when no jar is set<p>
 
-07/09/09 - 1.5.15 : Updated with JavaCC 5.0 and for new options, fixed running in Galileo, compiled with Java 1.5 to support Mac OS X ;
- Change the released zip to be a zipped update site file<p>
+<b>07/09/09 - 1.5.15</b><br>
+ updated with JavaCC 5.0 and for new options;<br>
+ fixed running in Galileo;<br>
+ compiled with Java 1.5 to support Mac OS X;<br>
+ Changed the released zip to be a zipped update site file<p>
 
-23/05/09 - 1.5.14 : Added Call hierarchy view<p>
+<b>23/05/09 - 1.5.14</b><br>
+ added Call hierarchy view<p>
 
-25/04/09 - 1.5.13 : Updated JavaCC / JJTree / JTB options, New preferences, Enhanced formatting & coloring (Marc Mazas)<p>
+<b>25/04/09 - 1.5.13</b><br>
+ updated JavaCC / JJTree / JTB options, New preferences, Enhanced formatting & coloring (Marc Mazas)<p>
 
-13/07/08 - 1.5.12 : Updated with JavaCC 4.1, added Folding, Hover, Completion proposals, and project Cleaning<p>
+<b>13/07/08 - 1.5.12</b><br>
+ updated with JavaCC 4.1, added Folding, Hover, Completion proposals, and project Cleaning<p>
 
-08/07/07 - 1.5.10 : Fixed JJTREE_OUTPUT_DIRECTORY, NullPointerException<p>
+<b>08/07/07 - 1.5.10</b><br>
+ fixed JJTREE_OUTPUT_DIRECTORY, NullPointerException<p>
 
-10/06/07 - 1.5.9 : Fixed javacc.jar to handle output directory for JJDoc<p>
+<b>10/06/07 - 1.5.9</b><br>
+ fixed javacc.jar to handle output directory for JJDoc<p>
 
-11/03/07 - 1.5.7 : Fixed suppress warnings and preserve unicode escape when formatting<p>
+<b>11/03/07 - 1.5.7</b><br>
+ fixed suppress warnings and preserve unicode escape when formatting<p>
 
-26/11/06 - 1.5.6 : Restored compatibility with Eclipse 3.1 and handle case where no src/bin dir are defined<p>
+<b>26/11/06 - 1.5.6</b><br>
+ restored compatibility with Eclipse 3.1 and handle case where no src/bin dir are defined<p>
 
-05/11/06 - 1.5.5 : Added Java 1.5 and Eclipse 3.2.1 support, fixed bug in console hyperlinks, added basic content assistant<p>
+<b>05/11/06 - 1.5.5</b><br>
+ added Java 1.5 and Eclipse 3.2.1 support;<br>
+ fixed bug in console hyperlinks;<br>
+ added basic content assistant<p>
 
-01/10/06 - 1.5.4 : Suppressed warnings in generated files, global preferences for colors<p>
+<b>01/10/06 - 1.5.4</b><br>
+ added suppressed warnings in generated files;<br>
+ added global preferences for colors<p>
 
-24/05/06 - 1.5.3 : Fixed plug-in key conflict F3<p>
+<b>24/05/06 - 1.5.3</b><br>
+ fixed plug-in key conflict F3<p>
 
-27/03/06 - 1.5.2 : Removed "exclude from build" and adopted Eclipse way, ie Build Path<p>
+<b>27/03/06 - 1.5.2</b><br>
+ removed "exclude from build" and adopted Eclipse way, ie Build Path<p>
 
-24/02/06 - 1.5.1 : Added French version (but the help is still in english)<p>
+<b>24/02/06 - 1.5.1</b><br>
+ added French version (but the help is still in english)<p>
 
-13/11/05 - 1.4.0 : Added update site, automatic format, java 1.4 .class files compatibility<p>
+<b>13/11/05 - 1.4.0</b><br>
+ added update site, automatic format, java 1.4 .class files compatibility<p>
 
-31/10/05 - 1.3.0 : Added JTB, Ctrl+click to open declaration, Wizard<p>
+<b>31/10/05 - 1.3.0</b><br>
+ added JTB, Ctrl+click to open declaration, Wizard<p>
 
 <h2>Quick Start</h2>
 1) Create a new Java project and a package "foo".<br>
 <br>
-2) Select package "foo" and create a new JavaCC file. Just accept all default settings (note : the following screens are not up to date).<br>
+2) Select package "foo" and create a new JavaCC file. Just accept all default settings
+ (note: the following screens are not up to date).<br>
 <br>
-<img src="new_project.png" alt="new project"><br>
+<img src="images/new_project.png" alt="new project"><br>
 <br>
 3) You have now a new JavaCC file, compiled with JavaCC, with all the generated java files in you project.<br>
-Note that :<ul>
-<li>the generated files are decorated with a "<strong>G</strong>" and a "<strong>&lt;somefromfile.jj&gt;</strong>"
+Note that:<ul>
+<li>the generated files are decorated with a "<strong>G</strong>" and
+ a "<strong>&lt;somefromfile.jj&gt;</strong>"
  to indicate where the <strong>.jj</strong> files come from,</li>
 <li>there may be compiler warnings, in the java generated files (due to your compiler error & warnings settings
 and due to the way JavaCC generates the java code)</li>
 <li>the JavaCC console opens automatically.</li>
 </ul>
-<img src="files_generated.png" alt="files generated"><br>
+<img src="images/files_generated.png" alt="files generated"><br>
 <br>
-4) Run the example :<ul>
+4) Run the example:<ul>
 <li>Select "<strong>TestJavaCC</strong>" and menu "<strong>Run</strong>"/ "<strong>Run as...</strong>" /
  "<strong>Java application</strong>"</li>
 <li>Choose "<strong>eg1</strong>" for the main type.</li>
-<li>You can now test your JavaCC application :</li>
+<li>You can now test your JavaCC application:</li>
 </ul>
-<img src="file_run_test.png"><br>
+<img src="images/file_run_test.png"><br>
 <br>
-You can do the same with the template for JJTree :<br>
+You can do the same with the template for JJTree:<br>
 <br>
-<img src="file_run_eg2.png"><br>
+<img src="images/file_run_eg2.png"><br>
 <br>
-and also with the template for JTB :<br>
+and also with the template for JTB:<br>
 <br>
-<img src="file_run_eg3.png"><br>
+<img src="images/file_run_eg3.png"><br>
 <br><br>
 <h2>Support</h2>
 Feel free to report any bug or suggest enhancement at the
  <a href="http://sourceforge.net/tracker/?group_id=56876">JavaCC Eclipse Plug-in SourceForge site</a>.<br>
 <h2>JavaCC Book</h2>
-Tom Copeland wrote a very nice book on JavaCC :
+Tom Copeland wrote a very nice book on JavaCC:
  <a href="http://generatingparserswithjavacc.com/">http://generatingparserswithjavacc.com/</a><br>
 A really good book, clear, well written, and full of ready to use examples.<br>
-If you need to parse a complex file format and choose JavaCC to generate the parser, this is definitely the best book.
+If you need to parse a complex file format and choose JavaCC to generate the parser,
+ this is definitely the best book.
 </body>
 </html>
 
