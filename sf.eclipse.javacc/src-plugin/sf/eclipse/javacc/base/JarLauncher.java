@@ -4,40 +4,48 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
+
 
 /**
  * Launcher for JavaCC. Uses Runtime.exec().
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  */
 public class JarLauncher {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 02/2010 : formatting and javadoc revision
+  // MMa 10/2012 : added JVM options option ; used ProcessBuilder instead of Runtime
+  // MMa 11/2014 : removed some public modifiers
+  // MMa 12/2014 : added test on interrupted waitFor
 
-  /** The java command on the command line */
-  private static String javaCmd;
+  /** The java command on the command line (accessed directly by Builder) */
+  public static String        sJavaCmd;
 
   static {
     final String os = System.getProperty("os.name"); //$NON-NLS-1$
     if (os != null) {
       if (os.indexOf("win") >= 0) { //$NON-NLS-1$
-        javaCmd = "javaw"; //$NON-NLS-1$
+        sJavaCmd = "javaw"; //$NON-NLS-1$
       }
       else {
-        javaCmd = "java"; //$NON-NLS-1$
+        sJavaCmd = "java"; //$NON-NLS-1$
       }
     }
   }
 
+  /** The regex to split the JVM options string in a array */
+  public static final Pattern patt = Pattern.compile("\\s"); //$NON-NLS-1$
+
   /**
    * A Thread to get Output from External Process.
    */
-  public static class StreamGobbler extends Thread {
+  static class StreamGobbler extends Thread {
 
     /** The input stream */
-    InputStream is;
+    protected InputStream is;
 
     /**
      * Standard constructor.
@@ -53,14 +61,20 @@ public class JarLauncher {
     public void run() {
       try {
         final InputStreamReader isr = new InputStreamReader(is);
+        // JavaCC / JJTree / JTB use PrintStream (System.out) to print,
+        //  in a JVM (like IBM 160 JVM) that may use the native code page(850 on Windows)
+        //  (Sun 160 JVM seems to use Cp1252 to print)
+        // Here the InputStreamReader use a default charset (usually Cp1252 on Eclipse)
+        //  this may lead to characters conversion
+        //  this can be seen with the IBM 160 JVM error messages (for wrong JVM options) on a French platform
         final BufferedReader br = new BufferedReader(isr);
         String line = null;
         while ((line = br.readLine()) != null) {
           System.out.println(line);
         }
         br.close();
-      } catch (final Throwable ioe) {
-        ioe.printStackTrace();
+      } catch (final Throwable t) {
+        AbstractActivator.logBug(t);
       }
     }
   }
@@ -71,7 +85,7 @@ public class JarLauncher {
    * @param aCmd - the command to launch
    * @param aDir - the directory where to launch the command
    */
-  public static void launch(final String[] aCmd, final String aDir) {
+  static void rt_launch(final String[] aCmd, final String aDir) {
     final Runtime rt = Runtime.getRuntime();
     try {
       final Process proc = rt.exec(aCmd, null, new File(aDir));
@@ -81,98 +95,156 @@ public class JarLauncher {
       out.start();
       proc.waitFor();
     } catch (final Throwable t) {
-      t.printStackTrace();
+      AbstractActivator.logBug(t);
     }
   }
 
   /**
-   * Launches JavaCC with Runtime.exec(), i.e. launches java -classpath javaccJarFile JavaCC args.
+   * Launches a command with ProcessBuilder.start().
    * 
+   * @param aCmd - the command to launch
+   * @param aDir - the directory where to launch the command
+   */
+  static void pb_launch(final String[] aCmd, final String aDir) {
+    int rc = 0;
+    try {
+      final ProcessBuilder pb = new ProcessBuilder(aCmd);
+      pb.redirectErrorStream(true);
+      pb.directory(new File(aDir));
+      final Process proc = pb.start();
+      final StreamGobbler out = new StreamGobbler(proc.getInputStream());
+      out.start();
+      rc = proc.waitFor();
+    } catch (final Throwable t) {
+      if (rc == 0) {
+        AbstractActivator.logInfo("proc.waitFor() interrupted and returned 0");
+      }
+      else {
+        AbstractActivator.logErr("proc.waitFor() interrupted and returned " + rc);
+      }
+    }
+  }
+
+  /**
+   * Launches JavaCC with Runtime.exec(), i.e. launches java [jvm_options] -classpath javaccJarFile JavaCC
+   * arguments.
+   * 
+   * @param aJvmOptions - the optional JVM options
    * @param aJavaCCJarFile - the jar file to use
    * @param aArgs - the arguments
    * @param aDir - the directory where to launch the command
    */
-  public static void launchJavaCC(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
-    final String[] cmd = new String[aArgs.length + 4];
-    cmd[0] = javaCmd;
-    cmd[1] = "-classpath"; //$NON-NLS-1$
-    cmd[2] = aJavaCCJarFile;
-    cmd[3] = "javacc"; //$NON-NLS-1$
-    for (int i = 0; i < aArgs.length; i++) {
-      cmd[i + 4] = aArgs[i];
+  public static void launchJavaCC(final String aJvmOptions, final String aJavaCCJarFile,
+                                  final String[] aArgs, final String aDir) {
+    final String[] opt = patt.split(aJvmOptions);
+    final String[] cmd = new String[aArgs.length + opt.length + 4];
+    int k = 0;
+    cmd[k++] = sJavaCmd;
+    for (int i = 0; i < opt.length; i++) {
+      cmd[k++] = opt[i];
     }
-    launch(cmd, aDir);
+    cmd[k++] = "-classpath"; //$NON-NLS-1$
+    cmd[k++] = aJavaCCJarFile;
+    cmd[k++] = "javacc"; //$NON-NLS-1$
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[k++] = aArgs[i];
+    }
+    pb_launch(cmd, aDir);
   }
 
   /**
-   * Launches JJTree with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJTree args.
+   * Launches JJTree with Runtime.exec(), i.e. launches java [jvm_options] -classpath javaccJarFile JJTree
+   * arguments.
    * 
+   * @param aJvmOptions - the optional JVM options
    * @param aJavaCCJarFile - the jar file to use
    * @param aArgs - the arguments
    * @param aDir - the directory where to launch the command
    */
-  public static void launchJJTree(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
-    final String[] cmd = new String[aArgs.length + 4];
-    cmd[0] = javaCmd;
-    cmd[1] = "-classpath"; //$NON-NLS-1$
-    cmd[2] = aJavaCCJarFile;
-    cmd[3] = "jjtree"; //$NON-NLS-1$
-    for (int i = 0; i < aArgs.length; i++) {
-      cmd[i + 4] = aArgs[i];
+  public static void launchJJTree(final String aJvmOptions, final String aJavaCCJarFile,
+                                  final String[] aArgs, final String aDir) {
+    final String[] opt = patt.split(aJvmOptions);
+    final String[] cmd = new String[aArgs.length + opt.length + 4];
+    int k = 0;
+    cmd[k++] = sJavaCmd;
+    for (int i = 0; i < opt.length; i++) {
+      cmd[k++] = opt[i];
     }
-    launch(cmd, aDir);
+    cmd[k++] = "-classpath"; //$NON-NLS-1$
+    cmd[k++] = aJavaCCJarFile;
+    cmd[k++] = "jjtree"; //$NON-NLS-1$
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[k++] = aArgs[i];
+    }
+    pb_launch(cmd, aDir);
   }
 
   /**
-   * Launches JJDoc with Runtime.exec(), i.e. launches java -classpath javaccJarFile JJDoc args.
+   * Launches JJDoc with Runtime.exec(), i.e. launches java [jvm_options] -classpath javaccJarFile JJDoc
+   * arguments.
    * 
+   * @param aJvmOptions - the optional JVM options
    * @param aJavaCCJarFile - the jar file to use
    * @param aArgs - the arguments
    * @param aDir - the directory where to launch the command
    */
-  public static void launchJJDoc(final String aJavaCCJarFile, final String[] aArgs, final String aDir) {
-    final String[] cmd = new String[aArgs.length + 4];
-    cmd[0] = javaCmd;
-    cmd[1] = "-classpath"; //$NON-NLS-1$
-    cmd[2] = aJavaCCJarFile;
-    cmd[3] = "jjdoc"; //$NON-NLS-1$
-    for (int i = 0; i < aArgs.length; i++) {
-      cmd[i + 4] = aArgs[i];
+  public static void launchJJDoc(final String aJvmOptions, final String aJavaCCJarFile, final String[] aArgs,
+                                 final String aDir) {
+    final String[] opt = patt.split(aJvmOptions);
+    final String[] cmd = new String[aArgs.length + opt.length + 4];
+    int k = 0;
+    cmd[k++] = sJavaCmd;
+    for (int i = 0; i < opt.length; i++) {
+      cmd[k++] = opt[i];
     }
-    launch(cmd, aDir);
+    cmd[k++] = "-classpath"; //$NON-NLS-1$
+    cmd[k++] = aJavaCCJarFile;
+    cmd[k++] = "jjdoc"; //$NON-NLS-1$
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[k++] = aArgs[i];
+    }
+    pb_launch(cmd, aDir);
   }
 
   /**
-   * Launches JTB with Runtime.exec(), i.e. launches java -jar javaccJarFile args.
+   * Launches JTB with Runtime.exec(), i.e. launches java [jvm_options] -jar javaccJarFile arguments.
    * 
+   * @param aJvmOptions - the optional JVM options
    * @param aJarfile - the jar file to use
    * @param aArgs - the arguments
    * @param aDir - the directory where to launch the command
    */
-  public static void launchJTB(final String aJarfile, final String[] aArgs, final String aDir) {
-    final String[] cmd = new String[aArgs.length + 3];
-    cmd[0] = javaCmd;
-    cmd[1] = "-jar"; //$NON-NLS-1$
-    cmd[2] = aJarfile;
-    for (int i = 0; i < aArgs.length; i++) {
-      cmd[i + 3] = aArgs[i];
+  public static void launchJTB(final String aJvmOptions, final String aJarfile, final String[] aArgs,
+                               final String aDir) {
+    final String[] opt = patt.split(aJvmOptions);
+    final String[] cmd = new String[aArgs.length + opt.length + 3];
+    int k = 0;
+    cmd[k++] = sJavaCmd;
+    for (int i = 0; i < opt.length; i++) {
+      cmd[k++] = opt[i];
     }
-    launch(cmd, aDir);
+    cmd[k++] = "-jar"; //$NON-NLS-1$
+    cmd[k++] = aJarfile;
+    for (int i = 0; i < aArgs.length; i++) {
+      cmd[k++] = aArgs[i];
+    }
+    pb_launch(cmd, aDir);
   }
 
-  /**
-   * Unit test.
-   * 
-   * @param aArgs - the arguments
-   */
-  public static void main(final String aArgs[]) {
-    final String jarFile = "C:/java/javacc-3.0/bin/lib/javacc.jar"; //$NON-NLS-1$
-    launchJavaCC(jarFile, new String[] {
-      "C:/java/javacc-3.0/examples/JavaCCGrammar/JavaCC.jj" }, //$NON-NLS-1$
-                 "."); //$NON-NLS-1$
+  //  /**
+  //   * Unit test.
+  //   * 
+  //   * @param aArgs - the arguments
+  //   */
+  //  public static void main(final String aArgs[]) {
+  //    final String jarFile = "C:/java/javacc-3.0/bin/lib/javacc.jar"; //$NON-NLS-1$
+  //    launchJavaCC(jarFile, new String[] {
+  //      "C:/java/javacc-3.0/examples/JavaCCGrammar/JavaCC.jj" }, //$NON-NLS-1$
+  //                 "."); //$NON-NLS-1$
+  //
+  //    launchJJTree(jarFile, new String[] {
+  //      "C:/java/javacc-3.0/examples/JJTreeExamples/eg1.jjt" }, //$NON-NLS-1$
+  //                 "."); //$NON-NLS-1$
+  //  }
 
-    launchJJTree(jarFile, new String[] {
-      "C:/java/javacc-3.0/examples/JJTreeExamples/eg1.jjt" }, //$NON-NLS-1$
-                 "."); //$NON-NLS-1$
-  }
 }

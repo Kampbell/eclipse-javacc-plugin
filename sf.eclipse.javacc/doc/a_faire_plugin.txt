@@ -1,0 +1,85 @@
+A faire pour le plugin
+- voir si le pb proc.waitFor() JarLauncher revient
+- revoir les différences headless / head
+- gérer différentes versions de jar jtb / javacc
+- affichage d'une squiggly line pour les markers ? : il faut utiliser des textmarker
+    et trouver les positions de début et fin
+- options et keywords centralisés
+- vérifier méthodes final (utiliser search final .*\(.*\)\s*\{)
+- vérifier NLS (utiliser sur un répertoire Click-droit / Source / Externalize strings..., sélectionner les
+   classes une par une, sélectionner les lignes, cliquer sur Ignore)
+- voir les TODOs pour le plugin, ajouter les tests qui vont bien
+- utiliser les org.eclipse.core.runtime.Assert
+- voir les ajouts faits par FA ou à faire pour JavaCC 6.x
+- tester le plugin sur les différentes versions d'Eclipse
+- voir les nouveautés Juno / Kepler / Luna du workbench et du JDT et impacts sur le plugin
+- voir évolutions du langage Java 1.7 et 1.8 et impacts sur coloration syntaxique, formatteur, call hierarchy
+- s'interfacer avec une vue JJDoc ?
+
+
+
+Fait pour le plugin en 1.5.28
+- corrigé libellé Show Caller / Callee Hierarchy non en français
+- vu l'affichage de plusieurs messages d'erreur sur une même ligne
+- ajouté la couleur du ! (syntaxe JTB)
+- ajouté l'option "JVM options" et "Keep deleted files in history"
+- vu l'encoding de la console JavaCC pour les accents
+- voir l'affichage des messages dans le fichier .jj après compilation .jtb
+- problème de remontée des erreurs JTB qui ne sont pas affichées : faire comme pour les .jj, en ligne 1
+    ex : TCF sans {} pour le try
+    >java -jar D:\Devs\Parsers-workspace\JTB-svn_java.net\lib\new_jtb-1.4.7.jar -ia -jd -tk java1_5.jtb 
+    JTB version 1.4.7
+    JTB:  Reading jtb input file java1_5.jtb...
+    Encountered " "(" "( "" at line 1122, column 11.
+    Was expecting:
+        "{" ...
+    JTB:  Encountered error(s) during parsing.
+- revu les clés de plugin.properties et plugin_fr.properties
+- passé en import static les interfaces IJJConstants et IJJPreferences
+- corrigé le problème de la position du curseur, trié et révisé la liste des propositions
+   sur le Content Assist en fonction du contexte (ajouté des nouveaux nœuds pour cela)
+- mis à jour l'Outline avec les nœuds #ConstrDecl, #EnumDecl, #AnnotTypeDecl et corrigé les problèmes
+- adapté le Call Hierarchy avec les nouveaux nœuds
+- ajouté l'affichage dans l'Outline du nœud englobant la sélection sur double-click et modification
+   dans l'éditeur
+- ajouté dans l'Outline et la Call Hierarchy le bouton de synchronisation avec l'éditeur
+- ajouté dans l'Outline le bouton de Refresh
+- revu toutes les icônes pour les enregistrer avec la transparence du Gif
+- renommé classes et membres et propriétés en supprimant les JJ superflus
+- remplacé les actions par les handlers (classes et plugin.xml), supprimé JTBEditor
+- revu les menus dans la barre de menu et la barre d'outils
+- passé les getters et setters en final
+- ajouté les options .jj à celles de .jjt et .jtb pour le completion proposal
+- mis en place les summarizable annotations ; corrigé la suppression des markers
+- ajouté le nœud PARSER_BEGIN et enlevé le nœud JAVACODE_PROD des nœuds repliables
+- corrigé les identifiants de nature et builder
+- mis en place la navigation next/previous des annotations
+- refondu tous les logs des erreurs dans l'Error log, avec ajout de la version du plugin, de la stack trace et
+   des données de contexte
+- mis en place le filtre des fichiers générés JavaCC dans la vue Project Explorer et enlevé le filtre dans la
+   OutlinePage Java
+- mis dans les vues Package et Project Explorer un bouton pour une action de suppression de tous
+   les fichiers générés sous le répertoire sélectionné
+- corrections sur l'effacement de la console après la suppression des fichiers lors des builds automatiques
+- améliorations sur l'affichage des commandes dans la console
+- corrigé la grammaire sur la condition de javacc_options pour l'affichage du nœud option dans l'Outline et
+   la bonne proposition de completion proposal quand les options sont vides
+- ajouté le folding pour les commentaires et affiché celui des autres régions en 1 ligne a lieu de 2
+- corrigé pourquoi le spelling service ne fonctionnait plus
+- modifié les fichiers template (nom du parser modifiable)
+- modifié la super classe de NewElementWizard et renommé en NewGrammarWizard
+- renommé WizPageJJ en NewGrammarWizardPage 
+- vu les restrictions restantes (@SuppressWarnings("restriction"))
+- corrigé l'image pour les JJTIDENT_IN_EXP_UNIT (i->r)
+- corrigé l'annulation du highlight range entre JJE / CHV / OP
+- corrigé le non affichage de la couleur de fond sur click dans l'OutlinePage et la CallHierarchyView
+- corrigé la synchronisation des 3 JJEditor OutlinePage CallHierarchyView
+- passé l'affichage dans l'OutlinePage sur simple-click dans JJEditor
+- supprimé le package actions (les actions ne sont plus utilisées)
+- corrigé le bug #56 NPE dragging a jj/jjt/jtb file in Eclipse plugin, et ajouté l'ouverture de l'éditeur,
+   le bon fonctionnement de la Call Hierarchy View, et l'inhibition des commandes de compilation
+- ajouté l'option OUTPUT_LANGUAGE
+- amélioré l'affichage de la ligne en erreur quand on clique sur l'erreur dans l'OutlinePage
+- corrigé les problèmes de calcul des completion proposals en cas de fichier vide ou presque
+- déplacé Builder et Nature dans le package base du plugin head pour utiliser ce package dans le plugin headless
+- extrait de Activator une superclasse AbstractActivator factorisée entre les plugins head et headless 

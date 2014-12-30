@@ -1,5 +1,9 @@
 package sf.eclipse.javacc.options;
 
+import static sf.eclipse.javacc.base.IConstants.DEF_EMPTY_OPTION;
+import static sf.eclipse.javacc.base.IConstants.DEF_JDK_VERSION;
+import static sf.eclipse.javacc.base.IConstants.JAVACC_OPTIONS;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
@@ -10,47 +14,49 @@ import sf.eclipse.javacc.base.OptionSet;
  * The JavaCC options Tab that enables setting the JavaCC options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  * @author Bill Fenlason 2012
  */
-public class JavaCCOptions extends OptionsAbstractTab {
+class JavaCCOptions extends OptionsAbstractTab {
 
   // MMa 02/2010 : formatting and javadoc revision
   // MMa 03/2010 : adapted boolean options sort to 3 columns display
-  // BF  06/2012 : removed redunant superinterface to prevent warning
+  // BF  06/2012 : removed redundant superinterface to prevent warning
+  // MMa 11/2014 : added OUTPUT_LANGUAGE option
 
-  //	The integer valued options are:
-  //	    LOOKAHEAD              (default 1)
-  //	    CHOICE_AMBIGUITY_CHECK (default 2)
-  //	    OTHER_AMBIGUITY_CHECK  (default 1)
-  //	The boolean valued options are:
-  //	    STATIC                 (default true)
-  //	    SUPPORT_CLASS_VISIBILITY_PUBLIC (default true)
-  //	    DEBUG_PARSER           (default false)
-  //	    DEBUG_LOOKAHEAD        (default false)
-  //	    DEBUG_TOKEN_MANAGER    (default false)
-  //	    ERROR_REPORTING        (default true)
-  //	    JAVA_UNICODE_ESCAPE    (default false)
-  //	    UNICODE_INPUT          (default false)
-  //	    IGNORE_CASE            (default false)
-  //	    COMMON_TOKEN_ACTION    (default false)
-  //	    USER_TOKEN_MANAGER     (default false)
-  //	    USER_CHAR_STREAM       (default false)
-  //	    BUILD_PARSER           (default true)
-  //	    BUILD_TOKEN_MANAGER    (default true)
-  //	    TOKEN_MANAGER_USES_PARSER (default false)
-  //	    SANITY_CHECK           (default true)
-  //	    FORCE_LA_CHECK         (default false)
-  //	    CACHE_TOKENS           (default false)
-  //	    KEEP_LINE_COLUMN       (default true)
-  //	GENERATE_CHAINED_EXCEPTION (default false)
-  //	GENERATE_GENERICS          (default false)
-  //	The string valued options are:
-  //	    OUTPUT_DIRECTORY       (default Current Directory)
-  //	    TOKEN_EXTENDS          (Object)
-  //	    TOKEN_FACTORY          (Object)
-  //	JDK_VERSION            (1.5)
-  //	GRAMMAR_ENCODING       (default file.encoding)
+  // The integer valued options are:
+  //     LOOKAHEAD                       (default 1)
+  //     CHOICE_AMBIGUITY_CHECK          (default 2)
+  //     OTHER_AMBIGUITY_CHECK           (default 1)
+  // The boolean valued options are:
+  //     STATIC                          (default true)
+  //     SUPPORT_CLASS_VISIBILITY_PUBLIC (default true)
+  //     DEBUG_PARSER                    (default false)
+  //     DEBUG_LOOKAHEAD                 (default false)
+  //     DEBUG_TOKEN_MANAGER             (default false)
+  //     ERROR_REPORTING                 (default true)
+  //     JAVA_UNICODE_ESCAPE             (default false)
+  //     UNICODE_INPUT                   (default false)
+  //     IGNORE_CASE                     (default false)
+  //     COMMON_TOKEN_ACTION             (default false)
+  //     USER_TOKEN_MANAGER              (default false)
+  //     USER_CHAR_STREAM                (default false)
+  //     BUILD_PARSER                    (default true)
+  //     BUILD_TOKEN_MANAGER             (default true)
+  //     TOKEN_MANAGER_USES_PARSER       (default false)
+  //     SANITY_CHECK                    (default true)
+  //     FORCE_LA_CHECK                  (default false)
+  //     CACHE_TOKENS                    (default false)
+  //     KEEP_LINE_COLUMN                (default true)
+  //     GENERATE_CHAINED_EXCEPTION      (default false)
+  //     GENERATE_GENERICS               (default false)
+  // The string valued options are:
+  //     OUTPUT_DIRECTORY                (default Current Directory)
+  //     OUTPUT_LANGUAGE                 (default Java)
+  //     TOKEN_EXTENDS                   (Object)
+  //     TOKEN_FACTORY                   (Object)
+  //     JDK_VERSION                     (1.5)
+  //     GRAMMAR_ENCODING                (default file.encoding)
 
   /**
    * Initializes with JavaCC default options.
@@ -98,6 +104,7 @@ public class JavaCCOptions extends OptionsAbstractTab {
     jOptionSet.add(new Option("KEEP_LINE_COLUMN", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // string options
+    jOptionSet.add(new Option("OUTPUT_LANGUAGE", "Java", Option.STRING)); //$NON-NLS-1$ 
     jOptionSet.add(new Option("JDK_VERSION", DEF_JDK_VERSION, Option.STRING)); //$NON-NLS-1$ 
     jOptionSet.add(new Option("TOKEN_EXTENDS", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 
     jOptionSet.add(new Option("TOKEN_FACTORY", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 
@@ -115,6 +122,8 @@ public class JavaCCOptions extends OptionsAbstractTab {
 
   /**
    * Sets defaults in Eclipse.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void performDefaults() {

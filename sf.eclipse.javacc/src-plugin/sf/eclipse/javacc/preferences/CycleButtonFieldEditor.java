@@ -18,34 +18,36 @@ import org.eclipse.swt.widgets.Label;
  * preference value.
  * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
+ * @author Marc Mazas 2014
  */
-public class CycleButtonFieldEditor extends FieldEditor {
+class CycleButtonFieldEditor extends FieldEditor {
 
   // BF  05/2012 : added for JavaCC preference page font attribute selection
+  // MMa 11/2014 : some renamings
 
   /** The toggle button */
-  protected Button         fButton;
+  protected Button         jButton;
 
   /** The button label text array */
-  protected final String[] fButtonLabels;
+  protected final String[] jButtonLabels;
 
   /** The button preference value array */
-  protected final String[] fButtonValues;
+  protected final String[] jButtonValues;
 
   /** The button tool tip text */
-  private final String     fButtonToolTipText;
+  protected final String   jButtonToolTipText;
 
   /** The label */
-  private Label            fLabel;
+  protected Label          jLabel;
 
   /** The label text */
-  private final String     fLabelText;
+  protected final String   jLabelText;
 
   /** The label tool tip text */
-  private final String     fLabelToolTipText;
+  protected final String   jLabelToolTipText;
 
   /** The current selection index */
-  protected int            fSelectionIndex;
+  protected int            jSelectionIndex;
 
   /**
    * Creates a cyclic toggle button field editor with no label
@@ -87,13 +89,13 @@ public class CycleButtonFieldEditor extends FieldEditor {
 
     setPreferenceName(preferenceName != null ? preferenceName : ""); //$NON-NLS-1$
 
-    fButtonLabels = buttonText != null ? buttonText : emptyStringArray;
-    fButtonValues = buttonValues != null ? buttonValues : emptyStringArray;
-    Assert.isTrue(fButtonLabels.length > 0 && fButtonLabels.length == fButtonValues.length);
+    jButtonLabels = buttonText != null ? buttonText : emptyStringArray;
+    jButtonValues = buttonValues != null ? buttonValues : emptyStringArray;
+    Assert.isTrue(jButtonLabels.length > 0 && jButtonLabels.length == jButtonValues.length);
 
-    fButtonToolTipText = buttonToolTipText;
-    fLabelText = labelText;
-    fLabelToolTipText = labelToolTipText;
+    jButtonToolTipText = buttonToolTipText;
+    jLabelText = labelText;
+    jLabelToolTipText = labelToolTipText;
 
     createControl(parent);
   }
@@ -101,41 +103,41 @@ public class CycleButtonFieldEditor extends FieldEditor {
   /** {@inheritDoc} */
   @Override
   public int getNumberOfControls() {
-    return (fLabelText == null && fLabelToolTipText == null) ? 1 : 2;
+    return (jLabelText == null && jLabelToolTipText == null) ? 1 : 2;
   }
 
   /** {@inheritDoc} */
   @Override
   protected void doFillIntoGrid(final Composite parent, final int numColumns) {
-    fButton = getPushButtonControl(parent);
+    jButton = getPushButtonControl(parent);
     final GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
     gd.horizontalSpan = numColumns - (getNumberOfControls() - 1);
 
     // insure that the button is wide enough for the longest label
-    for (int i = fButtonLabels.length - 1; i >= 0; i--) {
-      fButton.setText(fButtonLabels[i]);
-      final Point trueSize = fButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+    for (int i = jButtonLabels.length - 1; i >= 0; i--) {
+      jButton.setText(jButtonLabels[i]);
+      final Point trueSize = jButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
       if (trueSize.x > gd.widthHint) {
         gd.widthHint = trueSize.x;
       }
     }
-    fButton.setLayoutData(gd);
+    jButton.setLayoutData(gd);
 
-    if (fLabel != null) {
+    if (jLabel != null) {
       final GridData gdl = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-      fLabel.setLayoutData(gdl);
+      jLabel.setLayoutData(gdl);
     }
   }
 
   /** {@inheritDoc} */
   @Override
   protected void adjustForNumColumns(final int numColumns) {
-    if (fLabel != null) {
-      ((GridData) fButton.getLayoutData()).horizontalSpan = 1;
-      ((GridData) fLabel.getLayoutData()).horizontalSpan = numColumns - 1;
+    if (jLabel != null) {
+      ((GridData) jButton.getLayoutData()).horizontalSpan = 1;
+      ((GridData) jLabel.getLayoutData()).horizontalSpan = numColumns - 1;
     }
     else {
-      ((GridData) fButton.getLayoutData()).horizontalSpan = numColumns;
+      ((GridData) jButton.getLayoutData()).horizontalSpan = numColumns;
     }
   }
 
@@ -146,24 +148,25 @@ public class CycleButtonFieldEditor extends FieldEditor {
    * @return the button control
    */
   public Button getPushButtonControl(final Composite parent) {
-    if (fButton == null) {
-      fButton = new Button(parent, SWT.PUSH);
-      fButton.setFont(parent.getFont());
-      fButton.setText(fButtonLabels[0]);
-      fButton.setToolTipText(fButtonToolTipText);
-      fButton.addSelectionListener(new SelectionAdapter() {
+    if (jButton == null) {
+      jButton = new Button(parent, SWT.PUSH);
+      jButton.setFont(parent.getFont());
+      jButton.setText(jButtonLabels[0]);
+      jButton.setToolTipText(jButtonToolTipText);
+      jButton.addSelectionListener(new SelectionAdapter() {
 
+        /** {@inheritDoc} */
         @Override
         public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent e) {
-          fSelectionIndex = (fSelectionIndex + 1 >= fButtonLabels.length) ? 0 : fSelectionIndex + 1;
-          fButton.setText(fButtonLabels[fSelectionIndex]);
+          jSelectionIndex = (jSelectionIndex + 1 >= jButtonLabels.length) ? 0 : jSelectionIndex + 1;
+          jButton.setText(jButtonLabels[jSelectionIndex]);
         }
       });
 
-      if (fLabelText != null || fLabelToolTipText != null) {
-        fLabel = getLabelControl(parent);
-        setLabelText(fLabelText == null ? "" : fLabelText); //$NON-NLS-1$
-        fLabel.setToolTipText(fLabelToolTipText);
+      if (jLabelText != null || jLabelToolTipText != null) {
+        jLabel = getLabelControl(parent);
+        setLabelText(jLabelText == null ? "" : jLabelText); //$NON-NLS-1$
+        jLabel.setToolTipText(jLabelToolTipText);
       }
 
       if (getPreferenceName().length() == 0) {
@@ -171,19 +174,19 @@ public class CycleButtonFieldEditor extends FieldEditor {
       }
     }
     else {
-      checkParent(fButton, parent);
+      checkParent(jButton, parent);
     }
-    return fButton;
+    return jButton;
   }
 
   /** {@inheritDoc} */
   @Override
   public void setEnabled(final boolean enabled, @SuppressWarnings("unused") final Composite parent) {
-    if (fButton != null) {
-      fButton.setEnabled(enabled);
+    if (jButton != null) {
+      jButton.setEnabled(enabled);
     }
-    if (fLabel != null) {
-      fLabel.setEnabled(enabled);
+    if (jLabel != null) {
+      jLabel.setEnabled(enabled);
     }
   }
 
@@ -193,30 +196,30 @@ public class CycleButtonFieldEditor extends FieldEditor {
    * @param visible - the boolean visibility value
    */
   public void setVisible(final boolean visible) {
-    if (fButton != null) {
-      fButton.setVisible(visible);
+    if (jButton != null) {
+      jButton.setVisible(visible);
     }
-    if (fLabel != null) {
-      fLabel.setVisible(visible);
+    if (jLabel != null) {
+      jLabel.setVisible(visible);
     }
   }
 
   /** {@inheritDoc} */
   @Override
   protected void doLoad() {
-    fSelectionIndex = 0;
+    jSelectionIndex = 0;
 
     if (getPreferenceName().length() > 0) {
       final String value = getPreferenceStore().getString(getPreferenceName());
 
-      for (fSelectionIndex = 0; fSelectionIndex < fButtonValues.length; fSelectionIndex++) {
-        if (value.equals(fButtonValues[fSelectionIndex])) {
+      for (jSelectionIndex = 0; jSelectionIndex < jButtonValues.length; jSelectionIndex++) {
+        if (value.equals(jButtonValues[jSelectionIndex])) {
           break;
         }
       }
-      fSelectionIndex = (fSelectionIndex >= fButtonValues.length) ? 0 : fSelectionIndex;
+      jSelectionIndex = (jSelectionIndex >= jButtonValues.length) ? 0 : jSelectionIndex;
     }
-    fButton.setText(fButtonLabels[fSelectionIndex]);
+    jButton.setText(jButtonLabels[jSelectionIndex]);
   }
 
   /** {@inheritDoc} */
@@ -232,7 +235,7 @@ public class CycleButtonFieldEditor extends FieldEditor {
   @Override
   protected void doStore() {
     if (getPreferenceName().length() > 0) {
-      getPreferenceStore().setValue(getPreferenceName(), fButtonValues[fSelectionIndex]);
+      getPreferenceStore().setValue(getPreferenceName(), jButtonValues[jSelectionIndex]);
     }
   }
 

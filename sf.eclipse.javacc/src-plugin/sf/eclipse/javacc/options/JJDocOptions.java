@@ -1,5 +1,7 @@
 package sf.eclipse.javacc.options;
 
+import static sf.eclipse.javacc.base.IConstants.JJDOC_OPTIONS;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 
@@ -10,10 +12,10 @@ import sf.eclipse.javacc.base.OptionSet;
  * The Tab for JJDoc options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  * @author Bill Fenlason 2012
  */
-public class JJDocOptions extends OptionsAbstractTab {
+class JJDocOptions extends OptionsAbstractTab {
 
   // MMa 02/2010 : formatting and javadoc revision ; fixed output file handling
   // BF  06/2012 : removed redundant superinterface to prevent warning
@@ -69,6 +71,8 @@ public class JJDocOptions extends OptionsAbstractTab {
 
   /**
    * Sets defaults in Eclipse.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void performDefaults() {

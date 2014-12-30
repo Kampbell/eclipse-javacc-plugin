@@ -8,32 +8,33 @@ import java.util.Collection;
  * Find last added or modified files after a compilation of a .jjt or .jj file.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  * @author Bill Fenlason 2012
  */
 public class DirList {
 
   // MMa 02/2010 : formatting and javadoc revision
   // BF  06/2012 : added required hashCode method to avoid warning message
+  // MMa 11/2014 : some renamings
 
   /** The last collection of files */
-  static Collection<DatedFile> oldCol;
+  private static Collection<DatedFile> sLastColl;
 
   /**
    * Adds all files found under a given root directory to a given collection.
    * 
    * @param aRoot - the root directory
-   * @param aCol - the Collection to fill
+   * @param aColl - the Collection to fill
    */
-  protected static void listFiles(final File aRoot, final Collection<DatedFile> aCol) {
+  static void listFiles(final File aRoot, final Collection<DatedFile> aColl) {
     final File[] f = aRoot.listFiles();
     for (int i = 0; i < f.length; i++) {
       if (f[i].isDirectory()) {
-        listFiles(f[i], aCol);
+        listFiles(f[i], aColl);
       }
       else {
         final DatedFile df = new DatedFile(f[i]);
-        aCol.add(df);
+        aColl.add(df);
       }
     }
   }
@@ -44,8 +45,9 @@ public class DirList {
    * @param aDir - a directory
    */
   public static void snapshot(final String aDir) {
-    oldCol = new ArrayList<DatedFile>();
-    listFiles(new File(aDir), oldCol);
+    final int sz = sLastColl == null ? 20 : 5 + sLastColl.size();
+    sLastColl = new ArrayList<DatedFile>(sz);
+    listFiles(new File(aDir), sLastColl);
   }
 
   /**
@@ -56,12 +58,13 @@ public class DirList {
    * @return String[] the array of last modified files
    */
   public static String[] getDiff(final String aDir) {
-    final Collection<DatedFile> newCol = new ArrayList<DatedFile>();
+    final int sz = sLastColl == null ? 20 : 5 + sLastColl.size();
+    final Collection<DatedFile> newCol = new ArrayList<DatedFile>(sz);
     listFiles(new File(aDir), newCol);
-    if (oldCol == null) {
+    if (sLastColl == null) {
       return null;
     }
-    newCol.removeAll(oldCol);
+    newCol.removeAll(sLastColl);
     if (newCol.isEmpty()) {
       return null;
     }
@@ -80,9 +83,9 @@ public class DirList {
 class DatedFile {
 
   /** The file */
-  private final File fFile;
+  protected final File jFile;
   /** The file modification date */
-  private final long fDate;
+  protected final long jDate;
 
   /**
    * Standard constructor.
@@ -90,24 +93,24 @@ class DatedFile {
    * @param aFile - a file
    */
   DatedFile(final File aFile) {
-    fFile = aFile;
-    fDate = aFile.lastModified();
+    jFile = aFile;
+    jDate = aFile.lastModified();
   }
 
   /** {@inheritDoc} */
   @Override
   public boolean equals(final Object aObj) {
     final DatedFile obj = (DatedFile) aObj;
-    if (this.fDate != obj.fDate) {
+    if (this.jDate != obj.jDate) {
       return false;
     }
-    return this.fFile.equals(obj.fFile);
+    return this.jFile.equals(obj.jFile);
   }
 
   /** {@inheritDoc} */
   @Override
   public String toString() {
-    return fFile.toString();
+    return jFile.toString();
   }
 
   /** {@inheritDoc} */

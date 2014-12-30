@@ -1,10 +1,10 @@
 package sf.eclipse.javacc.options;
 
-import org.eclipse.core.resources.IProject;
+import static sf.eclipse.javacc.base.IConstants.PLUGIN_QN;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -19,10 +19,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.service.prefs.BackingStoreException;
 
-import sf.eclipse.javacc.base.IJJConstants;
+import sf.eclipse.javacc.base.AbstractActivator;
 import sf.eclipse.javacc.base.Option;
 import sf.eclipse.javacc.base.OptionSet;
-import sf.eclipse.javacc.head.Activator;
 
 /**
  * The basic Tab for JavaCC, JJTree, JJDoc and JTB project options.<br>
@@ -33,9 +32,9 @@ import sf.eclipse.javacc.head.Activator;
  * @see JJDocOptions
  * @see JTBOptions
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  */
-public abstract class OptionsAbstractTab extends Composite implements IPropertyChangeListener, IJJConstants {
+abstract class OptionsAbstractTab extends Composite implements IPropertyChangeListener {
 
   // MMa 04/2009 : added descriptions
   // MMa 11/2009 : javadoc and formatting revision ; changed line option section
@@ -68,9 +67,9 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
   /** The IResource we are working on */
   protected IResource              jResource;
   /** The "default" label */
-  String                           jDefaultLabel      = Activator.getString("OptAbsTab.default");      //$NON-NLS-1$
+  protected String                 jDefaultLabel      = AbstractActivator.getMsg("OptAbsTab.default");      //$NON-NLS-1$
   /** The "empty default" label */
-  String                           jEmptyDefaultLabel = Activator.getString("OptAbsTab.empty_default"); //$NON-NLS-1$
+  protected String                 jEmptyDefaultLabel = AbstractActivator.getMsg("OptAbsTab.empty_default"); //$NON-NLS-1$
 
   /**
    * Standard constructor.
@@ -91,9 +90,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     // get the global line options string from the resource
     String options = null;
     if (jResource != null) {
-      final IProject proj = jResource.getProject();
-      final IScopeContext projectScope = new ProjectScope(proj);
-      final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+      final IEclipsePreferences prefs = new ProjectScope(jResource.getProject()).getNode(PLUGIN_QN);
       options = prefs.get(jPreferenceName, ""); //$NON-NLS-1$
       jOptionSet.configuresFrom(options);
     }
@@ -106,7 +103,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
     // add group
     final Group resGrp = new Group(this, SWT.NONE);
-    resGrp.setText(Activator.getString("OptAbsTab.Resulting_group")); //$NON-NLS-1$
+    resGrp.setText(AbstractActivator.getMsg("OptAbsTab.Resulting_group")); //$NON-NLS-1$
     resGrp.setLayout(layout);
     resGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
@@ -115,7 +112,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
 
     // add group
     final Group optGrp = new Group(this, SWT.NONE);
-    optGrp.setText(Activator.getString("OptAbsTab.Options_group")); //$NON-NLS-1$
+    optGrp.setText(AbstractActivator.getMsg("OptAbsTab.Options_group")); //$NON-NLS-1$
     optGrp.setLayout(layout);
     optGrp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
@@ -152,7 +149,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     jCmdLnOptField = new StringFieldEditor(
                                            jPreferenceName, // name
-                                           "(" + Activator.getString("OptAbsTab.Resulting") + ") " + jPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                           "(" + AbstractActivator.getMsg("OptAbsTab.Resulting") + ") " + jPreferenceName + " :", // label //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                            StringFieldEditor.UNLIMITED, // width
                                            StringFieldEditor.VALIDATE_ON_FOCUS_LOST, // strategy
                                            composite);
@@ -269,8 +266,8 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Select_directory")); //$NON-NLS-1$
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Path_can_be_pathSection")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(AbstractActivator.getMsg("OptAbsTab.Select_directory")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(AbstractActivator.getMsg("OptAbsTab.Path_can_be_pathSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     int k = jOptionSet.getOptionsSize(Option.PATH);
     jPathField = new DirectoryFieldEditor[k];
@@ -281,7 +278,7 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
         continue;
       }
       jPathField[k] = new DirectoryFieldEditor(jOptionSet.getName(i), jOptionSet.getNameAndDescription(i),
-                                               Activator.getString("OptAbsTab.Choose_a_directory"), //$NON-NLS-1$
+                                               AbstractActivator.getMsg("OptAbsTab.Choose_a_directory"), //$NON-NLS-1$
                                                jResource.getProject().getLocation().toOSString(), composite);
       jPathField[k].setStringValue(jOptionSet.getValueInQuotes(i));
       jPathField[k].setPropertyChangeListener(this);
@@ -298,8 +295,8 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
     final Composite composite = new Composite(aGrp, SWT.NONE);
     composite.setLayout(new GridLayout());
     composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Select_file")); //$NON-NLS-1$
-    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(Activator.getString("OptAbsTab.Path_can_be_FileSection")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(AbstractActivator.getMsg("OptAbsTab.Select_file")); //$NON-NLS-1$
+    new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(AbstractActivator.getMsg("OptAbsTab.Path_can_be_FileSection")); //$NON-NLS-1$
     new Label(composite, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
     int k = jOptionSet.getOptionsSize(Option.FILE);
     jFileField = new FileFieldEditor[k];
@@ -382,15 +379,13 @@ public abstract class OptionsAbstractTab extends Composite implements IPropertyC
    */
   public boolean performOk() {
     if (jResource != null) {
-      final IProject project = jResource.getProject();
-      final IScopeContext projectScope = new ProjectScope(project);
-      final IEclipsePreferences prefs = projectScope.getNode(IJJConstants.ID);
+      final IEclipsePreferences prefs = new ProjectScope(jResource.getProject()).getNode(PLUGIN_QN);
       //      prefs.put(fPreferenceName, fCmdLnOptField.getStringValue());
       prefs.put(jPreferenceName, jOptionSet.buildCmdLine());
       try {
         prefs.flush();
       } catch (final BackingStoreException e) {
-        e.printStackTrace();
+        AbstractActivator.logBug(e);
         return false;
       }
     }

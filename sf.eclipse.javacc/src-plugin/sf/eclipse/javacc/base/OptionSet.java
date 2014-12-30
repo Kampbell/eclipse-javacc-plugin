@@ -2,13 +2,14 @@ package sf.eclipse.javacc.base;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
  * A set of Options ; can parse options on a command line and generate one new set.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  */
 public class OptionSet {
 
@@ -17,11 +18,11 @@ public class OptionSet {
   // ... ....... : fixed display true cases for void options
 
   /** The list of options */
-  protected ArrayList<Option> list;
+  protected List<Option> list;
   /** The "equals" flag : true if an '=' is needed, false otherwise */
-  protected boolean           needsEqual;
+  protected boolean      needsEqual;
   /** The command line target (after the options) */
-  protected String            target;
+  protected String       target;
 
   /**
    * Standard constructor.
@@ -269,7 +270,7 @@ public class OptionSet {
    * 
    * @param aOption - the option
    */
-  public void add(final Option aOption) {
+  public final void add(final Option aOption) {
     list.add(aOption);
   }
 
@@ -277,14 +278,14 @@ public class OptionSet {
    * @param aIndex - the option index
    * @return the option
    */
-  public Option getOption(final int aIndex) {
+  public final Option getOption(final int aIndex) {
     return list.get(aIndex);
   }
 
   /**
    * @return the total number of options
    */
-  public int getOptionsSize() {
+  public final int getOptionsSize() {
     return list.size();
   }
 
@@ -307,7 +308,7 @@ public class OptionSet {
    * @param aIndex - the option index
    * @return the option type
    */
-  public int getType(final int aIndex) {
+  public final int getType(final int aIndex) {
     return getOption(aIndex).getType();
   }
 
@@ -315,7 +316,7 @@ public class OptionSet {
    * @param aIndex - the option index
    * @return the option name
    */
-  public String getName(final int aIndex) {
+  public final String getName(final int aIndex) {
     return getOption(aIndex).getName();
   }
 
@@ -323,7 +324,7 @@ public class OptionSet {
    * @param aIndex - the option index
    * @return the option name and description
    */
-  public String getNameAndDescription(final int aIndex) {
+  public final String getNameAndDescription(final int aIndex) {
     return getOption(aIndex).getNameAndDescription();
   }
 
@@ -343,7 +344,7 @@ public class OptionSet {
    * @param aIndex - the option index
    * @return the option value (no quotes added)
    */
-  public String getValue(final int aIndex) {
+  public final String getValue(final int aIndex) {
     return getOption(aIndex).getValue();
   }
 
@@ -351,7 +352,7 @@ public class OptionSet {
    * @param aIndex - the option index
    * @return the option default value
    */
-  public String getDefaultValue(final int aIndex) {
+  public final String getDefaultValue(final int aIndex) {
     return getOption(aIndex).getDefaultValue();
   }
 }

@@ -4,7 +4,7 @@ package sf.eclipse.javacc.base;
  * An option is a name + type + value + default value.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  */
 public class Option {
 
@@ -68,21 +68,21 @@ public class Option {
   /**
    * @return the type
    */
-  int getType() {
+  final int getType() {
     return type;
   }
 
   /**
    * @return the name
    */
-  String getName() {
+  final String getName() {
     return name;
   }
 
   /**
    * @return the name and the description
    */
-  String getNameAndDescription() {
+  final String getNameAndDescription() {
     if (description.length() == 0) {
       return name;
     }
@@ -92,7 +92,7 @@ public class Option {
   /**
    * @return the value
    */
-  String getValue() {
+  final String getValue() {
     return value;
   }
 
@@ -101,7 +101,7 @@ public class Option {
    * 
    * @param aValue - the value to be set
    */
-  public void setValue(final String aValue) {
+  public final void setValue(final String aValue) {
     if (aValue == null) {
       value = defaultValue;
     }
@@ -113,7 +113,7 @@ public class Option {
   /**
    * @return the default value
    */
-  String getDefaultValue() {
+  final String getDefaultValue() {
     return defaultValue;
   }
 }

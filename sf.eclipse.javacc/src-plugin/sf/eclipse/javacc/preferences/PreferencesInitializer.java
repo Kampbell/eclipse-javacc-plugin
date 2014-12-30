@@ -1,21 +1,25 @@
 package sf.eclipse.javacc.preferences;
 
+import static sf.eclipse.javacc.preferences.IPrefConstants.*;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
-import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.base.AbstractActivator;
 
 /**
- * Class used to initialize default preference values.
+ * Class used to initialize default preference values.<br>
+ * Referenced by plugin.xml.<br>
+ * <extension point="org.eclipse.core.runtime.preferences">.<br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  * @author Bill Fenlason 2012
  */
-public class PreferencesInitializer extends AbstractPreferenceInitializer implements IPrefConstants {
+public class PreferencesInitializer extends AbstractPreferenceInitializer {
 
   // MMa : added / renamed colors and indentation preferences
   // MMa 02/2010 : formatting and javadoc revision
@@ -30,7 +34,7 @@ public class PreferencesInitializer extends AbstractPreferenceInitializer implem
   /** {@inheritDoc} */
   @Override
   public void initializeDefaultPreferences() {
-    final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+    final IPreferenceStore store = AbstractActivator.getDefault().getPreferenceStore();
 
     store.setValue(P_HYPERLINK_COLOR_SYSTEM_DEFAULT, false);
     store.setDefault(P_HYPERLINK_COLOR, BLUE);
@@ -192,104 +196,95 @@ public class PreferencesInitializer extends AbstractPreferenceInitializer implem
   // Currently unused values may be used in the future
 
   /** The RGB String for the color WHITE */
-  private static String       WHITE        = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_WHITE)
-                                                                             .getRGB());
+  protected static String       WHITE        = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_WHITE)
+                                                                               .getRGB());
 
   /** The RGB String for the color BLACK */
-  private static String       BLACK        = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_BLACK)
-                                                                             .getRGB());
+  protected static String       BLACK        = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_BLACK)
+                                                                               .getRGB());
 
   /** The RGB String for the color RED */
-  private static String       RED          = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_RED)
-                                                                             .getRGB());
+  protected static String       RED          = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_RED)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK RED */
-  private static String       DARK_RED     = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_RED)
-                                                                             .getRGB());
+  protected static String       DARK_RED     = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_RED)
+                                                                               .getRGB());
 
   /** The RGB String for the color GREEN */
-  @SuppressWarnings("unused")
-  private static String       GREEN        = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_GREEN)
-                                                                             .getRGB());
+  protected static String       GREEN        = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_GREEN)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK GREEN */
-  private static String       DARK_GREEN   = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_GREEN)
-                                                                             .getRGB());
+  protected static String       DARK_GREEN   = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_GREEN)
+                                                                               .getRGB());
 
   /** The RGB String for the color YELLOW */
-  @SuppressWarnings("unused")
-  private static String       YELLOW       = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_YELLOW)
-                                                                             .getRGB());
+  protected static String       YELLOW       = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_YELLOW)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK YELLOW */
-  private static String       DARK_YELLOW  = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_YELLOW)
-                                                                             .getRGB());
+  protected static String       DARK_YELLOW  = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_YELLOW)
+                                                                               .getRGB());
 
   /** The RGB String for the color BLUE */
-  private static String       BLUE         = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_BLUE)
-                                                                             .getRGB());
+  protected static String       BLUE         = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_BLUE)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK BLUE */
-  @SuppressWarnings("unused")
-  private static String       DARK_BLUE    = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_BLUE)
-                                                                             .getRGB());
+  protected static String       DARK_BLUE    = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_BLUE)
+                                                                               .getRGB());
 
   /** The RGB String for the color MAGENTA */
-  private static String       MAGENTA      = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_MAGENTA)
-                                                                             .getRGB());
+  protected static String       MAGENTA      = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_MAGENTA)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK MAGENTA */
-  @SuppressWarnings("unused")
-  private static String       DARK_MAGENTA = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_MAGENTA)
-                                                                             .getRGB());
+  protected static String       DARK_MAGENTA = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_MAGENTA)
+                                                                               .getRGB());
 
   /** The RGB String for the color CYAN */
-  @SuppressWarnings("unused")
-  private static String       CYAN         = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_CYAN)
-                                                                             .getRGB());
+  protected static String       CYAN         = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_CYAN)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK CYAN */
-  @SuppressWarnings("unused")
-  private static String       DARK_CYAN    = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_CYAN)
-                                                                             .getRGB());
+  protected static String       DARK_CYAN    = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_CYAN)
+                                                                               .getRGB());
 
   /** The RGB String for the color GRAY */
-  @SuppressWarnings("unused")
-  private static String       GRAY         = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_GRAY)
-                                                                             .getRGB());
+  protected static String       GRAY         = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_GRAY)
+                                                                               .getRGB());
 
   /** The RGB String for the color DARK GRAY */
-  @SuppressWarnings("unused")
-  private static String       DARK_GRAY    = StringConverter.asString(Display.getCurrent()
-                                                                             .getSystemColor(SWT.COLOR_DARK_GRAY)
-                                                                             .getRGB());
+  protected static String       DARK_GRAY    = StringConverter.asString(Display.getCurrent()
+                                                                               .getSystemColor(SWT.COLOR_DARK_GRAY)
+                                                                               .getRGB());
 
   /** The font attribute String constant NONE */
-  private static final String NONE         = "" + SWT.NONE;                             //$NON-NLS-1$
+  protected static final String NONE         = String.valueOf(SWT.NONE);
 
   /** The font attribute String constant BOLD */
-  private static final String BOLD         = "" + SWT.BOLD;                             //$NON-NLS-1$
+  protected static final String BOLD         = String.valueOf(SWT.BOLD);
 
   /** The font attribute String constant ITALIC */
-  private static final String ITALIC       = "" + SWT.ITALIC;                           //$NON-NLS-1$
+  protected static final String ITALIC       = String.valueOf(SWT.ITALIC);
 
   /** The font attribute String constant BOLD_ITALIC */
-  @SuppressWarnings("unused")
-  private static final String BOLD_ITALIC  = "" + (SWT.BOLD + SWT.ITALIC);              //$NON-NLS-1$
+  protected static final String BOLD_ITALIC  = String.valueOf(SWT.BOLD + SWT.ITALIC);
 
 }

@@ -11,14 +11,13 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+
 /**
- * Builder for .jj and .jjt files. It is also used to compile files via static methods.<br>
- * Referenced by plugin.xml<br>
- * <extension point="org.eclipse.core.resources.builders">
+ * File handling utility. Static methods.
  * 
  * @author Tim Hanson 2007
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  */
 public class FileUtils {
 
@@ -27,7 +26,7 @@ public class FileUtils {
   // MMa 08/2011 : added getFileContentsSB() (but unused)
 
   /**
-   * Reads a file contents.
+   * Reads a file contents. Unused.
    * 
    * @param aFileName - a file name
    * @return the file contents
@@ -44,13 +43,14 @@ public class FileUtils {
       sb.append(buf);
       return sb;
     } catch (final IOException e) {
+      AbstractActivator.logBug(e);
       throw new RuntimeException(e);
     } finally {
       if (r != null) {
         try {
           r.close();
         } catch (final IOException e) {
-          e.printStackTrace();
+          AbstractActivator.logBug(e);
         }
       }
     }
@@ -74,13 +74,14 @@ public class FileUtils {
       }
       return w.toString();
     } catch (final IOException e) {
+      AbstractActivator.logBug(e);
       throw new RuntimeException(e);
     } finally {
       if (r != null) {
         try {
           r.close();
         } catch (final IOException e) {
-          e.printStackTrace();
+          AbstractActivator.logBug(e);
         }
       }
     }
@@ -98,20 +99,21 @@ public class FileUtils {
       w = new FileWriter(aFileName);
       w.write(aStr);
     } catch (final IOException e) {
+      AbstractActivator.logBug(e);
       throw new RuntimeException(e);
     } finally {
       if (w != null) {
         try {
           w.close();
         } catch (final IOException e) {
-          e.printStackTrace();
+          AbstractActivator.logBug(e);
         }
       }
     }
   }
 
   /**
-   * Appends a string to a file.
+   * Appends a string to a file. Unused.
    * 
    * @param aFileName - a file name
    * @param aStr - a string
@@ -122,13 +124,14 @@ public class FileUtils {
       w = new FileWriter(aFileName);
       w.append(aStr);
     } catch (final IOException e) {
+      AbstractActivator.logBug(e);
       throw new RuntimeException(e);
     } finally {
       if (w != null) {
         try {
           w.close();
         } catch (final IOException e) {
-          e.printStackTrace();
+          AbstractActivator.logBug(e);
         }
       }
     }

@@ -1,62 +1,69 @@
 package sf.eclipse.javacc.parser;
 
+import static sf.eclipse.javacc.parser.JavaCCParserConstants.*;
+import static sf.eclipse.javacc.parser.JavaCCParserTreeConstants.*;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
-import sf.eclipse.javacc.editors.JJElements;
-import sf.eclipse.javacc.head.Activator;
+import sf.eclipse.javacc.base.AbstractActivator;
+import sf.eclipse.javacc.editors.Elements;
 
 /**
- * The JJNode is a SimpleNode to which have been added all the methods not starting with "jjt". </ul>
+ * The JJNode is a SimpleNode to which have been added all the methods not starting with "jjt".
  * 
  * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014
  * @author Bill Fenlason 2012
  */
-public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserConstants {
+public class JJNode implements Node {
 
   // MMa 11/2009 : javadoc and formatting revision ; fixed duplicated JJT identifiers (node #node) in maps ;
-  // added lexical states and JJTree nodes in labels (to be displayed in outline and call hierarchy views)
+  //               added lexical states and JJTree nodes in labels (to be displayed in outline and call
+  //               hierarchy views)
   // MMa 08/2011 : added node_descriptor labels
   // MMa 08/2011 : fixed NPE in buildCalleeMap()
-  // MMa 08/2011 : enhanced Call Hierarchy view (to display JJTree node descriptors)
-  // MMa 08/2011 : enhanced Outline view (to display JJTree node descriptors and to fix regexpr_spec)
+  // MMa 08/2011 : enhanced Call Hierarchy View (to display JJTree node descriptors)
+  // MMa 08/2011 : enhanced Outline Page (to display JJTree node descriptors and to fix regexpr_spec)
   // BF  06/2012 : added NLS tags and eliminated else clauses to prevent warning messages
-  // TODO add methods and classes call hierarchy callers and callees
+  // MMa 10/2012 : added begin and end columns, used static imports, adapted to the no node creation flags, 
+  //               fixed outline names and tree ; adapted to modifications in grammar nodes ;
+  //               adapted to the new token offset availability
+  // MMa 11/2014 : added nameToken field
+
+  // TODO add methods and classes in Call Hierarchy callers and callees
 
   /** The node's parent */
-  protected Node              parent;
+  protected Node                parent;
   /** The parser */
-  protected JavaCCParser      parser;
+  protected JavaCCParser        parser;
   /** The node's children */
-  protected Node[]            children;
+  protected Node[]              children;
   /** The node's id */
-  protected int               id;
+  protected int                 id;
   /** The node's name */
-  protected String            name;
+  protected String              name;
   /** The node's display name */
-  protected String            displayName;
+  protected String              displayName;
+  /** The node's name token */
+  protected Token               nameToken;
   /** The first node */
-  protected Token             first;
+  protected Token               first;
   /** The last node */
-  protected Token             last;
-  /** The JavaCC elements */
-  private JJElements          jjElements;
+  protected Token               last;
   /** The callers */
-  private JJNode[]            callers   = new JJNode[0];
+  protected JJNode[]            callers   = new JJNode[0];
   /** The callees */
-  private JJNode[]            callees   = new JJNode[0];
+  protected JJNode[]            callees   = new JJNode[0];
   /** The separator string for display names */
-  public static final String  DASH_SEP  = " - ";        //$NON-NLS-1$
+  public static final String    DASH_SEP  = " - ";        //$NON-NLS-1$
   /** The separator string for lexical states */
-  private static final String COLON_SEP = " : ";        //$NON-NLS-1$
-
-  /** An fake node to display an out of hierarchy selection */
-  static final JJNode         oohsJJNode;
-
+  protected static final String COLON_SEP = " : ";        //$NON-NLS-1$
+  /** A fake node to display an out of hierarchy selection */
+  protected static final JJNode oohsJJNode;
   static {
     oohsJJNode = new JJNode(-1);
-    oohsJJNode.name = Activator.getString("GlobOpt.Out_of_hierarchy_selection"); //$NON-NLS-1$
+    oohsJJNode.name = AbstractActivator.getMsg("OptGlob.Out_of_hierarchy_selection"); //$NON-NLS-1$
     oohsJJNode.displayName = oohsJJNode.name;
   }
 
@@ -80,15 +87,14 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     parser = aParser;
   }
 
-  /**
-   * @return Returns the fake node to display an out of hierarchy selection
+  /*
+   * SimpleNode methods.
    */
-  public static final JJNode getOohsjjnode() {
-    return oohsJJNode;
-  }
 
   /**
    * Empty open method. Comes from SimpleNode.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void jjtOpen() {
@@ -97,6 +103,8 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
 
   /**
    * Empty close method. Comes from SimpleNode.
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void jjtClose() {
@@ -104,16 +112,9 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   }
 
   /**
-   * @return the id
-   */
-  public int getId() {
-    return id;
-  }
-
-  /**
    * Sets the parent. Comes from SimpleNode.
-   * 
-   * @param aParent - the parent
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void jjtSetParent(final Node aParent) {
@@ -122,8 +123,8 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
 
   /**
    * Gets the parent. Comes from SimpleNode.
-   * 
-   * @return the parent
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public Node jjtGetParent() {
@@ -131,20 +132,9 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   }
 
   /**
-   * @return the parent
-   */
-  public JJNode getParent() {
-    if (parent instanceof JJNode) {
-      return (JJNode) parent;
-    }
-    return null;
-  }
-
-  /**
    * Adds a child. Comes from SimpleNode.
-   * 
-   * @param aNode - the child's node
-   * @param aId - the child's id
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public void jjtAddChild(final Node aNode, final int aId) {
@@ -161,9 +151,8 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
 
   /**
    * Gets the child of a given index. Comes from SimpleNode.
-   * 
-   * @param i - the child's index
-   * @return the child's node
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public Node jjtGetChild(final int i) {
@@ -172,12 +161,33 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
 
   /**
    * Gets the node's number of children. Comes from SimpleNode.
-   * 
-   * @return The node's number of children
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public int jjtGetNumChildren() {
     return (children == null) ? 0 : children.length;
+  }
+
+  /*
+   * Specific methods
+   */
+
+  /**
+   * @return the parent
+   */
+  public JJNode getParent() {
+    if (parent instanceof JJNode) {
+      return (JJNode) parent;
+    }
+    return null;
+  }
+
+  /**
+   * @return Returns the fake node to display an out of hierarchy selection
+   */
+  public static final JJNode getOohsjjnode() {
+    return oohsJJNode;
   }
 
   /**
@@ -188,6 +198,13 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   }
 
   /**
+   * @return the id
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
    * @return the node's first token line number
    */
   public int getBeginLine() {
@@ -195,10 +212,24 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
   }
 
   /**
+   * @return the node's first token column number
+   */
+  public int getBeginColumn() {
+    return first.beginColumn;
+  }
+
+  /**
    * @return the node's last token line number
    */
   public int getEndLine() {
     return last.endLine;
+  }
+
+  /**
+   * @return the node's last token column number
+   */
+  public int getEndColumn() {
+    return last.endColumn;
   }
 
   /**
@@ -235,8 +266,8 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
 
   /**
    * Returns the node's name. Comes from SimpleNode.
-   * 
-   * @return the node's name
+   * <p>
+   * {@inheritDoc}
    */
   @Override
   public String toString() {
@@ -248,6 +279,34 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     }
     // Should not happen
     return jjtNodeName[id];
+  }
+
+  /**
+   * Returns the node's name.
+   * 
+   * @return the node's name
+   */
+  public String getName() {
+    if (name == null) {
+      setNames();
+    }
+    if (name != null) {
+      return name;
+    }
+    // Should not happen
+    return jjtNodeName[id];
+  }
+
+  /**
+   * Returns the node's name column.
+   * 
+   * @return the node's name column
+   */
+  public Token getNameToken() {
+    if (nameToken == null) {
+      setNames();
+    }
+    return nameToken;
   }
 
   /**
@@ -268,74 +327,152 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
 
   /**
    * Sets the node's name and display name.
+   * <p>
+   * Note : we could probably simplify this by using more appropriate and more appropriately JJTree nodes
    */
   public void setNames() {
-    // default name
+    // JJTVOID
+    // JJTROOT
+    // JJTPARSER_BEGIN
+    // JJTJAVACC_OPTIONS
+    // JJTJAVACODE_BLOCK
+    // JJTBNF_PROD_JAVA_BLOCK
+    // JJTBNF_PROD_EXP_BLOCK
+    // JJTREG_EXPR_PROD_BLOCK
+    // JJTTOKEN_MANAGER_DECLS
+    // JJTREGEXPR_KIND
+    // JJTIDENT_REG_EXPR_LABEL
+    // JJTJAVAIDENTINCLAORINTDECL
+    // JJTJAVAIDENTINENUMDECL
+    // JJTJAVAIDENTINMETHODDECL
+    // JJTJAVAIDENTINCONSTRDECL
+    // JJTJAVAIDENTINANNOTTYPEDECL
     name = displayName = first.image;
+    nameToken = first;
 
-    if (id == JJTOPTION_BINDING) {
-      // Options option_binding => Option name
-      Token f = first;
-      while (f != last && f.kind != JavaCCParserConstants.IDENTIFIER
-             && f.kind != JavaCCParserConstants._LOOKAHEAD && f.kind != JavaCCParserConstants._IGNORE_CASE) {
-        f = f.next;
+    if (id == JJTIDENT_IN_PARSER || id == JJTIDENT_IN_EXP_UNIT || id == JJTIDENT_IN_REG_EXPR
+        || id == JJTIDENT_IN_COMP_REG_EXPR_UNIT) {
+      name = displayName = first.image;
+      nameToken = first;
+      // add the optional no node creation flag
+      final int parId = ((JJNode) parent).getId();
+      if (parId == JJTBNF_PROD_EXP_BLOCK) {
+        // skip arguments or last ">"
+        Token f = first.next;
+        final int fk = f.kind;
+        if (fk == LPAREN || fk == GT) {
+          f = f.next;
+          if (fk == LPAREN) {
+            while (f.kind != RPAREN) {
+              f = f.next;
+            }
+            f = f.next;
+          }
+          if (f.kind == BANG) {
+            displayName += " !"; //$NON-NLS-1$
+          }
+        }
       }
-      name = displayName = f.image;
     }
-    else if (id == JJTCLASSORINTERFACEDECLARATION) {
-      // Parser ClassDeclaration => Class name
-      Token f = first;
-      while (f != last && f.next.kind != JavaCCParserConstants.LBRACE) {
-        f = f.next;
-      }
-      name = displayName = f.image;
+    else if (id == JJTROOT) {
+      name = displayName = "ASTroot"; //$NON-NLS-1$
+      nameToken = null;
     }
-    // Parser MethodDeclaration => Method name
-    else if (id == JJTMETHODDECLARATION) {
+    else if (id == JJTOPTION_BINDING) {
+      // Options option_binding => 'option name'
       Token f = first;
-      while (f != last && f.next.kind != JavaCCParserConstants.LPAREN) {
+      while (f != last && f.kind != IDENTIFIER && f.kind != _LOOKAHEAD && f.kind != _IGNORE_CASE) {
         f = f.next;
       }
       name = displayName = f.image;
+      nameToken = f;
     }
-    else if (id == JJTBNF_PRODUCTION) {
-      // Bnf production => identifier name or identifier name - #node name
+    else if (id == JJTCLAORINTDECL || id == JJTENUMDECL) {
+      // 'identifier' after "class", "interface" or "enum"
+      name = displayName = first.next.image;
+      nameToken = first.next;
+    }
+    else if (id == JJTANNOTTYPEDECL) {
+      // 'identifier' after "@" "interface"
+      name = displayName = first.next.next.image;
+      nameToken = first.next.next;
+    }
+    else if (id == JJTMETHODDECL || id == JJTCONSTRDECL) {
+      // Parser MethodDeclaration or ConstructorDeclation => 'method name'
       Token f = first;
-      while (f != last && f.next.kind != JavaCCParserConstants.LPAREN) {
+      while (f != last && f.next.kind != LPAREN) {
         f = f.next;
       }
       name = displayName = f.image;
-      while (f != last && f.next.kind != JavaCCParserConstants.COLON) {
+      nameToken = f;
+    }
+    else if (id == JJTBNF_PROD) {
+      // Bnf production => 'identifier name' or 'identifier name - #node name'
+      Token f = first;
+      while (f != last && f.next.kind != LPAREN) {
         f = f.next;
-        if (f.kind == JavaCCParserConstants.SHARP) {
+      }
+      name = displayName = f.image;
+      nameToken = f;
+      while (f != last && f.next.kind != COLON) {
+        f = f.next;
+        // add the optional no node creation flag
+        if (f.kind == BANG) {
+          displayName += " !"; //$NON-NLS-1$
+          f = f.next;
+        }
+        else if (f.kind == SHARP) {
           displayName += DASH_SEP + f.image + f.next.image;
         }
       }
     }
-    else if (id == JJTREGULAR_EXPR_PRODUCTION) {
-      // Regular expression => kind name or or kind name : all lexical state
+    else if (id == JJTJAVACODE_PROD) {
+      // Javacode production => 'method name' or 'method name - #node name'
+      Token f = first;
+      while (f != last && f.next.kind != LPAREN) {
+        f = f.next;
+      }
+      name = displayName = f.image;
+      nameToken = f;
+      while (f != last && f.next.kind != LBRACE) {
+        f = f.next;
+        // add the optional no node creation flag
+        if (f.kind == REM) {
+          displayName += " %"; //$NON-NLS-1$
+          f = f.next;
+        }
+        else if (f.kind == SHARP) {
+          displayName += DASH_SEP + f.image + f.next.image;
+        }
+      }
+    }
+    else if (id == JJTREGULAR_EXPR_PROD) {
+      // Regular expression => 'kind name' or 'kind name : all lexical states'
       Token f = first;
       String lexState = null;
-      if (f.kind == JavaCCParserConstants.LT) {
+      if (f.kind == LT) {
+        // get the lexical states
         f = f.next;
         lexState = COLON_SEP;
-        while (f != last && f.kind != JavaCCParserConstants.GT) {
+        while (f != last && f.kind != GT) {
           lexState += f.image;
           f = f.next;
         }
         f = f.next;
       }
       name = displayName = f.image;
+      nameToken = f;
       if (lexState != null) {
         displayName += lexState;
       }
     }
     else if (id == JJTREGEXPR_SPEC) {
-      // Token => Token name or token name : lexical state (keep "#" plus name for private label identifier)
+      // Token => 'token name' or 'token name : lexical state'
+      // (keep "#" plus name for private label identifier)
       boolean foundLT = false;
       Token f = first;
       while (f != last) {
-        if (f.kind == JavaCCParserConstants.LT) {
+        if (f.kind == LT) {
           foundLT = true;
           f = f.next;
           break;
@@ -343,39 +480,69 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
         f = f.next;
       }
       if (foundLT) {
-        // "<" "#" IDENTIFIER ":" complex_regular_expression_choices ">
-        if (f.kind == JavaCCParserConstants.SHARP) {
+        // found a "<"
+        if (f.kind == SHARP) {
+          // "<" "#" < IDENTIFIER > ":" complex_regular_expression_choices ">
           name = displayName = f.image;
+          nameToken = f;
           f = f.next;
           name = displayName += f.image;
         }
-        else if (f.kind == JavaCCParserConstants.IDENTIFIER) {
-          // "<" IDENTIFIER ":" complex_regular_expression_choices "> or "<" < IDENTIFIER > ">
+        else if (f.kind == IDENTIFIER) {
+          // "<" < IDENTIFIER > ":" complex_regular_expression_choices "> or "<" < IDENTIFIER > ">
           name = displayName = f.image;
+          nameToken = f;
+        }
+        else if (f.kind == _EOF) {
+          // "<" "EOF" ">"
+          name = displayName = "< EOF >"; //$NON-NLS-1$
+          nameToken = null;
         }
         else {
           // "<" complex_regular_expression_choices ">"
           name = displayName = "< ... >"; //$NON-NLS-1$
+          nameToken = null;
         }
         // skip up to last ">"
         int lvl = 1;
         while (f != last && lvl != 0) {
-          if (f.kind == JavaCCParserConstants.LT) {
+          if (f.kind == LT) {
             lvl++;
           }
-          else if (f.kind == JavaCCParserConstants.GT) {
+          else if (f.kind == GT) {
             lvl--;
           }
           f = f.next;
         }
       }
       else {
-        // no "<" ... ">", it's a single StringLiteral
-        name = displayName = f.image;
+        // no "<" found, it's a single StringLiteral ; back to the beginning
+        name = displayName = first.image;
+        nameToken = f;
+        f = first.next;
+      }
+      // add the optional no node creation flag
+      if (f.kind == BANG) {
+        displayName += " !"; //$NON-NLS-1$
+        f = f.next;
+      }
+      // skip optional java bloc
+      if (f.kind == LBRACE) {
+        int lvl = 1;
+        f = f.next;
+        while (f != last && lvl != 0) {
+          if (f.kind == LBRACE) {
+            lvl++;
+          }
+          else if (f.kind == RBRACE) {
+            lvl--;
+          }
+          f = f.next;
+        }
       }
       // set lexical state
       String lexState = null;
-      if (f.kind == JavaCCParserConstants.COLON) {
+      if (f.kind == COLON) {
         f = f.next;
         lexState = COLON_SEP + f.image;
       }
@@ -385,48 +552,61 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     }
     else if (id == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
       name = displayName = "#" + first.image; //$NON-NLS-1$
+      nameToken = first;
     }
     else if (id == JJTIDENT_BNF_DECL) {
       name = first.image;
+      nameToken = first;
       displayName = ((JJNode) parent).displayName;
     }
     else if (id == JJTNODE_DESC_IN_EXP || id == JJTNODE_DESC_IN_METH) {
       name = displayName = first.image + first.next.image;
+      nameToken = first;
     }
     else if (id == JJTNODE_DESC_BNF_DECL) {
       name = first.image + first.next.image;
       displayName = ((JJNode) parent).displayName;
+      nameToken = first;
     }
   }
 
   /**
-   * To buildHashMap each JJNode needs to know where to put Name / Node associations.
+   * Builds recursively the maps in JavaCC elements given the node at the root of parse tree.
    * 
    * @param aJjElements - the JavaCC elements
    */
-  public void setJJElementsToUpdate(final JJElements aJjElements) {
-    jjElements = aJjElements;
-    if (children != null) {
-      for (final Node child : children) {
-        final JJNode n = (JJNode) child;
-        n.setJJElementsToUpdate(aJjElements);
-      }
-    }
-  }
-
-  /**
-   * Builds recursively a map of JavaCC elements given the node at the root of parse tree.
-   */
-  public void buildJJNodesMap() {
+  public void buildElements(final Elements aJjElements) {
     setNames();
-    jjElements.put(name, this);
+    aJjElements.addNode(name, this);
     if (children != null) {
       for (final Node child : children) {
         final JJNode n = (JJNode) child;
-        n.buildJJNodesMap();
+        n.buildElements(aJjElements);
       }
     }
     return;
+  }
+
+  /**
+   * Adds the node to the stack if it is not a block, or its children if is a block, recursively.
+   * 
+   * @param aStack - the stack
+   * @param aChild - a node
+   */
+  void addNonBlockChild(final Queue<JJNode> aStack, final Node aChild) {
+    final JJNode ch = (JJNode) aChild;
+    final int chId = ch.id;
+    if (chId == JJTBNF_PROD_EXP_BLOCK || chId == JJTBNF_PROD_JAVA_BLOCK || chId == JJTJAVACODE_BLOCK
+        || chId == JJTREG_EXPR_PROD_BLOCK) {
+      if (ch.children != null) {
+        for (final Node son : ch.children) {
+          addNonBlockChild(aStack, son);
+        }
+      }
+    }
+    else {
+      aStack.offer(ch);
+    }
   }
 
   /**
@@ -454,38 +634,53 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
     while (!stack.isEmpty()) {
       final JJNode nd = stack.remove();
       final int ndId = nd.getId();
-      if (sel.equals(nd.name)) {
-        if (ndId == JJTIDENT_BNF_DECL || ndId == JJTIDENT_USE || ndId == JJTIDENT_REG_EXPR_LABEL
-            || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL || ndId == JJTNODE_DESC_BNF_DECL
-            || ndId == JJTNODE_DESC_IN_EXP || ndId == JJTNODE_DESC_IN_METH) {
-          // Take JJTree identifier nodes with the same name
-          // Cases productions Q inside the body of a production P or the production P in its declaration
-          // as in 'type P() [#N] : {} {... Q() ...}'
-          // Same for label identifiers and private labels identifiers
-          // Get its parent
-          final JJNode ndParent = (JJNode) nd.parent;
-          // Skip this parent if the JJTree identifier node is its first child
-          // Case the production P in its declaration, as in 'type P() [#N] : ...'
-          if (ndParent.children[0] == nd) {
-            continue;
+      final String ndName = nd.name;
+      if (sel.equals(ndName)) {
+        if (ndId == JJTIDENT_REG_EXPR_LABEL || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL
+            || ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT //
+            || ndId == JJTIDENT_IN_REG_EXPR // 
+            || ndId == JJTIDENT_IN_EXP_UNIT || ndId == JJTNODE_DESC_IN_EXP) {
+          final JJNode ndGrandParent = (JJNode) ((JJNode) nd.parent).parent;
+          if (ndGrandParent.id == JJTBNF_PROD) {
+            // Found a caller (the grand parent), record it
+            addCaller(ndGrandParent, false);
+            // For JJTIDENT_IN_COMP_REG_EXPR_UNIT, see if it is defined in a regular expression label
+            if (ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT) {
+              final JJNode brother = (JJNode) ((JJNode) nd.parent).children[0];
+              final int brId = brother.id;
+              if (brId == JJTIDENT_REG_EXPR_LABEL || brId == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
+                addCaller(brother, false);
+              }
+            }
           }
-          // Found a caller (the parent), record it
-          addCaller(ndParent, false);
+          else if (ndGrandParent.id == JJTREG_EXPR_PROD_BLOCK) {
+            // Found a caller (the grand grand parent, the JJTREGEXPR_KIND), record it
+            addCaller((JJNode) ndGrandParent.parent, false);
+            // For JJTIDENT_IN_COMP_REG_EXPR_UNIT, see if it is defined in a regular expression label
+            if (ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT) {
+              final JJNode brother = (JJNode) ((JJNode) nd.parent).children[0];
+              final int brId = brother.id;
+              if (brId == JJTIDENT_REG_EXPR_LABEL || brId == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
+                addCaller(brother, false);
+              }
+            }
+          }
+        }
+        else if (ndId == JJTJAVAIDENTINMETHODDECL || ndId == JJTJAVAIDENTINCONSTRDECL //
+                 || (ndId == JJTBNF_PROD && thId != JJTBNF_PROD && thId != JJTIDENT_BNF_DECL)//
+                 || ndId == JJTNODE_DESC_BNF_DECL //
+                 || ndId == JJTNODE_DESC_IN_METH) {
+          // Found a caller (the node), record it
+          addCaller(nd, false);
         }
       }
-      else if (ndId == JJTREGULAR_EXPR_PRODUCTION //
-               && this.getParent().getParent() == nd) {
-        // Take token / special_token / skip / more if ancestor
-        // Found a caller (the node), record it
-        addCaller(nd, false);
-      }
-      // If it has children push them
+      // If it has children, push them if they are not a block or push their children if they are a block
       if (nd.children != null) {
         for (final Node child : nd.children) {
-          stack.offer((JJNode) child);
+          addNonBlockChild(stack, child);
         }
       }
-    }
+    } // end while
   }
 
   /**
@@ -518,32 +713,33 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
    * Clears the array of callers for this node.
    */
   public void clearCallers() {
-    //    callers = new JJNode[0];
     callers = new JJNode[1];
     callers[0] = oohsJJNode;
   }
 
   /**
    * Builds the array of callees for this node.
+   * 
+   * @param aElements - the JJ elements
    */
-  public void buildCallees() {
+  public void buildCallees(final Elements aElements) {
     // Clear callees
     callees = new JJNode[0];
     // Get the node to which this node belongs
     String declName = name;
     if (this.getId() == JJTNODE_DESC_BNF_DECL) {
-      declName = name.substring(1) + DASH_SEP + name;
+      declName = declName.substring(1) + DASH_SEP + declName;
     }
-    final JJNode declarationNode = jjElements.getNonIdentNorNodeDesc(declName);
-    if (declarationNode == null) {
+    final JJNode declNode = aElements.getNonIdentNorNodeDesc(declName);
+    if (declNode == null) {
       return;
     }
     // Search callees within the declaration node tree
     final Queue<JJNode> stack = new LinkedList<JJNode>();
-    // Push all children of the declaration node
-    if (declarationNode.children != null) {
-      for (final Node child : declarationNode.children) {
-        stack.offer((JJNode) child);
+    // If it has children, push them if they are not a block or push their children if they are a block
+    if (declNode.children != null) {
+      for (final Node child : declNode.children) {
+        addNonBlockChild(stack, child);
       }
     }
     // Examine each element of the stack
@@ -552,28 +748,28 @@ public class JJNode implements Node, JavaCCParserTreeConstants, JavaCCParserCons
       // Take all JJTree identifier and node descriptor nodes
       final int ndId = nd.getId();
       if (ndId == JJTIDENT_BNF_DECL //
-          || ndId == JJTIDENT_REG_EXPR_LABEL //
-          || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
-          || ndId == JJTIDENT_USE //
+          || ndId == JJTIDENT_REG_EXPR_LABEL || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
+          || ndId == JJTIDENT_IN_EXP_UNIT //
+          || ndId == JJTIDENT_IN_REG_EXPR //
+          || ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT //
           || ndId == JJTNODE_DESC_BNF_DECL //
           || ndId == JJTNODE_DESC_IN_EXP //
           || ndId == JJTNODE_DESC_IN_METH //
       ) {
         // Get its parent
         final JJNode ndParent = (JJNode) nd.jjtGetParent();
-        // Skip this parent if the JJTree node is its first child
+        // Skip the node if it is the first child of its parent for some cases
         if ((ndParent.children[0] == nd) //
-            || (ndId == JJTNODE_DESC_BNF_DECL //
-                && ndParent.children.length > 1 //
-            && ndParent.children[1] == nd)) {
+            && (ndId == JJTIDENT_BNF_DECL //
+                || ndId == JJTIDENT_REG_EXPR_LABEL || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL)) {
           continue;
         }
         // Found a callee, record it
         addCallee(nd);
-        // If it has children push them
+        // If it has children, push them if they are not a block or push their children if they are a block
         if (nd.children != null) {
           for (final Node child : nd.children) {
-            stack.offer((JJNode) child);
+            addNonBlockChild(stack, child);
           }
         }
       }

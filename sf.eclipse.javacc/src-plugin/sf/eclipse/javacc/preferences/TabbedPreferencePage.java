@@ -19,41 +19,44 @@ import org.eclipse.swt.widgets.TabItem;
  * The TabbedPreferencePage Class.
  * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
+ * @author Marc Mazas 2014
  */
 public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
 
+  // MMa 11/2014 : modified some modifiers
+
   /** The tab folder */
-  protected TabFolder          fTabFolder;
+  protected TabFolder          jTabFolder;
 
   /** The tab folder style (SWT.TOP or SWT.BOTTOM) */
-  private int                  fTabFolderStyle = SWT.TOP;
+  protected int                jTabFolderStyle = SWT.TOP;
 
   /** The apply changes at tab switch check box field editor */
-  protected BooleanFieldEditor fApplyChangesAtTabSwitchFE;
+  protected BooleanFieldEditor jApplyChangesAtTabSwitchFE;
 
   /** The tool tip text for the Apply button */
-  private String               fApplyToolTip;
+  protected String             jApplyToolTip;
 
   /** The tool tip text for the Restore Defaults button */
-  private String               fDefaultsToolTip;
+  protected String             jDefaultsToolTip;
 
   /** The field editors */
-  protected List<FieldEditor>  fFieldEditors;
+  protected List<FieldEditor>  jFieldEditors;
 
   /** The tab number list */
-  private List<Integer>        fTabNumberList;
+  protected List<Integer>      jTabNumberList;
 
   /** The end of tab page flag */
-  private boolean              fEndOfTabPages;
+  protected boolean            jEndOfTabPages;
 
   /** The current tab number */
-  protected int                fCurrentTabNumber;
+  protected int                jCurrentTabNumber;
 
   /** The last tab number */
-  protected int                fLastTabNumber;
+  protected int                jLastTabNumber;
 
   /** The tab switch occurred flag */
-  protected boolean            fTabSwitchOccurred;
+  protected boolean            jTabSwitchOccurred;
 
   /**
    * Create a new default tabbed field editor preference page.
@@ -117,22 +120,24 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    * @param layout - the layout
    */
   public void addTab(final String tabText, final String toolTipText, final Layout layout) {
-    if (fTabFolder == null) {
-      fTabFolder = new TabFolder(super.getFieldEditorParent(), fTabFolderStyle);
-      fTabFolder.addSelectionListener(new SelectionAdapter() {
+    if (jTabFolder == null) {
+      jTabFolder = new TabFolder(super.getFieldEditorParent(), jTabFolderStyle);
+      jTabFolder.addSelectionListener(new SelectionAdapter() {
 
+        /** {@inheritDoc} */
         @Override
         public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent e) {
 
-          if (!isValid()) { // Do not allow page switch if the field editor is invalid
-            fTabFolder.setSelection(fLastTabNumber == 0 ? 0 : fLastTabNumber - 1);
+          if (!isValid()) {
+            // Do not allow page switch if the field editor is invalid
+            jTabFolder.setSelection(jLastTabNumber == 0 ? 0 : jLastTabNumber - 1);
           }
           else {
-            fLastTabNumber = fCurrentTabNumber;
-            fCurrentTabNumber = fTabFolder.getSelectionIndex() + 1;
+            jLastTabNumber = jCurrentTabNumber;
+            jCurrentTabNumber = jTabFolder.getSelectionIndex() + 1;
 
-            if (fApplyChangesAtTabSwitchFE != null && fApplyChangesAtTabSwitchFE.getBooleanValue()) {
-              fTabSwitchOccurred = true;
+            if (jApplyChangesAtTabSwitchFE != null && jApplyChangesAtTabSwitchFE.getBooleanValue()) {
+              jTabSwitchOccurred = true;
               performOk();
             }
           }
@@ -140,11 +145,11 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
       });
     }
 
-    final TabItem tabItem = new TabItem(fTabFolder, SWT.NONE);
+    final TabItem tabItem = new TabItem(jTabFolder, SWT.NONE);
     tabItem.setText(tabText == null ? "" : tabText); //$NON-NLS-1$
     tabItem.setToolTipText(toolTipText == null ? "" : toolTipText); //$NON-NLS-1$
 
-    final Composite currentTab = new Composite(fTabFolder, SWT.NULL);
+    final Composite currentTab = new Composite(jTabFolder, SWT.NULL);
 
     if (layout != null) {
       currentTab.setLayout(layout);
@@ -156,8 +161,8 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
   /** {@inheritDoc} */
   @Override
   protected Composite getFieldEditorParent() {
-    if (fTabFolder != null) {
-      return (Composite) fTabFolder.getItem(fTabFolder.getItemCount() - 1).getControl();
+    if (jTabFolder != null) {
+      return (Composite) jTabFolder.getItem(jTabFolder.getItemCount() - 1).getControl();
     }
     return super.getFieldEditorParent();
   }
@@ -170,13 +175,13 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
   @Override
   @SuppressWarnings("boxing")
   protected void addField(final FieldEditor fieldEditor) {
-    if (!fEndOfTabPages) {
-      if (fFieldEditors == null) {
-        fFieldEditors = new ArrayList<FieldEditor>();
-        fTabNumberList = new ArrayList<Integer>();
+    if (!jEndOfTabPages) {
+      if (jFieldEditors == null) {
+        jFieldEditors = new ArrayList<FieldEditor>();
+        jTabNumberList = new ArrayList<Integer>();
       }
-      fFieldEditors.add(fieldEditor);
-      fTabNumberList.add(fTabFolder != null ? fTabFolder.getItemCount() : 0);
+      jFieldEditors.add(fieldEditor);
+      jTabNumberList.add(jTabFolder != null ? jTabFolder.getItemCount() : 0);
     }
     super.addField(fieldEditor);
   }
@@ -191,12 +196,12 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    * @param toolTipText - the tool tip text
    */
   public void endOfTabPages(final String preferenceName, final String labelText, final String toolTipText) {
-    fApplyChangesAtTabSwitchFE = new BooleanFieldEditor(preferenceName, labelText,
+    jApplyChangesAtTabSwitchFE = new BooleanFieldEditor(preferenceName, labelText,
                                                         super.getFieldEditorParent());
-    fEndOfTabPages = true;
-    fApplyChangesAtTabSwitchFE.getDescriptionControl(super.getFieldEditorParent())
+    jEndOfTabPages = true;
+    jApplyChangesAtTabSwitchFE.getDescriptionControl(super.getFieldEditorParent())
                               .setToolTipText(toolTipText);
-    addField(fApplyChangesAtTabSwitchFE);
+    addField(jApplyChangesAtTabSwitchFE);
   }
 
   /**
@@ -207,8 +212,8 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    * @param defaultsToolTip - the restore defaults button tool tip text
    */
   public void setApplyAndDefaultToolTips(final String applyToolTip, final String defaultsToolTip) {
-    fApplyToolTip = applyToolTip;
-    fDefaultsToolTip = defaultsToolTip;
+    jApplyToolTip = applyToolTip;
+    jDefaultsToolTip = defaultsToolTip;
   }
 
   /**
@@ -219,8 +224,8 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
   @Override
   public void createControl(final Composite parent) {
     super.createControl(parent);
-    getApplyButton().setToolTipText(fApplyToolTip);
-    getDefaultsButton().setToolTipText(fDefaultsToolTip);
+    getApplyButton().setToolTipText(jApplyToolTip);
+    getDefaultsButton().setToolTipText(jDefaultsToolTip);
   }
 
   /**
@@ -232,17 +237,17 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    */
   @Override
   protected void performDefaults() {
-    if (fFieldEditors == null || fTabFolder == null) {
+    if (jFieldEditors == null || jTabFolder == null) {
       super.performDefaults();
       return;
     }
 
-    for (int i = 0; i < fFieldEditors.size(); i++) {
-      final int thisTabNumber = fTabNumberList.get(i).intValue();
-      if (thisTabNumber == fCurrentTabNumber || thisTabNumber == 0) {
-        fFieldEditors.get(i).loadDefault();
+    for (int i = 0; i < jFieldEditors.size(); i++) {
+      final int thisTabNumber = jTabNumberList.get(i).intValue();
+      if (thisTabNumber == jCurrentTabNumber || thisTabNumber == 0) {
+        jFieldEditors.get(i).loadDefault();
       }
-      if (thisTabNumber > fCurrentTabNumber) {
+      if (thisTabNumber > jCurrentTabNumber) {
         break;
       }
     }
@@ -259,9 +264,9 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    */
   @Override
   public boolean performOk() {
-    if (fTabSwitchOccurred) {
-      fTabSwitchOccurred = false;
-      return performOk(fLastTabNumber);
+    if (jTabSwitchOccurred) {
+      jTabSwitchOccurred = false;
+      return performOk(jLastTabNumber);
     }
     return super.performOk();
   }
@@ -273,8 +278,8 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    */
   @Override
   public void performApply() {
-    fTabSwitchOccurred = true;
-    fLastTabNumber = fCurrentTabNumber;
+    jTabSwitchOccurred = true;
+    jLastTabNumber = jCurrentTabNumber;
     performOk();
   }
 
@@ -286,11 +291,11 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    */
   protected boolean performOk(final int tabNumber) {
 
-    for (int i = 0; i < fFieldEditors.size(); i++) {
-      final int editorTabNumber = fTabNumberList.get(i).intValue();
+    for (int i = 0; i < jFieldEditors.size(); i++) {
+      final int editorTabNumber = jTabNumberList.get(i).intValue();
 
       if (editorTabNumber == tabNumber || editorTabNumber == 0) {
-        final FieldEditor pe = fFieldEditors.get(i);
+        final FieldEditor pe = jFieldEditors.get(i);
         pe.store();
         pe.load(); // pe.setPresentsDefaultValue(false); see eclipse bug 38547
       }
@@ -307,7 +312,7 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    * @return the tab folder control
    */
   protected TabFolder getTabFolderControl() {
-    return fTabFolder;
+    return jTabFolder;
   }
 
   /**
@@ -318,7 +323,7 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
    * @param tabFolderStyle - the new tab folder style
    */
   protected void setTabFolderStyle(final int tabFolderStyle) {
-    fTabFolderStyle = tabFolderStyle;
+    jTabFolderStyle = tabFolderStyle;
   }
 
 }

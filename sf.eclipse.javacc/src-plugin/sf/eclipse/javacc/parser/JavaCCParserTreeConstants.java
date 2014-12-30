@@ -6,51 +6,81 @@ public interface JavaCCParserTreeConstants
 {
   public int JJTVOID = 0;
   public int JJTROOT = 1;
-  public int JJTIDENT_USE = 2;
+  public int JJTIDENT_IN_PARSER = 2;
   public int JJTPARSER_BEGIN = 3;
   public int JJTJAVACC_OPTIONS = 4;
   public int JJTOPTION_BINDING = 5;
-  public int JJTJAVACODE_PRODUCTION = 6;
-  public int JJTBNF_PRODUCTION = 7;
-  public int JJTIDENT_BNF_DECL = 8;
-  public int JJTNODE_DESC_BNF_DECL = 9;
-  public int JJTREGULAR_EXPR_PRODUCTION = 10;
-  public int JJTTOKEN_MANAGER_DECLS = 11;
-  public int JJTREGEXPR_KIND = 12;
-  public int JJTREGEXPR_SPEC = 13;
-  public int JJTNODE_DESC_IN_EXP = 14;
-  public int JJTIDENT_REG_EXPR_LABEL = 15;
-  public int JJTIDENT_REG_EXPR_PRIVATE_LABEL = 16;
-  public int JJTCLASSORINTERFACEDECLARATION = 17;
-  public int JJTJAVAIDENTIFIERINCLASSORINTERFACEDECLARATION = 18;
-  public int JJTMETHODDECLARATION = 19;
-  public int JJTNODE_DESC_IN_METH = 20;
-  public int JJTJAVAIDENTIFIERINMETHODDECLARATOR = 21;
+  public int JJTJAVACODE_PROD = 6;
+  public int JJTNODE_DESC_IN_METH = 7;
+  public int JJTJAVACODE_BLOCK = 8;
+  public int JJTMETHODDECL = 9;
+  public int JJTBNF_PROD = 10;
+  public int JJTIDENT_BNF_DECL = 11;
+  public int JJTNODE_DESC_BNF_DECL = 12;
+  public int JJTBNF_PROD_JAVA_BLOCK = 13;
+  public int JJTBNF_PROD_EXP_BLOCK = 14;
+  public int JJTREGULAR_EXPR_PROD = 15;
+  public int JJTREG_EXPR_PROD_BLOCK = 16;
+  public int JJTTOKEN_MANAGER_DECLS = 17;
+  public int JJTREGEXPR_KIND = 18;
+  public int JJTREGEXPR_SPEC = 19;
+  public int JJTREGEXPR_SPEC_JAVA_BLOCK = 20;
+  public int JJTNODE_DESC_IN_EXP = 21;
+  public int JJTEXP_UNIT_JAVA_BLOCK = 22;
+  public int JJTIDENT_IN_EXP_UNIT = 23;
+  public int JJTIDENT_REG_EXPR_LABEL = 24;
+  public int JJTIDENT_REG_EXPR_PRIVATE_LABEL = 25;
+  public int JJTIDENT_IN_REG_EXPR = 26;
+  public int JJTIDENT_IN_COMP_REG_EXPR_UNIT = 27;
+  public int JJTCLAORINTDECL = 28;
+  public int JJTJAVAIDENTINCLAORINTDECL = 29;
+  public int JJTENUMDECL = 30;
+  public int JJTJAVAIDENTINENUMDECL = 31;
+  public int JJTJAVAIDENTINMETHODDECL = 32;
+  public int JJTCONSTRDECL = 33;
+  public int JJTJAVAIDENTINCONSTRDECL = 34;
+  public int JJTANNOTTYPEDECL = 35;
+  public int JJTJAVAIDENTINANNOTTYPEDECL = 36;
 
 
   public String[] jjtNodeName = {
     "void",
     "root",
-    "ident_use",
+    "ident_in_parser",
     "parser_begin",
     "javacc_options",
     "option_binding",
-    "javacode_production",
-    "bnf_production",
+    "javacode_prod",
+    "node_desc_in_meth",
+    "javacode_block",
+    "MethodDecl",
+    "bnf_prod",
     "ident_bnf_decl",
     "node_desc_bnf_decl",
-    "regular_expr_production",
+    "bnf_prod_java_block",
+    "bnf_prod_exp_block",
+    "regular_expr_prod",
+    "reg_expr_prod_block",
     "token_manager_decls",
     "regexpr_kind",
     "regexpr_spec",
+    "regexpr_spec_java_block",
     "node_desc_in_exp",
+    "exp_unit_java_block",
+    "ident_in_exp_unit",
     "ident_reg_expr_label",
     "ident_reg_expr_private_label",
-    "ClassOrInterfaceDeclaration",
-    "JavaIdentifierInClassOrInterfaceDeclaration",
-    "MethodDeclaration",
-    "node_desc_in_meth",
-    "JavaIdentifierInMethodDeclarator",
+    "ident_in_reg_expr",
+    "ident_in_comp_reg_expr_unit",
+    "ClaOrIntDecl",
+    "JavaIdentInClaOrIntDecl",
+    "EnumDecl",
+    "JavaIdentInEnumDecl",
+    "JavaIdentInMethodDecl",
+    "ConstrDecl",
+    "JavaIdentInConstrDecl",
+    "AnnotTypeDecl",
+    "JavaIdentInAnnotTypeDecl",
   };
 }
-/* JavaCC - OriginalChecksum=29562039bb1fa7c4d1ca9f1e9450bfe0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6eee4196e0b6c281d96003fa2c12fb04 (do not edit this line) */
