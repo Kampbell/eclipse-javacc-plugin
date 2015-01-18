@@ -13,7 +13,7 @@ import org.eclipse.text.edits.TextEdit;
  * Test class to call the Eclipse formatter.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class UnusedTestJavaFormat {
 

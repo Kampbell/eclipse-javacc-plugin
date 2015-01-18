@@ -17,7 +17,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class ContentAssist extends AbstractHandler {
 

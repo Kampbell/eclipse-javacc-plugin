@@ -52,7 +52,7 @@ public class DocumentSetupParticipant implements IDocumentSetupParticipant {
    * 
    * @return a FastPartitioner set with a RuleBasedPartitionScanner set with code and comment partitions
    */
-  private IDocumentPartitioner createPartitioner() {
+  private static IDocumentPartitioner createPartitioner() {
     final IToken codeToken = new Token(CODE_CONTENT_TYPE);
     final IToken lineCommentToken = new Token(LINE_CMT_CONTENT_TYPE);
     final IToken blockCommentToken = new Token(BLOCK_CMT_CONTENT_TYPE);

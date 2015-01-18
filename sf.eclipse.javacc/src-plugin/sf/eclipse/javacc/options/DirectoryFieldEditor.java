@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  * I found no way but sub-classing to allow adding the last path and the label.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 class DirectoryFieldEditor extends StringButtonFieldEditor {
 

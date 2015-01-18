@@ -30,7 +30,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * The content assist processor for completions JavaCC and inner Java code (not in Java & Javadoc comments).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 class CompletionProcessor implements IContentAssistProcessor {
 
@@ -272,7 +272,7 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param aJElements - the nodes
    * @return the images of the proposals
    */
-  private String[] computeTopKwProps(final Elements aJElements) {
+  private static String[] computeTopKwProps(final Elements aJElements) {
     int len = JjTopKwCA.values().length;
     if (aJElements.isOptionsThere) {
       len--;
@@ -302,7 +302,7 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param aJElements - the nodes
    * @return the cursor positions of the proposals
    */
-  private int[] computeTopKwCurProps(final Elements aJElements) {
+  private static int[] computeTopKwCurProps(final Elements aJElements) {
     int len = JjTopKwCA.values().length;
     if (aJElements.isOptionsThere) {
       len--;
@@ -339,9 +339,9 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param str - the element
    * @param id - the node id
    */
-  private void addTokenLabel(final String prefix, final boolean isTokenPrefix, final boolean isAnglePrefix,
-                             final List<String> props, final List<Integer> curPos, final String str,
-                             final int id) {
+  private static void addTokenLabel(final String prefix, final boolean isTokenPrefix,
+                                    final boolean isAnglePrefix, final List<String> props,
+                                    final List<Integer> curPos, final String str, final int id) {
     // tokens
     if (id == JJTIDENT_REG_EXPR_LABEL || id == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
       if (isAnglePrefix || (isTokenPrefix && str.toUpperCase().startsWith(prefix))) {
@@ -363,9 +363,9 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param id - the node id
    */
   @SuppressWarnings("unused")
-  private void addTokenLabelAsKind(final String prefix, final boolean isTokenPrefix,
-                                   final boolean isAnglePrefix, final List<String> props,
-                                   final List<Integer> curPos, final String str, final int id) {
+  private static void addTokenLabelAsKind(final String prefix, final boolean isTokenPrefix,
+                                          final boolean isAnglePrefix, final List<String> props,
+                                          final List<Integer> curPos, final String str, final int id) {
     // tokens
     if (id == JJTIDENT_REG_EXPR_LABEL || id == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
       if (isAnglePrefix || (isTokenPrefix && str.toUpperCase().startsWith(prefix))) {
@@ -385,8 +385,8 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param str - the element
    * @param id - the node id
    */
-  private void addMethod(final String prefix, final boolean isTokenPrefix, final List<String> props,
-                         final List<Integer> curPos, final String str, final int id) {
+  private static void addMethod(final String prefix, final boolean isTokenPrefix, final List<String> props,
+                                final List<Integer> curPos, final String str, final int id) {
     if (!isTokenPrefix) {
       // nodes and methods
       if (id == JJTMETHODDECL) {
@@ -408,9 +408,9 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param str - the element
    * @param id - the node id
    */
-  private void addBNFProductionOrMethod(final String prefix, final boolean isTokenPrefix,
-                                        final List<String> props, final List<Integer> curPos,
-                                        final String str, final int id) {
+  private static void addBNFProductionOrMethod(final String prefix, final boolean isTokenPrefix,
+                                               final List<String> props, final List<Integer> curPos,
+                                               final String str, final int id) {
     if (!isTokenPrefix) {
       // nodes and methods
       if (id == JJTBNF_PROD || id == JJTMETHODDECL) {
@@ -429,8 +429,8 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param curPos - the cursor position
    * @param prefix - the prefix
    */
-  private void addCommonJavaIdentifiers(final List<String> props, final List<Integer> curPos,
-                                        final String prefix) {
+  private static void addCommonJavaIdentifiers(final List<String> props, final List<Integer> curPos,
+                                               final String prefix) {
     addTrueFalse(props, curPos, prefix);
     /* keywords */
     if ("BOOLEAN".startsWith(prefix)) { //$NON-NLS-1$
@@ -511,7 +511,7 @@ class CompletionProcessor implements IContentAssistProcessor {
    * @param curPos - the cursor position
    * @param prefix - the prefix
    */
-  private void addTrueFalse(final List<String> props, final List<Integer> curPos, final String prefix) {
+  private static void addTrueFalse(final List<String> props, final List<Integer> curPos, final String prefix) {
     if ("TRUE".startsWith(prefix)) { //$NON-NLS-1$
       props.add("true"); //$NON-NLS-1$
       curPos.add(new Integer("true".length())); //$NON-NLS-1$
@@ -524,8 +524,8 @@ class CompletionProcessor implements IContentAssistProcessor {
 
   /** {@inheritDoc} */
   @Override
-  public final IContextInformation[] computeContextInformation(@SuppressWarnings("unused") final ITextViewer aTextViewer,
-                                                               @SuppressWarnings("unused") final int aOffset) {
+  public final IContextInformation[] computeContextInformation(final ITextViewer aTextViewer,
+                                                               final int aOffset) {
     return null;
   }
 

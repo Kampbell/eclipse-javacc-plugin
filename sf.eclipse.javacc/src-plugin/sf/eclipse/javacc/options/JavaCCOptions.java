@@ -14,7 +14,7 @@ import sf.eclipse.javacc.base.OptionSet;
  * The JavaCC options Tab that enables setting the JavaCC options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 class JavaCCOptions extends OptionsAbstractTab {
@@ -104,7 +104,7 @@ class JavaCCOptions extends OptionsAbstractTab {
     jOptionSet.add(new Option("KEEP_LINE_COLUMN", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // string options
-    jOptionSet.add(new Option("OUTPUT_LANGUAGE", "Java", Option.STRING)); //$NON-NLS-1$ 
+    jOptionSet.add(new Option("OUTPUT_LANGUAGE", "Java", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ 
     jOptionSet.add(new Option("JDK_VERSION", DEF_JDK_VERSION, Option.STRING)); //$NON-NLS-1$ 
     jOptionSet.add(new Option("TOKEN_EXTENDS", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 
     jOptionSet.add(new Option("TOKEN_FACTORY", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 

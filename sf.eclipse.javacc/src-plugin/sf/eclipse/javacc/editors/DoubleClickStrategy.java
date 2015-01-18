@@ -17,7 +17,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * identifier around the first character of the selected text.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 class DoubleClickStrategy implements ITextDoubleClickStrategy {
 
@@ -48,7 +48,7 @@ class DoubleClickStrategy implements ITextDoubleClickStrategy {
    * @param aCharPos - a character position
    * @return the whole word around the character position
    */
-  private String selectWord(final ITextViewer aTextViewer, final int aCharPos) {
+  private static String selectWord(final ITextViewer aTextViewer, final int aCharPos) {
     final IDocument doc = aTextViewer.getDocument();
     final int length = doc.getLength();
     // dummy initializations for the logBug message
@@ -98,7 +98,7 @@ class DoubleClickStrategy implements ITextDoubleClickStrategy {
    * 
    * @param aTextViewer - the current viewer
    */
-  private void forwardChange(final ITextViewer aTextViewer) {
+  private static void forwardChange(final ITextViewer aTextViewer) {
     // get the editor showing the active document (should have a better / more direct way to get it !)
     JJEditor jjeditor = null;
     final IDocument currentDocument = aTextViewer.getDocument();

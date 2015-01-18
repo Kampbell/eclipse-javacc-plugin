@@ -19,7 +19,7 @@ import sf.eclipse.javacc.parser.Token;
  * <p>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class Elements {
 
@@ -227,6 +227,7 @@ public class Elements {
         //      identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + subImage, aJJNode);
         identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + subImage, aJJNode);
         if (aImage.charAt(0) == '#') {
+          // nothing
         }
         else {
           compPropsIdentMap.put(aImage, aJJNode);
@@ -571,7 +572,7 @@ public class Elements {
    * @param aNodeId - a node id
    * @return true if the node id is one of an englobing node (a node that contains others), false otherwise
    */
-  private boolean isInEnglobingNode(final int aNodeId) {
+  private static boolean isInEnglobingNode(final int aNodeId) {
     switch (aNodeId) {
       case JJTBNF_PROD:
       case JJTBNF_PROD_EXP_BLOCK:
@@ -587,62 +588,54 @@ public class Elements {
    * @param aNode - a node
    * @return the node's begin line, fixed for bnf_prod_exp_block
    */
-  private int getNodeBeginLine(final JJNode aNode) {
+  private static int getNodeBeginLine(final JJNode aNode) {
     if (aNode.getId() != JJTBNF_PROD_EXP_BLOCK) {
       return aNode.getBeginLine();
     }
-    else {
-      // get previous "{", which is the token after the brother bnf_prod_java_block
-      final Node[] brothers = aNode.getParent().getChildren();
-      final JJNode bpjb = (JJNode) brothers[brothers.length - 2];
-      final Token lastOfBpjb = bpjb.getLastToken();
-      return lastOfBpjb.next.beginLine;
-    }
+    // get previous "{", which is the token after the brother bnf_prod_java_block
+    final Node[] brothers = aNode.getParent().getChildren();
+    final JJNode bpjb = (JJNode) brothers[brothers.length - 2];
+    final Token lastOfBpjb = bpjb.getLastToken();
+    return lastOfBpjb.next.beginLine;
   }
 
   /**
    * @param aNode - a node
    * @return the node's begin column, fixed for bnf_prod_exp_block
    */
-  private int getNodeBeginColumn(final JJNode aNode) {
+  private static int getNodeBeginColumn(final JJNode aNode) {
     if (aNode.getId() != JJTBNF_PROD_EXP_BLOCK) {
       return aNode.getBeginColumn();
     }
-    else {
-      // get previous "{", which is the token after the brother bnf_prod_java_block
-      final Node[] brothers = aNode.getParent().getChildren();
-      final JJNode bpjb = (JJNode) brothers[brothers.length - 2];
-      final Token lastOfBpjb = bpjb.getLastToken();
-      return lastOfBpjb.next.beginColumn;
-    }
+    // get previous "{", which is the token after the brother bnf_prod_java_block
+    final Node[] brothers = aNode.getParent().getChildren();
+    final JJNode bpjb = (JJNode) brothers[brothers.length - 2];
+    final Token lastOfBpjb = bpjb.getLastToken();
+    return lastOfBpjb.next.beginColumn;
   }
 
   /**
    * @param aNode - a node
    * @return the node's end line, fixed for bnf_prod_exp_block
    */
-  private int getNodeEndLine(final JJNode aNode) {
+  private static int getNodeEndLine(final JJNode aNode) {
     if (aNode.getId() != JJTBNF_PROD_EXP_BLOCK) {
       return aNode.getEndLine();
     }
-    else {
-      // get next "}", which is the last token of the parent bnf_prod
-      return aNode.getParent().getEndLine();
-    }
+    // get next "}", which is the last token of the parent bnf_prod
+    return aNode.getParent().getEndLine();
   }
 
   /**
    * @param aNode - a node
    * @return the node's end column, fixed for bnf_prod_exp_block
    */
-  private int getNodeEndColumn(final JJNode aNode) {
+  private static int getNodeEndColumn(final JJNode aNode) {
     if (aNode.getId() != JJTBNF_PROD_EXP_BLOCK) {
       return aNode.getEndColumn();
     }
-    else {
-      // get next "}", which is the last token of the parent bnf_prod
-      return aNode.getParent().getEndColumn();
-    }
+    // get next "}", which is the last token of the parent bnf_prod
+    return aNode.getParent().getEndColumn();
   }
 
 }

@@ -29,7 +29,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * A JavaCC & Java code scanner.
  * 
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 @SuppressWarnings("restriction")
 public final class UnusedJavaCodeScanner extends AbstractJavaScanner {

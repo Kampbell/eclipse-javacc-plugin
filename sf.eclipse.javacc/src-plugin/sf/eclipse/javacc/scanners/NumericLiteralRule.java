@@ -105,7 +105,7 @@ class NumericLiteralRule implements IRule {
    * @param hex - true if the digit may be hexadecimal
    * @return true, if is good digit
    */
-  private boolean isGoodDigit(final char ch, final boolean hex) {
+  private static boolean isGoodDigit(final char ch, final boolean hex) {
     return ((ch >= '0' && ch <= '9') || (hex && ((ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f'))));
   }
 }

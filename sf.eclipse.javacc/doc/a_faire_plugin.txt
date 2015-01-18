@@ -1,4 +1,6 @@
 A faire pour le plugin
+- voir le dictionnaire spelling
+- voir la question des dépendances "inutilisées" org.eclipse.core.expressions et org.eclipse.swt
 - voir si le pb proc.waitFor() JarLauncher revient
 - revoir les différences headless / head
 - gérer différentes versions de jar jtb / javacc
@@ -6,8 +8,6 @@ A faire pour le plugin
     et trouver les positions de début et fin
 - options et keywords centralisés
 - vérifier méthodes final (utiliser search final .*\(.*\)\s*\{)
-- vérifier NLS (utiliser sur un répertoire Click-droit / Source / Externalize strings..., sélectionner les
-   classes une par une, sélectionner les lignes, cliquer sur Ignore)
 - voir les TODOs pour le plugin, ajouter les tests qui vont bien
 - utiliser les org.eclipse.core.runtime.Assert
 - voir les ajouts faits par FA ou à faire pour JavaCC 6.x
@@ -17,6 +17,12 @@ A faire pour le plugin
 - s'interfacer avec une vue JJDoc ?
 
 
+Fait pour le plugin en 1.5.29
+- changé des options du warning du compilateur (méthodes static, suppresswarnings inutiles, else inutiles)
+- ajouté une commande pour afficher les informations pour le lancement de la commande de la compilation java
+- déplacé les méthodes non IncrementalCompiler de Compiler vers la nouvelle classe Compiler, modifié le type des
+   paramètres passé au ProcessCompiler en enlevant la jvmoptions vide
+- passé à la version 1.7 la version minimum de l'environnement requis du plug-in
 
 Fait pour le plugin en 1.5.28
 - corrigé libellé Show Caller / Callee Hierarchy non en français
@@ -81,5 +87,5 @@ Fait pour le plugin en 1.5.28
 - ajouté l'option OUTPUT_LANGUAGE
 - amélioré l'affichage de la ligne en erreur quand on clique sur l'erreur dans l'OutlinePage
 - corrigé les problèmes de calcul des completion proposals en cas de fichier vide ou presque
-- déplacé Builder et Nature dans le package base du plugin head pour utiliser ce package dans le plugin headless
+- déplacé Compiler et Nature dans le package base du plugin head pour utiliser ce package dans le plugin headless
 - extrait de Activator une superclasse AbstractActivator factorisée entre les plugins head et headless 

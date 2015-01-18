@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle_name
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.28
+Bundle-Version: 1.5.29
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.head.Activator
 Bundle-Vendor: %Bundle_Vendor_name
@@ -23,7 +23,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.300",
 Eclipse-LazyStart: true
 Comment: For Eclipse 3.1
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: sf.eclipse.javacc.base;
   uses:="org.eclipse.core.runtime,
    org.eclipse.jface.resource,

@@ -16,14 +16,13 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * <extension point="org.eclipse.jdt.ui.javaElementFilters">.<br>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class FilterGeneratedJavaCCFiles extends ViewerFilter {
 
   /** {@inheritDoc} */
   @Override
-  public boolean select(@SuppressWarnings("unused") final Viewer aViewer,
-                        @SuppressWarnings("unused") final Object aParentElement, final Object aObj) {
+  public boolean select(final Viewer aViewer, final Object aParentElement, final Object aObj) {
     if (aObj instanceof IAdaptable) {
       final IResource resource = (IResource) ((IAdaptable) aObj).getAdapter(IResource.class);
       if (resource != null) {

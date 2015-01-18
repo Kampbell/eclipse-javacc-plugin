@@ -28,6 +28,10 @@ How to create the JavaCC Eclipse Plugin update site zip file
 
 For the normal plug-in:
 
+- Build project "JTB-svn_java.net"
+  * see build.xml
+  * update doc/jtb_doc.hmtl
+  
 - Build project "sf.eclipse.javacc":
   * copy "jtb-x.y.z.jar" under the jars folder
   * update JTB_JAR_NAME in "IConstants"
@@ -117,8 +121,13 @@ How to update the JavaCC Eclipse Plugin SourceForge site
   * run psftp, open web.sourceforge.net, it takes sf account,project, give pass phrase
   * sftp commands like ftp : ls, lcd, cd, put, !dir
 
-- Update the project information (Project Admin / Settings)
+- Update the project information (Project Admin / Settings) : version, full description
 
 - Send an announcement (Develop / News)
 
 
+How to update the Eclipse MarketPlace JavaCC Plug-in entry
+----------------------------------------------------------
+
+- Login into http://marketplace.eclipse.org/content/javacc-eclipse-plug
+- Use the Edit menu to edit the entry, and save

@@ -18,10 +18,10 @@ h3 { font-size:10pt; }
 </a>
 <h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font><br>
 for <font color="green">Eclipse 3.7+</font>
- with <font color="green">JDK 1.6+</font> and <font color="green">JavaCC 5.0+</font> and
-  <font color="green">JTB 1.4.8</font></h1>
+ with <font color="green">JDK 1.7+</font> and <font color="green">JavaCC 5.0+</font> and
+  <font color="green">JTB 1.4.9</font></h1>
 
-<h2>Last update: dec 30th, 2014 - version <font color="red">1.5.28</font></h2>
+<h2>Last update: jan 18th, 2015 - version <font color="red">1.5.29</font></h2>
 
 The JavaCC plug-in is designed to help development of JavaCC / JTB applications within the Eclipse IDE;
  the headless plug-in is designed to allow headless builds.<br>
@@ -45,12 +45,13 @@ see the <a href="http://sourceforge.net/scm/?type=cvs&amp;group_id=56876">JavaCC
 You can also look at the following <a href="https://eclipse-tutorial.dev.java.net/eclipse-tutorial/part2.html">
 tutorial on Team development with Eclipse and CVS</a>.<br><br>
 
-The plug-in needs <font color="red">Java 1.6+</font> and <font color="red">Eclipse 3.7+</font> to run.<br>
+The plug-in needs <font color="red">Java 1.7+</font> and <font color="red">Eclipse 3.7+</font> to run.<br>
 It has been tested with Eclipse Classic 3.7.2 (Indigo), 4.2.2 (Juno), 4.3.2 (Kepler), 4.4.0 (Luna).<br>
 It has some compatibility issues with Eclipse 3.6- and 4.1.2.<br>
 It is shipped with <a href="https://javacc.dev.java.net/">JavaCC 5.0</a> and with
- <a href="jtb_doc.html">JTB 1.4.8</a>.<br>
-Also are shipped  JavaCC 4.2, JavaCC 6.0 and JTB 1.4.7 for the ones who need different versions.<br><br>
+ <a href="jtb_doc.html">JTB 1.4.9</a>.<br>
+Also are shipped  JavaCC 4.2, JavaCC 6.0 and JTB 1.4.7 for the ones who need different versions (JTB 1.4.8 had
+ a regression issue).<br><br>
 
 See (the old) <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
@@ -84,6 +85,14 @@ on how to modify the sources.
        (console is on System.out but nothing is printed on it)</li>
 </ul>
 <h2>Changes history (dd/mm/yy)</h2>
+<b>18/01/154 - 1.5.29</b><br>
+ fixed a problem on the compile commands (see discussion / help
+  https://sourceforge.net/p/eclipse-javacc/discussion/190562/thread/7c7af63b/?limit=25#2e3d);<br>
+ configured now to use a JavaSE 1.7 and no more a 1.6 (as 1.6 became obsolete);<br>
+ updated with JTB 1.4.9;<br>
+<br>
+ <p>
+
 <b>08/11/12-30/12/14 - 1.5.28</b><br>
  updated with JTB 1.4.8;<br>
  added the "JVM Options" option and the "Keep deleted files in history" option (default set
@@ -121,9 +130,7 @@ on how to modify the sources.
  improved displaying the line in error in the JJEditor when clicking on the error in the Outline view;<br>
  fixed issues in the completion proposals computation when the grammar file is empty or almost empty;<br>
  refactored some packages and classes to simplify the common and different code from the normal and the
- headless plugin<br>
- <br>
- <p>
+ headless plugin<p>
 
 <b>25/09/12 - 1.5.27</b><br>
  localized Call Hierarchy view tooltip texts;<br>

@@ -40,7 +40,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * Hierarchy View and the folding structure, and does itself the check spelling .
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
@@ -120,8 +120,7 @@ class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyE
    * {@inheritDoc}
    */
   @Override
-  public final void reconcile(@SuppressWarnings("unused") final DirtyRegion aDirtyRegion,
-                              @SuppressWarnings("unused") final IRegion aSubRegion) {
+  public final void reconcile(final DirtyRegion aDirtyRegion, final IRegion aSubRegion) {
     performUpdates();
   }
 
@@ -131,7 +130,7 @@ class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyE
    * {@inheritDoc}
    */
   @Override
-  public final void reconcile(@SuppressWarnings("unused") final IRegion aPartition) {
+  public final void reconcile(final IRegion aPartition) {
     performUpdates();
   }
 
@@ -191,7 +190,7 @@ class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyE
     else {
       // saw null model in case of drag and drop in the editor area
       AbstractActivator.logErr("null AnnotationModel, unable to checkSpelling() in ReconcilingStrategy ;" //$NON-NLS-1$
-                       + " please report this message with the actions which led to it"); //$NON-NLS-1$
+                               + " please report this message with the actions which led to it"); //$NON-NLS-1$
     }
   }
 
@@ -265,7 +264,7 @@ class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyE
    * @param aProblems - the spelling problems to annotate
    * @return the map of annotations and their positions
    */
-  private Map<Annotation, Position> createAnnotations(final List<SpellingProblem> aProblems) {
+  private static Map<Annotation, Position> createAnnotations(final List<SpellingProblem> aProblems) {
     final Map<Annotation, Position> annotations = new HashMap<Annotation, Position>();
     for (final Iterator<SpellingProblem> it = aProblems.iterator(); it.hasNext();) {
       final SpellingProblem problem = it.next();

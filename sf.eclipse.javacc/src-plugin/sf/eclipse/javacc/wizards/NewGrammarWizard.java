@@ -45,7 +45,7 @@ import sf.eclipse.javacc.base.Nature;
  * <extension point="org.eclipse.ui.newWizards"><br>
  * 
  * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public class NewGrammarWizard extends Wizard implements INewWizard {
@@ -62,13 +62,13 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
   //                renamed methods and changed visibility
 
   /** The wizard page */
-  protected NewGrammarWizardPage          jPage;
+  protected NewGrammarWizardPage jPage;
 
   /** The current selection */
-  private IStructuredSelection jSelection;
+  private IStructuredSelection   jSelection;
 
   /** A size */
-  private static final int     DEFAULT_READING_SIZE = 8192;
+  private static final int       DEFAULT_READING_SIZE = 8192;
 
   /**
    * Constructor for WizPage. Provides the image, DialogSetting, and title.
@@ -83,8 +83,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 
   /** {@inheritDoc} */
   @Override
-  public void init(@SuppressWarnings("unused") final IWorkbench aWorkbench,
-                   final IStructuredSelection aSelection) {
+  public void init(final IWorkbench aWorkbench, final IStructuredSelection aSelection) {
     jSelection = aSelection;
   }
 
@@ -156,7 +155,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     if (root == null || !root.exists()) {
       AbstractActivator.logErr(AbstractActivator.getMsg("WizPage.Root_problem"), new Exception(), //$NON-NLS-1$
-                       (root == null ? "null" : root.getName())); //$NON-NLS-1$
+                               (root == null ? "null" : root.getName())); //$NON-NLS-1$
       return;
     }
     String resName = aSrcDir;
@@ -166,7 +165,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
     final IResource res = root.findMember(new Path(resName));
     if (res == null || !res.exists() || !(res instanceof IContainer)) {
       AbstractActivator.logErr(AbstractActivator.getMsg("WizPage.Srcpkgdir_doesnot_exist"), new Exception(), //$NON-NLS-1$
-                       resName);
+                               resName);
       return;
     }
     // second: create the file
@@ -191,7 +190,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
       stream.close();
     } catch (final IOException e) {
       AbstractActivator.logBug(e,
-                       AbstractActivator.getMsg("WizPage.Creation_of") + " (" + file + ") " + AbstractActivator.getMsg("WizPage.failed") + " : "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                               AbstractActivator.getMsg("WizPage.Creation_of") + " (" + file + ") " + AbstractActivator.getMsg("WizPage.failed") + " : "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       return;
     }
     aMonitor.worked(1);
@@ -221,7 +220,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
           IDE.openEditor(wpage, file, true);
         } catch (final PartInitException e) {
           AbstractActivator.logBug(e,
-                           AbstractActivator.getMsg("WizPage.Opening_of") + " " + file + " " + AbstractActivator.getMsg("WizPage.failed") + " : "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                                   AbstractActivator.getMsg("WizPage.Opening_of") + " " + file + " " + AbstractActivator.getMsg("WizPage.failed") + " : "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
       }
     });
@@ -280,8 +279,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
    * @param aStaticFlag - the static / non static flag
    * @return the modified template input stream
    */
-  InputStream getNewContent(final String aExtension, final String aPackageName, final String aFileName,
-                            final boolean aStaticFlag) {
+  static InputStream getNewContent(final String aExtension, final String aPackageName,
+                                   final String aFileName, final boolean aStaticFlag) {
     // the extension and the flag give the right template
     final String template = TEMPLATE_PREFIX + (aStaticFlag ? TEMPLATE_STATIC : TEMPLATE_NON_STATIC)
                             + aExtension;
@@ -307,8 +306,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
    * @param aParserName - the parser name
    * @return the updated input stream
    */
-  InputStream makeReplacements(final InputStream aInputStream, final String aPackageName,
-                               final String aParserName) {
+  static InputStream makeReplacements(final InputStream aInputStream, final String aPackageName,
+                                      final String aParserName) {
 
     // read InputStream into byte buffer
     byte buffer[];

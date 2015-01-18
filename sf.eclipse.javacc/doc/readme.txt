@@ -69,7 +69,7 @@ History (dd/mm/yy)
 - Updated with JTB 1.4.0 and new options (Marc Mazas)
 
 26/09/09 - version 1.5.16
-- Support Variables in Builder, and Options
+- Support Variables in Compiler, and Options
 - Click in call hierarchy view reopen Editor if it was closed
 - Keep jtb jar in preferences
 
@@ -207,7 +207,7 @@ Bug correction
 
 28/07/05 - version 1.2 
 - hyperlinks in Console
-- bug correction in Builder, Console
+- bug correction in Compiler, Console
 
 25/07/03 - 1.0 First release for Eclipse 2.1
 

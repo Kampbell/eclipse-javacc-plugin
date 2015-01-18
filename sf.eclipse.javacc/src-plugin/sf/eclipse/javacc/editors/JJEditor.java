@@ -68,7 +68,7 @@ import sf.eclipse.javacc.preferences.IPrefConstants;
  * @see "http://www.realsolve.co.uk/site/tech/jface-text.php"
  * @see "https://www.eclipse.org/articles/Article-Folding-in-Eclipse-Text-Editors/folding.html"
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public class JJEditor extends TextEditor implements IPrefConstants {
@@ -279,7 +279,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
    * {@inheritDoc}
    */
   @Override
-  public Object getAdapter(@SuppressWarnings("rawtypes") final Class aRequiredClass) {
+  public Object getAdapter(final Class aRequiredClass) {
     if (IContentOutlinePage.class.equals(aRequiredClass)) {
       if (jOutlinePage == null) {
         jOutlinePage = new OutlinePage(this);
@@ -402,7 +402,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
     if (model == null) {
       // saw null model in case of drag and drop in the editor area
       AbstractActivator.logErr("null AnnotationModel, unable to updateFoldingStructure() in JJEditor ;" //$NON-NLS-1$
-                       + " please report this message with the actions which led to it"); //$NON-NLS-1$
+                               + " please report this message with the actions which led to it"); //$NON-NLS-1$
       return;
     }
     computeFoldablePositions();
@@ -692,7 +692,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
    * @param aSelection - the selected text
    * @return the extended selection (up to a whole word)
    */
-  public ITextSelection selectWord(final IDocument aDoc, final IRegion aSelection) {
+  public static ITextSelection selectWord(final IDocument aDoc, final IRegion aSelection) {
     final int caretPos = aSelection.getOffset();
     int startPos, endPos;
     try {
@@ -774,7 +774,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
 
     /** {@inheritDoc } */
     @Override
-    public void selectionChanged(@SuppressWarnings("unused") final SelectionChangedEvent aEvent) {
+    public void selectionChanged(final SelectionChangedEvent aEvent) {
       JJEditor.this.selectionChanged();
     }
 

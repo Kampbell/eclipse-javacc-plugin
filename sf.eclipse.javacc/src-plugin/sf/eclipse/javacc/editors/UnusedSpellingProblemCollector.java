@@ -20,7 +20,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
  * If more than one thread reports problems to this collector in parallel, only the thread which called
  * {@link #beginCollecting()} last will be adhered to.
  * 
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class UnusedSpellingProblemCollector implements ISpellingProblemCollector {
 

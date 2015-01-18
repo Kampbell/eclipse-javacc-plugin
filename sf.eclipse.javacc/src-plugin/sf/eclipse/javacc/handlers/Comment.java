@@ -21,7 +21,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class Comment extends AbstractHandler {
 
@@ -122,7 +122,7 @@ public class Comment extends AbstractHandler {
    * @param aTextSelection - the selected text
    * @return true if all lines of the selected text are commented, false otherwise
    */
-  boolean isSelectionCommented(final IDocument aDoc, final ITextSelection aTextSelection) {
+  static boolean isSelectionCommented(final IDocument aDoc, final ITextSelection aTextSelection) {
     final int startLine = aTextSelection.getStartLine();
     final int endLine = aTextSelection.getEndLine();
     try {

@@ -29,19 +29,19 @@ This plug-in uses 14 extensions:
    
    This class sets and removes JavaCC Nature to projects.
    The nature is used by the Workbench to identify the builder.
-   Nature.configure() adds a new Command with Builder.
+   Nature.configure() adds a new Command with Compiler.
    
-2) Builder
+2) Compiler
    point="org.eclipse.core.resources.builders"
-   class="sf.eclipse.javacc.base.Builder"
+   class="sf.eclipse.javacc.base.Compiler"
    
-   Builder extends IncrementalProjectBuilder
+   Compiler extends IncrementalProjectCompiler
    and is called by the Workbench to compile javaCC files.
    
    Note that it is also used to compile files via static methods.
    (On Actions triggered from contextual menu on a Resource)
     
-   Builder uses also in this package :
+   Compiler uses also in this package :
    -Dirlist to retrieve JavaCC generated files.
    -JarLauncher to launch JavaCC via Runtime.exec()
    
@@ -69,7 +69,7 @@ This plug-in uses 14 extensions:
    -JJDocOptions  for jjdoc arguments
    -JTBOptions  for jjdoc arguments
    -JJRuntimeOptions for Eclipse use of JavaCC
-    (Console, jarfile setting, Builder)
+    (Console, jarfile setting, Compiler)
     
    JJPropertyPage sets up a TabFolder to show 4 tabs
    for these 5 classes.
@@ -82,7 +82,7 @@ This plug-in uses 14 extensions:
    gather all the options in a single PersistentProperty 
    which is set on the Resource.
    JJRuntimeOptions sets PersistentProperty on Project.
-   (These PersistentProperty are retrieved by Builder from
+   (These PersistentProperty are retrieved by Compiler from
     Resource or Project)
     
    BooleanFieldEditor and DirectoryFieldEditor
@@ -97,7 +97,7 @@ This plug-in uses 14 extensions:
 
    CompileAction provides a direct way to compile .jj, .jjt or jtb files
    in the contextual PopupMenu associated with a File.
-   CompileAction simply calls a static method of Builder.
+   CompileAction simply calls a static method of Compiler.
    
 6) Decorator to annotate generated files
    point="org.eclipse.ui.decorators">

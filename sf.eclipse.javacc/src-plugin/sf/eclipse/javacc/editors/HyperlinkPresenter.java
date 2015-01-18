@@ -9,7 +9,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
  * Class HyperlinkPresenter underlines the link and colors the line and the text with the given color.
  * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 class HyperlinkPresenter extends DefaultHyperlinkPresenter {
 

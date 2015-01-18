@@ -24,7 +24,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  * <extension point="org.eclipse.ui.preferencePages">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPreferencePage {
@@ -566,7 +566,7 @@ public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPr
    * @param columns - the number of columns on the tab page
    * @return the tab page grid layout
    */
-  private GridLayout getTabPageGridLayout(final int columns) {
+  private static GridLayout getTabPageGridLayout(final int columns) {
     final GridLayout gridLayout = new GridLayout(columns, false);
 
     // allow more margin space, default is only 5 pixels
@@ -602,7 +602,7 @@ public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPr
    * @param columns - the number of columns in the composite
    * @return the composite
    */
-  private Composite getComposite(final Group group, final int columns) {
+  private static Composite getComposite(final Group group, final int columns) {
     final Composite composite = new Composite(group, SWT.NONE);
     composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
     composite.setLayout(new GridLayout(columns, false));
@@ -615,7 +615,7 @@ public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPr
    * @param group - the group containing the composite
    * @return the composite
    */
-  private Composite getComposite(final Group group) {
+  private static Composite getComposite(final Group group) {
     return getComposite(group, 1);
   }
 
@@ -634,7 +634,7 @@ public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPr
   /**
    * Updates spelling and colors for all active JavaCC editors.
    */
-  protected void updateSpellingAndColors() {
+  protected static void updateSpellingAndColors() {
     final IWorkbenchWindow window = AbstractActivator.getDefault().getWorkbench().getActiveWorkbenchWindow();
     if (window != null) {
       final IWorkbenchPage page = window.getActivePage();
@@ -653,7 +653,7 @@ public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPr
 
   /** {@inheritDoc} */
   @Override
-  public void init(@SuppressWarnings("unused") final IWorkbench aWorkbench) {
+  public void init(final IWorkbench aWorkbench) {
     // required override, no action
   }
 }

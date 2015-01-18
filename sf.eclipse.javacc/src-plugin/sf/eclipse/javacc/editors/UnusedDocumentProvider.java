@@ -24,7 +24,7 @@ import sf.eclipse.javacc.scanners.SMLJCDetector;
  * Must be coherent with {@link CodeScanner}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class UnusedDocumentProvider extends FileDocumentProvider {
 
@@ -42,7 +42,7 @@ public class UnusedDocumentProvider extends FileDocumentProvider {
    * {@inheritDoc}
    */
   @Override
-  protected void setupDocument(@SuppressWarnings("unused") final Object aElement, final IDocument aDoc) {
+  protected void setupDocument(final Object aElement, final IDocument aDoc) {
     if (aDoc instanceof IDocumentExtension3) {
       final IDocumentExtension3 theDoc = (IDocumentExtension3) aDoc;
       final IDocumentPartitioner partitioner = createPartitioner();
@@ -56,7 +56,7 @@ public class UnusedDocumentProvider extends FileDocumentProvider {
    * 
    * @return a FastPartitioner set with a RuleBasedPartitionScanner set with code and comment partitions
    */
-  private IDocumentPartitioner createPartitioner() {
+  private static IDocumentPartitioner createPartitioner() {
     final IToken codeToken = new Token(CODE_CONTENT_TYPE);
     final IToken lineCommentToken = new Token(LINE_CMT_CONTENT_TYPE);
     final IToken blockCommentToken = new Token(BLOCK_CMT_CONTENT_TYPE);

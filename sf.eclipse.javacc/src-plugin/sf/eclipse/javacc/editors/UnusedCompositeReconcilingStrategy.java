@@ -14,7 +14,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 /**
  * The JJ Composite Reconciling strategy.
  * 
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 @SuppressWarnings("restriction")
 public class UnusedCompositeReconcilingStrategy extends JavaCompositeReconcilingStrategy {
@@ -106,7 +106,7 @@ public class UnusedCompositeReconcilingStrategy extends JavaCompositeReconciling
    * {@inheritDoc}
    */
   @Override
-  public void notifyListeners(@SuppressWarnings("unused") final boolean aNotify) {
+  public void notifyListeners(final boolean aNotify) {
     //    jStrategy.notifyListeners(notify);
   }
 

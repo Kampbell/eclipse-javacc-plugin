@@ -38,7 +38,7 @@ import sf.eclipse.javacc.scanners.CommentScanner;
  * {@link SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
@@ -102,8 +102,8 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final IAutoEditStrategy[] getAutoEditStrategies(@SuppressWarnings("unused") final ISourceViewer aSourceViewer,
-                                                         @SuppressWarnings("unused") final String aContentType) {
+  public final IAutoEditStrategy[] getAutoEditStrategies(final ISourceViewer aSourceViewer,
+                                                         final String aContentType) {
     return new IAutoEditStrategy[] {
       new AutoIndentStrategy() };
   }
@@ -114,7 +114,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final String getConfiguredDocumentPartitioning(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public final String getConfiguredDocumentPartitioning(final ISourceViewer aSourceViewer) {
     return PARTITIONING_ID;
   }
 
@@ -124,7 +124,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final String[] getConfiguredContentTypes(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public final String[] getConfiguredContentTypes(final ISourceViewer aSourceViewer) {
     return CONTENT_TYPES;
   }
 
@@ -163,8 +163,8 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final ITextDoubleClickStrategy getDoubleClickStrategy(@SuppressWarnings("unused") final ISourceViewer aSourceViewer,
-                                                               @SuppressWarnings("unused") final String aContentType) {
+  public final ITextDoubleClickStrategy getDoubleClickStrategy(final ISourceViewer aSourceViewer,
+                                                               final String aContentType) {
     return new DoubleClickStrategy();
   }
 
@@ -229,7 +229,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final IAnnotationHover getAnnotationHover(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public final IAnnotationHover getAnnotationHover(final ISourceViewer aSourceViewer) {
     return new AnnotationHover();
   }
 
@@ -239,7 +239,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final IAnnotationHover getOverviewRulerAnnotationHover(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public final IAnnotationHover getOverviewRulerAnnotationHover(final ISourceViewer aSourceViewer) {
     return new AnnotationHover();
   }
 
@@ -259,7 +259,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final IHyperlinkDetector[] getHyperlinkDetectors(@SuppressWarnings("unused") final ISourceViewer aSourceViewer) {
+  public final IHyperlinkDetector[] getHyperlinkDetectors(final ISourceViewer aSourceViewer) {
     return new HyperlinkDetector[] {
       new HyperlinkDetector(jEditor) };
   }
@@ -270,7 +270,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
    * {@inheritDoc}
    */
   @Override
-  public final IHyperlinkPresenter getHyperlinkPresenter(@SuppressWarnings("unused") final ISourceViewer sourceViewer) {
+  public final IHyperlinkPresenter getHyperlinkPresenter(final ISourceViewer sourceViewer) {
     return new HyperlinkPresenter(AbstractActivator.getDefault().getPreferenceStore());
   }
 

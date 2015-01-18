@@ -34,7 +34,7 @@ import sf.eclipse.javacc.scanners.CodeScanner;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class Format extends AbstractHandler {
 
@@ -937,7 +937,7 @@ public class Format extends AbstractHandler {
    * 
    * @param aSb - the indentation StringBuffer
    */
-  private void decrementIndent(final StringBuffer aSb) {
+  private static void decrementIndent(final StringBuffer aSb) {
     final int len = aSb.length() - CodeScanner.getIndentString().length();
     if (len >= 0) {
       aSb.setLength(len);

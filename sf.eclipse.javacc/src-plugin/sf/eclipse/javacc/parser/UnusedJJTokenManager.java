@@ -5,7 +5,7 @@ package sf.eclipse.javacc.parser;
  * Note that it extends {@link JavaCCParserTokenManager}, which must be rebuilt whenever the grammar tokens
  * change (recompile the grammar with USER_TOKEN_MANAGER = false;).
  * 
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class UnusedJJTokenManager extends JavaCCParserTokenManager implements TokenManager {
 

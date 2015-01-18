@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.headless.feature"
       label="JavaCC Eclipse Headless Plug-in (Sourceforge)"
-      version="1.5.28"
+      version="1.5.29"
       provider-name="Remi Koutcherawy, Marc Mazas"
       plugin="sf.eclipse.javacc.headless">
 

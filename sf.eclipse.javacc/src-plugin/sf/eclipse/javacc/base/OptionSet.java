@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
  * A set of Options ; can parse options on a command line and generate one new set.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class OptionSet {
 
@@ -244,7 +244,7 @@ public class OptionSet {
    * @param aValue - the string
    * @return the string with the enclosing quotes stripped, or the string itself
    */
-  private String stripEnclosingQuotes(final String aValue) {
+  private static String stripEnclosingQuotes(final String aValue) {
     String value = aValue;
     final int len = value.length() - 1;
     if ((len > 0) && (value.charAt(0) == '"') && (value.charAt(len) == '"')) {

@@ -50,9 +50,9 @@ import sf.eclipse.javacc.base.IConsole;
  * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.views"><br>
  * Since 1.3 this console is used for reporting errors, so must be.
- * 
+ *
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public class ConsoleView extends ViewPart implements IConsole {
@@ -67,11 +67,13 @@ public class ConsoleView extends ViewPart implements IConsole {
   //               fixed multiple markers hashtable for multiple files problem ; renamed
   // MMa 10/2014 : fixed markers deletion
   // MMa 11/2014 : enhanced printing methods ; some renamings ; modified some modifiers
+  // MMa 01/2015 : added method for displaying output ; added dispose method
 
   // TODO check JJDoc problems handling
 
   /** The preference store */
-  private final IPreferenceStore             jStore          = AbstractActivator.getDefault().getPreferenceStore();
+  private final IPreferenceStore             jStore          = AbstractActivator.getDefault()
+                                                                                .getPreferenceStore();
 
   /** The viewer control */
   StyledText                                 jStyledText;
@@ -139,7 +141,7 @@ public class ConsoleView extends ViewPart implements IConsole {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetDisposed(@SuppressWarnings("unused") final DisposeEvent e) {
+      public void widgetDisposed(final DisposeEvent e) {
         if (jCommandColor != null) {
           jCommandColor.dispose();
           jCommandColor = null;
@@ -181,6 +183,12 @@ public class ConsoleView extends ViewPart implements IConsole {
     menuMgr.add(clear);
     menuMgr.add(copy);
     jStyledText.setMenu(popup);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void dispose() {
+    getPrintStream().close();
   }
 
   /** {@inheritDoc} */
@@ -249,17 +257,23 @@ public class ConsoleView extends ViewPart implements IConsole {
 
   /** {@inheritDoc} */
   @Override
-  public void processReport(final IFile aFile, final boolean aIsJtb) {
+  public void displayOutput() {
     addText(jBaos.toString(), false);
     jBaos.reset();
     println();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void processReport(final IFile aFile, final boolean aIsJtb) {
+    displayOutput();
     // add markers and hyperlinks
     processConsoleOutput(aFile, aIsJtb);
   }
 
   /**
    * Adds this text to the Console.
-   * 
+   *
    * @param aTxt - the text to add
    * @param aIsConsoleCommand - if the text is to be displayed using the console command color preference
    */
@@ -297,7 +311,7 @@ public class ConsoleView extends ViewPart implements IConsole {
   /**
    * Decodes console output, catches lines reporting problems (infos / warnings / errors), adds hyperlinks and
    * markers for them.
-   * 
+   *
    * @param aFile - the file to report on
    * @param aIsJtb - true if file is a JTB one, false otherwise
    */
@@ -423,7 +437,8 @@ public class ConsoleView extends ViewPart implements IConsole {
           }
           else {
             // create an hyperlink pointing to the beginning of the file
-            new ConsoleHyperlink(jLastOffset + offset, length, aFile, 0, 0);
+            @SuppressWarnings("unused")
+            final ConsoleHyperlink chl = new ConsoleHyperlink(jLastOffset + offset, length, aFile, 0, 0);
             IMarker topMarker = (severity == IMarker.SEVERITY_WARNING ? topWarningMarker : topErrorMarker);
             // mark the problem at the beginning of the editor
             if (topMarker == null) {
@@ -483,14 +498,16 @@ public class ConsoleView extends ViewPart implements IConsole {
 
           // add an hyperlink in the console
           // the first line is 1 for JavaCC and 0 for Eclipse editors
-          new ConsoleHyperlink(jLastOffset + start + offset, length, newFile, line - 1, col - 1);
+          @SuppressWarnings("unused")
+          final ConsoleHyperlink chl = new ConsoleHyperlink(jLastOffset + start + offset, length, newFile,
+                                                            line - 1, col - 1);
         } // do this for all occurrences on the line
         while (lineColumnMatcher.find());
       }
 
       if (aIsJtb) {
         /*
-         *  .jtb file for the pure JTB phase : we get in the console outputs like : 
+         *  .jtb file for the pure JTB phase : we get in the console outputs like :
          */
         // new.jtb (406,3):  warning:  Non initialized user variable 'isTypedef'. May lead to compiler error(s) (specially for 'Token' variables). Check in generated parser.
         // new.jtb (461,2):  info:  Non "void" BNFProduction. Result type 'boolean' will be changed into 'type_modifiers', and a parser class variable 'jtbrt_type_modifiers' of type 'boolean' will be added to hold the return values.
@@ -510,21 +527,23 @@ public class ConsoleView extends ViewPart implements IConsole {
           offset = jtbPbMatcher.start(0);
           // show the hyperlink only up to "info" or "warning" or "error" to increase Console readability
           length = jtbPbMatcher.end(3) - offset;
-          // add the problem in the editor problems 
+          // add the problem in the editor problems
           addMarker(aFile, report, severity, line);
           // the first line or column is 1 for JTB and 0 for Eclipse editors
-          new ConsoleHyperlink(jLastOffset + offset, length, aFile, line - 1, col - 1);
+          @SuppressWarnings("unused")
+          final ConsoleHyperlink chl = new ConsoleHyperlink(jLastOffset + offset, length, aFile, line - 1,
+                                                            col - 1);
         }
       }
 
-      // next time the text shall be parsed from lastOffset 
+      // next time the text shall be parsed from lastOffset
       jLastOffset = count;
     }
   }
 
   /**
    * Add a marker to signal a problem. Hover tips are managed by SourceViewerConfiguration.
-   * 
+   *
    * @param aFile - the file to report on
    * @param aMsg - the marker message
    * @param aSeverity - the marker severity
@@ -547,12 +566,10 @@ public class ConsoleView extends ViewPart implements IConsole {
         fmht.put(line, newMarker);
         return newMarker;
       }
-      else {
-        // marker already on this line ; assumes that the new severity is not higher than the old one
-        final String msg = (((String) oldMarker.getAttribute(IMarker.MESSAGE))).concat(LS).concat(aMsg);
-        oldMarker.setAttribute(IMarker.MESSAGE, msg);
-        return oldMarker;
-      }
+      // marker already on this line ; assumes that the new severity is not higher than the old one
+      final String msg = (((String) oldMarker.getAttribute(IMarker.MESSAGE))).concat(LS).concat(aMsg);
+      oldMarker.setAttribute(IMarker.MESSAGE, msg);
+      return oldMarker;
     } catch (final CoreException e) {
       AbstractActivator.logBug(e);
       return null;
@@ -561,11 +578,11 @@ public class ConsoleView extends ViewPart implements IConsole {
 
   /**
    * Updates a current marker by adding a new line with a given new message.
-   * 
+   *
    * @param aMarker - the marker to update
    * @param aMsg - the message to add
    */
-  private void addProblem(final IMarker aMarker, final String aMsg) {
+  private static void addProblem(final IMarker aMarker, final String aMsg) {
     try {
       final String msg = (((String) aMarker.getAttribute(IMarker.MESSAGE))).concat(LS).concat(aMsg);
       aMarker.setAttribute(IMarker.MESSAGE, msg);

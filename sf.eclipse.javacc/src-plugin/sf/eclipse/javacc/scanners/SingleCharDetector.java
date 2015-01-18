@@ -20,7 +20,7 @@ class SingleCharDetector implements IWordDetector {
 
   /** {@inheritDoc} */
   @Override
-  public boolean isWordPart(@SuppressWarnings("unused") final char character) {
+  public boolean isWordPart(final char character) {
     return false;
   }
 }

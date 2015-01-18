@@ -21,7 +21,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
 /**
  * JJ spelling service copied from the System wide spelling service {@link SpellingService}.
  * 
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
@@ -105,7 +105,7 @@ class UnusedSpellingServiceJJ {
 
               /** {@inheritDoc} */
               @Override
-              public void handleException(@SuppressWarnings("unused") final Throwable x) {
+              public void handleException(final Throwable x) {
                 // swallowed
               }
             };
@@ -125,7 +125,7 @@ class UnusedSpellingServiceJJ {
    * 
    * @return all spelling engine descriptors
    */
-  public SpellingEngineDescriptor[] getSpellingEngineDescriptors() {
+  public static SpellingEngineDescriptor[] getSpellingEngineDescriptors() {
     final SpellingEngineRegistry registry = getSpellingEngineRegistry();
     if (registry == null) {
       return new SpellingEngineDescriptor[0];
@@ -138,7 +138,7 @@ class UnusedSpellingServiceJJ {
    * 
    * @return the default spelling engine descriptor or <code>null</code> if none could be found
    */
-  public SpellingEngineDescriptor getDefaultSpellingEngineDescriptor() {
+  public static SpellingEngineDescriptor getDefaultSpellingEngineDescriptor() {
     final SpellingEngineRegistry registry = getSpellingEngineRegistry();
     if (registry == null) {
       return null;
@@ -154,7 +154,7 @@ class UnusedSpellingServiceJJ {
    * @return the descriptor of the active spelling engine or <code>null</code> if none could be found
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
-  public SpellingEngineDescriptor getActiveSpellingEngineDescriptor(final IPreferenceStore aPrefStore) {
+  public static SpellingEngineDescriptor getActiveSpellingEngineDescriptor(final IPreferenceStore aPrefStore) {
     final SpellingEngineRegistry registry = getSpellingEngineRegistry();
     if (registry == null) {
       return null;
@@ -179,7 +179,7 @@ class UnusedSpellingServiceJJ {
    * @throws CoreException - if the creation failed
    * @see SpellingService#PREFERENCE_SPELLING_ENGINE
    */
-  private ISpellingEngine createEngine(final IPreferenceStore aPrefStore) throws CoreException {
+  private static ISpellingEngine createEngine(final IPreferenceStore aPrefStore) throws CoreException {
     final SpellingEngineDescriptor descriptor = getActiveSpellingEngineDescriptor(aPrefStore);
     if (descriptor != null) {
       return descriptor.createEngine();
@@ -193,7 +193,7 @@ class UnusedSpellingServiceJJ {
    * 
    * @return the spelling engine registry or <code>null</code> if the plug-in has been shutdown
    */
-  private final SpellingEngineRegistry getSpellingEngineRegistry() {
+  private final static SpellingEngineRegistry getSpellingEngineRegistry() {
     return TextEditorPlugin.getDefault().getSpellingEngineRegistry();
   }
 }

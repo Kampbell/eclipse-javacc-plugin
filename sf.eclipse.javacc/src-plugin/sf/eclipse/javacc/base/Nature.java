@@ -9,14 +9,13 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * The Project Nature for JavaCC projects for normal usage (ie non headless builds).<br>
  * Referenced by plugin.xml.<br>
  * <extension point="org.eclipse.core.resources.natures">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class Nature implements IProjectNature {
 
@@ -62,7 +61,7 @@ public class Nature implements IProjectNature {
       }
     }
     if (command == null) {
-      // add Builder (ID only)
+      // add Compiler (ID only)
       command = desc.newCommand();
       command.setBuilderName(BUILDER_ID);
       final ICommand[] newCommands = new ICommand[cmds.length + 1];
@@ -88,7 +87,7 @@ public class Nature implements IProjectNature {
     final ICommand[] cmds = desc.getBuildSpec();
     for (int i = cmds.length - 1; i >= 0; i--) {
       if (cmds[i].getBuilderName().equals(BUILDER_ID)) {
-        // copy without Builder
+        // copy without Compiler
         final ICommand[] newCommands = new ICommand[cmds.length - 1];
         System.arraycopy(cmds, 0, newCommands, 0, i);
         System.arraycopy(cmds, i + 1, newCommands, i, cmds.length - i - 1);

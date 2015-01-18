@@ -16,7 +16,7 @@ import sf.eclipse.javacc.scanners.CodeScanner;
  * 
  * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
@@ -37,7 +37,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
   @Override
   public void customizeDocumentCommand(final IDocument aDoc, final DocumentCommand aCmd) {
     final boolean noAdvancedAutoInd = AbstractActivator.getDefault().getPreferenceStore()
-                                               .getBoolean(P_NO_ADV_AUTO_INDENT);
+                                                       .getBoolean(P_NO_ADV_AUTO_INDENT);
     if (noAdvancedAutoInd) {
       if (aCmd.length == 0 && aCmd.text != null && endsWithDelimiter(aDoc, aCmd.text)) {
         basicIndentAfterNewLine(aDoc, aCmd);
@@ -615,7 +615,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
    * @param aTxt - the text
    * @return true if the text ends with one of the document end of line delimiters, false otherwise
    */
-  boolean endsWithDelimiter(final IDocument aDoc, final String aTxt) {
+  static boolean endsWithDelimiter(final IDocument aDoc, final String aTxt) {
     final String[] delimiters = aDoc.getLegalLineDelimiters();
     for (int i = 0; i < delimiters.length; i++) {
       if (aTxt.endsWith(delimiters[i])) {
@@ -635,8 +635,8 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
    * @return the line number of the next matching brace after end
    * @throws BadLocationException - if not in the right place
    */
-  int findMatchingLeftBrace(final IDocument aDoc, final int aStartLine, final int aEndPos,
-                            final int aRightBracesCount) throws BadLocationException {
+  static int findMatchingLeftBrace(final IDocument aDoc, final int aStartLine, final int aEndPos,
+                                   final int aRightBracesCount) throws BadLocationException {
     int ln = aStartLine;
     int startPos = aDoc.getLineOffset(ln);
     int brackcount = getBracesCount(aDoc, startPos, aEndPos, false) - aRightBracesCount;
@@ -665,8 +665,8 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
    * @return the line number of the next matching brace after end
    * @throws BadLocationException - if not in the right place
    */
-  int getBracesCount(final IDocument aDoc, final int aStartPos, final int aEndPos,
-                     final boolean aIgnoreRightBraces) throws BadLocationException {
+  static int getBracesCount(final IDocument aDoc, final int aStartPos, final int aEndPos,
+                            final boolean aIgnoreRightBraces) throws BadLocationException {
     int p = aStartPos;
     int bracesCount = 0;
     boolean ignore = aIgnoreRightBraces;
@@ -743,7 +743,8 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
    * @return the end position of a comment starting at the start position
    * @throws BadLocationException - if not in the right place
    */
-  int getCommentEnd(final IDocument aDoc, final int aStartPos, final int aEndPos) throws BadLocationException {
+  static int getCommentEnd(final IDocument aDoc, final int aStartPos, final int aEndPos)
+                                                                                        throws BadLocationException {
     int p = aStartPos;
     while (p < aEndPos) {
       final char c = aDoc.getChar(p);
@@ -767,8 +768,8 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
    * @return the first location of the character searched
    * @throws BadLocationException - if not in the right place
    */
-  int getStringEnd(final IDocument aDoc, final int aStartPos, final int aEndPos, final char aCh)
-                                                                                                throws BadLocationException {
+  static int getStringEnd(final IDocument aDoc, final int aStartPos, final int aEndPos, final char aCh)
+                                                                                                       throws BadLocationException {
     int p = aStartPos;
     while (p < aEndPos) {
       final char c = aDoc.getChar(p);

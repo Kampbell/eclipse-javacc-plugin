@@ -8,12 +8,12 @@ import org.eclipse.jface.text.IDocument;
  * import).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public interface IConstants {
 
-  // MMa 04/2009 : formatting and javadoc revision ; added and removed some entries 
+  // MMa 04/2009 : formatting and javadoc revision ; added and removed some entries
   // MMa 12/2009 : changed JTB version
   // MMa 02/2010 : changed JTB revision
   // MMa 03/2010 : added IDs; changed JTB version
@@ -23,9 +23,7 @@ public interface IConstants {
   // MMa 10/2012 : added JVM options option and keep deleted files in history option ; moved arrays ; renamed
   // MMa 11/2014 : changed JavaCC jar name & JTB revision ; fixed default JDK_VERSION
   // MMa 12/2014 : added jars directory
-
-  //  /** Debug mode flag (not used) */
-  //  static final boolean         DEBUG                      = false;
+  // MMa 01/2015 : added arguments
 
   /*
    *  JARs
@@ -33,9 +31,23 @@ public interface IConstants {
   /** Default JavaCC jar name */
   static final String          JAVACC_JAR_NAME            = "javacc-5.0.jar";                                 //$NON-NLS-1$
   /** Default JTB jar name */
-  static final String          JTB_JAR_NAME               = "jtb-1.4.8.jar";                                  //$NON-NLS-1$
+  static final String          JTB_JAR_NAME               = "jtb-1.4.9.jar";                                  //$NON-NLS-1$
   /** Jars directory name */
   static final String          JARS_DIR                   = "/jars/";                                         //$NON-NLS-1$
+
+  /*
+   *  Arguments
+   */
+  /** Argument for javacc compiling */
+  static final String          JAVACC_ARG                 = "javacc";                                         //$NON-NLS-1$
+  /** Argument for jjtree compiling */
+  static final String          JJTREE_ARG                 = "jjtree";                                         //$NON-NLS-1$
+  /** Argument for jjdoc compiling */
+  static final String          JJDOC_ARG                  = "jjdoc";                                          //$NON-NLS-1$
+  /** Argument for javacc & jjtree compiling */
+  static final String          CLASSPATH_ARG              = "-classpath";                                     //$NON-NLS-1$
+  /** Argument for jtb compiling */
+  static final String          JAR_ARG                    = "-jar";                                           //$NON-NLS-1$
 
   /*
    *  Project options
@@ -53,15 +65,15 @@ public interface IConstants {
   /** JavaCC // JJTree // JJDoc / JTB empty default option */
   static final String          DEF_EMPTY_OPTION           = "";                                               //$NON-NLS-1$
   /** Suppress warnings run-time option qualified name suffix */
-  static final String          SUPPRESS_WARNINGS          = "SUPPRESS_WARNINGS";                              //$NON-NLS-1$  
+  static final String          SUPPRESS_WARNINGS          = "SUPPRESS_WARNINGS";                              //$NON-NLS-1$
   /** Default value for {@link #SUPPRESS_WARNINGS} */
   static final String          DEF_SUPPRESS_WARNINGS      = "false";                                          //$NON-NLS-1$
   /** Mark generated files as derived run-time option qualified name suffix */
-  static final String          MARK_GEN_FILES_DERIVED     = "MARK_GEN_FILES_AS_DERIVED";                      //$NON-NLS-1$  
+  static final String          MARK_GEN_FILES_DERIVED     = "MARK_GEN_FILES_AS_DERIVED";                      //$NON-NLS-1$
   /** Default value for {@link #MARK_GEN_FILES_DERIVED} */
   static final String          DEF_MARK_GEN_FILES_DERIVED = "true";                                           //$NON-NLS-1$
   /** Keep deleted files in history run-time option qualified name suffix */
-  static final String          KEEP_DEL_FILES_IN_HIST     = "KEEP_DEL_FILES_IN_HISTORY";                      //$NON-NLS-1$  
+  static final String          KEEP_DEL_FILES_IN_HIST     = "KEEP_DEL_FILES_IN_HISTORY";                      //$NON-NLS-1$
   /** Default value for {@link #KEEP_DEL_FILES_IN_HIST} */
   static final String          DEF_KEEP_DEL_FILES_IN_HIST = "false";                                          //$NON-NLS-1$
   /** Show console run-time option qualified name suffix */
@@ -92,17 +104,17 @@ public interface IConstants {
   /** Plugin name */
   public static final String   PLUGIN_NAME                = "JavaCC";                                         //$NON-NLS-1$
 
-  // Builder and Nature ID
+  // Compiler and Nature ID
   /** Nature qualified name id (note that in plugin.xml it is "javaccnature") */
   static final String          NATURE_ID                  = "sf.eclipse.javacc.javaccnature";                 //$NON-NLS-1$
   /** Nature qualified name label */
   static final String          NATURE_NAME                = "JavaCC Nature";                                  //$NON-NLS-1$
-  /** Builder qualified name id (note that in plugin.xml it is "javaccbuilder") */
+  /** Compiler qualified name id (note that in plugin.xml it is "javaccbuilder") */
   static final String          BUILDER_ID                 = "sf.eclipse.javacc.javaccbuilder";                //$NON-NLS-1$
-  /** Builder qualified name label */
-  static final String          BUILDER_NAME               = "JavaCC Builder";                                 //$NON-NLS-1$
+  /** Compiler qualified name label */
+  static final String          BUILDER_NAME               = "JavaCC Compiler";                                //$NON-NLS-1$
 
-  //  Decorator ID 
+  //  Decorator ID
   /** Decorator qualified name id */
   static final String          DECORATOR_ID               = "sf.eclipse.javacc.jjdecorator";                  //$NON-NLS-1$
 
@@ -121,6 +133,14 @@ public interface IConstants {
   static final String          JJEDITOR_ID                = "sf.eclipse.javacc.editors.JJEditor";             //$NON-NLS-1$
   /** JJEditorScope qualified name id */
   static final String          JJEDITOR_SCOPE_ID          = "sf.eclipse.javacc.JJEditorScope";                //$NON-NLS-1$
+
+  //  Compile commands
+  /** Check_compile id */
+  static final String          CHECK_COMPILE_ID           = "sf.eclipse.javacc.checkcompile";                 //$NON-NLS-1$
+  /** Compile_with_ext command id */
+  static final String          EXT_COMPILE_ID             = "sf.eclipse.javacc.extcompile";                   //$NON-NLS-1$
+  /** Compile_with_ext command id */
+  static final String          JJDOC_COMPILE_ID           = "sf.eclipse.javacc.jjdoccompile";                 //$NON-NLS-1$
 
   //  Folding commands
   /** Collapse command id */
@@ -146,15 +166,15 @@ public interface IConstants {
 
   //  JJDocumentProvider / partitioning
   /** The partitioning ID */
-  public static final String   PARTITIONING_ID            = "sf.eclipse.javacc.editors.JJEditor.partitioning"; //$NON-NLS-1$ 
+  public static final String   PARTITIONING_ID            = "sf.eclipse.javacc.editors.JJEditor.partitioning"; //$NON-NLS-1$
   /** The identifier for the code partition content type */
-  public static final String   CODE_CONTENT_TYPE          = "JJ_CODE";                                        //$NON-NLS-1$ 
+  public static final String   CODE_CONTENT_TYPE          = "JJ_CODE";                                        //$NON-NLS-1$
   /** The identifier for the single line comments partition content type */
-  public static final String   LINE_CMT_CONTENT_TYPE      = "JJ_LINE_COMMENT";                                //$NON-NLS-1$ 
+  public static final String   LINE_CMT_CONTENT_TYPE      = "JJ_LINE_COMMENT";                                //$NON-NLS-1$
   /** The identifier for the multiline comments partition content type */
-  public static final String   BLOCK_CMT_CONTENT_TYPE     = "JJ_BLOCK_COMMENT";                               //$NON-NLS-1$ 
+  public static final String   BLOCK_CMT_CONTENT_TYPE     = "JJ_BLOCK_COMMENT";                               //$NON-NLS-1$
   /** The identifier for the javadoc partition content type */
-  public static final String   JAVADOC_CONTENT_TYPE       = "JJ_JAVADOC";                                     //$NON-NLS-1$ 
+  public static final String   JAVADOC_CONTENT_TYPE       = "JJ_JAVADOC";                                     //$NON-NLS-1$
   /** The array of partition content types */
   public static final String[] CONTENT_TYPES              = {
       CODE_CONTENT_TYPE, //

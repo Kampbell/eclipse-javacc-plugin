@@ -14,7 +14,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * JavaCC hyperlink detector.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 class HyperlinkDetector implements IHyperlinkDetector {
 
@@ -41,7 +41,7 @@ class HyperlinkDetector implements IHyperlinkDetector {
   /** {@inheritDoc} */
   @Override
   public IHyperlink[] detectHyperlinks(final ITextViewer aTextViewer, final IRegion aRegion,
-                                       @SuppressWarnings("unused") final boolean aCanShowMultipleHyperlinks) {
+                                       final boolean aCanShowMultipleHyperlinks) {
     if (aRegion == null) {
       return null;
     }
@@ -51,7 +51,7 @@ class HyperlinkDetector implements IHyperlinkDetector {
       return null;
     }
 
-    final ITextSelection textSel = jEditor.selectWord(document, aRegion);
+    final ITextSelection textSel = JJEditor.selectWord(document, aRegion);
     if (textSel == null) {
       return null;
     }

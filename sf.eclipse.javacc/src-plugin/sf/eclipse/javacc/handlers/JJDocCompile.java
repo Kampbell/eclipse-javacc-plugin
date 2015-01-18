@@ -12,7 +12,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import sf.eclipse.javacc.base.AbstractActivator;
-import sf.eclipse.javacc.base.Builder;
+import sf.eclipse.javacc.base.Compiler;
 import sf.eclipse.javacc.editors.JJEditor;
 
 /**
@@ -21,14 +21,15 @@ import sf.eclipse.javacc.editors.JJEditor;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class JJDocCompile extends AbstractHandler {
 
   // MMa 10/2012 : created from the corresponding now deprecated action
+  // MMa 01/2015 : changed Builder to Compiler
 
   /** The builder to use */
-  private final Builder jBuilder = new Builder();
+  private final Compiler jCompiler = new Compiler();
 
   /** {@inheritDoc} */
   @Override
@@ -44,7 +45,7 @@ public class JJDocCompile extends AbstractHandler {
         // find the resource from the editor input
         final IEditorInput input = jEditor.getEditorInput();
         final IResource res = (IResource) input.getAdapter(IResource.class);
-        jBuilder.jjdoc_compile(res);
+        jCompiler.jjdoc_compile(res);
       }
       else {
         // not our editor (no reason why, however), do nothing
@@ -59,7 +60,7 @@ public class JJDocCompile extends AbstractHandler {
         final Object obj = ((IStructuredSelection) selection).getFirstElement();
         if (obj != null && obj instanceof IFile) {
           final IResource res = (IFile) obj;
-          jBuilder.jjdoc_compile(res);
+          jCompiler.jjdoc_compile(res);
         }
       }
     }

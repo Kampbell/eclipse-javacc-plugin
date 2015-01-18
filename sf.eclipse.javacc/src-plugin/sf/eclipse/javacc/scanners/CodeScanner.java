@@ -28,7 +28,7 @@ import sf.eclipse.javacc.handlers.Format;
  * Must be coherent with {@link UnusedDocumentProvider}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public class CodeScanner extends RuleBasedScanner {
@@ -145,7 +145,8 @@ public class CodeScanner extends RuleBasedScanner {
   final Display                         jDisplay         = Display.getCurrent();
 
   /** The preference store */
-  static final IPreferenceStore         sStore           = AbstractActivator.getDefault().getPreferenceStore();
+  static final IPreferenceStore         sStore           = AbstractActivator.getDefault()
+                                                                            .getPreferenceStore();
 
   /** The preference change listener and its associated method */
   private final IPropertyChangeListener jPrefListener    = new IPropertyChangeListener() {

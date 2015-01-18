@@ -22,7 +22,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * (for the moment).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 class TextHover implements ITextHover, ITextHoverExtension2 {
 
@@ -54,10 +54,13 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
     jEditor = aJJEditor;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   * 
+   * @deprecated see superclass
+   */
+  @Deprecated
   @Override
-  @SuppressWarnings({
-    "deprecation" })
   public final String getHoverInfo(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
     return getHoverInfo2(aTextViewer, aHoverRegion);
   }

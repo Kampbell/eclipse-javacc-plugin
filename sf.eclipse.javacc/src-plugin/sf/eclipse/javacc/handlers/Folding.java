@@ -6,7 +6,6 @@ import static sf.eclipse.javacc.base.IConstants.EXPAND_ALL_ID;
 import static sf.eclipse.javacc.base.IConstants.EXPAND_ID;
 
 import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
@@ -21,7 +20,7 @@ import sf.eclipse.javacc.editors.JJEditor;
  * Folding handler. Manages collapse, expand, collapse_all and expand_all commands.<br>
  * Referenced by plugin.xml.<br>
  * <extension point="org.eclipse.ui.handlers">.<br>
- * 
+ *
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
  * @author Marc Mazas 2014
  */
@@ -51,8 +50,7 @@ public class Folding extends AbstractHandler {
     if (sourceViewer instanceof ProjectionViewer) {
       final ProjectionViewer pv = (ProjectionViewer) sourceViewer;
       if (pv.isProjectionMode()) {
-        final Command cmd = event.getCommand();
-        final String cmdId = cmd.getId();
+        final String cmdId = event.getCommand().getId();
         if (COLLAPSE_ID.equals(cmdId)) {
           if (pv.canDoOperation(ProjectionViewer.COLLAPSE)) {
             pv.doOperation(ProjectionViewer.COLLAPSE);

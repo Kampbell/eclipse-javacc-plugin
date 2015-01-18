@@ -31,7 +31,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * <extension point="org.eclipse.ui.propertyPages">.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class PropertyPageJJ extends PropertyPage {
 
@@ -167,9 +167,11 @@ public class PropertyPageJJ extends PropertyPage {
     // ask for rebuild (should check if an option has changed)
     try {
       final IProject proj = jResource.getProject();
-      final MessageDialog dialog = new MessageDialog(getShell(),
+      final MessageDialog dialog = new MessageDialog(
+                                                     getShell(),
                                                      AbstractActivator.getMsg("PropPage.Ask_for_rebuild_title"), //$NON-NLS-1$
-                                                     null, AbstractActivator.getMsg("PropPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
+                                                     null,
+                                                     AbstractActivator.getMsg("PropPage.Ask_for_rebuild_msg"), //$NON-NLS-1$
                                                      MessageDialog.QUESTION, new String[] {
                                                          IDialogConstants.YES_LABEL,
                                                          IDialogConstants.NO_LABEL,

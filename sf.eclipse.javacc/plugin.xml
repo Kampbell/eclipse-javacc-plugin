@@ -5,15 +5,16 @@
 <!-- MMa 10/2014 : added markers, annotationTypes and markerAnnotationSpecification extensions -->
 <!-- MMa 11/2014 : added navigatorContent extension, updated handlers, menus, commands, definition
                     extensions for deleting derived files, folding, placing menus and tool bars -->
+<!-- MMa 01/2015 : enhanced compile commands -->
 <plugin>
-<!-- Builders Extension -->
+<!-- Compilers Extension -->
 <!-- This defines the class used to build from a JavaCC file -->
    <extension point="org.eclipse.core.resources.builders"
-         name="%JavaCC_Builder"
+         name="%JavaCC_Compiler"
          id="javaccbuilder">
       <builder>
          <run
-          class="sf.eclipse.javacc.base.Builder" >
+          class="sf.eclipse.javacc.base.Compiler" >
          </run>
       </builder>
    </extension>
@@ -86,108 +87,12 @@
           </includes>
        </viewerContentBinding>
    </extension>
-<!-- actionSetPartAssociations Extension -->
-<!-- This allows allows to add actions to the workbench menu bar and tool bar,
-     but they cannot be customized and have been implemented through the Editor Contributor.
-     Kept as a working example for the hard to understand menu ids, paths and so on -->
-<!-- 
-   <extension
-         point="org.eclipse.ui.actionSetPartAssociations">
-      <actionSetPartAssociation targetID="javacc.editor.actionset.id">
-         <part id="sf.eclipse.javacc.editors.JJEditor"/>
-         <part id="sf.eclipse.javacc.editors.JTBEditor"/>
-         <part id="org.eclipse.jdt.ui.PackageExplorer"/>
-         <part id="org.eclipse.jdt.ui.ProjectExplorer"/>
-         <part id="org.eclipse.jdt.ui.Navigator"/>
-      </actionSetPartAssociation>
-   </extension>
- -->
-<!-- actionSets Extensions Extension -->
-<!-- 
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            description="%JavaCC_Ed_ActSet_Descr"
-            id="javacc.editor.actionset.id"
-            label="%JavaCC_Ed_ActSet_Label"
-            visible="true">
-         <menu
-               id="javacc.actionset.menu.id"
-               label="%JavaCC_Menu"
-               path="additions">
-            <separator
-                  name="%JavaCC_Menu">
-            </separator>
-         </menu>
-         <action
-               id="javacc.jjdoccompile.action.id"
-               label="%Compile_with_JJDoc"
-               class="sf.eclipse.javacc.actions.JJDocCompile"
-               definitionId="sf.eclipse.javacc.doccompile"
-               enablesFor="1"
-               icon="icons/jj_jjdoc_compile.gif"
-               menubarPath="javacc.actionset.menu.id/%JavaCC_Menu">
-<!- - turn visible for views but not for editors ; don't know why
-               toolbarPath="%JavaCC_Menu"
- - ->
-            <selection
-                  class="org.eclipse.core.resources.IFile"
-                  name="*.jj">
-            </selection>
-            <selection
-                  class="org.eclipse.core.resources.IFile"
-                  name="*.jjt">
-            </selection>
-            <selection
-                  class="org.eclipse.core.resources.IFile"
-                  name="*.jtb">
-            </selection>
-         </action>
-         <action
-               id="javacc.jjcompile.action.id"
-               label="%Compile_with_JavaCC"
-               class="sf.eclipse.javacc.actions.JJCompile"
-               definitionId="sf.eclipse.javacc.compile"
-               enablesFor="1"
-               icon="icons/jj_jj_compile.gif"
-               menubarPath="javacc.actionset.menu.id/%JavaCC_Menu">
-<!- - turn visible for views but not for editors ; don't know why
-               toolbarPath="%JavaCC_Menu"
- - ->
-            <selection
-                  class="org.eclipse.core.resources.IFile"
-                  name="*.jj">
-            </selection>
-            <selection
-                  class="org.eclipse.core.resources.IFile"
-                  name="*.jjt">
-            </selection>
-         </action>
-         <action
-               id="javacc.jtbcompile.action.id"
-               label="%Compile_with_JTB"
-               definitionId="commands.jtbcompile"
-               class="sf.eclipse.javacc.actions.JTBCompile"
-               enablesFor="1"
-               icon="icons/jj_jtb_compile.gif"
-               menubarPath="javacc.actionset.menu.id/%JavaCC_Menu">
-<!- - turn visible for views but not for editors ; don't know why
-               toolbarPath="%JavaCC_Menu"
- - ->
-            <selection
-                  class="org.eclipse.core.resources.IFile"
-                  name="*.jtb">
-            </selection>
-         </action>
-      </actionSet>
-   </extension>
- -->
 <!-- Bindings Extension -->
 <!-- This defines the default keyboard shortcuts bindings to the commands -->
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="sf.eclipse.javacc.compile"
+            commandId="sf.eclipse.javacc.extcompile"
             contextId="sf.eclipse.javacc.JJEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="F9">
@@ -234,14 +139,20 @@
       </category>
       <command
             categoryId="JavaCC.category"
+            description="%Check_compile"
+            id="sf.eclipse.javacc.checkcompile"
+            name="%Check_compile">
+      </command>
+      <command
+            categoryId="JavaCC.category"
             description="%Compile_with_for_ext"
-            id="sf.eclipse.javacc.compile"
+            id="sf.eclipse.javacc.extcompile"
             name="%Compile_with_for_ext">
       </command>
       <command
             categoryId="JavaCC.category"
             description="%Compile_with_JJDoc"
-            id="sf.eclipse.javacc.doccompile"
+            id="sf.eclipse.javacc.jjdoccompile"
             name="%Compile_with_JJDoc">
       </command>
       <command
@@ -359,358 +270,7 @@
             contributorClass="sf.eclipse.javacc.editors.JJEditorActionContributor"
 -->
       </editor>
-<!-- Deprecated since 1.5.28 as no more used to differentiate it from JJEditor
-            class="sf.eclipse.javacc.editors.JTBEditor"
-            contributorClass="sf.eclipse.javacc.editors.JJEditorActionContributor"
-	<!- - JTBEditor - ->
-      <editor
-            id="sf.eclipse.javacc.editors.JTBEditor"
-            class="sf.eclipse.javacc.editors.JJEditor"
-            default="true"
-            extensions="jtb"
-            icon="icons/jj_jtb_file.gif"
-            name="%JTB_Editor">
-      </editor>
--->
    </extension>
-<!-- EditorActions Extension -->
-<!-- This allows binding the actions to the commands -->
-<!-- 
-   <extension
-         point="org.eclipse.ui.editorActions">
-	<!- - JJEditor - ->
-      <editorContribution
-            id="jjeditor.contribution"
-            targetID="sf.eclipse.javacc.editors.JJEditor">
-         <action
-               class="sf.eclipse.javacc.actions.JJCompile"
-               definitionId="sf.eclipse.javacc.compile"
-               icon="icons/jj_jj_compile.gif"
-               id="javacc.jjcompile"
-               label="%Compile_with_JavaCC">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Comment"
-               definitionId="commands.comment"
-               icon="icons/jj_comment.gif"
-               id="javacc.comment"
-               label="%Toggle_Comment">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.JJDocCompile"
-               definitionId="sf.eclipse.javacc.doccompile"
-               icon="icons/jj_jjdoc_compile.gif"
-               id="javacc.jjdoccompile"
-               label="%Compile_with_JJDoc">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ContentAssist"
-               definitionId="sf.eclipse.javacc.contentassist"
-               icon="icons/en_wordassist_co.gif"
-               id="javacc.jjcontentassist"
-               label="%Content_Assist">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Format"
-               definitionId="sf.eclipse.javacc.format"
-               icon="icons/jj_format.gif"
-               id="javacc.jjformat"
-               label="%Format">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.FoldingCollapse"
-               definitionId="sf.eclipse.javacc.foldingcollapseall"
-               icon="icons/jj_fold_collapse.gif"
-               id="javacc.jjfoldingcollapseall"
-               label="%Folding_collapse_all">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.FoldingExpand"
-               definitionId="sf.eclipse.javacc.foldingexpandall"
-               icon="icons/jj_fold_expand.gif"
-               id="javacc.jjfoldingexpandall"
-               label="%Folding_expand_all">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.GotoRule"
-               definitionId="sf.eclipse.javacc.gotorule"
-               icon="icons/jj_goto_decl.gif"
-               id="javacc.jjgotorule"
-               label="%Goto_declaration">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ShowCallHierarchy"
-               definitionId="sf.eclipse.javacc.callhierarchy"
-               icon="icons/jj_call_hierarchy.gif"
-               id="javacc.jjcallhierarchy"
-               label="%Show_Call_Hierarchy">
-         </action>
-      </editorContribution>
-	<!- - JTBEditor - ->
-      <editorContribution
-            id="jtbeditor.contribution"
-            targetID="sf.eclipse.javacc.editors.JTBEditor">
-         <action
-               class="sf.eclipse.javacc.actions.JTBCompile"
-               definitionId="commands.jtbcompile"
-               icon="icons/jj_jtb_compile.gif"
-               id="javacc.jtbcompile"
-               label="%Compile_with_JTB">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Comment"
-               definitionId="commands.comment"
-               icon="icons/jj_comment.gif"
-               id="javacc.comment"
-               label="%Toggle_Comment">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.JJDocCompile"
-               definitionId="sf.eclipse.javacc.doccompile"
-               icon="icons/jj_jjdoc_compile.gif"
-               id="javacc.jjdoccompile"
-               label="%Compile_with_JJDoc">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ContentAssist"
-               definitionId="sf.eclipse.javacc.contentassist"
-               icon="icons/en_wordassist_co.gif"
-               id="javacc.jjcontentassist"
-               label="%Content_Assist">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Format"
-               definitionId="sf.eclipse.javacc.format"
-               icon="icons/jj_format.gif"
-               id="javacc.jjformat"
-               label="%Format">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.FoldingCollapse"
-               definitionId="sf.eclipse.javacc.foldingcollapseall"
-               icon="icons/jj_fold_collapse.gif"
-               id="javacc.jjfoldingcollapseall"
-               label="%Folding_collapse_all">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.FoldingExpand"
-               definitionId="sf.eclipse.javacc.foldingexpandall"
-               icon="icons/jj_fold_expand.gif"
-               id="javacc.jjfoldingexpandall"
-               label="%Folding_expand_all">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.GotoRule"
-               definitionId="sf.eclipse.javacc.gotorule"
-               icon="icons/jj_goto_decl.gif"
-               id="javacc.jjgotorule"
-               label="%Goto_declaration">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ShowCallHierarchy"
-               definitionId="sf.eclipse.javacc.callhierarchy"
-               icon="icons/jj_call_hierarchy.gif"
-               id="javacc.jjcallhierarchy"
-               label="%Show_Call_Hierarchy">
-         </action>
-      </editorContribution>
-   </extension>
--->
-<!-- PopupMenus Extension -->
-<!--  This adds the popup menus in the Package Explorer, Project Explorer, Navigator and JJ/JTB Editors -->
-<!-- 
-   <extension
-         point="org.eclipse.ui.popupMenus">
-	<!- - JavaCC - ->
-      <objectContribution
-            adaptable="false"
-            id="javacccompile"
-            nameFilter="*.jj"
-            objectClass="org.eclipse.core.resources.IFile">
-         <action
-               class="sf.eclipse.javacc.actions.JJCompile"
-               definitionId="sf.eclipse.javacc.compile"
-               enablesFor="1"
-               icon="icons/jj_jj_compile.gif"
-               id="javacc.compile"
-               label="%Compile_with_JavaCC"
-               menubarPath="JJGroup">
-         </action>
-      </objectContribution>
-	<!- - JJTree - ->
-      <objectContribution
-            adaptable="false"
-            id="jjtreecompile"
-            nameFilter="*.jjt"
-            objectClass="org.eclipse.core.resources.IFile">
-         <action
-               class="sf.eclipse.javacc.actions.JJCompile"
-               definitionId="sf.eclipse.javacc.compile"
-               enablesFor="1"
-               icon="icons/jj_jj_compile.gif"
-               id="javacc.compile"
-               label="%Compile_with_JavaCC"
-               menubarPath="JJGroup">
-         </action>
-      </objectContribution>
-	<!- - JTB - ->
-      <objectContribution
-            adaptable="false"
-            id="jtbcompile"
-            nameFilter="*.jtb"
-            objectClass="org.eclipse.core.resources.IFile">
-         <action
-               class="sf.eclipse.javacc.actions.JTBCompile"
-               definitionId="commands.jtbcompile"
-               enablesFor="1"
-               icon="icons/jj_jtb_compile.gif"
-               id="jtb.compile"
-               label="%Compile_with_JTB"
-               menubarPath="JJGroup">
-         </action>
-      </objectContribution>
-	<!- - JJEditor - ->
-      <viewerContribution
-            id="jjeditor.popup"
-            targetID="sf.eclipse.javacc.editors.JJEditor">
-         <menu
-               icon="icons/jj_popup.gif"
-               id="JavaCC_Menu"
-               label="%JavaCC_Popup"
-               path="JavaCC">
-            <separator
-                  name="JJGroup">
-            </separator>
-         </menu>
-         <action
-               class="sf.eclipse.javacc.actions.JJDocCompile"
-               definitionId="sf.eclipse.javacc.doccompile"
-               icon="icons/jj_jjdoc_compile.gif"
-               id="javacc.jjdoccompile"
-               label="%Compile_with_JJDoc"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.GotoRule"
-               definitionId="sf.eclipse.javacc.gotorule"
-               icon="icons/jj_goto_decl.gif"
-               id="javacc.jjgotorule"
-               label="%Goto_declaration"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ShowCallHierarchy"
-               definitionId="sf.eclipse.javacc.callhierarchy"
-               icon="icons/jj_call_hierarchy.gif"
-               id="javacc.jjcallhierarchy"
-               label="%Show_Call_Hierarchy"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ContentAssist"
-               definitionId="sf.eclipse.javacc.contentassist"
-               icon="icons/en_wordassist_co.gif"
-               id="javacc.jjcontentassist"
-               label="%Content_Assist"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Format"
-               definitionId="sf.eclipse.javacc.format"
-               icon="icons/jj_format.gif"
-               id="javacc.jjformat"
-               label="%Format"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Comment"
-               definitionId="commands.comment"
-               icon="icons/jj_comment.gif"
-               id="javacc.comment"
-               label="%Toggle_Comment"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.JJCompile"
-               definitionId="sf.eclipse.javacc.compile"
-               icon="icons/jj_jj_compile.gif"
-               id="javacc.compile"
-               label="%Compile_with_JavaCC"
-               menubarPath="JJGroup">
-         </action>
-      </viewerContribution>
-	<!- - JTBEditor - ->
-      <viewerContribution
-            id="jtbeeditor.popup"
-            targetID="sf.eclipse.javacc.editors.JTBEditor">
-         <menu
-               icon="icons/jj_popup.gif"
-               id="JTBMenu"
-               label="%JTB_Popup"
-               path="JTB">
-            <separator
-                  name="JJGroup">
-            </separator>
-         </menu>
-         <action
-               class="sf.eclipse.javacc.actions.JJDocCompile"
-               definitionId="sf.eclipse.javacc.doccompile"
-               icon="icons/jj_jjdoc_compile.gif"
-               id="javacc.jjdoccompile"
-               label="%Compile_with_JJDoc"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.GotoRule"
-               definitionId="sf.eclipse.javacc.gotorule"
-               icon="icons/jj_goto_decl.gif"
-               id="javacc.jjgotorule"
-               label="%Goto_declaration"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ShowCallHierarchy"
-               definitionId="sf.eclipse.javacc.callhierarchy"
-               icon="icons/jj_call_hierarchy.gif"
-               id="javacc.jjcallhierarchy"
-               label="%Show_Call_Hierarchy"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.ContentAssist"
-               definitionId="sf.eclipse.javacc.contentassist"
-               icon="icons/en_wordassist_co.gif"
-               id="javacc.jjcontentassist"
-               label="%Content_Assist"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Format"
-               definitionId="sf.eclipse.javacc.format"
-               icon="icons/jj_format.gif"
-               id="javacc.jjformat"
-               label="%Format"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.Comment"
-               definitionId="commands.comment"
-               icon="icons/jj_comment.gif"
-               id="javacc.comment"
-               label="%Toggle_Comment"
-               menubarPath="JJGroup">
-         </action>
-         <action
-               class="sf.eclipse.javacc.actions.JTBCompile"
-               definitionId="commands.jtbcompile"
-               icon="icons/jj_jtb_compile.gif"
-               id="jtb.compile"
-               label="%Compile_with_JTB"
-               menubarPath="JJGroup">
-         </action>
-      </viewerContribution>
-   </extension>
- -->
 <!-- AnnotationTypes Extension -->
 <!-- This links the compiling markers to annotations ; see org.eclipse.core.resources.IMarker -->
    <extension
@@ -852,7 +412,7 @@
             class="sf.eclipse.javacc.options.PropertyPageJJ"
             icon="icons/jj_settings_obj.gif"
             id="sf.eclipse.javacc.options.PropertyPage"
-            name="%Projects_Options_Page">
+            name="%Project_Options_Page">
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject">
                <test
@@ -973,13 +533,20 @@
          point="org.eclipse.ui.handlers">
       <handler
             class="sf.eclipse.javacc.handlers.Compile"
-            commandId="sf.eclipse.javacc.compile">
+            commandId="sf.eclipse.javacc.checkcompile">
          <activeWhen>
             <reference definitionId="javacc.inJJEditorOrViews.definition"/>
          </activeWhen>
       </handler>
       <handler
-            class="sf.eclipse.javacc.handlers.JJDocCompile"
+            class="sf.eclipse.javacc.handlers.Compile"
+            commandId="sf.eclipse.javacc.extcompile">
+         <activeWhen>
+            <reference definitionId="javacc.inJJEditorOrViews.definition"/>
+         </activeWhen>
+      </handler>
+      <handler
+            class="sf.eclipse.javacc.handlers.Compile"
             commandId="sf.eclipse.javacc.doccompile">
          <activeWhen>
             <reference definitionId="javacc.inJJEditorOrViews.definition"/>
@@ -1063,13 +630,13 @@
          id="sf.eclipse.javacc.menus"
          name="JavaCC new menus - NEW"
          point="org.eclipse.ui.menus">
-      <!-- For the workbench menubar : after the Edit menu -->
-      <menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=edit">
+      <!-- For the workbench menubar : after the Window menu -->
+      <menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=window">
          <menu
                id="JavaCC_Menu"
                label="%JavaCC_Menu">
             <command
-                  commandId="sf.eclipse.javacc.compile"
+                  commandId="sf.eclipse.javacc.extcompile"
                   icon="icons/jj_compile.gif"
                   label="%Compile_with_for_ext">
                <visibleWhen checkEnabled="true">
@@ -1109,7 +676,15 @@
                   visible="true">
             </separator>
             <command
-                  commandId="sf.eclipse.javacc.doccompile"
+                  commandId="sf.eclipse.javacc.checkcompile"
+                  icon="icons/jj_check_compile.gif"
+                  label="%Check_compile">
+               <visibleWhen checkEnabled="true">
+                  <reference definitionId="javacc.inJJEditorOrViews.definition"/>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="sf.eclipse.javacc.jjdoccompile"
                   icon="icons/jj_jjdoc_compile.gif"
                   label="%Compile_with_JJDoc">
                <visibleWhen checkEnabled="false">
@@ -1126,9 +701,9 @@
                id="JavaCC_Toolbar"
                label="%JavaCC_Menu">
             <command
-                  commandId="sf.eclipse.javacc.compile"
+                  commandId="sf.eclipse.javacc.extcompile"
                   icon="icons/jj_compile.gif"
-                  id="sf.eclipse.javacc.compile"
+                  id="sf.eclipse.javacc.extcompile"
                   label="%Compile_with_for_ext"
                   style="push">
                <visibleWhen checkEnabled="false">
@@ -1219,7 +794,7 @@
                visible="true">
          </separator>
          <command
-               commandId="sf.eclipse.javacc.compile"
+               commandId="sf.eclipse.javacc.extcompile"
                icon="icons/jj_compile.gif"
                label="%Compile_with_for_ext">
             <visibleWhen checkEnabled="false">

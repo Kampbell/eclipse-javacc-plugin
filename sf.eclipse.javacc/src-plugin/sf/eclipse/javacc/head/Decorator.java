@@ -24,7 +24,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * <extension point="org.eclipse.ui.decorators">
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class Decorator extends LabelProvider implements ILabelDecorator {
 
@@ -105,7 +105,7 @@ public class Decorator extends LabelProvider implements ILabelDecorator {
    * @param aElement - the given element
    * @return the .jj file name
    */
-  private String getGeneratedProperty(final Object aElement) {
+  private static String getGeneratedProperty(final Object aElement) {
     if (aElement == null) {
       return null;
     }
@@ -134,7 +134,7 @@ public class Decorator extends LabelProvider implements ILabelDecorator {
    * @param aElement - the given element
    * @return true if a given element is a .jj, .jjt, .jtb file and is on the classpath, false otherwise
    */
-  private boolean isOnClasspath(final Object aElement) {
+  private static boolean isOnClasspath(final Object aElement) {
     boolean gen = true;
     if (aElement instanceof IResource) {
       final IResource res = (IResource) aElement;

@@ -1,5 +1,9 @@
 package sf.eclipse.javacc.handlers;
 
+import static sf.eclipse.javacc.base.IConstants.CHECK_COMPILE_ID;
+import static sf.eclipse.javacc.base.IConstants.EXT_COMPILE_ID;
+import static sf.eclipse.javacc.base.IConstants.JJDOC_COMPILE_ID;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -15,27 +19,28 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import sf.eclipse.javacc.base.AbstractActivator;
-import sf.eclipse.javacc.base.Builder;
+import sf.eclipse.javacc.base.Compiler;
 import sf.eclipse.javacc.editors.JJEditor;
 
 /**
- * Compile with JavaCC / JJTree / JTB handler.<br>
+ * Compile commands handler.<br>
  * Referenced by plugin.xml.<br>
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class Compile extends AbstractHandler {
 
   // MMa 10/2012 : created from the corresponding now deprecated action
   // MMa 11/2014 : modified some modifiers ; added state management
+  // MMa 01/2015 : used same class for 3 commands; changed Compiler to Compiler
 
-  /** The builder to use */
-  private final Builder jBuilder   = new Builder();
+  /** The compiler to use */
+  private final Compiler jCompiler  = new Compiler();
 
   /** The handler state */
-  private boolean       jIsEnabled = false;
+  private boolean        jIsEnabled = false;
 
   /** {@inheritDoc} */
   @Override
@@ -72,7 +77,16 @@ public class Compile extends AbstractHandler {
         // find the resource from the editor input
         final IEditorInput input = jEditor.getEditorInput();
         final IResource res = (IResource) input.getAdapter(IResource.class);
-        jBuilder.jj_compile(res);
+        final String cmdId = event.getCommand().getId();
+        if (CHECK_COMPILE_ID.equals(cmdId)) {
+          jCompiler.print_launch_info(res);
+        }
+        else if (EXT_COMPILE_ID.equals(cmdId)) {
+          jCompiler.jj_compile(res);
+        }
+        else if (JJDOC_COMPILE_ID.equals(cmdId)) {
+          jCompiler.jjdoc_compile(res);
+        }
       }
       else {
         // not our editor (no reason why, however), do nothing
@@ -88,7 +102,7 @@ public class Compile extends AbstractHandler {
         if (obj != null && obj instanceof IFile) {
           final IResource res = (IFile) obj;
           // if res is null nothing will happen
-          jBuilder.jj_compile(res);
+          jCompiler.jj_compile(res);
         }
       }
     }

@@ -126,7 +126,7 @@ public abstract class TabbedPreferencePage extends FieldEditorPreferencePage {
 
         /** {@inheritDoc} */
         @Override
-        public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent e) {
+        public void widgetSelected(final SelectionEvent e) {
 
           if (!isValid()) {
             // Do not allow page switch if the field editor is invalid

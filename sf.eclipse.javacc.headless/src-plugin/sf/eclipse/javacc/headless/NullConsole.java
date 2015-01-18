@@ -26,7 +26,13 @@ public class NullConsole implements IConsole {
 
   /** {@inheritDoc} */
   @Override
-  public void processReport(@SuppressWarnings("unused") final IFile aFile, @SuppressWarnings("unused") final boolean aIsJtb) {
+  public void displayOutput() {
+    /* no console, nothing done */
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void processReport(final IFile aFile, final boolean aIsJtb) {
     /* no console, nothing done */
   }
 
@@ -38,13 +44,13 @@ public class NullConsole implements IConsole {
 
   /** {@inheritDoc} */
   @Override
-  public void print(@SuppressWarnings("unused") final String aStr, @SuppressWarnings("unused") final boolean aCmdFlag) {
+  public void print(final String aStr, final boolean aCmdFlag) {
     /* no console, nothing done */
   }
 
   /** {@inheritDoc} */
   @Override
-  public void println(@SuppressWarnings("unused") final String aStr, @SuppressWarnings("unused") final boolean aCmdFlag) {
+  public void println(final String aStr, final boolean aCmdFlag) {
     /* no console, nothing done */
   }
 
@@ -57,6 +63,6 @@ public class NullConsole implements IConsole {
   /** {@inheritDoc} */
   @Override
   public String fmtTS() {
-    return "";
+    return ""; //$NON-NLS-1$
   }
 }

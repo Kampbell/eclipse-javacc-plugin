@@ -24,7 +24,7 @@ import sf.eclipse.javacc.base.IConstants;
  * Spelling engine, copied from the default spelling engine {@link DefaultSpellingEngine} and modified to use
  * a {@link JavaSpellingEngine} to process {@link IConstants#JAVADOC_CONTENT_TYPE} partitions.
  * 
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")

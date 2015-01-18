@@ -32,7 +32,7 @@ import sf.eclipse.javacc.base.IConsole;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28
- * @author Marc Mazas 2012-2013-2014
+ * @author Marc Mazas 2012-2013-2014-2015
  */
 public class DeleteDerivedFiles extends AbstractHandler {
 

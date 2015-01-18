@@ -8,11 +8,12 @@ import org.eclipse.core.resources.IFile;
  * Interface for a Console for JavaCC output.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public interface IConsole {
 
   // MMa 11/2014 : renamed
+  // MMa 01/2015 : added method for displaying output
 
   /**
    * Clears the console.
@@ -46,7 +47,12 @@ public interface IConsole {
   public abstract void println();
 
   /**
-   * Processes compilation report. Called when {@link Builder} has finished.
+   * Displays a command output.
+   */
+  public abstract void displayOutput();
+
+  /**
+   * Displays and processes compilation report. Called when {@link Compiler} has finished.
    * 
    * @param aFile - the file to report on
    * @param aIsJtb - true if file is a JTB one, false otherwise

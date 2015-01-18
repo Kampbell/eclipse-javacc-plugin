@@ -13,7 +13,7 @@ import sf.eclipse.javacc.editors.Elements;
  * The JJNode is a SimpleNode to which have been added all the methods not starting with "jjt".
  * 
  * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
  */
 public class JJNode implements Node {
