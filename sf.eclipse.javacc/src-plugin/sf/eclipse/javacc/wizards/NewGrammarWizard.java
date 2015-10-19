@@ -249,8 +249,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
         if (home.startsWith("/") && home.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
           home = home.substring(1);
         }
-        javaCCJarFile = home + JAVACC_JAR_NAME;
-        jtbJarFile = home + JTB_JAR_NAME;
+        javaCCJarFile = home + "jars/" + JAVACC_JAR_NAME;
+        jtbJarFile = home + "jars/" + JTB_JAR_NAME;
       } catch (final IOException e) {
         AbstractActivator.logBug(e, AbstractActivator.getMsg("WizPage.Rootbundle_notfound") + " : "); //$NON-NLS-1$ //$NON-NLS-2$
         return;

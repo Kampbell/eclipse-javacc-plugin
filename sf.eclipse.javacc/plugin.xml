@@ -10,11 +10,11 @@
 <!-- Compilers Extension -->
 <!-- This defines the class used to build from a JavaCC file -->
    <extension point="org.eclipse.core.resources.builders"
-         name="%JavaCC_Compiler"
+         name="%JavaCC_Builder"
          id="javaccbuilder">
       <builder>
          <run
-          class="sf.eclipse.javacc.base.Compiler" >
+          class="sf.eclipse.javacc.base.Builder" >
          </run>
       </builder>
    </extension>

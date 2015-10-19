@@ -12,14 +12,16 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.300",
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.core.variables;bundle-version="3.2.500",
  org.eclipse.debug.ui;bundle-version="3.7.102",
- org.eclipse.jdt.core;bundle-version="3.7.3",
+ org.eclipse.jdt.core;bundle-version="3.11.0",
  org.eclipse.jdt.ui;bundle-version="3.7.2",
  org.eclipse.jface.text;bundle-version="3.7.2",
  org.eclipse.swt;bundle-version="3.7.2",
  org.eclipse.ui.editors;bundle-version="3.7.0",
  org.eclipse.ui.ide;bundle-version="3.7.0",
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.200",
- org.eclipse.ui.workbench.texteditor;bundle-version="3.7.0"
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.7.0",
+ org.eclipse.jdt.launching;bundle-version="3.8.0",
+ org.eclipse.equinox.registry
 Eclipse-LazyStart: true
 Comment: For Eclipse 3.1
 Bundle-ActivationPolicy: lazy
