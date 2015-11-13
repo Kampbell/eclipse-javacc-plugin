@@ -106,7 +106,7 @@ public class UnusedCompositeReconcilingStrategy extends JavaCompositeReconciling
    * {@inheritDoc}
    */
   @Override
-  public void notifyListeners(final boolean aNotify) {
+  public void notifyListeners(@SuppressWarnings("unused") final boolean aNotify) {
     //    jStrategy.notifyListeners(notify);
   }
 

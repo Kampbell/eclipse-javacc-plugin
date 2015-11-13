@@ -115,7 +115,7 @@ class GlobalOptions extends Composite {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetSelected(final SelectionEvent event) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final FileDialog dialog = new FileDialog(jJavaCCjarFile.getShell(), SWT.OPEN);
         dialog.setText(AbstractActivator.getMsg("OptGlob.Choose_file")); //$NON-NLS-1$
         dialog.setFilterPath(jJavaCCjarFile.getText());
@@ -132,7 +132,7 @@ class GlobalOptions extends Composite {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetSelected(final SelectionEvent event) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
                                                                                        jJavaCCjarFile.getShell());
         if (dialog.open() == Window.OK) {
@@ -169,7 +169,7 @@ class GlobalOptions extends Composite {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetSelected(final SelectionEvent event) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final FileDialog dialog = new FileDialog(jJavaCCjarFile.getShell(), SWT.OPEN);
         dialog.setText(AbstractActivator.getMsg("OptGlob.Choose_file")); //$NON-NLS-1$
         dialog.setFilterPath(jJTBJarFile.getText());
@@ -186,7 +186,7 @@ class GlobalOptions extends Composite {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetSelected(final SelectionEvent event) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(jJTBJarFile.getShell());
         if (dialog.open() == Window.OK) {
           jJTBJarFile.insert(dialog.getVariableExpression());
@@ -222,7 +222,7 @@ class GlobalOptions extends Composite {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetSelected(final SelectionEvent event) {
+      public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent event) {
         final StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(jJvmOptions.getShell());
         if (dialog.open() == Window.OK) {
           jJvmOptions.insert(dialog.getVariableExpression());

@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import sf.eclipse.javacc.base.AbstractActivator;
 import sf.eclipse.javacc.editors.JJEditor;
@@ -73,12 +74,17 @@ public class Format extends AbstractHandler {
     if (tssl < 0 || tsel < 0) {
       return null;
     }
+    // save line position
+    final int ln = tssl;
     // if No selection, treat full text
     if (tslen == 0) {
-      ts = new TextSelection(doc, 0, doc.getLength());
-      tssl = ts.getStartLine();
-      tsel = ts.getEndLine();
-      tslen = ts.getLength();
+      //      ts = new TextSelection(doc, 0, doc.getLength());
+      //      tssl = ts.getStartLine();
+      //      tsel = ts.getEndLine();
+      //      tslen = ts.getLength();
+      tssl = 0;
+      tsel = doc.getNumberOfLines() - 1;
+      tslen = doc.getLength();
     }
     int sloffset = 0;
     try {
@@ -105,6 +111,8 @@ public class Format extends AbstractHandler {
       }
       // Reselect text... not exactly as JavaEditor... whole text here
       // editor.selectAndReveal(startLine.getOffset(), strbuf.length());
+      // reposition
+      ((AbstractTextEditor) editor).selectAndReveal(doc.getLineInformation(ln).getOffset(), 0);
     } catch (final BadLocationException e) {
       AbstractActivator.logBug(e, sloffset, tslen);
     }

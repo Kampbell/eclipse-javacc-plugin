@@ -653,7 +653,7 @@ public class PreferencePage extends TabbedPreferencePage implements IWorkbenchPr
 
   /** {@inheritDoc} */
   @Override
-  public void init(final IWorkbench aWorkbench) {
+  public void init(@SuppressWarnings("unused") final IWorkbench aWorkbench) {
     // required override, no action
   }
 }

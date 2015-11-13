@@ -120,7 +120,8 @@ class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyE
    * {@inheritDoc}
    */
   @Override
-  public final void reconcile(final DirtyRegion aDirtyRegion, final IRegion aSubRegion) {
+  public final void reconcile(@SuppressWarnings("unused") final DirtyRegion aDirtyRegion,
+                              @SuppressWarnings("unused") final IRegion aSubRegion) {
     performUpdates();
   }
 
@@ -130,7 +131,7 @@ class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyE
    * {@inheritDoc}
    */
   @Override
-  public final void reconcile(final IRegion aPartition) {
+  public final void reconcile(@SuppressWarnings("unused") final IRegion aPartition) {
     performUpdates();
   }
 

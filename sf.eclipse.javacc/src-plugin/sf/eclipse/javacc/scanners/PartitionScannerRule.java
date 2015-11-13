@@ -45,7 +45,7 @@ public class PartitionScannerRule implements IPredicateRule {
 
   /** {@inheritDoc} */
   @Override
-  public IToken evaluate(final ICharacterScanner scanner, final boolean resume) {
+  public IToken evaluate(final ICharacterScanner scanner, @SuppressWarnings("unused") final boolean resume) {
     IToken returnToken = Token.UNDEFINED;
 
     int c1 = scanner.read();

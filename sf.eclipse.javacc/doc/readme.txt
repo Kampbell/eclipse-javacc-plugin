@@ -1,12 +1,71 @@
 History (dd/mm/yy)
 
+13/11/2015 - 1.5.32
+- added spaces between < > and token when inserting through completion proposal;
+- after formating the cursors stays on the line it was, no more goes to end of file;
+- suppressed extra option in JJTree options proposal;
+- added / improved @SuppressWarnings annotations in derived classes;
+- put the hovers (on code and comments) back in place;
+
+??/??/2015 - 1.5.31
+- fixed a problem when navigating to private labels;
+
+27/01/2015 - 1.5.30
+- fixed a regression problem on the compile commands;
+- fixed a jar path problem on the wizard (bug #88);
+
+18/01/15 - 1.5.29
+- fixed a problem on the compile commands (see discussion / help
+   https://sourceforge.net/p/eclipse-javacc/discussion/190562/thread/7c7af63b/?limit=25#2e3d);
+- configured now to use a JavaSE 1.7 and no more a 1.6 (as 1.6 became obsolete);
+- updated with JTB 1.4.9;
+
+08/11/12-30/12/14 - 1.5.28
+- updated with JTB 1.4.8;
+- added the "JVM Options" option and the "Keep deleted files in history" option (default set
+  to false) in the Global Options Tab of the project preferences;
+- added (JavaCC) parsing problems in JTB hyperlink reporting;
+- fixed problems markers not showing in derived .jj file issue;
+- fixed cursor position issue in content assist;
+- sorted and revised (to be much more accurate and context dependent) the content assist proposals list;
+- revised the outline view (added nodes and the no node creation flags, added synchronization with the editor,
+- added node highlighting in the outline when double-clicking and modifying in the editor);
+- revised the call hierarchy view, added synchronization with the editor;
+- revised the icons transparency;
+- internal refactoring on file names and package contents; removed JTBEditor subclasse; switched from actions,
+   actionSets, actionSetPartAssociations, editorActions, viewActions and popupMenus to expressions, handlers
+   and menus; added a JavaCC menu in the menu bar and in the toolbar;
+- made the annotation markers summarizable ; fixed markers deletion;
+- added the PARSER_BEGIN node to and removed the JAVACODE node from the foldable nodes set;
+- fixed nature and builder ids (seen in .project);
+- added next/previous navigation for annotations;
+- rewrote logs, produced them in the Error Log, added the plugin's version, the stacktrace and context data;
+- added the generated file filter in the Project Explorer view and removed it from the Outline view;
+- added in Package and Project Explorer view a button to suppress all generated files in the selected package;
+- fixed some issues on clearing the JavaCC console after file deletions on automatic builds;
+- improved displays in the JavaCC console (timestamp, messages);
+- fixed issues in the JavaCC "options" section (display in the Outline, completion proposals);
+- added comments folding and fixed the other foldings in one line instead of two;
+- fixed the templates to reflect the change of the parser name;
+- fixed some icons in the Outline and the Call Hierarchy views;
+- fixed some synchronization and display issues (highlight, background color) around selections in the
+   JJEditor, Outline and Call Hierarchy views;
+- changed the action (from double-click to single-click) in the JJEditor to display a node in the Outline view;
+- fixed bug #56 "NPE dragging a jj/jjt/jtb file in Eclipse plugin" by adding the drag and drop capability
+   (opening of JJEditor, proper interaction with the Call Hierarchy view, and disabling of compile commands;)
+- added the OUTPUT_LANGUAGE option (form JavaCC 6.0+; but not yet the ability for JTB to generate C++ classes);
+- improved displaying the line in error in the JJEditor when clicking on the error in the Outline view;
+- fixed issues in the completion proposals computation when the grammar file is empty or almost empty;
+- refactored some packages and classes to simplify the common and different code from the normal and the
+   headless plugin
+
 25/09/12 - version 1.5.27
 - Localized Call Hierarchy view tooltip texts and removed related compatibility issue with Eclipse 3.5
 - updated with JTB 1.4.7
 - managed new column numbers in JTB messages
 - managed multiple messages on the same line in editors
 - upgraded the internal JTB grammar and the syntax coloring to handle the JTB 1.4.7 new '!' syntax
-  for not generating a node creation<p>
+  for not generating a node creation
 
 29/06/12 - version 1.5.26
 - New contributor Bill Fenlason ; added Bill's syntax coloring rewritten code
@@ -69,7 +128,7 @@ History (dd/mm/yy)
 - Updated with JTB 1.4.0 and new options (Marc Mazas)
 
 26/09/09 - version 1.5.16
-- Support Variables in Compiler, and Options
+- Support Variables in Builder, and Options
 - Click in call hierarchy view reopen Editor if it was closed
 - Keep jtb jar in preferences
 
@@ -207,7 +266,7 @@ Bug correction
 
 28/07/05 - version 1.2 
 - hyperlinks in Console
-- bug correction in Compiler, Console
+- bug correction in Builder, Console
 
 25/07/03 - 1.0 First release for Eclipse 2.1
 

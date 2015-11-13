@@ -19,7 +19,7 @@ class OutlineContentProvider implements ITreeContentProvider {
 
   // MMa 11/2009 : javadoc and formatting revision
   // MMa 08/2011 : modified getChildren() to add identifiers and JJT nodes in Outline Page
-  // BF  06/2012 : removed redundant superinterface to prevent warning
+  // BF  06/2012 : removed redundant super interface to prevent warning
   // MMa 10/2012 : used static import ; adapted to modifications in grammar nodes and new nodes ; renamed ;
   //               added ability to reveal a node ; moved parsing and root node to JJEditor ; renamed
   // MMa 10/2014 : removed the reference to OutlinePage
@@ -36,7 +36,8 @@ class OutlineContentProvider implements ITreeContentProvider {
 
   /** {@inheritDoc} */
   @Override
-  public final void inputChanged(final Viewer aViewer, final Object aOldInput, final Object aNewInput) {
+  public final void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
+                                 @SuppressWarnings("unused") final Object aOldInput, final Object aNewInput) {
     jAstRoot = (JJNode) aNewInput;
   }
 
@@ -149,7 +150,7 @@ class OutlineContentProvider implements ITreeContentProvider {
 
   /** {@inheritDoc} */
   @Override
-  public final Object[] getElements(final Object aObj) {
+  public final Object[] getElements(@SuppressWarnings("unused") final Object aObj) {
     return getChildren(getAstRoot());
   }
 

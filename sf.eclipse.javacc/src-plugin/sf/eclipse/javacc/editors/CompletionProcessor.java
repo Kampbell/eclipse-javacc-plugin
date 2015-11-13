@@ -40,6 +40,7 @@ class CompletionProcessor implements IContentAssistProcessor {
   //               used static import ; adapted to modifications in grammar nodes ; renamed
   // MMa 11/2014 : added some final modifiers, added OUTPUT_LANGUAGE option
   // MMa 12/2014 : improved top level proposals
+  // MMa 11/2015 : added spaces to tokens on insertion through completion proposal
 
   // Note keywords could be centralized with options
   // see "http://www.realsolve.co.uk/site/tech/jface-text.php"
@@ -345,8 +346,8 @@ class CompletionProcessor implements IContentAssistProcessor {
     // tokens
     if (id == JJTIDENT_REG_EXPR_LABEL || id == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
       if (isAnglePrefix || (isTokenPrefix && str.toUpperCase().startsWith(prefix))) {
-        props.add("<" + str + "> "); //$NON-NLS-1$ //$NON-NLS-2$
-        curPos.add(new Integer(str.length() + 3));
+        props.add("< " + str + " > "); //$NON-NLS-1$ //$NON-NLS-2$
+        curPos.add(new Integer(str.length() + 5));
       }
     }
   }
@@ -524,8 +525,8 @@ class CompletionProcessor implements IContentAssistProcessor {
 
   /** {@inheritDoc} */
   @Override
-  public final IContextInformation[] computeContextInformation(final ITextViewer aTextViewer,
-                                                               final int aOffset) {
+  public final IContextInformation[] computeContextInformation(@SuppressWarnings("unused") final ITextViewer aTextViewer,
+                                                               @SuppressWarnings("unused") final int aOffset) {
     return null;
   }
 
@@ -708,8 +709,8 @@ class CompletionProcessor implements IContentAssistProcessor {
     NODE_USES_PARSER("NODE_USES_PARSER", true, "true", "(default false)"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     /** OUTPUT_FILE JJTree option */
     OUTPUT_FILE("OUTPUT_FILE", false, "???", "(undocumented"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$   undocumented
-    /** OUTPUT_LANGUAGE JJTree option */
-    OUTPUT_LANGUAGE("OUTPUT_LANGUAGE", false, "C++", "(default \"java\")"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    //    /** OUTPUT_LANGUAGE JJTree option */
+    //    OUTPUT_LANGUAGE("OUTPUT_LANGUAGE", false, "C++", "(default \"java\")"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     /** STATIC JJTree option */
     STATIC("STATIC", true, "false", "(default true)"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     /** TRACK_TOKENS JJTree option */
@@ -888,7 +889,7 @@ class CompletionProcessor implements IContentAssistProcessor {
    */
   enum JjExpKwCA {
     /** EOF JavaCC keyword, to be used as a token */
-    EOF("EOF", "<EOF> ", "<EOF> ".length()), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    EOF("EOF", "< EOF > ", "< EOF > ".length()), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     /** LOOKAHEAD JavaCC keyword */
     LOOKAHEAD("LOOKAHEAD", "LOOKAHEAD() ", "LOOKAHEAD(".length()), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     ;
@@ -920,7 +921,7 @@ class CompletionProcessor implements IContentAssistProcessor {
    */
   enum JjRegKwCA {
     /** EOF JavaCC keyword, to be used as a token */
-    EOF("EOF", "<EOF> ", "<EOF> ".length()), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    EOF("EOF", "< EOF > ", "< EOF > ".length()), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     ;
 
     /** The keyword */

@@ -30,6 +30,7 @@ public class JJNode implements Node {
   //               fixed outline names and tree ; adapted to modifications in grammar nodes ;
   //               adapted to the new token offset availability
   // MMa 11/2014 : added nameToken field
+  // MMa 02/2015 : fixed nameToken for  "<" "#" < IDENTIFIER > ":" complex_regular_expression_choices ">
 
   // TODO add methods and classes in Call Hierarchy callers and callees
 
@@ -484,8 +485,8 @@ public class JJNode implements Node {
         if (f.kind == SHARP) {
           // "<" "#" < IDENTIFIER > ":" complex_regular_expression_choices ">
           name = displayName = f.image;
-          nameToken = f;
           f = f.next;
+          nameToken = f;
           name = displayName += f.image;
         }
         else if (f.kind == IDENTIFIER) {

@@ -157,7 +157,7 @@ class CycleButtonFieldEditor extends FieldEditor {
 
         /** {@inheritDoc} */
         @Override
-        public void widgetSelected(final SelectionEvent e) {
+        public void widgetSelected(@SuppressWarnings("unused") final SelectionEvent e) {
           jSelectionIndex = (jSelectionIndex + 1 >= jButtonLabels.length) ? 0 : jSelectionIndex + 1;
           jButton.setText(jButtonLabels[jSelectionIndex]);
         }
@@ -181,7 +181,7 @@ class CycleButtonFieldEditor extends FieldEditor {
 
   /** {@inheritDoc} */
   @Override
-  public void setEnabled(final boolean enabled, final Composite parent) {
+  public void setEnabled(final boolean enabled, @SuppressWarnings("unused") final Composite parent) {
     if (jButton != null) {
       jButton.setEnabled(enabled);
     }

@@ -12,7 +12,7 @@ import sf.eclipse.javacc.base.OptionSet;
 
 /**
  * The JavaCC options Tab that enables setting the JavaCC options.
- * 
+ *
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
@@ -23,6 +23,13 @@ class JavaCCOptions extends OptionsAbstractTab {
   // MMa 03/2010 : adapted boolean options sort to 3 columns display
   // BF  06/2012 : removed redundant superinterface to prevent warning
   // MMa 11/2014 : added OUTPUT_LANGUAGE option
+
+  /*
+   * TODO add PARSER_SUPER_CLASS, PARSER_CONSTRUCTOR_VISIBILITY, PARSER_REINIT_VISIBILITY, JAVA_TEMPLATE_TYPE,
+   * GENERATE_BOILERPLATE, TOKEN_MANAGER_SUPER_CLASS, GENERATE_ANNOTATIONS, GENERATE_STRING_BUILDER
+   * GENERATE_GENERICS, GENERATE_CHAINED_EXCEPTION, NAMESPACE, TOKEN_INCLUDES, PARSER_INCLUDES,
+   * IGNORE_ACTIONS, TOKEN_MANAGER_INCLUDES, TOKEN_MANAGER_SUPERCLASS, STOP_ON_FIRST_ERROR, STACK_LIMIT
+   */
 
   // The integer valued options are:
   //     LOOKAHEAD                       (default 1)
@@ -60,7 +67,7 @@ class JavaCCOptions extends OptionsAbstractTab {
 
   /**
    * Initializes with JavaCC default options.
-   * 
+   *
    * @param aParent - the parent
    * @param aRes - the resource
    */
@@ -104,14 +111,14 @@ class JavaCCOptions extends OptionsAbstractTab {
     jOptionSet.add(new Option("KEEP_LINE_COLUMN", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
 
     // string options
-    jOptionSet.add(new Option("OUTPUT_LANGUAGE", "Java", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$ 
-    jOptionSet.add(new Option("JDK_VERSION", DEF_JDK_VERSION, Option.STRING)); //$NON-NLS-1$ 
-    jOptionSet.add(new Option("TOKEN_EXTENDS", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 
-    jOptionSet.add(new Option("TOKEN_FACTORY", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 
-    jOptionSet.add(new Option("GRAMMAR_ENCODING", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$ 
+    jOptionSet.add(new Option("OUTPUT_LANGUAGE", "Java", Option.STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+    jOptionSet.add(new Option("JDK_VERSION", DEF_JDK_VERSION, Option.STRING)); //$NON-NLS-1$
+    jOptionSet.add(new Option("TOKEN_EXTENDS", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$
+    jOptionSet.add(new Option("TOKEN_FACTORY", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$
+    jOptionSet.add(new Option("GRAMMAR_ENCODING", DEF_EMPTY_OPTION, Option.STRING)); //$NON-NLS-1$
 
     // path option
-    jOptionSet.add(new Option("OUTPUT_DIRECTORY", DEF_EMPTY_OPTION, Option.PATH)); //$NON-NLS-1$ 
+    jOptionSet.add(new Option("OUTPUT_DIRECTORY", DEF_EMPTY_OPTION, Option.PATH)); //$NON-NLS-1$
 
     // set values to default values
     jOptionSet.resetToDefaultValues();

@@ -7,7 +7,7 @@
                     extensions for deleting derived files, folding, placing menus and tool bars -->
 <!-- MMa 01/2015 : enhanced compile commands -->
 <plugin>
-<!-- Compilers Extension -->
+<!-- Builders Extension -->
 <!-- This defines the class used to build from a JavaCC file -->
    <extension point="org.eclipse.core.resources.builders"
          name="%JavaCC_Builder"
@@ -152,7 +152,7 @@
       <command
             categoryId="JavaCC.category"
             description="%Compile_with_JJDoc"
-            id="sf.eclipse.javacc.jjdoccompile"
+            id="sf.eclipse.javacc.doccompile"
             name="%Compile_with_JJDoc">
       </command>
       <command
@@ -261,14 +261,6 @@
             extensions="jj, jjt, jtb"
             icon="icons/jj_jj_file.gif"
             name="%JavaCC_Editor">
-<!-- This was to define an action contributor (when in editor above) ;
-     worked but the problem was that the menus and buttons added programmatically
-     did not appear in the Customize Perspective / Command Groups Availability,
-     as opposed to actionSets ;
-     no specific class used as in 1.5.28 we switched to menus and handlers, but we need to
-     define the standard contributor class to enable the standard actions
-            contributorClass="sf.eclipse.javacc.editors.JJEditorActionContributor"
--->
       </editor>
    </extension>
 <!-- AnnotationTypes Extension -->
@@ -383,7 +375,7 @@
             id="org.eclipse.ui.editors.text.StorageDocumentProvider">
       </provider>
    </extension>
-<!-- Document Providers Extension -->
+<!-- Document Setup Extension -->
 <!-- This defines the mappings between file types and document providers -->
    <extension
       id="JJDocumentSetupParticipant"
@@ -443,7 +435,7 @@
       </wizard>
    </extension>
 <!-- JavaCC Views Extension -->
-<!--  This adds the 2 views -->
+<!--  This adds the 2 views : JavaCC Console and Call Hierarchy -->
    <extension point="org.eclipse.ui.views">
       <category
         name="%JavaCC_Views"
@@ -684,7 +676,7 @@
                </visibleWhen>
             </command>
             <command
-                  commandId="sf.eclipse.javacc.jjdoccompile"
+                  commandId="sf.eclipse.javacc.doccompile"
                   icon="icons/jj_jjdoc_compile.gif"
                   label="%Compile_with_JJDoc">
                <visibleWhen checkEnabled="false">
@@ -885,8 +877,8 @@
                icon="icons/jj_delete_derived.gif"
                label="%Delete_Derived"
                tooltip="%Delete_Derived_Files">
-            <visibleWhen checkEnabled="false">
-               <reference definitionId="javacc.folderInViews.definition"/>
+            <visibleWhen checkEnabled="true">
+               <!-- reference definitionId="javacc.folderInViews.definition"/ -->
             </visibleWhen>
          </command>
       </menuContribution>
@@ -896,8 +888,8 @@
                icon="icons/jj_delete_derived.gif"
                label="%Delete_Derived"
                tooltip="%Delete_Derived_Files">
-            <visibleWhen checkEnabled="false">
-               <reference definitionId="javacc.folderInViews.definition"/>
+            <visibleWhen checkEnabled="true">
+               <!-- reference definitionId="javacc.folderInViews.definition"/ -->
             </visibleWhen>
          </command>
       </menuContribution>

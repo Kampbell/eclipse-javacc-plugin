@@ -1,5 +1,12 @@
 package sf.eclipse.javacc.editors;
 
+import static sf.eclipse.javacc.base.IConstants.BLOCK_CMT_CONTENT_TYPE;
+import static sf.eclipse.javacc.base.IConstants.CODE_CONTENT_TYPE;
+import static sf.eclipse.javacc.base.IConstants.JAVADOC_CONTENT_TYPE;
+import static sf.eclipse.javacc.base.IConstants.LINE_CMT_CONTENT_TYPE;
+
+import java.util.Iterator;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -7,7 +14,9 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
 import sf.eclipse.javacc.base.AbstractActivator;
 import sf.eclipse.javacc.parser.JJNode;
@@ -32,13 +41,14 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
   // MMa 10/2012 : renamed
   // MMa 11/2014 : modified some modifiers
   // MMa 12/2014 : fixed null region
+  // MMa 11/2015 : back to show hovers !
 
   /** The current editor */
-  private final JJEditor jEditor;
-  //  /** The current source viewer */
-  //  protected final ISourceViewer jSourceViewer;
+  private final JJEditor        jEditor;
+  /** The current source viewer */
+  protected final ISourceViewer jSourceViewer;
   /** The current content type */
-  private final String   jContentType;
+  private final String          jContentType;
 
   /**
    * Standard constructor.
@@ -47,9 +57,8 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
    * @param aContentType - the content type
    * @param aJJEditor - the editor
    */
-  public TextHover(@SuppressWarnings("unused") final ISourceViewer aSourceViewer, final String aContentType,
-                   final JJEditor aJJEditor) {
-    //    jSourceViewer = aSourceViewer;
+  public TextHover(final ISourceViewer aSourceViewer, final String aContentType, final JJEditor aJJEditor) {
+    jSourceViewer = aSourceViewer;
     jContentType = aContentType;
     jEditor = aJJEditor;
   }
@@ -59,6 +68,7 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
    * 
    * @deprecated see superclass
    */
+  @SuppressWarnings("deprecation")
   @Deprecated
   @Override
   public final String getHoverInfo(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
@@ -72,7 +82,7 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
     final IDocument document = aTextViewer.getDocument();
     try {
       //      if (fContentType.equals(UnusedDocumentProvider.CODE)) {
-      if (jContentType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+      if (jContentType.equals(CODE_CONTENT_TYPE)) {
         // hover info for code regions (grammar)
         String word;
         word = document.get(aHoverRegion.getOffset(), aHoverRegion.getLength());
@@ -97,29 +107,30 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
         final int length = end - start;
         hoverInfo = document.get(start, length);
       }
-      //      else if (fContentType.equals(UnusedDocumentProvider.COMMENT)) {
-      //        // hover info for comments regions (spelling)
-      //        final IAnnotationModel model = fSourceViewer.getAnnotationModel();
-      //        final Iterator<?> iter = model.getAnnotationIterator();
-      //        while (iter.hasNext()) {
-      //          final Object obj = iter.next();
-      //          if (obj instanceof SpellingAnnotation) {
-      //            final SpellingAnnotation annotation = (SpellingAnnotation) obj;
-      //            final int offset = annotation.getSpellingProblem().getOffset();
-      //            try {
-      //              final int line = fSourceViewer.getDocument().getLineOfOffset(offset);
-      //              if (line == document.getLineOfOffset(aHoverRegion.getOffset())) { // same start numbers
-      //                hoverInfo = annotation.getText();
-      //                break;
-      //              }
-      //            } catch (final BadLocationException e) {
-      //              Activator.logBug(e);
-      //              return null;
-      //            }
-      //          }
-      //        }
-      //        //        return "TextHover.getHoverInfo2";
-      //      }
+      else if (jContentType.equals(LINE_CMT_CONTENT_TYPE) || jContentType.equals(BLOCK_CMT_CONTENT_TYPE)
+               || jContentType.equals(JAVADOC_CONTENT_TYPE)) {
+        // hover info for comments regions (spelling)
+        final IAnnotationModel model = jSourceViewer.getAnnotationModel();
+        final Iterator<?> iter = model.getAnnotationIterator();
+        while (iter.hasNext()) {
+          final Object obj = iter.next();
+          if (obj instanceof SpellingAnnotation) {
+            final SpellingAnnotation annotation = (SpellingAnnotation) obj;
+            final int offset = annotation.getSpellingProblem().getOffset();
+            try {
+              final int line = jSourceViewer.getDocument().getLineOfOffset(offset);
+              if (line == document.getLineOfOffset(aHoverRegion.getOffset())) { // same start numbers
+                hoverInfo = annotation.getText();
+                break;
+              }
+            } catch (final BadLocationException e) {
+              AbstractActivator.logBug(e);
+              return null;
+            }
+          }
+        }
+        //                return "TextHover.getHoverInfo2"; //$NON-NLS-1$
+      }
     } catch (final BadLocationException e) {
       AbstractActivator.logBug(e);
     }

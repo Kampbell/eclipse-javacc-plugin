@@ -10,6 +10,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+//import org.eclipse.core.runtime.CoreException;
+//import org.eclipse.debug.core.DebugPlugin;
+//import org.eclipse.debug.core.ILaunch;
+//import org.eclipse.debug.core.ILaunchConfiguration;
+//import org.eclipse.debug.core.ILaunchConfigurationType;
+//import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+//import org.eclipse.debug.core.ILaunchManager;
+//import org.eclipse.debug.core.Launch;
+//import org.eclipse.jdt.core.IJavaProject;
+//import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+//import org.eclipse.jdt.launching.IVMInstall;
+//import org.eclipse.jdt.launching.IVMRunner;
+//import org.eclipse.jdt.launching.JavaRuntime;
+//import org.eclipse.jdt.launching.VMRunnerConfiguration;
+
 /**
  * Launcher for JavaCC.<br>
  * Used only by {@link Compiler}.
@@ -109,6 +124,30 @@ public class JarLauncher {
       }
     }
   }
+
+  //  @SuppressWarnings("javadoc")
+  //  static void launch1(final IJavaProject proj, final String main) throws CoreException {
+  //    IVMInstall vm = JavaRuntime.getVMInstall(proj);
+  //    if (vm == null) {
+  //      vm = JavaRuntime.getDefaultVMInstall();
+  //    }
+  //    final IVMRunner vmr = vm.getVMRunner(ILaunchManager.RUN_MODE);
+  //    final String[] cp = JavaRuntime.computeDefaultRuntimeClassPath(proj);
+  //    final VMRunnerConfiguration config = new VMRunnerConfiguration(main, cp);
+  //    final ILaunch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
+  //    vmr.run(config, launch, null);
+  //  }
+  //
+  //  @SuppressWarnings("javadoc")
+  //  static void launch2(final IJavaProject proj, final String cfg, final String main) throws CoreException {
+  //    final ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
+  //    final ILaunchConfigurationType t = lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+  //    final ILaunchConfigurationWorkingCopy wc = t.newInstance(null, cfg);
+  //    wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, proj.getElementName());
+  //    wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, main);
+  //    final ILaunchConfiguration config = wc.doSave();
+  //    config.launch(ILaunchManager.RUN_MODE, null);
+  //  }
 
   /**
    * @return the {@link ProcessBuilder} environment

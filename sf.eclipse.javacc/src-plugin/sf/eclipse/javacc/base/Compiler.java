@@ -1,28 +1,6 @@
 package sf.eclipse.javacc.base;
 
-import static sf.eclipse.javacc.base.IConstants.CLASSPATH_ARG;
-import static sf.eclipse.javacc.base.IConstants.CLEAR_CONSOLE;
-import static sf.eclipse.javacc.base.IConstants.DEF_CLEAR_CONSOLE;
-import static sf.eclipse.javacc.base.IConstants.GEN_FILE_QN;
-import static sf.eclipse.javacc.base.IConstants.JARS_DIR;
-import static sf.eclipse.javacc.base.IConstants.JAR_ARG;
-import static sf.eclipse.javacc.base.IConstants.JAVACC_ARG;
-import static sf.eclipse.javacc.base.IConstants.JAVACC_JAR_NAME;
-import static sf.eclipse.javacc.base.IConstants.JAVACC_OPTIONS;
-import static sf.eclipse.javacc.base.IConstants.JJDOC_ARG;
-import static sf.eclipse.javacc.base.IConstants.JJDOC_OPTIONS;
-import static sf.eclipse.javacc.base.IConstants.JJTREE_ARG;
-import static sf.eclipse.javacc.base.IConstants.JJTREE_OPTIONS;
-import static sf.eclipse.javacc.base.IConstants.JTB_JAR_NAME;
-import static sf.eclipse.javacc.base.IConstants.JTB_OPTIONS;
-import static sf.eclipse.javacc.base.IConstants.LS;
-import static sf.eclipse.javacc.base.IConstants.MARK_GEN_FILES_DERIVED;
-import static sf.eclipse.javacc.base.IConstants.NATURE;
-import static sf.eclipse.javacc.base.IConstants.PLUGIN_QN;
-import static sf.eclipse.javacc.base.IConstants.RUNTIME_JJJAR;
-import static sf.eclipse.javacc.base.IConstants.RUNTIME_JTBJAR;
-import static sf.eclipse.javacc.base.IConstants.RUNTIME_JVMOPTIONS;
-import static sf.eclipse.javacc.base.IConstants.SUPPRESS_WARNINGS;
+import static sf.eclipse.javacc.base.IConstants.*;
 import static sf.eclipse.javacc.base.JarLauncher.sJavaCmd;
 
 import java.io.IOException;
@@ -51,34 +29,21 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.Launch;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMRunner;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 /**
  * Compiler for .jj, .jjt and .jtb files.<br>
  * It is used by the build process and by the compile commands.<br>
- *
- * @since 1.5.29 (from when extracted from {@link Compiler})
+ * 
+ * @since 1.5.29 (from when extracted from {@link Builder})
  * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  */
 public class Compiler {
 
-  // MMa 01/2015 : created from Compiler : see following history
+  // MMa 01/2015 : created from Builder : see following history
   // MMa 11/2009 : javadoc and formatting revision ; changed jar names
   // MMa 02/2010 : formatting and javadoc revision ; fixed issue for JTB problems reporting
   // MMa 03/2010 : change on QN_GENERATED_FILE for bug 2965665 fix
@@ -92,7 +57,8 @@ public class Compiler {
   //               modified some modifiers ; changed package
   // MMa 12/2014 : changed jars directory
   // MMa 01/2015 : added methods to display information for debugging problems in launching the compile commands
-  //               refactored initialization ; changed from array to list the command passed to ProcessCompiler
+  //               refactored initialization ; changed from array to list the command passed to ProcessBuilder
+  // MMa 11/2015 : improved addition of suppresswarning annotation on all classes in the derived classes
 
   /** The project */
   private IProject               jProject          = null;
@@ -116,41 +82,39 @@ public class Compiler {
   private int                    jCLC              = -1;
 
   /**
-   * Regular expression to capture the class declaration, including potential @SuppressWarnings annotations.
-   * <br>
-   * (?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)? : non capturing group, once or not at all.<br>
+   * Regular expression to capture the class declaration, including potential @SuppressWarnings annotations.<br>
+   * (?:@SuppressWarnings\\(\\\"(?:all|serial|unused)\\\"\\)..?)? : non capturing group, once or not at all.<br>
    * ((?:public )?(?:final )?(?:class|interface|enum)) : capturing group $1.<br>
    * This group $1 will by prefixed by a new line containing <code>@SuppressWarnings(\"all\")</code> and will
    * replace the whole string (group $0).
    */
-  protected final static String  sClassDeclRegExpr = "^(?:@SuppressWarnings\\(\\\"(?:all|serial)\\\"\\)..?)?"              //$NON-NLS-1$
-                                                     + "((?:public )?(?:final )?(?:class|interface|enum))";                //NON-NLS-1$ //$NON-NLS-1$
+  protected final static String  sClassDeclRegExpr = "^(?:@SuppressWarnings\\(\\\"(?:all|serial|unused)\\\"\\).?.?)?" //$NON-NLS-1$
+                                                     + "((?:public )?(?:final )?(?:class|interface|enum))"; //NON-NLS-1$ //$NON-NLS-1$
   /** Corresponding pattern */
-  protected final static Pattern sClassDeclPatt    = Pattern.compile(sClassDeclRegExpr,
-                                                                     Pattern.MULTILINE | Pattern.DOTALL);
+  protected final static Pattern sClassDeclPatt    = Pattern.compile(sClassDeclRegExpr, Pattern.MULTILINE
+                                                                                        | Pattern.DOTALL);
   /** Replacement string */
-  protected final static String  sReplStr          = "@SuppressWarnings(\"all\")" + LS + "$1";                             //$NON-NLS-1$ //$NON-NLS-2$
+  protected final static String  sReplStr          = "@SuppressWarnings(\"all\")" + LS + "$1";             //$NON-NLS-1$ //$NON-NLS-2$
 
   /** Array of hexadecimal characters */
   protected final static char[]  HEX_DIGITS        = new char[] {
-                                                                  '0', '1', '2', '3', '4', '5', '6', '7', '8',
-                                                                  '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
   /**
    * The algorithm used by JavaCC to compute the checksum.<br>
    * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile constant
    */
-  protected static final String  MD5_ALGO          = "MD5";                                                                //$NON-NLS-1$
+  protected static final String  MD5_ALGO          = "MD5";                                                //$NON-NLS-1$
   /**
    * Beginning of the checksum line generated by JavaCC.<br>
    * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.MD5_LINE_PART_1
    */
-  protected static final String  MD5_LINE_PART_1   = "/* JavaCC - OriginalChecksum=";                                      //$NON-NLS-1$
+  protected static final String  MD5_LINE_PART_1   = "/* JavaCC - OriginalChecksum=";                      //$NON-NLS-1$
   /**
    * End of the checksum line generated by JavaCC.<br>
    * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.MD5_LINE_PART_2
    */
-  protected static final String  MD5_LINE_PART_2   = " (do not edit this line) */";                                        //$NON-NLS-1$
+  protected static final String  MD5_LINE_PART_2   = " (do not edit this line) */";                        //$NON-NLS-1$
 
   /**
    * Instantiated by the the compile commands.
@@ -160,7 +124,7 @@ public class Compiler {
 
   /**
    * Instantiated by the build process.
-   *
+   * 
    * @param aProject - the project we are working on
    */
   public Compiler(final IProject aProject) {
@@ -169,7 +133,7 @@ public class Compiler {
 
   /**
    * Sets different information regarding from the project.
-   *
+   * 
    * @param aRes - the resource we are working on
    */
   private void setProjectInfo(final IResource aRes) {
@@ -180,7 +144,7 @@ public class Compiler {
 
   /**
    * Compiles a jj/jjt/jtb resource.
-   *
+   * 
    * @param aRes - the resource
    */
   public void jj_compile(final IResource aRes) {
@@ -209,7 +173,7 @@ public class Compiler {
   /**
    * Compiles a .jj, .jjt or .jtb file given its {@link IResource}.<br>
    * Called by {@link Builder#visit(IResource)} and {@link #jj_compile(IResource)} and recursively.
-   *
+   * 
    * @param aRes - the IResource to compile
    * @param aClearConsole - true to clear the console, false otherwise
    * @exception CoreException if this compile fails
@@ -263,7 +227,7 @@ public class Compiler {
       console.println(console.fmtTS(), false);
       return;
     }
-    // we trim the options to avoid empty tokens passed to the ProcessCompiler
+    // we trim the options to avoid empty tokens passed to the ProcessBuilder
     final String jvmOptions = getJvmOptions().trim();
 
     // save standard out and error streams
@@ -280,7 +244,7 @@ public class Compiler {
     if (jvmOptions.length() > 0) {
       cmd.add(jvmOptions);
     }
-    if (resExt.equals("jj")) { //$NON-NLS-1$
+    if (resExt.equals("jj")) { //$NON-NLS-1$ 
       cmd.add(CLASSPATH_ARG);
       cmd.add(jarfile);
       cmd.add(JAVACC_ARG);
@@ -304,8 +268,6 @@ public class Compiler {
     DirList.snapshot(projectDir);
     final boolean isJtb = false;
     JarLauncher.pb_launch(cmd, resDir);
-    //  jvm_launch(cmd, resDir);
-    //    jvm_run(cmd, resDir);
 
     // restore standard out and error streams
     System.setOut(orgOut);
@@ -346,123 +308,16 @@ public class Compiler {
   }
 
   /**
-   * IVMRunner uses the currently installed VM, sets up its classpath, and asks the VM runner to run the
-   * program
-   *
-   * @param cmd - the command to launch
-   * @param dir - the directory where to launch the command
-   */
-  void jvm_run(final List<String> cmd, final String resDir) {
-    try {
-      IVMInstall vm = JavaRuntime.getVMInstall(jJavaProject);
-      if (vm == null) {
-        vm = JavaRuntime.getDefaultVMInstall();
-      }
-      final IVMRunner vmr = vm.getVMRunner(ILaunchManager.RUN_MODE);
-
-      // Configure classpath with javacc.jar and jtb.jar
-      final String[] progclasspath = {
-                                       jPrefs.get("RUNTIME_JJJAR", ""), jPrefs.get("RUNTIME_JTBJAR", "") };
-      // Name of the class to launch in the jar
-      // jtb : "EDU.purdue.jtb.JTB" ; javacc : "javacc"
-      final String mainclass = cmd.get(1).equals("-jar") ? "EDU.purdue.jtb.JTB" : "javacc";
-      // VMRunner with mainclass and classpath
-      final VMRunnerConfiguration config = new VMRunnerConfiguration(mainclass, progclasspath);
-
-      // Program arguments
-      final List<String> v = new ArrayList<String>();
-      // java -classpath sf.eclipse.javacc/jars/javacc-6.0.jar javacc -option=val MaNouvGrammaire.jj
-      // java -classpath sf.eclipse.javacc/jars/javacc-6.0.jar jjtree -MULTI=true MaNouvGrammaire.jjt
-      // java -jar sf.eclipse.javacc/jars/jtb-1.4.9.jar MaNouvGrammaire.jtb
-      final int offset = cmd.get(1).equals("-jar") ? 3 : 5;
-      for (int i = offset; i < cmd.size(); i++) {
-        v.add(cmd.get(i));
-      }
-      final String[] progArgs = v.toArray(new String[cmd.size() - offset]);
-      config.setProgramArguments(progArgs);
-
-      // Working dir
-      config.setWorkingDirectory(resDir);
-
-      // Run
-      final ILaunch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
-      launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "true");
-      //      final String value = launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
-      //      System.out.println("ATTR_CAPTURE_OUTPUT:" + value);
-
-      vmr.run(config, launch, null);
-
-    } catch (final CoreException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Create a new launch configuration, save it, and run it.
-   *
-   * @param cmd - the command to launch
-   * @param dir - the directory where to launch the command
-   */
-  void jvm_launch(final List<String> cmd, final String resDir) {
-    try {
-      final DebugPlugin plugin = DebugPlugin.getDefault();
-      final ILaunchManager lm = plugin.getLaunchManager();
-      final ILaunchConfigurationType t = lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-
-      // Launch Configuration
-      final ILaunchConfigurationWorkingCopy wc = t.newInstance(null, "JavaCC-Compiler");
-      wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, jJavaProject.getElementName());
-
-      // Name of the class to launch in the jar
-      // jtb : "EDU.purdue.jtb.JTB" ; javacc : "javacc"
-      final String mainclass = cmd.get(1).equals("-jar") ? "EDU.purdue.jtb.JTB" : "javacc";
-      wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainclass);
-      // Jars on the classpath
-      final IRuntimeClasspathEntry jj = JavaRuntime.newStringVariableClasspathEntry(jPrefs.get("RUNTIME_JJJAR",
-                                                                                               ""));
-      final IRuntimeClasspathEntry jt = JavaRuntime.newStringVariableClasspathEntry(jPrefs.get("RUNTIME_JTBJAR",
-                                                                                               ""));
-      final List<String> list = new ArrayList<String>();
-      list.add(jt.getMemento());
-      list.add(jj.getMemento());
-      wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, list);
-      wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-
-      // Program arguments
-      // java -classpath sf.eclipse.javacc/jars/javacc-6.0.jar javacc -option=val MaNouvGrammaire.jj
-      // java -classpath sf.eclipse.javacc/jars/javacc-6.0.jar jjtree -MULTI=true MaNouvGrammaire.jjt
-      // java -jar sf.eclipse.javacc/jars/jtb-1.4.9.jar MaNouvGrammaire.jtb
-      final int offset = cmd.get(1).equals("-jar") ? 3 : 5;
-      final StringBuilder sb = new StringBuilder();
-      for (int i = offset; i < cmd.size(); i++) {
-        sb.append(cmd.get(i)).append(" ");
-      }
-      wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, sb.toString());
-
-      // Working Dir
-      wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, resDir);
-
-      final ILaunchConfiguration configuration = wc.doSave();
-
-      // Launch
-      configuration.launch(ILaunchManager.RUN_MODE, null);
-
-    } catch (final CoreException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Marks the generated file as derived and suppresses the @SuppressWarnings annotation according to
-   * corresponding preference.
-   *
+   * Marks the generated file as derived and adds the @SuppressWarnings annotation according to corresponding
+   * preference.
+   * 
    * @param aRelPath - the path to the grammar file (relative to the project) this resource is generated from
    * @param aRes - the IResource to mark and to correct
    * @param aAlter - true if alter the file, false otherwise
    * @throws CoreException - see {@link IResource#setDerived(boolean, IProgressMonitor)}
    */
-  private void markAsDerivedAndAlter(final String aRelPath, final IResource aRes,
-                                     final boolean aAlter) throws CoreException {
+  private void markAsDerivedAndAlter(final String aRelPath, final IResource aRes, final boolean aAlter)
+                                                                                                       throws CoreException {
     // mark
     // the calls cost a lot, so don't do it if the properties are already set
     if (jDerived != aRes.isDerived()) {
@@ -472,7 +327,7 @@ public class Compiler {
       aRes.setPersistentProperty(GEN_FILE_QN, aRelPath);
     }
     // alter if set in preferences
-    final IJavaElement element = aRes.getAdapter(IJavaElement.class);
+    final IJavaElement element = (IJavaElement) aRes.getAdapter(IJavaElement.class);
     if (jSuppressWarnings && aAlter && element instanceof ICompilationUnit) {
       // direct access to the file !
       final String filename = ((IFile) aRes).getLocation().toOSString();
@@ -480,7 +335,8 @@ public class Compiler {
       final Matcher matcher = sClassDeclPatt.matcher(source);
       if (matcher.find()) {
         // add the annotation
-        String newsource = matcher.replaceFirst(sReplStr);
+        //        String newsource = matcher.replaceFirst(sReplStr);
+        String newsource = matcher.replaceAll(sReplStr);
         final int ix = newsource.indexOf(MD5_LINE_PART_1);
         if (ix >= 0) {
           // strip the old checksum line
@@ -500,7 +356,7 @@ public class Compiler {
   /**
    * Recomputes the last line checksum.<br>
    * Duplicated from JavaCC 5.0 org.javacc.parser.OutputFile.java OutputFile() constructor.
-   *
+   * 
    * @param aSource - the source to modify
    * @return the modified source
    */
@@ -524,7 +380,7 @@ public class Compiler {
 
   /**
    * Converts a byte array into an hexadecimal string.
-   *
+   * 
    * @param aBytes - a byte array
    * @return the hexadecimal string
    */
@@ -539,7 +395,7 @@ public class Compiler {
 
   /**
    * Compiles a resource.
-   *
+   * 
    * @param aRes - the resource
    */
   public void jjdoc_compile(final IResource aRes) {
@@ -561,7 +417,7 @@ public class Compiler {
 
   /**
    * Calls JJDoc for a .jj, .jjt or .jtb file given its IResource.
-   *
+   * 
    * @param aRes - the IResource to JJDoc
    */
   private void genDocForJJResource(final IResource aRes) {
@@ -586,7 +442,7 @@ public class Compiler {
     System.setOut(consolePS);
     System.setErr(consolePS);
 
-    // build the command line
+    // build the command line 
     final List<String> cmd = new ArrayList<String>(6);
     cmd.add(sJavaCmd);
     cmd.add(jvmOptions);
@@ -602,9 +458,6 @@ public class Compiler {
     // call JJDoc
     //    JarLauncher.launchJJDoc(jvmOptions, jarfile, args, resDir);
     JarLauncher.pb_launch(cmd, resDir);
-    //  jvm_launch(cmd, resDir);
-    //    jvm_run(cmd, resDir);
-
     console.println();
 
     // restore standard and error streams
@@ -618,7 +471,7 @@ public class Compiler {
 
   /**
    * Builds the array of options to call the JavaCC, JJTree or JTB Compiler with.
-   *
+   * 
    * @param aFile - the resource to get the options for
    * @param aName - the file name to compile
    * @return the options to call the JavaCC / JJTree / JTB compiler with
@@ -680,7 +533,7 @@ public class Compiler {
 
   /**
    * Builds the array of options to call the JJDoc Compiler with.
-   *
+   * 
    * @param aName - the file name to compile
    * @return the array of options to call the JJDoc Compiler with
    */
@@ -707,7 +560,7 @@ public class Compiler {
   /**
    * @return the full path to the jars directory or null in case of error
    */
-  private static String getJarsDir() {
+  public static String getJarsDir() {
     String dir = null;
     try {
       final URL installURL = AbstractActivator.getDefault().getBundle().getEntry(JARS_DIR);
@@ -725,7 +578,7 @@ public class Compiler {
 
   /**
    * Retrieves the path to the jar file (from the preferences or from the plug-in).
-   *
+   * 
    * @param aFile - the IResource to get the jar file for
    * @param aExtension - if not null, the overriding extension (for jtb files)
    * @return the path to the jar file, or null in case of error
@@ -737,7 +590,7 @@ public class Compiler {
 
   /**
    * Retrieves the path to the jar file (from the preferences or from the plug-in).
-   *
+   * 
    * @param aExtension - the extension (must be not null)
    * @return the path to the jar file, or null in case of error
    */
@@ -760,15 +613,15 @@ public class Compiler {
     }
     String jarfile2 = null;
     try {
-      jarfile2 = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(jarfile,
-                                                                                                   true);
+      jarfile2 = VariablesPlugin.getDefault().getStringVariableManager()
+                                .performStringSubstitution(jarfile, true);
       // on Windows this returns "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
       // as this will fails, we remove the first "/" if there is ":" at index 2
       if (jarfile2.startsWith("/") && jarfile2.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
         jarfile2 = jarfile2.substring(1);
       }
     } catch (final CoreException e) {
-      AbstractActivator.logBug(e, "couldn't resolve jar file", jarfile); //$NON-NLS-1$
+      AbstractActivator.logBug(e, "couldn't resolve jar file", jarfile); //$NON-NLS-1$ 
       // jarfile2 will keep it's previous value, which will fail in launch()
     }
     return jarfile2;
@@ -776,7 +629,7 @@ public class Compiler {
 
   /**
    * Retrieves the path to the default jar file (from the plug-in).
-   *
+   * 
    * @param aExtension - the extension (must be not null)
    * @return the path to the default jar file, or null in case of error
    */
@@ -797,7 +650,7 @@ public class Compiler {
 
   /**
    * Retrieves the JVM options as a String (from the preferences or from the plug-in).
-   *
+   * 
    * @return the JVM options
    */
   private String getJvmOptions() {
@@ -812,7 +665,7 @@ public class Compiler {
 
   /**
    * Checks if the resource is a .jj / .jjt / .jtb file and is on classpath.
-   *
+   * 
    * @param aRes - the resource
    * @return true if all is OK, false otherwise
    */
@@ -827,7 +680,7 @@ public class Compiler {
 
   /**
    * Prints different information and runs java commands to help debug launch problems.
-   *
+   * 
    * @param aRes - the resource
    */
   public void print_launch_info(final IResource aRes) {
@@ -870,12 +723,9 @@ public class Compiler {
     System.setOut(consolePS);
     System.setErr(consolePS);
 
-    console.print("~~~ ProcessCompiler / System environment ~~~", true); //$NON-NLS-1$
+    console.print("~~~ ProcessBuilder / System environment ~~~", true); //$NON-NLS-1$
     console.println(console.fmtTS(), false);
     final TreeMap<String, String> env = new TreeMap<String, String>(JarLauncher.getPbEnv());
-    //    jvm_run(cmd, resDir);
-    //    jvm_launch(cmd, resDir);
-
     final Iterator<String> ite = env.keySet().iterator();
     while (ite.hasNext()) {
       final String key = ite.next();
@@ -929,17 +779,13 @@ public class Compiler {
 
     console.println("~~~ Java command + version option ---> Java version ~~~", false); //$NON-NLS-1$
     cmd.add(sJavaCmd);
-    cmd.add("-version"); //$NON-NLS-1$
+    cmd.add("-version"); //$NON-NLS-1$ 
     displayCommand(console, cmd);
     JarLauncher.pb_launch(cmd, resDir);
-    //  jvm_launch(cmd, resDir);
-    //    jvm_run(cmd, resDir);
-
     console.displayOutput();
     console.println();
 
-    console.println("~~~ JavaCC command + trimmed jvmoptions if not empty & nogrammarfile ---> JavaCC help ~~~", //$NON-NLS-1$
-                    false);
+    console.println("~~~ JavaCC command + trimmed jvmoptions if not empty & nogrammarfile ---> JavaCC help ~~~", false); //$NON-NLS-1$
     cmd.clear();
     cmd.add(sJavaCmd);
     if (jvmOptions.length() > 0) {
@@ -950,14 +796,10 @@ public class Compiler {
     cmd.add(JAVACC_ARG);
     displayCommand(console, cmd);
     JarLauncher.pb_launch(cmd, resDir);
-    //  jvm_launch(cmd, resDir);
-    //    jvm_run(cmd, resDir);
-
     console.displayOutput();
     console.println();
 
-    console.println("~~~ JTB command + trimmed jvmoptions if not empty & nogrammarfile ---> JTB help ~~~", //$NON-NLS-1$
-                    false);
+    console.println("~~~ JTB command + trimmed jvmoptions if not empty & nogrammarfile ---> JTB help ~~~", false); //$NON-NLS-1$
     cmd.clear();
     cmd.add(sJavaCmd);
     if (jvmOptions.length() > 0) {
@@ -967,9 +809,6 @@ public class Compiler {
     cmd.add(jtbJarFile);
     displayCommand(console, cmd);
     JarLauncher.pb_launch(cmd, resDir);
-    //  jvm_launch(cmd, resDir);
-    //    jvm_run(cmd, resDir);
-
     console.displayOutput();
     console.println();
 
@@ -1000,19 +839,20 @@ public class Compiler {
 
     /** {@inheritDoc} */
     @Override
-    public void write(final byte[] arg0, final int arg1, final int arg2) {
+    public void write(@SuppressWarnings("unused") final byte[] arg0,
+                      @SuppressWarnings("unused") final int arg1, @SuppressWarnings("unused") final int arg2) {
       // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void write(final byte[] arg0) {
+    public void write(@SuppressWarnings("unused") final byte[] arg0) {
       // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void write(final int arg0) {
+    public void write(@SuppressWarnings("unused") final int arg0) {
       // No action
     }
   }

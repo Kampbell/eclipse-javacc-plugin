@@ -7,7 +7,9 @@ import static sf.eclipse.javacc.base.IConstants.PLUGIN_QN;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
@@ -16,15 +18,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import sf.eclipse.javacc.base.AbstractActivator;
 import sf.eclipse.javacc.base.IConsole;
+import sf.eclipse.javacc.base.Nature;
 
 /**
  * Delete derived files handler.<br>
@@ -34,14 +39,62 @@ import sf.eclipse.javacc.base.IConsole;
  * @since 1.5.28
  * @author Marc Mazas 2012-2013-2014-2015
  */
+@SuppressWarnings("restriction")
 public class DeleteDerivedFiles extends AbstractHandler {
 
   // MMa 11/2012 : created
   // MMa 11/2014 : tested and linked to the views through menus and tool bars
   //               modified some modifiers
+  // MMa 03/2015 : added enablement only for JavaCC projects 
 
   /** The project's JavaCC preferences */
-  private IEclipsePreferences jPrefs = null;
+  private IEclipsePreferences jPrefs     = null;
+
+  /** The handler state */
+  private boolean             jIsEnabled = false;
+
+  /** {@inheritDoc} */
+  @Override
+  public void setEnabled(final Object evaluationContext) {
+
+    final IEvaluationContext evco = (IEvaluationContext) evaluationContext;
+    Object obj = HandlerUtil.getVariable(evco, ISources.ACTIVE_PART_NAME);
+    if (obj instanceof IViewPart) {
+      obj = HandlerUtil.getVariable(evco, ISources.ACTIVE_CURRENT_SELECTION_NAME);
+      if (obj instanceof ISelection) {
+        final ISelection sel = (ISelection) obj;
+        if (sel instanceof TreeSelection) {
+          // case for example in the PackageExplorer or ProjectExplorer parts with a file selected
+          final TreePath[] tps = ((TreeSelection) sel).getPaths();
+          if (tps.length > 0) {
+            final TreePath tp = tps[0];
+            // take the project
+            final Object pr = tp.getSegment(0);
+            if (pr instanceof IProject) {
+              // case Project Explorer
+              jIsEnabled = Nature.hasNature((IProject) pr);
+              //              setBaseEnabled(Nature.hasNature((IProject) pr));
+              return;
+            }
+            if (pr instanceof JavaProject) {
+              // case Package Explorer
+              jIsEnabled = Nature.hasNature(((JavaProject) pr).getProject());
+              //              setBaseEnabled(Nature.hasNature(((JavaProject) pr).getProject()));
+              return;
+            }
+          }
+        }
+      }
+    }
+    jIsEnabled = false;
+    //    setBaseEnabled(false);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public boolean isEnabled() {
+    return jIsEnabled;
+  }
 
   /** {@inheritDoc} */
   @Override
@@ -54,13 +107,13 @@ public class DeleteDerivedFiles extends AbstractHandler {
     }
     final ISelection sel = HandlerUtil.getCurrentSelection(event);
     IFolder parentFolder = null;
-    if ((sel instanceof IResource)) {
+    if (sel instanceof IResource) {
       // case in the JJEditor
       // not implemented
       return null;
     }
-    else if ((sel instanceof TreeSelection)) {
-      // case for example in the PackageExplorerPar or ProjectExplorer parts with a file selected
+    else if (sel instanceof TreeSelection) {
+      // case for example in the PackageExplorer or ProjectExplorer parts with a file selected
       final TreePath[] tps = ((TreeSelection) sel).getPaths();
       if (tps.length == 0) {
         return null;

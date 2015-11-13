@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -36,6 +35,7 @@ import org.eclipse.ui.ide.IDE;
 import org.osgi.service.prefs.BackingStoreException;
 
 import sf.eclipse.javacc.base.AbstractActivator;
+import sf.eclipse.javacc.base.Compiler;
 import sf.eclipse.javacc.base.Nature;
 
 /**
@@ -57,9 +57,10 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
   // MMa 02/2011 : fixed bug #3157017 (incorrect package handling)
   // BF  06/2012 : added NON-NLS tag
   // MMa 10/2012 : renamed
-  // MMA 11/2014 : changed super class from org.eclipse.jdt.internal.ui.wizards.NewElementWizard
+  // MMa 11/2014 : changed super class from org.eclipse.jdt.internal.ui.wizards.NewElementWizard
   //                to org.eclipse.jface.wizard.Wizard, renamed class, added parser name replacement,
   //                renamed methods and changed visibility
+  // MMa 02/2015 : fixed jars directory
 
   /** The wizard page */
   protected NewGrammarWizardPage jPage;
@@ -83,7 +84,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 
   /** {@inheritDoc} */
   @Override
-  public void init(final IWorkbench aWorkbench, final IStructuredSelection aSelection) {
+  public void init(@SuppressWarnings("unused") final IWorkbench aWorkbench,
+                   final IStructuredSelection aSelection) {
     jSelection = aSelection;
   }
 
@@ -239,22 +241,9 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
       // initializing properties do get automatically a full build
       AbstractActivator.logInfo(AbstractActivator.getMsg("WizPage.Initializing_preferences")); //$NON-NLS-1$ 
       // use the jar(s) in the plugin
-      String javaCCJarFile = ""; //$NON-NLS-1$
-      String jtbJarFile = ""; //$NON-NLS-1$
-      final URL installURL = AbstractActivator.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
-      try {
-        final URL resolvedURL = FileLocator.resolve(installURL);
-        String home = FileLocator.toFileURL(resolvedURL).getFile();
-        // return string is "/C:/workspace/sf.eclipse.javacc/"
-        if (home.startsWith("/") && home.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
-          home = home.substring(1);
-        }
-        javaCCJarFile = home + "jars/" + JAVACC_JAR_NAME;
-        jtbJarFile = home + "jars/" + JTB_JAR_NAME;
-      } catch (final IOException e) {
-        AbstractActivator.logBug(e, AbstractActivator.getMsg("WizPage.Rootbundle_notfound") + " : "); //$NON-NLS-1$ //$NON-NLS-2$
-        return;
-      }
+      final String dir = Compiler.getJarsDir();
+      final String javaCCJarFile = dir + JAVACC_JAR_NAME;
+      final String jtbJarFile = dir + JTB_JAR_NAME;
       prefs.put(RUNTIME_JJJAR, javaCCJarFile);
       prefs.put(RUNTIME_JTBJAR, jtbJarFile);
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$

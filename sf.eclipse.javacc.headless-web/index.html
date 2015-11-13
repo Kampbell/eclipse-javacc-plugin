@@ -19,9 +19,9 @@ h3 { font-size:10pt; }
 <h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font><br>
 for <font color="green">Eclipse 3.7+</font>
  with <font color="green">JDK 1.7+</font> and <font color="green">JavaCC 5.0+</font> and
-  <font color="green">JTB 1.4.9</font></h1>
+  <font color="green">JTB 1.4.11</font></h1>
 
-<h2>Last update: jan 18th, 2015 - version <font color="red">1.5.29</font></h2>
+<h2>Last update: nov 13th, 2015 - version <font color="red">1.5.32</font></h2>
 
 The JavaCC plug-in is designed to help development of JavaCC / JTB applications within the Eclipse IDE;
  the headless plug-in is designed to allow headless builds.<br>
@@ -85,15 +85,27 @@ on how to modify the sources.
        (console is on System.out but nothing is printed on it)</li>
 </ul>
 <h2>Changes history (dd/mm/yy)</h2>
-<b>18/01/154 - 1.5.29</b><br>
+<b>13/11/2015 - 1.5.32</b><br>
+ added spaces between < > and token when inserting through completion proposal;<br>
+ after formating the cursors stays on the line it was, no more goes to end of file;<br>
+ suppressed extra option in JJTree options proposal;<br>
+ added / improved @SuppressWarnings annotations in derived classes;<br>
+ put the hovers (on code and comments) back in place;<p>
+
+<b>??/??/2015 - 1.5.31</b><br>
+ fixed a problem when navigating to private labels;<p>
+
+<b>27/01/2015 - 1.5.30</b><br>
+ fixed a regression problem on the compile commands;<br>
+ fixed a jar path problem on the wizard (bug #88);<p>
+
+<b>18/01/2015 - 1.5.29</b><br>
  fixed a problem on the compile commands (see discussion / help
   https://sourceforge.net/p/eclipse-javacc/discussion/190562/thread/7c7af63b/?limit=25#2e3d);<br>
  configured now to use a JavaSE 1.7 and no more a 1.6 (as 1.6 became obsolete);<br>
- updated with JTB 1.4.9;<br>
-<br>
- <p>
+ updated with JTB 1.4.9;<p>
 
-<b>08/11/12-30/12/14 - 1.5.28</b><br>
+<b>08/11/2012-30/12/2014 - 1.5.28</b><br>
  updated with JTB 1.4.8;<br>
  added the "JVM Options" option and the "Keep deleted files in history" option (default set
   to false) in the Global Options Tab of the project preferences;<br>
@@ -132,7 +144,7 @@ on how to modify the sources.
  refactored some packages and classes to simplify the common and different code from the normal and the
  headless plugin<p>
 
-<b>25/09/12 - 1.5.27</b><br>
+<b>25/09/2012 - 1.5.27</b><br>
  localized Call Hierarchy view tooltip texts;<br>
  updated with JTB 1.4.7;<br>
  managed new column numbers in JTB messages;<br>
@@ -142,13 +154,13 @@ on how to modify the sources.
  tested on Eclipse 3.7 / 3.7.2;<br>
  fixed properties for the wizard<p>
 
-<b>29/06/12 - 1.5.26</b><br>
+<b>29/06/2012 - 1.5.26</b><br>
  new contributor Bill Fenlason;<br>
  added Bill's syntax coloring rewritten code;<br>
  updated javadoc (- in @param & @throws, {@inheritDoc} instead of @see, ...);<br>
  fixed some properties issues<p>
 
-<b>03/05/12 - 1.5.25</b><br>
+<b>03/05/2012 - 1.5.25</b><br>
  added in JJReconcilingStrategy Bill Fenlason's hack proposal for syntax coloring problems;<br>
  fixed property error in JJNewPage; fixed NPE in JJCallHierarchy;<br>
  enhanced Outline view to display identifiers and JJTree Nodes RFE 2968192;<br>
@@ -161,14 +173,14 @@ on how to modify the sources.
  changed plugin dependencies to at least version 3.6.0;<br>
  updated with JTB 1.4.6; fixed bug 3157017<p>
 
-<b>02/12/10 - 1.5.24</b><br>
+<b>02/12/2010 - 1.5.24</b><br>
  fixed NPE in JJDecorator; updated with JTB 1.4.4; built over Eclipse 3.5.2<p>
 
-<b>xx/04/10 - 1.5.23</b><br>
+<b>xx/04/2010 - 1.5.23</b><br>
  added spelling problem annotation hover; dropped support of Eclipse 3.4 (Galileo) and JDK 1.5;<br>
  refactored packages and added the headless plug-in<p>
 
-<b>31/03/10 - 1.5.22</b><br>
+<b>31/03/2010 - 1.5.22</b><br>
  fixed spell checking issues (non reported bugs + SR 2904433);<br>
  fixed tab issue (bugs 2961174 & 2958124);<br>
  fixed wizard template files issue (bug 2962672);<br>
@@ -178,18 +190,18 @@ on how to modify the sources.
  refactored layouts of Preferences and Project Properties pages (added groups and tooltips);<br>
  updated with JTB 1.4.3<p>
 
-<b>26/02/10 - 1.5.21</b><br>
+<b>26/02/2010 - 1.5.21</b><br>
  fixed Wizard not closing on error (bug RK and SR 2956977)<p>
 
-<b>25/02/10 - 1.5.20</b><br>
+<b>25/02/2010 - 1.5.20</b><br>
  fixed JTB preferences issue (for options defaulting to true);<br>
  fixed extra quote in command line (bug RK and SR 2956977)<p>
 
-<b>19/02/10 - 1.5.19</b><br>
+<b>19/02/2010 - 1.5.19</b><br>
  fixed project preferences issues with resulting command line options field /
  specific options fields / enclosing quotes for paths and files<p>
 
-<b>17/02/10 - 1.5.18</b><br>
+<b>17/02/2010 - 1.5.18</b><br>
  fixed /**/ syntax coloring issue (bug 2946447);<br>
  fixed missing french JTB preferences issue;<br>
  fixed JTB preferences not stored issue;<br>
@@ -198,64 +210,64 @@ on how to modify the sources.
  added spell checking (but not spell correction...);<br>
  updated with JTB 1.4.1<p>
 
-<b>13/11/09 - 1.5.17</b><br>
+<b>13/11/2009 - 1.5.17</b><br>
  fixed formatting / syntax coloring / outline / autoindent / call hierarchy /
  context menus / messages issues;<br>
  updated with JTB 1.4.0 and new options (Marc Mazas)<p>
 
-<b>04/10/09 - 1.5.16</b><br>
+<b>04/10/2009 - 1.5.16</b><br>
  added support for Eclipse variables in Builder and Options;<br>
  fixed JTB jar store bug in preferences and added use of default jar when no jar is set<p>
 
-<b>07/09/09 - 1.5.15</b><br>
+<b>07/09/2009 - 1.5.15</b><br>
  updated with JavaCC 5.0 and for new options;<br>
  fixed running in Galileo;<br>
  compiled with Java 1.5 to support Mac OS X;<br>
  Changed the released zip to be a zipped update site file<p>
 
-<b>23/05/09 - 1.5.14</b><br>
+<b>23/05/2009 - 1.5.14</b><br>
  added Call hierarchy view<p>
 
-<b>25/04/09 - 1.5.13</b><br>
+<b>25/04/2009 - 1.5.13</b><br>
  updated JavaCC / JJTree / JTB options, New preferences, Enhanced formatting & coloring (Marc Mazas)<p>
 
-<b>13/07/08 - 1.5.12</b><br>
+<b>13/07/2008 - 1.5.12</b><br>
  updated with JavaCC 4.1, added Folding, Hover, Completion proposals, and project Cleaning<p>
 
-<b>08/07/07 - 1.5.10</b><br>
+<b>08/07/2007 - 1.5.10</b><br>
  fixed JJTREE_OUTPUT_DIRECTORY, NullPointerException<p>
 
-<b>10/06/07 - 1.5.9</b><br>
+<b>10/06/2007 - 1.5.9</b><br>
  fixed javacc.jar to handle output directory for JJDoc<p>
 
-<b>11/03/07 - 1.5.7</b><br>
+<b>11/03/2007 - 1.5.7</b><br>
  fixed suppress warnings and preserve unicode escape when formatting<p>
 
-<b>26/11/06 - 1.5.6</b><br>
+<b>26/11/2006 - 1.5.6</b><br>
  restored compatibility with Eclipse 3.1 and handle case where no src/bin dir are defined<p>
 
-<b>05/11/06 - 1.5.5</b><br>
+<b>05/11/2006 - 1.5.5</b><br>
  added Java 1.5 and Eclipse 3.2.1 support;<br>
  fixed bug in console hyperlinks;<br>
  added basic content assistant<p>
 
-<b>01/10/06 - 1.5.4</b><br>
+<b>01/10/2006 - 1.5.4</b><br>
  added suppressed warnings in generated files;<br>
  added global preferences for colors<p>
 
-<b>24/05/06 - 1.5.3</b><br>
+<b>24/05/2006 - 1.5.3</b><br>
  fixed plug-in key conflict F3<p>
 
-<b>27/03/06 - 1.5.2</b><br>
+<b>27/03/2006 - 1.5.2</b><br>
  removed "exclude from build" and adopted Eclipse way, ie Build Path<p>
 
-<b>24/02/06 - 1.5.1</b><br>
+<b>24/02/2006 - 1.5.1</b><br>
  added French version (but the help is still in english)<p>
 
-<b>13/11/05 - 1.4.0</b><br>
+<b>13/11/2005 - 1.4.0</b><br>
  added update site, automatic format, java 1.4 .class files compatibility<p>
 
-<b>31/10/05 - 1.3.0</b><br>
+<b>31/10/2005 - 1.3.0</b><br>
  added JTB, Ctrl+click to open declaration, Wizard<p>
 
 <h2>Quick Start</h2>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src-plugin"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="D:/Eclipse-IDEs/Eclipse-Classic-3.7.2/eclipse/plugins"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src-plugin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

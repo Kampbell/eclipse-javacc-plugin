@@ -73,7 +73,9 @@ class CallHierarchyContentProvider implements ITreeContentProvider {
 
   /** {@inheritDoc} */
   @Override
-  public final void inputChanged(final Viewer aViewer, final Object aOldInput, final Object aNewInput) {
+  public final void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
+                                 @SuppressWarnings("unused") final Object aOldInput,
+                                 @SuppressWarnings("unused") final Object aNewInput) {
     // nothing done here
   }
 }

@@ -105,7 +105,7 @@ class UnusedSpellingServiceJJ {
 
               /** {@inheritDoc} */
               @Override
-              public void handleException(final Throwable x) {
+              public void handleException(@SuppressWarnings("unused") final Throwable x) {
                 // swallowed
               }
             };

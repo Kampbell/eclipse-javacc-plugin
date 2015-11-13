@@ -107,27 +107,36 @@ How to update the JavaCC Eclipse Plugin SourceForge site
 + WinSCP :
   * create a new site : host web.sourceforge.net port 22
   * link it to the DSA key file on the workstation
-  * cd /home/pfs/project/e/ec/eclipse-javacc to go to the release directory, where to put the sf.eclipse.javacc-z.y.xx-updatesite.zip
-  * cd /home/groups/e/ec/eclipse-javacc/htdocs to go to the project web directory, where to put the index.html and all files from
-     sf.eclipse.javacc-web
+  * cd /home/pfs/project/e/ec/eclipse-javacc to go to the release directory, where to put the
+     sf.eclipse.javacc-z.y.xx-updatesite.zip
+  * cd /home/groups/e/ec/eclipse-javacc/htdocs to go to the project web directory, where to put the
+     index.html and all files from sf.eclipse.javacc-web
   current problems :
   - open works with SFTP, not SCP (remote shell restricted to copy operations ?) ;
   - cannot overwrite not owned files (even if in right group) : seems to work now
   
   
 + Putty PSFTP :
-  * configure putty with host web.sourceforge.net port 22, sf account,project (e.g. mmazas,eclipse-javacc) on Connection / Data
-    add the private key file path on Connection / SSH / Auth, and save session
-  * run psftp, open web.sourceforge.net, it takes sf account,project, give pass phrase
+  * configure putty with host web.sourceforge.net port 22 on Session,
+     sf account,project (e.g. mmazas,eclipse-javacc) on Connection / Data
+     add the private key file path on Connection / SSH / Auth, and save session
+  * run psftp, open web.sourceforge.net, it takes sf account,project, give keyboard-interactive password
+     (not passphrase)
+    or run psftp <putty_session> (e.g. SourceForge), give pass phrase
   * sftp commands like ftp : ls, lcd, cd, put, !dir
 
-- Update the project information (Project Admin / Settings) : version, full description
++ Filezilla :
+  * configure site with web.sourceforge.net port 22, account,project (e.g. mmazas,eclipse-javacc),
+     ask for password (keyboard-interactive-password) (not passphrase), local and remote folders
+  * open connection to the site
 
-- Send an announcement (Develop / News)
+- Update the project information (Project Admin / Update MetaData) : version, full description
+
+- Send an announcement (News / New Post)
 
 
 How to update the Eclipse MarketPlace JavaCC Plug-in entry
 ----------------------------------------------------------
 
 - Login into http://marketplace.eclipse.org/content/javacc-eclipse-plug
-- Use the Edit menu to edit the entry, and save
+- Use the Edit menu to edit the entry (mainly version), and save

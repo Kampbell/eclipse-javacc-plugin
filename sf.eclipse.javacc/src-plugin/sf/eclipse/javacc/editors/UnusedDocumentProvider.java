@@ -42,7 +42,7 @@ public class UnusedDocumentProvider extends FileDocumentProvider {
    * {@inheritDoc}
    */
   @Override
-  protected void setupDocument(final Object aElement, final IDocument aDoc) {
+  protected void setupDocument(@SuppressWarnings("unused") final Object aElement, final IDocument aDoc) {
     if (aDoc instanceof IDocumentExtension3) {
       final IDocumentExtension3 theDoc = (IDocumentExtension3) aDoc;
       final IDocumentPartitioner partitioner = createPartitioner();

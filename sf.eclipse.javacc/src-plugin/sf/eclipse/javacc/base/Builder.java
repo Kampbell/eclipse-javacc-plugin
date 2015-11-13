@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 /**
- * Compiler for .jj, .jjt and .jtb files for normal usage (ie non headless builds).<br>
+ * public class Builder for .jj, .jjt and .jtb files for normal usage (ie non headless builds).<br>
  * It is used by the build process and by the compile commands.<br>
  * Referenced by plugin.xml.<br>
  * <extension point="org.eclipse.core.resources.builders">.<br>
@@ -48,7 +48,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
   private IEclipsePreferences jPrefs        = null;
 
   //  /** Standard constructor */
-  //  public Compiler() {
+  //  public Builder() {
   //  }
 
   /** @Inheritdoc */
@@ -73,7 +73,7 @@ public class Builder extends IncrementalProjectBuilder implements IResourceDelta
    */
   @Override
   protected IProject[] build(final int aKind, @SuppressWarnings({
-    "rawtypes" }) final Map aArgs, final IProgressMonitor aMonitor) throws CoreException {
+      "rawtypes", "unused" }) final Map aArgs, final IProgressMonitor aMonitor) throws CoreException {
     if (aKind == IncrementalProjectBuilder.FULL_BUILD) {
       fullBuild(aMonitor);
     }

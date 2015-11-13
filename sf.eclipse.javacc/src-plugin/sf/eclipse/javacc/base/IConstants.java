@@ -31,7 +31,7 @@ public interface IConstants {
   /** Default JavaCC jar name */
   static final String          JAVACC_JAR_NAME            = "javacc-5.0.jar";                                 //$NON-NLS-1$
   /** Default JTB jar name */
-  static final String          JTB_JAR_NAME               = "jtb-1.4.9.jar";                                  //$NON-NLS-1$
+  static final String          JTB_JAR_NAME               = "jtb-1.4.10.jar";                                 //$NON-NLS-1$
   /** Jars directory name */
   static final String          JARS_DIR                   = "/jars/";                                         //$NON-NLS-1$
 
@@ -104,15 +104,15 @@ public interface IConstants {
   /** Plugin name */
   public static final String   PLUGIN_NAME                = "JavaCC";                                         //$NON-NLS-1$
 
-  // Compiler and Nature ID
+  // Builder and Nature ID
   /** Nature qualified name id (note that in plugin.xml it is "javaccnature") */
   static final String          NATURE_ID                  = "sf.eclipse.javacc.javaccnature";                 //$NON-NLS-1$
   /** Nature qualified name label */
   static final String          NATURE_NAME                = "JavaCC Nature";                                  //$NON-NLS-1$
-  /** Compiler qualified name id (note that in plugin.xml it is "javaccbuilder") */
+  /** Builder qualified name id (note that in plugin.xml it is "javaccbuilder") */
   static final String          BUILDER_ID                 = "sf.eclipse.javacc.javaccbuilder";                //$NON-NLS-1$
-  /** Compiler qualified name label */
-  static final String          BUILDER_NAME               = "JavaCC Compiler";                                //$NON-NLS-1$
+  /** Builder qualified name label */
+  static final String          BUILDER_NAME               = "JavaCC Builder";                                 //$NON-NLS-1$
 
   //  Decorator ID
   /** Decorator qualified name id */

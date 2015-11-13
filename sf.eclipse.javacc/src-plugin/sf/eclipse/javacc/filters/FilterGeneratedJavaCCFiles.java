@@ -22,7 +22,8 @@ public class FilterGeneratedJavaCCFiles extends ViewerFilter {
 
   /** {@inheritDoc} */
   @Override
-  public boolean select(final Viewer aViewer, final Object aParentElement, final Object aObj) {
+  public boolean select(@SuppressWarnings("unused") final Viewer aViewer,
+                        @SuppressWarnings("unused") final Object aParentElement, final Object aObj) {
     if (aObj instanceof IAdaptable) {
       final IResource resource = (IResource) ((IAdaptable) aObj).getAdapter(IResource.class);
       if (resource != null) {

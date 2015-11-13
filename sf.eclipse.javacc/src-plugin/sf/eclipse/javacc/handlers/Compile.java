@@ -34,7 +34,7 @@ public class Compile extends AbstractHandler {
 
   // MMa 10/2012 : created from the corresponding now deprecated action
   // MMa 11/2014 : modified some modifiers ; added state management
-  // MMa 01/2015 : used same class for 3 commands; changed Compiler to Compiler
+  // MMa 01/2015 : used same class for 3 commands; changed Builder to Compiler
 
   /** The compiler to use */
   private final Compiler jCompiler  = new Compiler();

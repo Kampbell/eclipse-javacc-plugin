@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="sf.eclipse.javacc.feature"
-      label="JavaCC Eclipse Plug-in"
-      version="1.5.29"
-      provider-name="Remi Koutcherawy, Marc Mazas"
+      label="SF JavaCC Eclipse Plug-in feature"
+      version="1.5.32"
+      provider-name="Rémi Koutcherawy"
       plugin="sf.eclipse.javacc">
 
    <description url="http://eclipse-javacc.sourceforge.net/">
@@ -12,7 +12,7 @@ for installation through the Eclipse Update manager.
    </description>
 
    <copyright>
-      (c) Remi Koutcherawy, Marc Mazas
+      (c) Rémi Koutcherawy
    </copyright>
 
    <license url="http://www.cecill.info/index.en.html">
@@ -413,6 +413,7 @@ Version 2.0 dated 2005-05-21.
 
    <requires>
       <import plugin="org.eclipse.core.expressions" version="3.4.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.7.101" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.variables" version="3.2.500" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.ui" version="3.7.102" match="greaterOrEqual"/>
@@ -424,7 +425,6 @@ Version 2.0 dated 2005-05-21.
       <import plugin="org.eclipse.ui.ide" version="3.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.7.101" match="greaterOrEqual"/>
    </requires>
 
    <plugin

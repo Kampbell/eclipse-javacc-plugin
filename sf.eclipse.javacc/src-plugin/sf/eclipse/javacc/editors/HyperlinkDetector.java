@@ -41,7 +41,7 @@ class HyperlinkDetector implements IHyperlinkDetector {
   /** {@inheritDoc} */
   @Override
   public IHyperlink[] detectHyperlinks(final ITextViewer aTextViewer, final IRegion aRegion,
-                                       final boolean aCanShowMultipleHyperlinks) {
+                                       @SuppressWarnings("unused") final boolean aCanShowMultipleHyperlinks) {
     if (aRegion == null) {
       return null;
     }

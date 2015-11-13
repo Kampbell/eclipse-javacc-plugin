@@ -1,4 +1,8 @@
 A faire pour le plugin
+- voir à prendre le JRE du projet pour le lancement des jars
+- dans console, en mode debug_parser, mettre des hyperliens ou autres sur les productions ou les lignes ?
+- voir formatage Case1.jjt sur noeud avec condition
+- completion proposal : ajouter nouvelles options
 - voir le dictionnaire spelling
 - voir la question des dépendances "inutilisées" org.eclipse.core.expressions et org.eclipse.swt
 - voir si le pb proc.waitFor() JarLauncher revient
@@ -12,16 +16,30 @@ A faire pour le plugin
 - utiliser les org.eclipse.core.runtime.Assert
 - voir les ajouts faits par FA ou à faire pour JavaCC 6.x
 - tester le plugin sur les différentes versions d'Eclipse
-- voir les nouveautés Juno / Kepler / Luna du workbench et du JDT et impacts sur le plugin
+- voir les nouveautés Juno / Kepler / Luna / Mars du workbench et du JDT et impacts sur le plugin
 - voir évolutions du langage Java 1.7 et 1.8 et impacts sur coloration syntaxique, formatteur, call hierarchy
 - s'interfacer avec une vue JJDoc ?
 
 
+Fait pour le plugin en 1.5.32
+- ajouté des espaces sur les Token lors de l'insertion par la completion proposal
+- après formatage, on reste positionné sur la ligne où l'on était
+- supprimé l'option en trop OUTPUT_LANGUAGE pour JJTree
+- amélioré l'ajout/remplacement des annotations suppresswarnings dans les classes dérivées
+- remis en service les hovers
+
+Fait pour le plugin en 1.5.31
+- corrigé la navigation vers les règles pour les private label
+
+Fait pour le plugin en 1.5.30
+- corrigé la régression sur les remplacements de Builder en Compiler (voir Discussion/Help)
+- corrigé le problem sur le répertoire jars pour la page wizard
+
 Fait pour le plugin en 1.5.29
 - changé des options du warning du compilateur (méthodes static, suppresswarnings inutiles, else inutiles)
 - ajouté une commande pour afficher les informations pour le lancement de la commande de la compilation java
-- déplacé les méthodes non IncrementalCompiler de Compiler vers la nouvelle classe Compiler, modifié le type des
-   paramètres passé au ProcessCompiler en enlevant la jvmoptions vide
+- déplacé les méthodes non IncrementalBuilder de Builder vers la nouvelle classe Compiler, modifié le type des
+   paramètres passé au ProcessBuilder en enlevant la jvmoptions vide
 - passé à la version 1.7 la version minimum de l'environnement requis du plug-in
 
 Fait pour le plugin en 1.5.28
@@ -43,10 +61,10 @@ Fait pour le plugin en 1.5.28
 - revu les clés de plugin.properties et plugin_fr.properties
 - passé en import static les interfaces IJJConstants et IJJPreferences
 - corrigé le problème de la position du curseur, trié et révisé la liste des propositions
-   sur le Content Assist en fonction du contexte (ajouté des nouveaux nœuds pour cela)
-- mis à jour l'Outline avec les nœuds #ConstrDecl, #EnumDecl, #AnnotTypeDecl et corrigé les problèmes
-- adapté le Call Hierarchy avec les nouveaux nœuds
-- ajouté l'affichage dans l'Outline du nœud englobant la sélection sur double-click et modification
+   sur le Content Assist en fonction du contexte (ajouté des nouveaux noeuds pour cela)
+- mis à jour l'Outline avec les noeuds #ConstrDecl, #EnumDecl, #AnnotTypeDecl et corrigé les problèmes
+- adapté le Call Hierarchy avec les nouveaux noeuds
+- ajouté l'affichage dans l'Outline du noeud englobant la sélection sur double-click et modification
    dans l'éditeur
 - ajouté dans l'Outline et la Call Hierarchy le bouton de synchronisation avec l'éditeur
 - ajouté dans l'Outline le bouton de Refresh
@@ -57,7 +75,7 @@ Fait pour le plugin en 1.5.28
 - passé les getters et setters en final
 - ajouté les options .jj à celles de .jjt et .jtb pour le completion proposal
 - mis en place les summarizable annotations ; corrigé la suppression des markers
-- ajouté le nœud PARSER_BEGIN et enlevé le nœud JAVACODE_PROD des nœuds repliables
+- ajouté le noeud PARSER_BEGIN et enlevé le noeud JAVACODE_PROD des noeuds repliables
 - corrigé les identifiants de nature et builder
 - mis en place la navigation next/previous des annotations
 - refondu tous les logs des erreurs dans l'Error log, avec ajout de la version du plugin, de la stack trace et
@@ -68,7 +86,7 @@ Fait pour le plugin en 1.5.28
    les fichiers générés sous le répertoire sélectionné
 - corrections sur l'effacement de la console après la suppression des fichiers lors des builds automatiques
 - améliorations sur l'affichage des commandes dans la console
-- corrigé la grammaire sur la condition de javacc_options pour l'affichage du nœud option dans l'Outline et
+- corrigé la grammaire sur la condition de javacc_options pour l'affichage du noeud option dans l'Outline et
    la bonne proposition de completion proposal quand les options sont vides
 - ajouté le folding pour les commentaires et affiché celui des autres régions en 1 ligne a lieu de 2
 - corrigé pourquoi le spelling service ne fonctionnait plus
@@ -87,5 +105,5 @@ Fait pour le plugin en 1.5.28
 - ajouté l'option OUTPUT_LANGUAGE
 - amélioré l'affichage de la ligne en erreur quand on clique sur l'erreur dans l'OutlinePage
 - corrigé les problèmes de calcul des completion proposals en cas de fichier vide ou presque
-- déplacé Compiler et Nature dans le package base du plugin head pour utiliser ce package dans le plugin headless
+- déplacé Builder et Nature dans le package base du plugin head pour utiliser ce package dans le plugin headless
 - extrait de Activator une superclasse AbstractActivator factorisée entre les plugins head et headless 

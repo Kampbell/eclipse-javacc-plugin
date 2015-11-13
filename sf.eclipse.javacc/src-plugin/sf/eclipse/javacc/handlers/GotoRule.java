@@ -22,6 +22,7 @@ import sf.eclipse.javacc.parser.JJNode;
 public class GotoRule extends AbstractHandler {
 
   // MMa 10/2012 : created from the corresponding now deprecated action
+  // MMa 02/2015 : fixed case reference to a private label
 
   /** {@inheritDoc} */
   @Override
@@ -48,9 +49,15 @@ public class GotoRule extends AbstractHandler {
     if (!sel.isEmpty()) {
       final String text = sel.getText();
       // search matching node in AST
-      final JJNode node = jEditor.getElements().getNonIdentNorNodeDesc(text);
+      JJNode node = jEditor.getElements().getNonIdentNorNodeDesc(text);
       if (node != null) {
         jEditor.selectNode(node);
+      }
+      else {
+        node = jEditor.getElements().getNonIdentNorNodeDesc("#" + text); //$NON-NLS-1$
+        if (node != null) {
+          jEditor.selectNode(node);
+        }
       }
     }
     return null;

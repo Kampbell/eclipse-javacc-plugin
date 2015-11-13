@@ -10,7 +10,7 @@ import sf.eclipse.javacc.base.OptionSet;
 
 /**
  * The JJTree options Tab that enables setting the JJTree options.
- * 
+ *
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
@@ -24,7 +24,7 @@ class JJTreeOptions extends OptionsAbstractTab {
 
   /**
    * Initializes with JJTree default options.
-   * 
+   *
    * @param aParent - the parent
    * @param aRes - the resource
    */
@@ -38,6 +38,7 @@ class JJTreeOptions extends OptionsAbstractTab {
 
     // int options & boolean options, in alphabetic order on two columns
     jNbColBooleans = 2;
+    // TODO add NODE_STACK_SIZE, CHECK_DEFINITE_NODE, VISITOR_METHOD_NAME_INCLUDES_TYPE_NAME, NODE_INCLUDES
     jOptionSet.add(new Option("BUILD_NODE_FILES", "true", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     jOptionSet.add(new Option("MULTI", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$
     jOptionSet.add(new Option("NODE_DEFAULT_VOID", "false", Option.BOOLEAN)); //$NON-NLS-1$ //$NON-NLS-2$

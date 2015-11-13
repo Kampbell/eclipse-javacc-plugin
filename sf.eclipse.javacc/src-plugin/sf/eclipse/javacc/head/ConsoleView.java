@@ -50,7 +50,7 @@ import sf.eclipse.javacc.base.IConsole;
  * Referenced by plugin.xml<br>
  * <extension point="org.eclipse.ui.views"><br>
  * Since 1.3 this console is used for reporting errors, so must be.
- *
+ * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
  * @author Bill Fenlason 2012
@@ -141,7 +141,7 @@ public class ConsoleView extends ViewPart implements IConsole {
 
       /** {@inheritDoc} */
       @Override
-      public void widgetDisposed(final DisposeEvent e) {
+      public void widgetDisposed(@SuppressWarnings("unused") final DisposeEvent e) {
         if (jCommandColor != null) {
           jCommandColor.dispose();
           jCommandColor = null;
@@ -273,7 +273,7 @@ public class ConsoleView extends ViewPart implements IConsole {
 
   /**
    * Adds this text to the Console.
-   *
+   * 
    * @param aTxt - the text to add
    * @param aIsConsoleCommand - if the text is to be displayed using the console command color preference
    */
@@ -311,7 +311,7 @@ public class ConsoleView extends ViewPart implements IConsole {
   /**
    * Decodes console output, catches lines reporting problems (infos / warnings / errors), adds hyperlinks and
    * markers for them.
-   *
+   * 
    * @param aFile - the file to report on
    * @param aIsJtb - true if file is a JTB one, false otherwise
    */
@@ -543,7 +543,7 @@ public class ConsoleView extends ViewPart implements IConsole {
 
   /**
    * Add a marker to signal a problem. Hover tips are managed by SourceViewerConfiguration.
-   *
+   * 
    * @param aFile - the file to report on
    * @param aMsg - the marker message
    * @param aSeverity - the marker severity
@@ -578,7 +578,7 @@ public class ConsoleView extends ViewPart implements IConsole {
 
   /**
    * Updates a current marker by adding a new line with a given new message.
-   *
+   * 
    * @param aMarker - the marker to update
    * @param aMsg - the message to add
    */

@@ -52,7 +52,7 @@ public interface IConsole {
   public abstract void displayOutput();
 
   /**
-   * Displays and processes compilation report. Called when {@link Compiler} has finished.
+   * Displays and processes compilation report. Called when the compile commands have finished.
    * 
    * @param aFile - the file to report on
    * @param aIsJtb - true if file is a JTB one, false otherwise

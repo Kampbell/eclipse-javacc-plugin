@@ -25,6 +25,7 @@ public class Nature implements IProjectNature {
   // MMa 10/2012 : renamed
   // MMa 11/2014 : modified some modifiers
   // MMa 12/2014 : changed package
+  // MMa 03/2015 : added hasNature()
 
   /** The project */
   private IProject jProject;
@@ -61,7 +62,7 @@ public class Nature implements IProjectNature {
       }
     }
     if (command == null) {
-      // add Compiler (ID only)
+      // add Builder (ID only)
       command = desc.newCommand();
       command.setBuilderName(BUILDER_ID);
       final ICommand[] newCommands = new ICommand[cmds.length + 1];
@@ -87,7 +88,7 @@ public class Nature implements IProjectNature {
     final ICommand[] cmds = desc.getBuildSpec();
     for (int i = cmds.length - 1; i >= 0; i--) {
       if (cmds[i].getBuilderName().equals(BUILDER_ID)) {
-        // copy without Compiler
+        // copy without Builder
         final ICommand[] newCommands = new ICommand[cmds.length - 1];
         System.arraycopy(cmds, 0, newCommands, 0, i);
         System.arraycopy(cmds, i + 1, newCommands, i, cmds.length - i - 1);
@@ -99,14 +100,45 @@ public class Nature implements IProjectNature {
   }
 
   /**
+   * True if the project has the a JavaCC Nature, false otherwise.
+   * 
+   * @param aProject - to change
+   * @return true if project has the JavaCC Nature, false otherwise
+   */
+  static public boolean hasNature(final IProject aProject) {
+    if (aProject == null) {
+      AbstractActivator.logErr(AbstractActivator.getMsg("Nature.Project_null")); //$NON-NLS-1$ 
+      return false;
+    }
+    try {
+      if (aProject.isOpen()) {
+        final IProjectDescription desc = aProject.getDescription();
+        // find whether nature already exists
+        for (final String nature : desc.getNatureIds()) {
+          if (nature.equals(NATURE_ID)) {
+            return true;
+          }
+        }
+      }
+    } catch (final CoreException e) {
+      AbstractActivator.logBug(e, AbstractActivator.getMsg("Nature.Problem")); //$NON-NLS-1$
+    }
+    return false;
+  }
+
+  /**
    * Adds or removes a JavaCC Nature (nature id only) to the project.
    * 
    * @param aNature - adds if true, removes if false
-   * @param aProject - to change
+   * @param aProject - the project to change
    */
   static public void setNature(final boolean aNature, final IProject aProject) {
     if (aProject == null) {
       AbstractActivator.logErr(AbstractActivator.getMsg("Nature.Project_null")); //$NON-NLS-1$ 
+      return;
+    }
+    if (!aProject.isOpen()) {
+      AbstractActivator.logErr(AbstractActivator.getMsg("Nature.Project_closed")); //$NON-NLS-1$ 
       return;
     }
     try {
@@ -114,8 +146,8 @@ public class Nature implements IProjectNature {
       final String[] natures = desc.getNatureIds();
       boolean found = false;
       // find whether nature already exists
-      for (int i = 0; i < natures.length; ++i) {
-        if (natures[i].equals(NATURE_ID)) {
+      for (final String nature : natures) {
+        if (nature.equals(NATURE_ID)) {
           found = true;
           break;
         }
@@ -148,4 +180,5 @@ public class Nature implements IProjectNature {
       AbstractActivator.logBug(e, AbstractActivator.getMsg("Nature.Problem")); //$NON-NLS-1$
     }
   }
+
 }

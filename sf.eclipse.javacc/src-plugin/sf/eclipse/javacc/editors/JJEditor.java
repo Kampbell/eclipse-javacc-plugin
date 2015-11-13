@@ -279,7 +279,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
    * {@inheritDoc}
    */
   @Override
-  public Object getAdapter(final Class aRequiredClass) {
+  public Object getAdapter(@SuppressWarnings("rawtypes") final Class aRequiredClass) {
     if (IContentOutlinePage.class.equals(aRequiredClass)) {
       if (jOutlinePage == null) {
         jOutlinePage = new OutlinePage(this);
@@ -774,7 +774,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
 
     /** {@inheritDoc } */
     @Override
-    public void selectionChanged(final SelectionChangedEvent aEvent) {
+    public void selectionChanged(@SuppressWarnings("unused") final SelectionChangedEvent aEvent) {
       JJEditor.this.selectionChanged();
     }
 
