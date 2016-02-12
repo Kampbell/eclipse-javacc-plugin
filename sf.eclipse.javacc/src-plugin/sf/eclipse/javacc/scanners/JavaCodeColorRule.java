@@ -20,12 +20,13 @@ import org.eclipse.swt.graphics.Color;
  * Scanner rule for Java source code.
  * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
- * @author Marc Mazas 2014
+ * @author Marc Mazas 2014-2015-2016
  */
-class JavaCodeRule implements IRule {
+class JavaCodeColorRule implements IRule {
 
   // MMa 10/2012 : renamed
   // MMa 11/2014 : some renamings
+  // MMa 02/2016 : some renamings ; renamed from JavaCodeRule
 
   /** The java keywords */
   public static final String[]         sJavaKeywords          = {
@@ -180,7 +181,7 @@ class JavaCodeRule implements IRule {
   protected NumericLiteralRule         jNumberRule;
 
   /** The default rule */
-  protected SimpleRule                 jDefaultRule;
+  protected SimpleSequenceRule                 jDefaultRule;
 
   /** The whitespace rule */
   protected WhitespaceRule             jWhitespaceRule;
@@ -191,15 +192,15 @@ class JavaCodeRule implements IRule {
   /**
    * Instantiates a new Java code rule.
    * 
-   * @param fColorMap2 - the color map
-   * @param fAtrMap2 - the attribute map
+   * @param aColorMap - the color map
+   * @param aAtrMap - the attribute map
    * @param backgroundColorPrefName - the background color preference name
    */
-  public JavaCodeRule(final Map<String, Color> fColorMap2, final Map<String, Integer> fAtrMap2,
+  public JavaCodeColorRule(final Map<String, Color> aColorMap, final Map<String, Integer> aAtrMap,
                       final String backgroundColorPrefName) {
 
-    jColorMap = fColorMap2;
-    jAtrMap = fAtrMap2;
+    jColorMap = aColorMap;
+    jAtrMap = aAtrMap;
     jTokenMap = new HashMap<String, IToken>();
 
     jBGColorPrefName = backgroundColorPrefName;
@@ -208,11 +209,11 @@ class JavaCodeRule implements IRule {
   }
 
   /**
-   * @param preferenceName - the preference name that was updated
+   * @param aPreferenceName - the preference name that was updated
    */
-  public void updateRules(final String preferenceName) {
-    final boolean all = (preferenceName == null || preferenceName == jBGColorPrefName);
-    String prefName = all ? jBGColorPrefName : preferenceName;
+  public void updateRules(final String aPreferenceName) {
+    final boolean all = (aPreferenceName == null || aPreferenceName == jBGColorPrefName);
+    String prefName = all ? jBGColorPrefName : aPreferenceName;
     final Color background = jColorMap.get(jBGColorPrefName);
 
     if (all) {
@@ -220,7 +221,7 @@ class JavaCodeRule implements IRule {
     }
 
     for (int i = 0; i < sJavaColorPrefNames.length; i++) {
-      if (all || preferenceName == sJavaColorPrefNames[i] || preferenceName == sJavaAtrPrefNames[i]) {
+      if (all || aPreferenceName == sJavaColorPrefNames[i] || aPreferenceName == sJavaAtrPrefNames[i]) {
         prefName = sJavaColorPrefNames[i];
         jTokenMap.put(prefName,
                       new Token(new TextAttribute(jColorMap.get(prefName), background,
@@ -255,7 +256,7 @@ class JavaCodeRule implements IRule {
     }
 
     if (all || prefName == P_JAVA_DEFAULT_TEXT) {
-      jDefaultRule = new SimpleRule(null, jTokenMap.get(P_JAVA_DEFAULT_TEXT));
+      jDefaultRule = new SimpleSequenceRule("", jTokenMap.get(P_JAVA_DEFAULT_TEXT)); //$NON-NLS-1$
     }
 
     if (all) {
@@ -275,8 +276,8 @@ class JavaCodeRule implements IRule {
 
   /** {@inheritDoc} */
   @Override
-  public IToken evaluate(final ICharacterScanner scanner) {
-    final CodeScanner fScanner = (CodeScanner) scanner;
+  public IToken evaluate(final ICharacterScanner aScanner) {
+    final CodeColorScanner fScanner = (CodeColorScanner) aScanner;
 
     return fScanner.nextToken(jJavaRules);
   }

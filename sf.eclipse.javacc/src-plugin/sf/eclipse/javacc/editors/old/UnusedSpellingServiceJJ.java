@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.editors.old;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

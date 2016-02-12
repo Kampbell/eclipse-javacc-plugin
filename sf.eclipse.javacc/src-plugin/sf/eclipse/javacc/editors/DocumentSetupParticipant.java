@@ -15,22 +15,23 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordPatternRule;
 
-import sf.eclipse.javacc.scanners.CodeScanner;
-import sf.eclipse.javacc.scanners.PartitionScannerRule;
+import sf.eclipse.javacc.scanners.CodeColorScanner;
+import sf.eclipse.javacc.scanners.CodePartitionRule;
 import sf.eclipse.javacc.scanners.SMLJCDetector;
 
 /**
  * The document setup participant for JJEditor.<br>
  * Manages the document partitioning.<br>
- * Must be coherent with {@link CodeScanner}.<br>
+ * Must be coherent with {@link CodeColorScanner}.<br>
  * Referenced by plugin.xml.<br>
  * <extension point="org.eclipse.core.filebuffers.documentSetup">
  * 
- * @author Marc Mazas 2014
+ * @author Marc Mazas 2014-2015-2016
  */
 public class DocumentSetupParticipant implements IDocumentSetupParticipant {
 
   // MMa 11/2014 : created from old DocumentProvider
+  // MMa 02/2016 : removed default content type partition
 
   /**
    * Constructs a document partitioner and connects it to the document.
@@ -57,9 +58,9 @@ public class DocumentSetupParticipant implements IDocumentSetupParticipant {
     final IToken lineCommentToken = new Token(LINE_CMT_CONTENT_TYPE);
     final IToken blockCommentToken = new Token(BLOCK_CMT_CONTENT_TYPE);
     final IToken javadocToken = new Token(JAVADOC_CONTENT_TYPE);
-    final IToken defaultToken = new Token(IDocument.DEFAULT_CONTENT_TYPE);
+    //    final IToken defaultToken = new Token(IDocument.DEFAULT_CONTENT_TYPE);
 
-    final PartitionScannerRule codeRule = new PartitionScannerRule(codeToken);
+    final CodePartitionRule codeRule = new CodePartitionRule(codeToken);
     final EndOfLineRule lineCommentRule = new EndOfLineRule("//", lineCommentToken); //$NON-NLS-1$
     final WordPatternRule emptyBlockCommentRule = new WordPatternRule(new SMLJCDetector(),
                                                                       "/**", "/", blockCommentToken); //$NON-NLS-1$ //$NON-NLS-2$
@@ -67,14 +68,15 @@ public class DocumentSetupParticipant implements IDocumentSetupParticipant {
                                                                true);
     final MultiLineRule blockCommentRule = new MultiLineRule("/*", "*/", blockCommentToken, //$NON-NLS-1$ //$NON-NLS-2$
                                                              (char) 0, true);
-    final PartitionScannerRule defaultRule = new PartitionScannerRule(defaultToken);
+    //    final PartitionScannerRule defaultRule = new PartitionScannerRule(defaultToken);
 
+    // order is important : /**/, then /** blabla */, then /* blabla */ TODO voir s'il faut garder le eBCR !!!
     final IPredicateRule[] rules = {
-        codeRule, lineCommentRule, emptyBlockCommentRule, javadocCommentRule, blockCommentRule, defaultRule };
+        codeRule, lineCommentRule, emptyBlockCommentRule, javadocCommentRule, blockCommentRule /*, defaultRule*/};
 
-    final RuleBasedPartitionScanner scanner = new RuleBasedPartitionScanner();
-    scanner.setPredicateRules(rules);
+    final RuleBasedPartitionScanner javaccPartitionScanner = new RuleBasedPartitionScanner();
+    javaccPartitionScanner.setPredicateRules(rules);
 
-    return new FastPartitioner(scanner, CONTENT_TYPES);
+    return new FastPartitioner(javaccPartitionScanner, CONTENT_TYPES);
   }
 }

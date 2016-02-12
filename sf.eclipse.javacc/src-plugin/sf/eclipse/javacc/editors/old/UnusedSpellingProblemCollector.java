@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.editors.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;

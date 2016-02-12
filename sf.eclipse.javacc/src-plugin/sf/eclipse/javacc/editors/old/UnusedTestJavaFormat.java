@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.editors.old;
 
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.formatter.CodeFormatter;

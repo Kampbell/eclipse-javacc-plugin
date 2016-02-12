@@ -1,69 +1,13 @@
 package sf.eclipse.javacc.scanners;
 
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_BACKGROUND;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_CHOICE_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_CHOICE_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_DEFAULT_TEXT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_DEFAULT_TEXT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_EXPANSION_BRACE;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_EXPANSION_BRACE_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_KEYWORD;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_KEYWORD_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_NUMERIC;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_NUMERIC_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_OPTION;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_OPTION_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_OPTION_BRACE;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_OPTION_BRACE_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_OTHER_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_OTHER_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_PARSER_NAME;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_PARSER_NAME_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_PARSER_NAME_PAREN;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_PARSER_NAME_PAREN_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_STRING;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVACC_STRING_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVA_BACKGROUND;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVA_BLOCK_BRACE;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVA_BLOCK_BRACE_ALT_BG;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JAVA_BLOCK_BRACE_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JJTREE_NODE_EXPR_PAREN;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JJTREE_NODE_EXPR_PAREN_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JJTREE_NODE_NAME;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JJTREE_NODE_NAME_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JJTREE_NODE_NAME_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_JJTREE_NODE_NAME_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_LEXICAL_STATE;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_LEXICAL_STATE_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_LEXICAL_STATE_NEXT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_LEXICAL_STATE_NEXT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_LEXICAL_STATE_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_LEXICAL_STATE_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_BRACE;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_BRACE_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_BRACKET;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_BRACKET_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_CHOICE_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_CHOICE_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_OTHER_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_OTHER_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_TOKEN_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_REG_EX_TOKEN_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_DEF;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_DEF_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_PRIVATE_DEF;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_PRIVATE_DEF_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_PRIVATE_DEF_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_PRIVATE_DEF_PUNCT_ATR;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_PUNCT;
-import static sf.eclipse.javacc.preferences.IPrefConstants.P_TOKEN_LABEL_PUNCT_ATR;
+import static sf.eclipse.javacc.preferences.IPrefConstants.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentSkipListMap;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.ICharacterScanner;
@@ -79,142 +23,223 @@ import org.eclipse.swt.graphics.Color;
 import sf.eclipse.javacc.base.AbstractActivator;
 
 /**
- * The {@link JavaCCCodeRule} Class.
- *
+ * The {@link JavaCCCodeColorRule} Class.
+ * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
- * @author Marc Mazas 2014
+ * @author Marc Mazas 2014-2015-2016
  */
-class JavaCCCodeRule implements IRule {
+public class JavaCCCodeColorRule implements IRule {
 
   // BF  05/2012 : created
   // MMa 09/2012 : modified colors for ":" ; added "!" as a JavaCC punctuation character (JTB specific syntax)
   // MMa 10/2012 : renamed
   // MMa 11/2014 : some renamings ; added OUTPUT_LANGUAGE option
+  // MMa 02/2016 : some renamings ; fixed handling of options followed by a comment ; renamed from JavaCCCodeRule
+  //                added context stack save and restore methods, for proper handling of the spell check thread
+  //                which can start the evaluation further than the beginning of the document
 
   /** The preference store */
-  protected final IPreferenceStore     jStore = AbstractActivator.getDefault().getPreferenceStore();
+  protected final IPreferenceStore                         jStore = AbstractActivator.getDefault()
+                                                                                     .getPreferenceStore();
 
   /** The color map */
-  protected final Map<String, Color>   jColorMap;
+  protected final Map<String, Color>                       jColorMap;
 
   /** The attribute map */
-  protected final Map<String, Integer> jAtrMap;
+  protected final Map<String, Integer>                     jAtrMap;
 
   /** The token map */
-  protected final Map<String, IToken>  jTokenMap;
+  protected final Map<String, IToken>                      jTokenMap;
 
-  /** The Java code rule */
-  protected final JavaCodeRule         jJavaCodeRule;
+  /** The Java code background color rule (in Java code) */
+  protected final JavaCodeColorRule                        jJavaCodeBGColorRule;
 
-  /** The alternate Java code rule */
-  protected final JavaCodeRule         jJavaCodeAltRule;
+  /** The alternate Java code background color rule (in JavaCC code) */
+  protected final JavaCodeColorRule                        jJavaCCCodeBGColorRule;
 
   /** The JavaCC keyword rule */
-  protected WordRule                   jJavaCCKeywordRule;
+  protected WordRule                                       jJavaCCKeywordRule;
 
   /** The options keyword rule */
-  protected WordRule                   jOptionsKeywordRule;
+  protected WordRule                                       jOptionsKeywordRule;
 
   /** The string rule */
-  protected SingleLineRule             jStringRule;
+  protected SingleLineRule                                 jStringRule;
 
   /** The numeric rule */
-  protected NumericLiteralRule         jNumericRule;
+  protected NumericLiteralRule                             jNumericRule;
 
   /** The regular expression punctuation rule */
-  protected WordRule                   jRegExPunctuationRule;
+  protected WordRule                                       jRegExPunctuationRule;
 
   /** The lexical definition name rule */
-  protected WordRule                   jLexicalDefinitionNameRule;
+  protected WordRule                                       jLexicalDefinitionNameRule;
 
   /** The protected lexical definition name rule */
-  protected WordRule                   jPrivateLexicalDefinitionNameRule;
+  protected WordRule                                       jPrivateLexicalDefinitionNameRule;
 
   /** The expansion choices punctuation rule */
-  protected WordRule                   jBnfPunctuationRule;
+  protected WordRule                                       jBnfPunctuationRule;
 
   /** The whitespace rule */
-  protected WhitespaceRule             jWhitespaceRule;
+  protected WhitespaceRule                                 jWhitespaceRule;
 
   /** The unexpected character rule */
-  protected SimpleRule                 jUnexpectedCharacterRule;
+  protected SimpleSequenceRule                             jUnexpectedCharacterRule;
 
-  /** The begin state rules array */
-  protected IRule[]                    jOptionBlockRules;
+  /** The options block rules array */
+  protected IRule[]                                        jOptionBlockRules;
 
   /** The parser name rules array */
-  protected IRule[]                    jParserNameRules;
+  protected IRule[]                                        jParserNameRules;
 
   /** The TOKEN_MGR_DECLS rules array */
-  protected IRule[]                    jTokenMgrDeclsRules;
+  protected IRule[]                                        jTokenMgrDeclsRules;
 
   /** The regular expression production rules array */
-  protected IRule[]                    jRegularExprProductionRules;
+  protected IRule[]                                        jRegularExprProductionRules;
 
   /** The regular expression specification rules array */
-  protected IRule[]                    jRegExprSpecRules;
+  protected IRule[]                                        jRegExprSpecRules;
 
   /** The regular expression rules array */
-  protected IRule[]                    jRegularExpressionRules;
+  protected IRule[]                                        jRegularExpressionRules;
 
   /** The BNF production rules array */
-  protected IRule[]                    jBnfProductionRules;
+  protected IRule[]                                        jBnfProductionRules;
 
   /** The BNF expansion choice rules array */
-  protected IRule[]                    jBnfChoiceRules;
+  protected IRule[]                                        jBnfChoiceRules;
 
   /** The whitespace rules array */
-  protected IRule[]                    jWhitespaceRules;
+  protected IRule[]                                        jWhitespaceRules;
 
   /** The JJTree node rules array */
-  protected IRule[]                    jJjtreeNodeRules;
+  protected IRule[]                                        jJjtreeNodeRules;
 
-  /** The protected name flag */
-  protected boolean                    jPrivateName;
+  /** The private token name flag */
+  protected boolean                                        jPrivateName;
 
   /** The argument list flag */
-  protected boolean                    jArgList;
+  protected boolean                                        jArgList;
 
   /** The scanner */
-  protected CodeScanner                jScanner;
+  protected CodeColorScanner                               jScanner;
 
   /** The state stack */
-  protected final Stack<Context>       jStateStack;
+  protected Stack<Context>                                 jStateStack;
+
+  /** The state stack save map */
+  protected ConcurrentSkipListMap<Integer, Stack<Context>> jStateStackSaveMap;
 
   /**
    * Instantiates a new JavaCC code rule.
-   *
-   * @param fColorMap2 - the HashMap for the colors
-   * @param fAtrMap2 - the HashMap for the font attributes
+   * 
+   * @param aColorMap - the HashMap for the colors
+   * @param aAtrMap - the HashMap for the font attributes
    */
-  public JavaCCCodeRule(final Map<String, Color> fColorMap2, final Map<String, Integer> fAtrMap2) {
-    jColorMap = fColorMap2;
-    jAtrMap = fAtrMap2;
+  public JavaCCCodeColorRule(final Map<String, Color> aColorMap, final Map<String, Integer> aAtrMap) {
+    jColorMap = aColorMap;
+    jAtrMap = aAtrMap;
     jTokenMap = new HashMap<String, IToken>();
 
-    jJavaCodeRule = new JavaCodeRule(fColorMap2, fAtrMap2, P_JAVA_BACKGROUND);
-    jJavaCodeAltRule = new JavaCodeRule(fColorMap2, fAtrMap2, P_JAVACC_BACKGROUND);
+    jJavaCodeBGColorRule = new JavaCodeColorRule(aColorMap, aAtrMap, P_JAVA_BACKGROUND);
+    jJavaCCCodeBGColorRule = new JavaCodeColorRule(aColorMap, aAtrMap, P_JAVACC_BACKGROUND);
     updateRules(null);
 
     jStateStack = new Stack<Context>();
+    jStateStackSaveMap = new ConcurrentSkipListMap<Integer, Stack<Context>>();
     initialize();
   }
 
   /**
-   * Initializes the context to the start of the file.
+   * Initializes the context stack to the start of the file.
    */
   public void initialize() {
+    Assert.isNotNull(jStateStack);
     jStateStack.clear();
-    pushState(Context.AT_NEXT_PRODUCTION);
+    jStateStackSaveMap.clear();
+    pushState(Context.AT_FIRST_LEVEL);
+  }
+
+  /**
+   * Saves the stack for the given offset, trunking the save map if necessary.
+   * 
+   * @param aOffset - the offset
+   */
+  @SuppressWarnings("unchecked")
+  public void save(final int aOffset) {
+    log(aOffset, "Sa1"); //$NON-NLS-1$
+    Assert.isNotNull(jStateStack);
+    final Integer off = Integer.valueOf(aOffset);
+    // truncate the stack if saving before the last key
+    final Integer ck = jStateStackSaveMap.ceilingKey(off);
+    if (ck != null) {
+      final int cki = ck.intValue();
+      log(aOffset, "SaC " + cki); //$NON-NLS-1$
+      for (final Integer k : jStateStackSaveMap.descendingKeySet()) {
+        if (cki > k.intValue()) {
+          break;
+        }
+        jStateStackSaveMap.remove(k);
+        log(aOffset, "SaK " + k); //$NON-NLS-1$
+      }
+    }
+    // we really need to clone ...
+    jStateStackSaveMap.put(off, (Stack<Context>) jStateStack.clone());
+    log(aOffset, "Sa2"); //$NON-NLS-1$
+  }
+
+  /**
+   * Restores the stack to its state at the greatest key less than or equal to the offset, trunking the save
+   * map if necessary.
+   * 
+   * @param aOffset - the offset
+   */
+  public void restore(final int aOffset) {
+    // retreive the greatest key less than or equal to the offset
+    log(aOffset, "Re1"); //$NON-NLS-1$
+    final Integer fk = jStateStackSaveMap.floorKey(Integer.valueOf(aOffset));
+    // check it exists
+    if (fk != null) {
+      // truncate the stack if restoring before the last key
+      final int fki = fk.intValue();
+      log(aOffset, "ReF " + fki); //$NON-NLS-1$
+      for (final Integer k : jStateStackSaveMap.descendingKeySet()) {
+        if (fki >= k.intValue()) {
+          break;
+        }
+        jStateStackSaveMap.remove(k);
+        log(aOffset, "ReK " + k); //$NON-NLS-1$
+      }
+      // restore the stack to this key
+      jStateStack = jStateStackSaveMap.get(fk);
+    }
+    log(aOffset, "Re2"); //$NON-NLS-1$
+  }
+
+  /**
+   * Adds a line to a (Eclipse) watch debug variable in {@link CodeColorScanner}. TODO à passer en
+   * commentaires
+   * 
+   * @param aOffset - the offset
+   * @param str - a prefix string
+   */
+  private void log(final int aOffset, final String str) {
+    jScanner.dbgStr = str
+                      + " : " + aOffset //$NON-NLS-1$ 
+                      + ", " + Thread.currentThread().toString().substring(Thread.currentThread().toString().indexOf('[')) //$NON-NLS-1$
+                      + ", " + this.toString().substring(this.toString().indexOf('@')) //$NON-NLS-1$
+                      + ", " + jStateStack + "\r\n" + jScanner.dbgStr; //$NON-NLS-1$ //$NON-NLS-2$ 
   }
 
   /**
    * Updates the rules after a preference change.
-   *
-   * @param preferenceName - the changed preference name
+   * 
+   * @param aPreferenceName - the changed preference name
    */
-  public void updateRules(final String preferenceName) {
-    final boolean all = (preferenceName == null || preferenceName == P_JAVACC_BACKGROUND);
+  public void updateRules(final String aPreferenceName) {
+    final boolean all = (aPreferenceName == null || aPreferenceName == P_JAVACC_BACKGROUND);
     final Color background = jColorMap.get(P_JAVACC_BACKGROUND);
     String prefName = null;
 
@@ -224,7 +249,7 @@ class JavaCCCodeRule implements IRule {
     }
 
     for (int i = 0; i < sJavaCCColorPrefNames.length; i++) {
-      if (all || preferenceName == sJavaCCColorPrefNames[i] || preferenceName == sJavaCCAtrPrefNames[i]) {
+      if (all || aPreferenceName == sJavaCCColorPrefNames[i] || aPreferenceName == sJavaCCAtrPrefNames[i]) {
         prefName = sJavaCCColorPrefNames[i];
         jTokenMap.put(prefName,
                       new Token(new TextAttribute(jColorMap.get(prefName), background,
@@ -246,7 +271,7 @@ class JavaCCCodeRule implements IRule {
     jWhitespaceRule = new WhitespaceRule(new WhitespaceDetector(), jTokenMap.get(P_JAVACC_BACKGROUND));
     jStringRule = new SingleLineRule("\"", "\"", jTokenMap.get(P_JAVACC_STRING), '\\'); //$NON-NLS-1$ //$NON-NLS-2$
     jNumericRule = new NumericLiteralRule(jTokenMap.get(P_JAVACC_NUMERIC));
-    jUnexpectedCharacterRule = new SimpleRule("", jTokenMap.get(P_JAVACC_DEFAULT_TEXT)); //$NON-NLS-1$
+    jUnexpectedCharacterRule = new SimpleSequenceRule("", jTokenMap.get(P_JAVACC_DEFAULT_TEXT)); //$NON-NLS-1$
 
     jLexicalDefinitionNameRule = new WordRule(new WordDetector(), jTokenMap.get(P_TOKEN_LABEL_DEF));
     jPrivateLexicalDefinitionNameRule = new WordRule(new WordDetector(),
@@ -283,26 +308,26 @@ class JavaCCCodeRule implements IRule {
 
     jOptionBlockRules = new IRule[] {
         jWhitespaceRule, //
-        new SimpleRule("options", jTokenMap.get(P_JAVACC_KEYWORD)), //$NON-NLS-1$
-        new SimpleRule("{", jTokenMap.get(P_JAVACC_OPTION_BRACE)), //$NON-NLS-1$
+        new SimpleSequenceRule("options", jTokenMap.get(P_JAVACC_KEYWORD)), //$NON-NLS-1$
+        new SimpleSequenceRule("{", jTokenMap.get(P_JAVACC_OPTION_BRACE)), //$NON-NLS-1$
         jOptionsKeywordRule, //
-        new SimpleRule("}", jTokenMap.get(P_JAVACC_OPTION_BRACE)), //$NON-NLS-1$
+        new SimpleSequenceRule("}", jTokenMap.get(P_JAVACC_OPTION_BRACE)), //$NON-NLS-1$
         // new SimpleRule("=", fTokenMap.get(P_JAVACC_)), // Left as Java punctuation $NON-NLS-1$
         // new SimpleRule(";", fTokenMap.get(P_JAVACC_)), // Left as Java punctuation $NON-NLS-1$
-        jJavaCodeAltRule, //
+        jJavaCCCodeBGColorRule, //
     };
 
     jParserNameRules = new IRule[] {
         jWhitespaceRule, //
         new WordRule(new WordDetector(), jTokenMap.get(P_JAVACC_PARSER_NAME)), //
-        new SimpleRule("(", jTokenMap.get(P_JAVACC_PARSER_NAME_PAREN)), //$NON-NLS-1$
-        new SimpleRule(")", jTokenMap.get(P_JAVACC_PARSER_NAME_PAREN)), //$NON-NLS-1$
+        new SimpleSequenceRule("(", jTokenMap.get(P_JAVACC_PARSER_NAME_PAREN)), //$NON-NLS-1$
+        new SimpleSequenceRule(")", jTokenMap.get(P_JAVACC_PARSER_NAME_PAREN)), //$NON-NLS-1$
         jUnexpectedCharacterRule, //
     };
 
     jTokenMgrDeclsRules = new IRule[] {
         jWhitespaceRule, //
-        new SimpleRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
         jUnexpectedCharacterRule, //
     };
 
@@ -310,34 +335,34 @@ class JavaCCCodeRule implements IRule {
         jWhitespaceRule, //
         jJavaCCKeywordRule, //
         new WordRule(new WordDetector(), jTokenMap.get(P_LEXICAL_STATE)), //
-        new SimpleRule("*", jTokenMap.get(P_LEXICAL_STATE)), //$NON-NLS-1$
-        new SimpleRule("<", jTokenMap.get(P_LEXICAL_STATE_PUNCT)), //$NON-NLS-1$
-        new SimpleRule(">", jTokenMap.get(P_LEXICAL_STATE_PUNCT)), //$NON-NLS-1$
-        new SimpleRule("[", jTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
-        new SimpleRule("]", jTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule("*", jTokenMap.get(P_LEXICAL_STATE)), //$NON-NLS-1$
+        new SimpleSequenceRule("<", jTokenMap.get(P_LEXICAL_STATE_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule(">", jTokenMap.get(P_LEXICAL_STATE_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule("[", jTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule("]", jTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
         // MMa one line modified
         //        new SimpleRule(":", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
-        new SimpleRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
-        new SimpleRule(",", jTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule(",", jTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
         jUnexpectedCharacterRule, //
     };
 
     jRegExprSpecRules = new IRule[] {
         jWhitespaceRule, //
         new WordRule(new WordDetector(), jTokenMap.get(P_LEXICAL_STATE_NEXT)), //
-        new SimpleRule("|", jTokenMap.get(P_REG_EX_CHOICE_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule("|", jTokenMap.get(P_REG_EX_CHOICE_PUNCT)), //$NON-NLS-1$
         // MMa added 1 line
-        new SimpleRule("!", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule("!", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
         // MMa one line modified
         //        new SimpleRule(":", fTokenMap.get(P_REG_EX_OTHER_PUNCT)), //$NON-NLS-1$
-        new SimpleRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
         jStringRule, //
         jUnexpectedCharacterRule, //
     };
 
     jRegularExpressionRules = new IRule[] {
         jWhitespaceRule, //
-        new SimpleRule("EOF", jTokenMap.get(P_JAVACC_KEYWORD)), //$NON-NLS-1$
+        new SimpleSequenceRule("EOF", jTokenMap.get(P_JAVACC_KEYWORD)), //$NON-NLS-1$
         new WordRule(new WordDetector(), jTokenMap.get(P_TOKEN_LABEL)), //
         jNumericRule, //
         // new SimpleRule(":", fTokenMap.get(P_REGEX_OTHER_PUNCT)), //$NON-NLS-1$
@@ -350,9 +375,9 @@ class JavaCCCodeRule implements IRule {
     jBnfProductionRules = new IRule[] {
         jWhitespaceRule, //
         // MMa : 1 line added
-        new SimpleRule("!", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
-        new SimpleRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
-        jJavaCodeAltRule, //
+        new SimpleSequenceRule("!", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
+        new SimpleSequenceRule(":", jTokenMap.get(P_JAVACC_OTHER_PUNCT)), //$NON-NLS-1$
+        jJavaCCCodeBGColorRule, //
     };
 
     jBnfChoiceRules = new IRule[] {
@@ -371,31 +396,32 @@ class JavaCCCodeRule implements IRule {
 
     jJjtreeNodeRules = new IRule[] {
         jWhitespaceRule, //
-        new SimpleRule("(", jTokenMap.get(P_JJTREE_NODE_EXPR_PAREN)), //$NON-NLS-1$
-        new SimpleRule(")", jTokenMap.get(P_JJTREE_NODE_EXPR_PAREN)), //$NON-NLS-1$
+        new SimpleSequenceRule("(", jTokenMap.get(P_JJTREE_NODE_EXPR_PAREN)), //$NON-NLS-1$
+        new SimpleSequenceRule(")", jTokenMap.get(P_JJTREE_NODE_EXPR_PAREN)), //$NON-NLS-1$
         new WordRule(new WordDetector(), jTokenMap.get(P_JJTREE_NODE_NAME)), //
         jUnexpectedCharacterRule, //
     };
 
     // Update the Java code rules
-    jJavaCodeRule.updateRules(preferenceName);
-    jJavaCodeAltRule.updateRules(preferenceName);
+    jJavaCodeBGColorRule.updateRules(aPreferenceName);
+    jJavaCCCodeBGColorRule.updateRules(aPreferenceName);
   }
 
   // ------------------ FSM begins here ----------------------------------------
 
   /** {@inheritDoc} */
   @Override
-  public IToken evaluate(final ICharacterScanner scanner) {
-    jScanner = (CodeScanner) scanner;
+  public synchronized IToken evaluate(final ICharacterScanner aScanner) {
+    jScanner = (CodeColorScanner) aScanner;
 
     while (!isAtEOF() && !jStateStack.empty()) {
 
       switch (jStateStack.peek()) {
 
-        case AT_NEXT_PRODUCTION: {
+        case AT_FIRST_LEVEL: {
 
-          if (isAt("options") && nextDelim() == '{') { //$NON-NLS-1$
+          //          if (isAt("options") && nextDelim() == '{') { //$NON-NLS-1$
+          if (isAt("options")) { //$NON-NLS-1$
             pushState(Context.AT_OPTIONS_BLOCK);
             return nextToken(jOptionBlockRules);
           }
@@ -433,17 +459,17 @@ class JavaCCCodeRule implements IRule {
 
         case AFTER_PARSER_BEGIN_KEYWORD: {
           if (isAt(")")) { //$NON-NLS-1$
-            resetState(Context.IN_JAVA_COMPILATION_UNIT);
+            resetState(Context.IN_PARSER_SECTION_UNIT);
           }
           return nextToken(jParserNameRules);
         }
 
-        case IN_JAVA_COMPILATION_UNIT: {
+        case IN_PARSER_SECTION_UNIT: {
           if (isAt("PARSER_END", true)) { //$NON-NLS-1$
             resetState(Context.AT_PARSER_END_KEYWORD);
             return nextToken(P_JAVACC_KEYWORD);
           }
-          return nextToken(jJavaCodeRule);
+          return nextToken(jJavaCodeBGColorRule);
         }
 
         case AT_PARSER_END_KEYWORD: {
@@ -457,7 +483,7 @@ class JavaCCCodeRule implements IRule {
           if (isAt("{")) { //$NON-NLS-1$
             resetState(Context.IN_JAVA_CODE);
           }
-          return nextToken(jJavaCodeRule);
+          return nextToken(jJavaCodeBGColorRule);
         }
 
         case IN_JAVA_CODE: {
@@ -467,7 +493,7 @@ class JavaCCCodeRule implements IRule {
           else if (isAt("}")) { //$NON-NLS-1$
             popState();
           }
-          return nextToken(jJavaCodeRule);
+          return nextToken(jJavaCodeBGColorRule);
         }
 
         case AT_TOKEN_MANAGER_DECLS_PRODUCTION: {
@@ -486,7 +512,7 @@ class JavaCCCodeRule implements IRule {
           if (isAt("{")) { //$NON-NLS-1$
             pushState(Context.IN_JAVA_CODE);
           }
-          return nextToken(jJavaCodeRule);
+          return nextToken(jJavaCodeBGColorRule);
         }
 
         case AT_REGULAR_EXPRESSION_PRODUCTION: {
@@ -588,7 +614,7 @@ class JavaCCCodeRule implements IRule {
               jArgList = false;
               resetState(Context.AFTER_BNF_JAVA_RIGHT_PAREN);
               pushState(Context.AT_BNF_JAVA_LEFT_PAREN);
-              return nextToken(jJavaCodeAltRule);
+              return nextToken(jJavaCCCodeBGColorRule);
             }
             return nextToken(jBnfChoiceRules);
           }
@@ -615,18 +641,18 @@ class JavaCCCodeRule implements IRule {
 
           if (isAt("try")) { //$NON-NLS-1$
             pushState(Context.AT_EXPANSION_CHOICE_BLOCK);
-            return nextToken(jJavaCodeAltRule);
+            return nextToken(jJavaCCCodeBGColorRule);
           }
 
           if (isAtIdentifier()) {
             if (nextDelim() == '(') {
               jArgList = true;
             }
-            return nextToken(jJavaCodeAltRule);
+            return nextToken(jJavaCCCodeBGColorRule);
           }
           if (isAt("=")) { //$NON-NLS-1$
             jArgList = false;
-            return nextToken(jJavaCodeAltRule);
+            return nextToken(jJavaCCCodeBGColorRule);
           }
           return nextToken(jBnfChoiceRules);
         }
@@ -638,7 +664,7 @@ class JavaCCCodeRule implements IRule {
           else if (isAt(")")) { //$NON-NLS-1$
             popState();
           }
-          return nextToken(jJavaCodeAltRule);
+          return nextToken(jJavaCCCodeBGColorRule);
         }
 
         case AFTER_BNF_JAVA_RIGHT_PAREN: {
@@ -687,7 +713,7 @@ class JavaCCCodeRule implements IRule {
             popState();
             return nextToken(jJjtreeNodeRules);
           }
-          return nextToken(jJavaCodeRule);
+          return nextToken(jJavaCodeBGColorRule);
         }
 
         case IN_JJTREE_EXPR_NEST: {
@@ -697,7 +723,7 @@ class JavaCCCodeRule implements IRule {
           if (isAt(")")) { //$NON-NLS-1$
             popState();
           }
-          return nextToken(jJavaCodeRule);
+          return nextToken(jJavaCodeBGColorRule);
         }
         default:
           AbstractActivator.logErr("Unhandled case value (" + jStateStack.peek() + ") for enum Context"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -708,51 +734,54 @@ class JavaCCCodeRule implements IRule {
     return Token.EOF;
   }
 
-  // ----------------------- utility methods -----------------------------------
+  // ----------------------- Utility methods -----------------------------------
 
   /**
-   * Checks if is at a specified string.
-   *
-   * @param text - the text
-   * @param noUnreadIfFound - the do not unread if found flag
+   * Checks if the scanner is at a specified text.
+   * 
+   * @param aText - the text ; should not be null nor empty
+   * @param noUnreadIfFound - if true, do not unread if found, and if false unread if found (and if not found
+   *          always unread)
    * @return true, if is at the specified string
    */
-  private boolean isAt(final String text, final boolean noUnreadIfFound) {
-    int index = 0;
+  private boolean isAt(final String aText, final boolean noUnreadIfFound) {
+    int ix = 0;
     int c = 0;
+    char ch;
+    final int textLen = aText.length();
 
-    final int textLen = text.length();
-    for (c = jScanner.read(); index < textLen; c = jScanner.read(), index++) {
-      if ((char) c != text.charAt(index)) {
+    for (c = jScanner.read(), ch = (char) c; ix < textLen; c = jScanner.read(), ch = (char) c, ix++) {
+      if (ch != aText.charAt(ix)) {
         break;
       }
     }
+    // unread last character, outside the range
     jScanner.unread();
 
-    final boolean result = (index == textLen);
-    if (result && noUnreadIfFound) {
-      return result;
+    final boolean found = (ix == textLen);
+    if (found && noUnreadIfFound) {
+      return found;
     }
-
-    for (; index > 0; index--) {
+    // unread remaining characters
+    for (; ix > 0; ix--) {
       jScanner.unread();
     }
-    return result;
+    return found;
   }
 
   /**
-   * Checks if is at a specified string.
-   *
-   * @param text - the text
+   * Checks if the scanner is at a specified string.
+   * 
+   * @param aText - the text
    * @return true, if is at the specified string
    */
-  private boolean isAt(final String text) {
-    return isAt(text, false);
+  private boolean isAt(final String aText) {
+    return isAt(aText, false);
   }
 
   /**
    * Checks if is at an identifier.
-   *
+   * 
    * @return true, if is at an identifier
    */
   private boolean isAtIdentifier() {
@@ -763,7 +792,7 @@ class JavaCCCodeRule implements IRule {
 
   /**
    * Checks if is at EOF.
-   *
+   * 
    * @return true, if is at EOF
    */
   private boolean isAtEOF() {
@@ -776,7 +805,7 @@ class JavaCCCodeRule implements IRule {
    * Looks ahead and returns the next delimiter character.
    * <p>
    * A delimiter character is not an identifier character or whitespace.
-   *
+   * 
    * @return the char
    */
   private char nextDelim() {
@@ -796,21 +825,21 @@ class JavaCCCodeRule implements IRule {
 
   /**
    * Resets the current state.
-   *
-   * @param state - the new current state
+   * 
+   * @param aState - the new current state
    */
-  private void resetState(final Context state) {
+  private void resetState(final Context aState) {
     popState();
-    pushState(state);
+    pushState(aState);
   }
 
   /**
    * Pushes the current state.
-   *
-   * @param state - the state to be pushed
+   * 
+   * @param aState - the state to be pushed
    */
-  private void pushState(final Context state) {
-    jStateStack.push(state);
+  private void pushState(final Context aState) {
+    jStateStack.push(aState);
   }
 
   /**
@@ -822,32 +851,32 @@ class JavaCCCodeRule implements IRule {
 
   /**
    * Evaluates a rule and return the token.
-   *
-   * @param rule - the rule
+   * 
+   * @param aRule - the rule
    * @return the token for the rule
    */
-  private IToken nextToken(final IRule rule) {
-    return jScanner.nextToken(rule);
+  private IToken nextToken(final IRule aRule) {
+    return jScanner.nextToken(aRule);
   }
 
   /**
    * Evaluates a set of rules and return the token.
-   *
-   * @param rules - the rules
+   * 
+   * @param aRules - the rules
    * @return the token for the rules
    */
-  private IToken nextToken(final IRule[] rules) {
-    return jScanner.nextToken(rules);
+  private IToken nextToken(final IRule[] aRules) {
+    return jScanner.nextToken(aRules);
   }
 
   /**
    * Returns the token for a specified preference.
-   *
-   * @param preference - the preference
+   * 
+   * @param aPeference - the preference
    * @return the token for the preference
    */
-  private IToken nextToken(final String preference) {
-    return jTokenMap.get(preference);
+  private IToken nextToken(final String aPeference) {
+    return jTokenMap.get(aPeference);
   }
 
   //-------------------------- Static constants --------------------------------
@@ -855,32 +884,32 @@ class JavaCCCodeRule implements IRule {
   /** The Context (state) enumeration */
   protected static enum Context {
 
+    /** At first level state */
+    AT_FIRST_LEVEL, //
+
     /** At options block state */
     AT_OPTIONS_BLOCK, //
 
-    /** At parser begin keyword state */
+    /** After parser begin keyword state */
     AFTER_PARSER_BEGIN_KEYWORD, //
 
-    /** In Java compilation unit state */
-    IN_JAVA_COMPILATION_UNIT, //
-
-    /** At parser end keyword state */
-    AT_PARSER_END_KEYWORD, //
-
-    /** At next production state */
-    AT_NEXT_PRODUCTION, //
-
-    /** At JAVACODE production state */
-    AT_JAVACODE_PRODUCTION, //
-
-    /** At TOKEN MANAGER DECLS production state */
-    AT_TOKEN_MANAGER_DECLS_PRODUCTION, //
+    /** In parser section state */
+    IN_PARSER_SECTION_UNIT, //
 
     /** At Java block state */
     AT_JAVA_BLOCK, //
 
     /** In Java code state */
     IN_JAVA_CODE, //
+
+    /** At parser end keyword state */
+    AT_PARSER_END_KEYWORD, //
+
+    /** At JAVACODE production state */
+    AT_JAVACODE_PRODUCTION, //
+
+    /** At TOKEN MANAGER DECLS production state */
+    AT_TOKEN_MANAGER_DECLS_PRODUCTION, //
 
     /** At regular expression production state */
     AT_REGULAR_EXPRESSION_PRODUCTION, //
@@ -909,7 +938,7 @@ class JavaCCCodeRule implements IRule {
     /** At BNF Java left parenthesis state */
     AT_BNF_JAVA_LEFT_PAREN, //
 
-    /** At BNF Java post parenthesis state */
+    /** After BNF Java post parenthesis state */
     AFTER_BNF_JAVA_RIGHT_PAREN, //
 
     /** At JJTree node name state */
@@ -1157,7 +1186,7 @@ class JavaCCCodeRule implements IRule {
       "JTB_VD", //$NON-NLS-1$
       "JTB_VP", //$NON-NLS-1$
       "JTB_W", //$NON-NLS-1$
-                                                         //      "STATIC", //$NON-NLS-1$ (duplicated)
+               //      "STATIC", //$NON-NLS-1$ (duplicated)
                                                          };
 
   /** The jjdoc options (not used) */

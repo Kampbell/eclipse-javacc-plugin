@@ -275,20 +275,20 @@ class CompletionProcessor implements IContentAssistProcessor {
    */
   private static String[] computeTopKwProps(final Elements aJElements) {
     int len = JjTopKwCA.values().length;
-    if (aJElements.isOptionsThere) {
+    if (aJElements.jIsOptionsThere) {
       len--;
     }
-    if (aJElements.isParserBeginThere) {
+    if (aJElements.jIsParserBeginThere) {
       //      len = len - 2;
       len--;
     }
     int k = 0;
     final String[] caProps = new String[len];
     for (final JjTopKwCA v : JjTopKwCA.values()) {
-      if (v == JjTopKwCA.OPTIONS && aJElements.isOptionsThere) {
+      if (v == JjTopKwCA.OPTIONS && aJElements.jIsOptionsThere) {
         continue;
       }
-      if (v == JjTopKwCA.PARSER_BEGIN && aJElements.isParserBeginThere) {
+      if (v == JjTopKwCA.PARSER_BEGIN && aJElements.jIsParserBeginThere) {
         continue;
       }
       //      if (v == JjTopKwCA.PARSER_END && jElements.isParserBeginThere) {
@@ -305,20 +305,20 @@ class CompletionProcessor implements IContentAssistProcessor {
    */
   private static int[] computeTopKwCurProps(final Elements aJElements) {
     int len = JjTopKwCA.values().length;
-    if (aJElements.isOptionsThere) {
+    if (aJElements.jIsOptionsThere) {
       len--;
     }
-    if (aJElements.isParserBeginThere) {
+    if (aJElements.jIsParserBeginThere) {
       //      len = len - 2;
       len--;
     }
     int k = 0;
     final int[] caCurPos = new int[len];
     for (final JjTopKwCA v : JjTopKwCA.values()) {
-      if (v == JjTopKwCA.OPTIONS && aJElements.isOptionsThere) {
+      if (v == JjTopKwCA.OPTIONS && aJElements.jIsOptionsThere) {
         continue;
       }
-      if (v == JjTopKwCA.PARSER_BEGIN && aJElements.isParserBeginThere) {
+      if (v == JjTopKwCA.PARSER_BEGIN && aJElements.jIsParserBeginThere) {
         continue;
       }
       //      if (v == JjTopKwCA.PARSER_END && jElements.isParserBeginThere) {

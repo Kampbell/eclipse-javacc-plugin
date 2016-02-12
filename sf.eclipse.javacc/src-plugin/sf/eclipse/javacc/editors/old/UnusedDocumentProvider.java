@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.editors.old;
 
 import static sf.eclipse.javacc.base.IConstants.*;
 
@@ -15,13 +15,13 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
-import sf.eclipse.javacc.scanners.CodeScanner;
-import sf.eclipse.javacc.scanners.PartitionScannerRule;
+import sf.eclipse.javacc.scanners.CodeColorScanner;
+import sf.eclipse.javacc.scanners.CodePartitionRule;
 import sf.eclipse.javacc.scanners.SMLJCDetector;
 
 /**
  * Manages the document partitioning.<br>
- * Must be coherent with {@link CodeScanner}.
+ * Must be coherent with {@link CodeColorScanner}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
  * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
@@ -62,7 +62,7 @@ public class UnusedDocumentProvider extends FileDocumentProvider {
     final IToken blockCommentToken = new Token(BLOCK_CMT_CONTENT_TYPE);
     final IToken javadocToken = new Token(JAVADOC_CONTENT_TYPE);
 
-    final PartitionScannerRule codeRule = new PartitionScannerRule(codeToken);
+    final CodePartitionRule codeRule = new CodePartitionRule(codeToken);
     final EndOfLineRule lineCommentRule = new EndOfLineRule("//", lineCommentToken); //$NON-NLS-1$
     final WordPatternRule emptyBlockCommentRule = new WordPatternRule(new SMLJCDetector(),
                                                                       "/**", "/", blockCommentToken); //$NON-NLS-1$ //$NON-NLS-2$

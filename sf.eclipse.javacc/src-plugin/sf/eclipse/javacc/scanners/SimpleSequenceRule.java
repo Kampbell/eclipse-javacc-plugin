@@ -6,16 +6,17 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * The {@link SimpleRule} Class.
+ * Rule to match specific sequence of characters.
  * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
- * @author Marc Mazas 2014
+ * @author Marc Mazas 2014-2015-2016
  */
-class SimpleRule implements IRule {
+class SimpleSequenceRule implements IRule {
 
   // BF  05/2012 : created
   // MMa 10/2012 : renamed
   // MMa 11/2014 : some renamings
+  // MMa 02/2016 : some renamings ; renamed from SimpleRule
 
   /** The text */
   protected String jText;
@@ -30,34 +31,39 @@ class SimpleRule implements IRule {
    * If the specified token is null or has zero length, the next single character is matched and the token is
    * returned.
    * 
-   * @param text - the text string to be matched
-   * @param token - the token to be returned
+   * @param aText - the text string to be matched
+   * @param aToken - the token to be returned
    */
-  public SimpleRule(final String text, final IToken token) {
-    jText = (text == null) ? "" : text; //$NON-NLS-1$
-    jToken = (token == null) ? Token.UNDEFINED : token;
+  public SimpleSequenceRule(final String aText, final IToken aToken) {
+    jText = (aText == null) ? "" : aText; //$NON-NLS-1$
+    jToken = (aToken == null) ? Token.UNDEFINED : aToken;
   }
 
   /** {@inheritDoc} */
   @Override
-  public IToken evaluate(final ICharacterScanner scanner) {
-    int index = 0;
-    int c = scanner.read();
+  public IToken evaluate(final ICharacterScanner aScanner) {
+    int ix = 0;
+    int c = 0;
+    char ch;
     final int textLen = jText.length();
-    for (; index < textLen; c = scanner.read(), index++) {
-      if ((char) c != jText.charAt(index)) {
+
+    for (c = aScanner.read(), ch = (char) c; ix < textLen; c = aScanner.read(), ch = (char) c, ix++) {
+      if (ch != jText.charAt(ix)) {
         break;
       }
     }
     if (textLen == 0 && c != ICharacterScanner.EOF) {
+      // considered as a match, so do not unread
       return jToken;
     }
-    if (index == textLen) {
-      scanner.unread();
+    if (ix == textLen) {
+      // unread last character, outside the range
+      aScanner.unread();
       return jToken;
     }
-    for (index++; index > 0; index--) {
-      scanner.unread();
+    // unread remaining characters
+    for (ix++; ix > 0; ix--) {
+      aScanner.unread();
     }
     return Token.UNDEFINED;
   }

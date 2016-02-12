@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.editors;
+package sf.eclipse.javacc.editors.old;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy;
@@ -10,6 +10,9 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+
+import sf.eclipse.javacc.editors.JJEditor;
+import sf.eclipse.javacc.editors.ReconcilingStrategy;
 
 /**
  * The JJ Composite Reconciling strategy.
@@ -37,7 +40,7 @@ public class UnusedCompositeReconcilingStrategy extends JavaCompositeReconciling
                                             final String aDocumentPartitioning) {
     super(aSourceViewer, aJJEditor, aDocumentPartitioning);
     jEditor = aJJEditor;
-    jReconStrategy = new ReconcilingStrategy(aSourceViewer, aJJEditor);
+    jReconStrategy = new ReconcilingStrategy(aSourceViewer, aJJEditor, null);
     setReconcilingStrategies(new IReconcilingStrategy[] {
         jReconStrategy, new JavaSpellingReconcileStrategy(aSourceViewer, aJJEditor) });
   }

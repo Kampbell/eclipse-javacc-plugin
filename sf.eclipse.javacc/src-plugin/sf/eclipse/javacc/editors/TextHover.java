@@ -80,6 +80,7 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
   public String getHoverInfo2(final ITextViewer aTextViewer, final IRegion aHoverRegion) {
     String hoverInfo = null;
     final IDocument document = aTextViewer.getDocument();
+    JJNode node = null;
     try {
       //      if (fContentType.equals(UnusedDocumentProvider.CODE)) {
       if (jContentType.equals(CODE_CONTENT_TYPE)) {
@@ -91,7 +92,7 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
           return null;
         }
 
-        final JJNode node = jElements.getNonIdentNorNodeDesc(word);
+        node = jElements.getNonIdentNorNodeDesc(word);
         // If the  node is on the same line as the word under the mouse
         // Definition is over itself : do not show it
         if (node.getBeginLine() - 1 == document.getLineOfOffset(aHoverRegion.getOffset())) {
@@ -124,7 +125,7 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
                 break;
               }
             } catch (final BadLocationException e) {
-              AbstractActivator.logBug(e);
+              AbstractActivator.logBug(e, offset);
               return null;
             }
           }
@@ -132,7 +133,12 @@ class TextHover implements ITextHover, ITextHoverExtension2 {
         //                return "TextHover.getHoverInfo2"; //$NON-NLS-1$
       }
     } catch (final BadLocationException e) {
-      AbstractActivator.logBug(e);
+      if (node == null) {
+        AbstractActivator.logBug(e);
+      }
+      else {
+        AbstractActivator.logBug(e, node.getBeginLine(), node.getEndLine());
+      }
     }
     return hoverInfo;
   }

@@ -24,6 +24,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -68,7 +69,7 @@ import sf.eclipse.javacc.preferences.IPrefConstants;
  * @see "http://www.realsolve.co.uk/site/tech/jface-text.php"
  * @see "https://www.eclipse.org/articles/Article-Folding-in-Eclipse-Text-Editors/folding.html"
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  * @author Bill Fenlason 2012
  */
 public class JJEditor extends TextEditor implements IPrefConstants {
@@ -88,6 +89,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   //                on selection change (single-click) and no more through double-click ; fixed selection's
   //                display when called from the OutlinePage or the CallHierarchyView ;
   //               modified some modifiers ; some renamings ; added reset of OutlinePage revealing flag
+  // MMa 02/2016 : fixed folding single line comments ; changed character pair matcher to default one
 
   //  /** The source viewer configuration */
   //  private SourceViewerConfiguration                 jSourceViewerConf;
@@ -108,7 +110,11 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   private final List<Position>                      jFoldablePositions = new ArrayList<Position>(100);
 
   /** The editor's character pairs matcher */
-  private final CharacterPairMatcher                jCharPairMatcher   = new CharacterPairMatcher();
+  //  private final CharacterPairMatcher                jCharPairMatcher   = new CharacterPairMatcher();
+  private final DefaultCharacterPairMatcher         jCharPairMatcher   = new DefaultCharacterPairMatcher(
+                                                                                                         new char[] {
+      '{', '}', '<', '>', '[', ']', '(', ')'                                                            },
+                                                                                                         PARTITIONING_ID);
 
   /** The character pairs matching color */
   private Color                                     jColorMatchingChar;
@@ -123,7 +129,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   private JavaCCParser                              jParser;
 
   /** The AST root node built from the text */
-  private JJNode                                    jAstRoot;
+  protected JJNode                                  jAstRoot;
 
   /** The elements built from the AST root node */
   private Elements                                  jElements;
@@ -150,14 +156,12 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   @Override
   protected void initializeEditor() {
     super.initializeEditor();
-    // DocumentProvider now set through plugin.xml
-    //    setDocumentProvider(new UnusedDocumentProvider());
     // CodeScanner, Formatter, IndentStrategy, ContentAssist, ...
-    //    jSourceViewerConf = new SourceViewerConfiguration(this);
-    //    setSourceViewerConfiguration(jSourceViewerConf);
-    setSourceViewerConfiguration(new JSourceViewerConfiguration(this));
+    final JSourceViewerConfiguration svc = new JSourceViewerConfiguration(this);
+    setSourceViewerConfiguration(svc);
     // used to synchronize Outline Page, folding structure and check spelling
-    jReconStrategy = new ReconcilingStrategy(null, this);
+    // source viewer not yet known
+    jReconStrategy = new ReconcilingStrategy(null, this, svc);
     // used to retrieve Elements updated at each document parsing
     jElements = new Elements();
   }
@@ -432,7 +436,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   }
 
   /**
-   * Updates spelling and colors presentation when preference changes.
+   * Updates spelling and colors presentation when preferences change.
    */
   public void updateSpellingAndColors() {
     getReconcilingStrategy().checkSpelling();
@@ -549,96 +553,90 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   }
 
   /**
-   * Adds the multi line comments and the blocs of single line comments.
+   * Adds the multi line comments and the blocs of single line comments on full lines.
    */
   private void addFoldableComments() {
-    final ITypedRegion[] nonCodeRegions = jReconStrategy.getNonCodeRegions();
-    if (nonCodeRegions == null) {
+    final ITypedRegion[] regions = jReconStrategy.getRegions();
+    if (regions == null) {
       return;
     }
-    int offset = 0;
+    int regionOffset = 0;
+    int regionLen = 0;
+    int endLine = -1;
     int firstSlcOffset = 0;
-    int len = 0;
     int multipleSlcLen = 0;
     int firstSlcLine = -1;
+    int lastEndLine = -1;
     int lastSlcLine = -1;
     final IDocument doc = getDocument();
     try {
-      for (final ITypedRegion region : nonCodeRegions) {
-        offset = region.getOffset();
-        len = region.getLength();
-        final int startLine = doc.getLineOfOffset(offset);
-        final int endLine = doc.getLineOfOffset(offset + len);
-        if (region.getType() == LINE_CMT_CONTENT_TYPE) {
-          // case contiguous single line comments
-          if (firstSlcLine == -1) {
-            // first new one : memorize
-            lastSlcLine = firstSlcLine = startLine;
-            firstSlcOffset = offset;
-            multipleSlcLen = len;
-          }
-          else {
-            // next new one
-            if (startLine == lastSlcLine + 1) {
-              // contiguous : see if alone on the line or not
-              final int slcLastOffset = firstSlcOffset + multipleSlcLen;
-              int pos = offset - 1;
-              boolean alone = true;
-              while (pos > slcLastOffset) {
-                if (!Character.isWhitespace(doc.getChar(pos))) {
-                  alone = false;
-                  break;
-                }
-                pos--;
-              }
-              if (alone) {
-                // alone : memorize
-                lastSlcLine = startLine;
-                // cannot just increment with len because of end of lines
-                multipleSlcLen = offset + len - firstSlcOffset;
+      for (final ITypedRegion region : regions) {
+        final String regionType = region.getType();
+        if (LINE_CMT_CONTENT_TYPE.equals(regionType) || BLOCK_CMT_CONTENT_TYPE.equals(regionType)
+            || JAVADOC_CONTENT_TYPE.equals(regionType)) {
+          regionOffset = region.getOffset();
+          regionLen = region.getLength();
+          final int startLine = doc.getLineOfOffset(regionOffset);
+          endLine = doc.getLineOfOffset(regionOffset + regionLen);
+          if (regionType == LINE_CMT_CONTENT_TYPE) {
+            // case single line comment : consider it only if alone on its line
+            // (ie do not consider it if following some code)
+            if (startLine != lastEndLine) {
+              if (firstSlcLine == -1) {
+                // first new one : memorize
+                lastSlcLine = firstSlcLine = startLine;
+                firstSlcOffset = regionOffset;
+                multipleSlcLen = regionLen;
               }
               else {
-                // not alone : add old set then memorize
-                jFoldablePositions.add(new Position(firstSlcOffset, multipleSlcLen));
-                lastSlcLine = firstSlcLine = startLine;
-                firstSlcOffset = offset;
-                multipleSlcLen = len;
+                // next new one
+                if (startLine == lastSlcLine + 1) {
+                  // contiguous : memorize
+                  lastSlcLine = startLine;
+                  // cannot just increment with len because of end of lines
+                  multipleSlcLen = regionOffset + regionLen - firstSlcOffset;
+                }
+                else {
+                  // not contiguous : add old set if of 2 or more lines, then memorize
+                  if (firstSlcLine < lastSlcLine) {
+                    jFoldablePositions.add(new Position(firstSlcOffset, multipleSlcLen));
+                  }
+                  lastSlcLine = firstSlcLine = startLine;
+                  firstSlcOffset = regionOffset;
+                  multipleSlcLen = regionLen;
+                }
               }
-            }
-            else {
-              // not contiguous : add old set then memorize
-              if (firstSlcLine < lastSlcLine) {
-                jFoldablePositions.add(new Position(firstSlcOffset, multipleSlcLen));
-              }
-              lastSlcLine = firstSlcLine = startLine;
-              firstSlcOffset = offset;
-              multipleSlcLen = len;
             }
           }
-        }
-        else {
-          // case multi line comments
-          // first add memorized set of single line comments
-          if (firstSlcLine < lastSlcLine) {
-            jFoldablePositions.add(new Position(firstSlcOffset, multipleSlcLen));
+          else {
+            // case multi line comments
+            // first add memorized set of single line comments if of 2 or more lines
+            if (firstSlcLine < lastSlcLine) {
+              jFoldablePositions.add(new Position(firstSlcOffset, multipleSlcLen));
+            }
             firstSlcLine = lastSlcLine = -1;
-          }
-          // then add multi line comments
-          if (startLine != endLine) {
-            final int startLineOffset = doc.getLineOffset(startLine);
-            int endLineOffset;
-            if (doc.getNumberOfLines() > endLine + 1) {
-              endLineOffset = doc.getLineOffset(endLine + 1);
+            // then add multi line comments
+            if (startLine != endLine) {
+              final int startLineOffset = doc.getLineOffset(startLine);
+              int endLineOffset;
+              if (doc.getNumberOfLines() > endLine + 1) {
+                endLineOffset = doc.getLineOffset(endLine + 1);
+              }
+              else {
+                endLineOffset = doc.getLineOffset(endLine) + doc.getLineLength(endLine);
+              }
+              jFoldablePositions.add(new Position(startLineOffset, endLineOffset - startLineOffset));
             }
-            else {
-              endLineOffset = doc.getLineOffset(endLine) + doc.getLineLength(endLine);
-            }
-            jFoldablePositions.add(new Position(startLineOffset, endLineOffset - startLineOffset));
           }
+        } // end if one of the comment regions
+        else {
+          // not a comment region
+          firstSlcLine = lastSlcLine = -1;
         }
-      }
+        lastEndLine = endLine;
+      } // end for
     } catch (final BadLocationException e) {
-      AbstractActivator.logBug(e, offset, len);
+      AbstractActivator.logBug(e, regionOffset, regionLen);
     }
   }
 

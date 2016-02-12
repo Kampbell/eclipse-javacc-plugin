@@ -9,14 +9,14 @@ import org.eclipse.jface.text.IDocument;
 
 import sf.eclipse.javacc.base.AbstractActivator;
 import sf.eclipse.javacc.handlers.Format;
-import sf.eclipse.javacc.scanners.CodeScanner;
+import sf.eclipse.javacc.scanners.CodeColorScanner;
 
 /**
  * Auto indent strategy sensitive to newlines, braces, parenthesis, vertical bar, angle brackets and colons.
  * 
  * @see org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  * @author Bill Fenlason 2012
  */
 class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
@@ -28,6 +28,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
   // BF  06/2012 : removed unnecessary code to avoid warning message
   // MMa 07/2012 : fixed < < and > > to << and >>
   // MMa 10/2012 : renamed
+  // MMa 02/2016 : fixed a bad location exception ; changed handling of '{', '}', '<'
 
 /**
    * Customizes indentation after a newline, '{', '}', '(', ')', '|', '<', '>', ':' according to indentation used in {@link Format}
@@ -111,9 +112,10 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
     if (aCmd.offset == -1 || docLength == 0) {
       return;
     }
+    int p = 0;
     try {
       // p is the position of the newline character in the modified document
-      int p = aCmd.offset;
+      p = aCmd.offset;
       // line is the line number of the newline character
       final int line = aDoc.getLineOfOffset(aCmd.offset);
       // startPos is the offset of the first character of the line
@@ -138,7 +140,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
         if (c == '{' || c == '(') {
           // last character was a left brace or parenthesis, so we must increment indentation and
           // add it to the command
-          sb.append(aCmd.text).append(currIndent).append(CodeScanner.getIndentString());
+          sb.append(aCmd.text).append(currIndent).append(CodeColorScanner.getIndentString());
         }
         else {
           // otherwise keep current indentation and add it to the command
@@ -153,7 +155,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       }
       // remove trailing whitespaces
       p = aCmd.offset;
-      while (p >= 0) {
+      while (p > 0) {
         final char c = aDoc.getChar(--p);
         if (c != ' ' && c != '\t') {
           ++p;
@@ -166,7 +168,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       // set the replacement document command text
       aCmd.text = sb.toString();
     } catch (final BadLocationException e) {
-      AbstractActivator.logBug(e);
+      AbstractActivator.logBug(e, aCmd.offset, p);
     }
   }
 
@@ -192,15 +194,18 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       final int firstNonWS = findEndOfWhiteSpace(aDoc, startPos, p);
       // currIndent is the current line indentation string
       final String currIndent = aDoc.get(startPos, firstNonWS - startPos);
-      // eol is the newline string
-      final String eol = aDoc.getLegalLineDelimiters()[0];
+      // eol is the newline string for the current line
+      //      final String eol = aDoc.getLegalLineDelimiters()[0];
+      final String eol = aDoc.getLineDelimiter(line);
       // replacement buffer
       final StringBuffer sb = new StringBuffer(32);
       if (firstNonWS < p) {
         // case line has characters others than spaces and tabs before the '{'
-        // add a new line, the previous indentation, the left brace, a new line and an incremented indentation
-        sb.append(eol).append(currIndent).append('{');
-        sb.append(eol).append(currIndent).append(CodeScanner.getIndentString());
+        //        // add a new line, the previous indentation, the left brace, a new line and an incremented indentation
+        //        sb.append(eol).append(currIndent).append('{');
+        //        sb.append(eol).append(currIndent).append(CodeColorScanner.getIndentString());
+        // add a space if necessary, the left brace and a space
+        sb.append(p == firstNonWS ? "" : " ").append("{ "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         // "remove" trailing whitespaces
         while (true) {
           final char c = aDoc.getChar(--p);
@@ -216,9 +221,18 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       else {
         // case '{' at the beginning of a line (after whitespaces)
         // we assume current indentation is ok
-        // add the left brace, a new line and an incremented indentation
-        sb.append('{');
-        sb.append(eol).append(currIndent).append(CodeScanner.getIndentString());
+        // indentString is the indentation string derived from the preferences
+        final String indentString = CodeColorScanner.getIndentString();
+        final int indLen = indentString.length();
+        if (p <= startPos + indLen) {
+          // add the left brace, a new line and an incremented indentation
+          sb.append('{');
+          sb.append(eol).append(currIndent).append(indentString);
+        }
+        else {
+          // add the left brace and a space
+          sb.append("{ "); //$NON-NLS-1$
+        }
       }
       // set the replacement document command text
       aCmd.text = sb.toString();
@@ -248,23 +262,25 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       // whitespaces
       final int firstNonWS = findEndOfWhiteSpace(aDoc, startPos, p);
       // currIndent is the current line indentation string
-      final String currIndent = aDoc.get(startPos, firstNonWS - startPos);
+      //      final String currIndent = aDoc.get(startPos, firstNonWS - startPos);
       // eol is the newline string
-      final String eol = aDoc.getLegalLineDelimiters()[0];
+      //      final String eol = aDoc.getLegalLineDelimiters()[0];
       // indentString is the indentation string derived from the preferences
-      final String indentString = CodeScanner.getIndentString();
-      // nextIndent is the current and decremented indentation
+      final String indentString = CodeColorScanner.getIndentString();
       final int indLen = indentString.length();
-      final int len = currIndent.length() - indLen;
-      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : ""); //$NON-NLS-1$
+      // nextIndent is the current and decremented indentation
+      //      final int len = currIndent.length() - indLen;
+      //      final String nextIndent = (len > 0 ? currIndent.substring(0, len) : ""); //$NON-NLS-1$
       // replacement buffer
       final StringBuffer sb = new StringBuffer(32);
       if (firstNonWS < p) {
         // case line has characters others than spaces and tabs before the '}'
-        // add a new line, the current and decremented indentation, the right brace, a new line and
-        // the current and decremented indentation
-        sb.append(eol).append(nextIndent).append('}');
-        sb.append(eol).append(nextIndent);
+        //        // add a new line, the current and decremented indentation, the right brace, a new line and
+        //        // the current and decremented indentation
+        //        sb.append(eol).append(nextIndent).append('}');
+        //        sb.append(eol).append(nextIndent);
+        //         add a space, the right brace
+        sb.append(" }"); //$NON-NLS-1$
         // "remove" trailing whitespaces
         while (true) {
           final char c = aDoc.getChar(--p);
@@ -358,7 +374,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
         // assume current indentation is OK
         // add the left parenthesis, a new line and an incremented indentation
         sb.append('(');
-        sb.append(eol).append(currIndent).append(CodeScanner.getIndentString());
+        sb.append(eol).append(currIndent).append(CodeColorScanner.getIndentString());
         // set the replacement document command text
         aCmd.text = sb.toString();
       }
@@ -388,7 +404,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       // whitespaces
       final int firstNonWS = findEndOfWhiteSpace(aDoc, startPos, p);
       // indentString is the indentation string derived from the preferences
-      final String indentString = CodeScanner.getIndentString();
+      final String indentString = CodeColorScanner.getIndentString();
       // nextIndent is the current and decremented indentation
       final int indLen = indentString.length();
       if (firstNonWS < p) {
@@ -457,7 +473,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
       // whitespaces
       final int firstNonWS = findEndOfWhiteSpace(aDoc, startPos, p);
       // indentString is the indentation string derived from the preferences
-      final String indentString = CodeScanner.getIndentString();
+      final String indentString = CodeColorScanner.getIndentString();
       // nextIndent is the current and decremented indentation
       final int indLen = indentString.length();
       if (firstNonWS < p) {
@@ -472,7 +488,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
           // case '|' is probably aligned with the '|' of the previous line,
           // so keep the vertical bar and add the special indentation
           // set the replacement document command text
-          aCmd.text += CodeScanner.getSpecIndentString();
+          aCmd.text += CodeColorScanner.getSpecIndentString();
         }
         else {
           // case '|' is not after a previous line with a '|', so must decrement the current indentation,
@@ -490,7 +506,7 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
           aCmd.length += (aCmd.offset - p);
           aCmd.offset = p;
           // set the replacement document command text
-          aCmd.text += CodeScanner.getSpecIndentString();
+          aCmd.text += CodeColorScanner.getSpecIndentString();
         }
       }
     } catch (final BadLocationException e) {
@@ -529,8 +545,8 @@ class AutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
             break;
           }
         }
-        if (c == '(' || c == ')' || c == '*' || c == '+' || c == '?' || c == '|' || c == '"' || c == '='
-            || c == ':') {
+        if (c == '{' || c == '(' || c == ')' || c == '*' || c == '+' || c == '?' || c == '|' || c == '"'
+            || c == '=' || c == ':') {
           // case after some JavaCC punctuation, so add a space
           // set the replacement document command text
           aCmd.text = "< "; //$NON-NLS-1$

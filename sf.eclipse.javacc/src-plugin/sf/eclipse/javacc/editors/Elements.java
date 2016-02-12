@@ -19,7 +19,7 @@ import sf.eclipse.javacc.parser.Token;
  * <p>
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  */
 public class Elements {
 
@@ -29,43 +29,44 @@ public class Elements {
   // MMa 10/2012 : added compPropsMap for completion proposals, used static import ;
   //               adapted to modifications in grammar nodes ; renamed
   // MMa 11/2014 : removed old commented code ; added / removed some final modifiers
+  // MMa 02/2016 : some renamings
 
   /**
    * The map of node keys (line number + image) to nodes for identifier or node descriptor nodes<br>
    * Used by {@link ShowCallHierarchy}
    */
-  protected final Map<String, JJNode> identOrNodeDescMap     = new HashMap<String, JJNode>(30);
+  protected final Map<String, JJNode> jIdentOrNodeDescMap     = new HashMap<String, JJNode>(30);
 
   /**
    * The map of node keys (image) to nodes for non identifier nor node descriptor nodes<br>
    * Used by {@link GotoRule}, {@link TextHover}, {@link JJNode}
    */
-  protected final Map<String, JJNode> nonIdentNorNodeDescMap = new HashMap<String, JJNode>();
+  protected final Map<String, JJNode> jNonIdentNorNodeDescMap = new HashMap<String, JJNode>();
 
   /**
    * The map of node keys (image) to nodes for the completion proposals<br>
    * Used by {@link CompletionProcessor}
    */
-  protected final Map<String, JJNode> compPropsIdentMap      = new HashMap<String, JJNode>(30);
+  protected final Map<String, JJNode> jCompPropsIdentMap      = new HashMap<String, JJNode>(30);
 
   /** The list of nodes for completion proposals ; will be naturally sorted by line numbers */
-  protected final List<JJNode>        compPropsRangeList     = new ArrayList<JJNode>(30);
+  protected final List<JJNode>        jCompPropsRangeList     = new ArrayList<JJNode>(30);
 
   /**
    * The list of nodes for the Outline Page and Call Hierarchy View ; will be naturally sorted by line numbers
    */
-  protected final List<JJNode>        opchvList              = new ArrayList<JJNode>(30);
+  protected final List<JJNode>        jOpchvList              = new ArrayList<JJNode>(30);
 
   /**
    * The map of node keys (image) to nodes for hyperlinks<br>
    * Used by {@link HyperlinkDetector}
    */
-  protected final Map<String, JJNode> hyperlinksMap          = new HashMap<String, JJNode>(30);
+  protected final Map<String, JJNode> jHyperlinksMap          = new HashMap<String, JJNode>(30);
 
   /** True if options node is present, false otherwise */
-  protected boolean                   isOptionsThere         = false;
+  protected boolean                   jIsOptionsThere         = false;
   /** True if parser_begin node is present, false otherwise */
-  protected boolean                   isParserBeginThere     = false;
+  protected boolean                   jIsParserBeginThere      = false;
 
   /**
    * Empty constructor, as it should be constructed for each Editor.
@@ -148,19 +149,19 @@ public class Elements {
 
     switch (ndId) {
       case JJTPARSER_BEGIN:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
-        compPropsRangeList.add(aJJNode);
-        isParserBeginThere = true;
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jCompPropsRangeList.add(aJJNode);
+        jIsParserBeginThere = true;
         break;
       case JJTJAVACC_OPTIONS:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
-        compPropsRangeList.add(aJJNode);
-        isOptionsThere = true;
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jCompPropsRangeList.add(aJJNode);
+        jIsOptionsThere = true;
         break;
       case JJTOPTION_BINDING:
       case JJTREGEXPR_KIND:
       case JJTREGEXPR_SPEC:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
         break;
       case JJTIDENT_IN_PARSER:
       case JJTNODE_DESC_IN_METH:
@@ -169,86 +170,86 @@ public class Elements {
       case JJTIDENT_IN_REG_EXPR:
       case JJTIDENT_IN_COMP_REG_EXPR_UNIT:
         //        identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + aImage, aJJNode);
-        identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
+        jIdentOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
         break;
       case JJTJAVACODE_PROD:
       case JJTREGULAR_EXPR_PROD:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
-        opchvList.add(aJJNode);
-        compPropsRangeList.add(aJJNode);
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jOpchvList.add(aJJNode);
+        jCompPropsRangeList.add(aJJNode);
         break;
       case JJTMETHODDECL:
       case JJTCLAORINTDECL:
       case JJTENUMDECL:
       case JJTCONSTRDECL:
       case JJTANNOTTYPEDECL:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
-        compPropsIdentMap.put(aImage, aJJNode);
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jCompPropsIdentMap.put(aImage, aJJNode);
         break;
       case JJTBNF_PROD:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
-        opchvList.add(aJJNode);
-        compPropsIdentMap.put(aImage, aJJNode);
-        compPropsRangeList.add(aJJNode);
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jOpchvList.add(aJJNode);
+        jCompPropsIdentMap.put(aImage, aJJNode);
+        jCompPropsRangeList.add(aJJNode);
         break;
       case JJTIDENT_BNF_DECL:
         //      identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + aImage, aJJNode);
-        identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
-        hyperlinksMap.put(aImage, aJJNode);
+        jIdentOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
+        jHyperlinksMap.put(aImage, aJJNode);
         break;
       case JJTNODE_DESC_BNF_DECL:
         String subImage = aImage.substring(1);
         //      identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + aImage, aJJNode);
-        identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
+        jIdentOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
         // take also the identifier alone on its line in case the "#" will not be part of the selection
         final Token t = aJJNode.getFirstToken().next;
-        identOrNodeDescMap.put(t.beginLine + t.image, aJJNode.getParent());
+        jIdentOrNodeDescMap.put(t.beginLine + t.image, aJJNode.getParent());
         // for when node descriptor name is different that the identifier name, put an extra bnf production mapping
-        nonIdentNorNodeDescMap.put(subImage + JJNode.DASH_SEP + aImage, aJJNode.getParent());
-        hyperlinksMap.put(aImage, (JJNode) aJJNode.getParent().jjtGetChild(0));
+        jNonIdentNorNodeDescMap.put(subImage + JJNode.DASH_SEP + aImage, aJJNode.getParent());
+        jHyperlinksMap.put(aImage, (JJNode) aJJNode.getParent().jjtGetChild(0));
         // if node descriptor name is different that the identifier name, put an extra bnf production mapping
-        hyperlinksMap.put(subImage, aJJNode.getParent());
+        jHyperlinksMap.put(subImage, aJJNode.getParent());
         break;
       case JJTBNF_PROD_JAVA_BLOCK:
       case JJTBNF_PROD_EXP_BLOCK:
-        compPropsRangeList.add(aJJNode);
+        jCompPropsRangeList.add(aJJNode);
         break;
       case JJTIDENT_REG_EXPR_LABEL:
         //      identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + aImage, aJJNode);
-        identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
-        compPropsIdentMap.put(aImage, aJJNode);
-        hyperlinksMap.put(aImage, aJJNode);
+        jIdentOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
+        jCompPropsIdentMap.put(aImage, aJJNode);
+        jHyperlinksMap.put(aImage, aJJNode);
         break;
       case JJTIDENT_REG_EXPR_PRIVATE_LABEL:
         subImage = aImage.substring(1);
         //      identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + aImage, aJJNode);
-        identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
+        jIdentOrNodeDescMap.put(getNodeBeginLine(aJJNode) + aImage, aJJNode);
         // take also the identifier alone in case the "#" will not be part of the selection
         //      identOrNodeDescMap.put(getNodeBeginOffset(aJJNode) + subImage, aJJNode);
-        identOrNodeDescMap.put(getNodeBeginLine(aJJNode) + subImage, aJJNode);
+        jIdentOrNodeDescMap.put(getNodeBeginLine(aJJNode) + subImage, aJJNode);
         if (aImage.charAt(0) == '#') {
           // nothing
         }
         else {
-          compPropsIdentMap.put(aImage, aJJNode);
+          jCompPropsIdentMap.put(aImage, aJJNode);
         }
-        hyperlinksMap.put(aImage, aJJNode);
-        hyperlinksMap.put(subImage, aJJNode);
+        jHyperlinksMap.put(aImage, aJJNode);
+        jHyperlinksMap.put(subImage, aJJNode);
         break;
       case JJTJAVACODE_BLOCK:
       case JJTREG_EXPR_PROD_BLOCK:
       case JJTTOKEN_MANAGER_DECLS:
       case JJTREGEXPR_SPEC_JAVA_BLOCK:
       case JJTEXP_UNIT_JAVA_BLOCK:
-        compPropsRangeList.add(aJJNode);
+        jCompPropsRangeList.add(aJJNode);
         break;
       case JJTJAVAIDENTINCLAORINTDECL:
       case JJTJAVAIDENTINENUMDECL:
       case JJTJAVAIDENTINMETHODDECL:
       case JJTJAVAIDENTINCONSTRDECL:
       case JJTJAVAIDENTINANNOTTYPEDECL:
-        nonIdentNorNodeDescMap.put(aImage, aJJNode);
-        hyperlinksMap.put(aImage, aJJNode);
+        jNonIdentNorNodeDescMap.put(aImage, aJJNode);
+        jHyperlinksMap.put(aImage, aJJNode);
         break;
       default: // (JJTVOID) && JJTROOT
         break;
@@ -259,13 +260,13 @@ public class Elements {
    * Clears maps.
    */
   public void clear() {
-    identOrNodeDescMap.clear();
-    nonIdentNorNodeDescMap.clear();
-    compPropsIdentMap.clear();
-    compPropsRangeList.clear();
-    opchvList.clear();
-    hyperlinksMap.clear();
-    isOptionsThere = isParserBeginThere = false;
+    jIdentOrNodeDescMap.clear();
+    jNonIdentNorNodeDescMap.clear();
+    jCompPropsIdentMap.clear();
+    jCompPropsRangeList.clear();
+    jOpchvList.clear();
+    jHyperlinksMap.clear();
+    jIsOptionsThere = jIsParserBeginThere = false;
   }
 
   //  /**
@@ -284,7 +285,7 @@ public class Elements {
    * @return the JJNode
    */
   public final JJNode getIdentOrNodeDesc(final String aKey) {
-    return identOrNodeDescMap.get(aKey);
+    return jIdentOrNodeDescMap.get(aKey);
   }
 
   //  /**
@@ -313,7 +314,7 @@ public class Elements {
    * @return the JJNode
    */
   public final JJNode getNonIdentNorNodeDesc(final String aKey) {
-    return nonIdentNorNodeDescMap.get(aKey);
+    return jNonIdentNorNodeDescMap.get(aKey);
   }
 
   /**
@@ -323,14 +324,14 @@ public class Elements {
    * @return true / false
    */
   public final boolean isNonIdentNorNodeDescElement(final String aKey) {
-    return nonIdentNorNodeDescMap.containsKey(aKey);
+    return jNonIdentNorNodeDescMap.containsKey(aKey);
   }
 
   /**
    * @return the map of node keys (image) to nodes for the completion proposals
    */
   public final Map<String, JJNode> getCompPropsIdentMap() {
-    return compPropsIdentMap;
+    return jCompPropsIdentMap;
   }
 
   /**
@@ -341,7 +342,7 @@ public class Elements {
    * @return the JJNode
    */
   public final JJNode getCompProps(final String aKey) {
-    return compPropsIdentMap.get(aKey);
+    return jCompPropsIdentMap.get(aKey);
   }
 
   /**
@@ -352,7 +353,7 @@ public class Elements {
    * @return true / false
    */
   public final boolean isCompPropsElement(final String aKey) {
-    return compPropsIdentMap.containsKey(aKey);
+    return jCompPropsIdentMap.containsKey(aKey);
   }
 
   /**
@@ -362,7 +363,7 @@ public class Elements {
    * @return the JJNode
    */
   public final JJNode getHyperlinkTarget(final String aKey) {
-    return hyperlinksMap.get(aKey);
+    return jHyperlinksMap.get(aKey);
   }
 
   /**
@@ -372,7 +373,7 @@ public class Elements {
    * @return true / false
    */
   public final boolean isHyperlinkTarget(final String aKey) {
-    return hyperlinksMap.containsKey(aKey);
+    return jHyperlinksMap.containsKey(aKey);
   }
 
   /**
@@ -382,7 +383,7 @@ public class Elements {
   public JJNode getOpchvTopNodeFromLine(final int aLine) {
     // Eclipse numbers are 0-relative, JavaCC are 1-relative
     final int line = aLine + 1;
-    for (final JJNode nd : opchvList) {
+    for (final JJNode nd : jOpchvList) {
       final int bl = getNodeBeginLine(nd);
       final int el = getNodeEndLine(nd);
       if (line < bl) {
@@ -463,7 +464,7 @@ public class Elements {
     // so we have to find if we are in the inner or outer nodes
     boolean inOuter = false;
     int outerId = JJTVOID;
-    for (final JJNode nd : compPropsRangeList) {
+    for (final JJNode nd : jCompPropsRangeList) {
       final int ndId = nd.getId();
       if (!inOuter && ndId != JJTPARSER_BEGIN && ndId != JJTJAVACC_OPTIONS && ndId != JJTJAVACODE_PROD
           && ndId != JJTBNF_PROD && ndId != JJTREGULAR_EXPR_PROD && ndId != JJTTOKEN_MANAGER_DECLS) {

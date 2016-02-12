@@ -1,14 +1,15 @@
 package sf.eclipse.javacc.base;
 
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.jface.text.IDocument;
+
+/*import org.eclipse.jface.text.IDocument;*/
 
 /**
  * Defines near all the common static constants (except those for the preferences) (to be used as static
  * import).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  * @author Bill Fenlason 2012
  */
 public interface IConstants {
@@ -24,6 +25,7 @@ public interface IConstants {
   // MMa 11/2014 : changed JavaCC jar name & JTB revision ; fixed default JDK_VERSION
   // MMa 12/2014 : added jars directory
   // MMa 01/2015 : added arguments
+  // MMa 02/2016 : removed default content type partition
 
   /*
    *  JARs
@@ -181,7 +183,8 @@ public interface IConstants {
       LINE_CMT_CONTENT_TYPE, //
       BLOCK_CMT_CONTENT_TYPE, //
       JAVADOC_CONTENT_TYPE, //
-      IDocument.DEFAULT_CONTENT_TYPE                     };
+      //      IDocument.DEFAULT_CONTENT_TYPE, //
+                                                          };
 
   /*
    * Platform

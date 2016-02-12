@@ -59,6 +59,7 @@ public class Compiler {
   // MMa 01/2015 : added methods to display information for debugging problems in launching the compile commands
   //               refactored initialization ; changed from array to list the command passed to ProcessBuilder
   // MMa 11/2015 : improved addition of suppresswarning annotation on all classes in the derived classes
+  // MMa 11/2015 : fixed jtb file flag
 
   /** The project */
   private IProject               jProject          = null;
@@ -239,6 +240,7 @@ public class Compiler {
     System.setErr(consolePS);
 
     // build the command line
+    boolean isJtb = false;
     final List<String> cmd = new ArrayList<String>(6 + args.length);
     cmd.add(sJavaCmd);
     if (jvmOptions.length() > 0) {
@@ -257,6 +259,7 @@ public class Compiler {
     else if (resExt.equals("jtb")) { //$NON-NLS-1$
       cmd.add(JAR_ARG);
       cmd.add(jarfile);
+      isJtb = true;
     }
     // args[0] is the file name
     for (int i = 0; i < args.length; i++) {
@@ -266,7 +269,6 @@ public class Compiler {
 
     // call JavaCC, JJTree or JTB
     DirList.snapshot(projectDir);
-    final boolean isJtb = false;
     JarLauncher.pb_launch(cmd, resDir);
 
     // restore standard out and error streams

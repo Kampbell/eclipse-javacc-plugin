@@ -1,4 +1,4 @@
-package sf.eclipse.javacc.scanners;
+package sf.eclipse.javacc.scanners.old;
 
 import java.util.ArrayList;
 import java.util.Iterator;

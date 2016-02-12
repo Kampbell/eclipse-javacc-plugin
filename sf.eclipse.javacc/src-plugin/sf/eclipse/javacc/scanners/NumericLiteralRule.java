@@ -6,16 +6,18 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * The {@link NumericLiteralRule} class.
+ * Rule to match integer or floating point literal as defined by the Java Language Specification (Third
+ * Edition). It includes all forms of integer and floating point literals.
  * 
  * @author Bill Fenlason 2012 - licensed under the JavaCC package license
- * @author Marc Mazas 2014
+ * @author Marc Mazas 2014-2015-2016
  */
 class NumericLiteralRule implements IRule {
 
   // BF  05/2012 : created
   // MMa 10/2012 : renamed
   // MMa 11/2014 : some renamings
+  // MMa 02/2016 : some renamings
 
   /** The token */
   protected IToken jToken;
@@ -29,43 +31,43 @@ class NumericLiteralRule implements IRule {
    * If the literal is ill formed, such as having an exponent without following digits or a hexadecimal
    * literal missing a required exponent, Token.UNDEFINED is returned.
    * 
-   * @param token - the Token to be return if a numeric literal is found.
+   * @param aToken - the Token to be return if a numeric literal is found.
    */
-  public NumericLiteralRule(final IToken token) {
-    jToken = (token == null) ? Token.UNDEFINED : token;
+  public NumericLiteralRule(final IToken aToken) {
+    jToken = (aToken == null) ? Token.UNDEFINED : aToken;
   }
 
   /** {@inheritDoc} */
   @Override
-  public IToken evaluate(final ICharacterScanner scanner) {
+  public IToken evaluate(final ICharacterScanner aScanner) {
     boolean hex = false;
     boolean floating = false;
-    char ch = (char) scanner.read();
+    char ch = (char) aScanner.read();
     int count = 1;
 
     while (true) { // no loop, just convenient
       if (ch == '0') {
-        final char ch2 = (char) scanner.read();
+        final char ch2 = (char) aScanner.read();
         if (ch2 == 'x' || ch2 == 'X') {
           hex = true;
-          ch = (char) scanner.read();
+          ch = (char) aScanner.read();
           count += 2;
         }
         else {
-          scanner.unread();
+          aScanner.unread();
         }
       }
       if (ch != '.') {
         if (!isGoodDigit(ch, hex)) {
           break;
         }
-        for (; isGoodDigit(ch, hex); ch = (char) scanner.read(), count++) {
+        for (; isGoodDigit(ch, hex); ch = (char) aScanner.read(), count++) {
           //
         }
       }
       if (ch == '.') {
         floating = true;
-        for (ch = (char) scanner.read(), count++; isGoodDigit(ch, hex); ch = (char) scanner.read(), count++) {
+        for (ch = (char) aScanner.read(), count++; isGoodDigit(ch, hex); ch = (char) aScanner.read(), count++) {
           // documented empty block
         }
       }
@@ -74,26 +76,26 @@ class NumericLiteralRule implements IRule {
       }
       if ((hex && (ch == 'p' || ch == 'P')) || (!hex && (ch == 'e' || ch == 'E'))) {
         floating = true;
-        ch = (char) scanner.read();
+        ch = (char) aScanner.read();
         count += 1;
         if (ch == '+' || ch == '-') {
-          ch = (char) scanner.read();
+          ch = (char) aScanner.read();
           count += 1;
         }
         if (!(Character.isDigit(ch))) {
           break;
         }
-        for (ch = (char) scanner.read(); Character.isDigit(ch); ch = (char) scanner.read()) {
+        for (ch = (char) aScanner.read(); Character.isDigit(ch); ch = (char) aScanner.read()) {
           // documented empty block
         }
       }
       if (!((floating && (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D')) || (!floating && (ch == 'L' || ch == 'l')))) {
-        scanner.unread();
+        aScanner.unread();
       }
       return jToken;
     }
     for (; count > 0; count--) {
-      scanner.unread();
+      aScanner.unread();
     }
     return Token.UNDEFINED;
   }
@@ -101,11 +103,11 @@ class NumericLiteralRule implements IRule {
   /**
    * Checks if is good digit character.
    * 
-   * @param ch - the character
-   * @param hex - true if the digit may be hexadecimal
+   * @param aCh - the character
+   * @param aHex - true if the digit may be hexadecimal
    * @return true, if is good digit
    */
-  private static boolean isGoodDigit(final char ch, final boolean hex) {
-    return ((ch >= '0' && ch <= '9') || (hex && ((ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f'))));
+  private static boolean isGoodDigit(final char aCh, final boolean aHex) {
+    return ((aCh >= '0' && aCh <= '9') || (aHex && ((aCh >= 'A' && aCh <= 'F') || (aCh >= 'a' && aCh <= 'f'))));
   }
 }

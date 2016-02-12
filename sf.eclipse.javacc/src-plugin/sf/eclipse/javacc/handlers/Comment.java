@@ -1,5 +1,7 @@
 package sf.eclipse.javacc.handlers;
 
+import static sf.eclipse.javacc.base.IConstants.LS;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.text.BadLocationException;
@@ -21,15 +23,20 @@ import sf.eclipse.javacc.editors.JJEditor;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014-2015
+ * @author Marc Mazas 2012-2013-2014-2015-2016
  */
 public class Comment extends AbstractHandler {
 
   // MMa 10/2012 : created from the corresponding now deprecated action
   // MMa 11/2014 : modified some modifiers
+  // MMa 01/2016 : fixed loss of last empty line when commenting
 
   /** Comment prefix */
-  public static final String COMMENT_PREFIX = "//"; //$NON-NLS-1$
+  // care : if with an additional space : it may not exist when decommenting
+  public static final String COMMENT_PREFIX        = "//";                   //$NON-NLS-1$
+
+  /** Comment prefix length */
+  public static final int    COMMENT_PREFIX_LENGTH = COMMENT_PREFIX.length();
 
   /** {@inheritDoc} */
   @Override
@@ -65,52 +72,53 @@ public class Comment extends AbstractHandler {
       doComment = false;
     }
 
+    int tslen = ts.getLength();
+    int sloffset = 0;
     try {
-      // replacement buffer
-      final StringBuffer strbuf = new StringBuffer(128);
+      int tssl = ts.getStartLine();
+      int tsel = ts.getEndLine();
 
       // if partial lines are selected, extend selection
-      final IRegion endLine = doc.getLineInformation(ts.getEndLine());
-      final IRegion startLine = doc.getLineInformation(ts.getStartLine());
-      ts = new TextSelection(doc, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
-                                                         - startLine.getOffset());
+      final IRegion startLine = doc.getLineInformation(tssl);
+      final IRegion endLine = doc.getLineInformation(tsel);
+      sloffset = startLine.getOffset();
+      final int eloffset = endLine.getOffset();
+      final String eldelim = doc.getLineDelimiter(tsel);
+      final int eldelimlen = eldelim == null ? 0 : eldelim.length();
+      final int ellen = endLine.getLength();
+      int extlen = eloffset + ellen + eldelimlen - sloffset;
+      if (extlen > doc.getLength()) {
+        extlen = doc.getLength();
+      }
+      ts = new TextSelection(doc, sloffset, extlen);
+      tssl = ts.getStartLine();
+      tsel = ts.getEndLine();
+      tslen = ts.getLength();
+      final StringBuilder buf = new StringBuilder(tslen + COMMENT_PREFIX_LENGTH * (tsel - tssl));
 
-      int i;
-      final String endLineDelim = doc.getLegalLineDelimiters()[0];
-      String line;
       // comment out each line
-      for (i = ts.getStartLine(); i < ts.getEndLine(); i++) {
+      for (int i = ts.getStartLine(); i <= ts.getEndLine(); i++) {
         final IRegion reg = doc.getLineInformation(i);
-        line = doc.get(reg.getOffset(), reg.getLength());
+        final String line = doc.get(reg.getOffset(), reg.getLength());
         if (doComment) {
-          strbuf.append(COMMENT_PREFIX);
-          strbuf.append(line);
-          strbuf.append(endLineDelim);
+          buf.append(COMMENT_PREFIX);
+          buf.append(line);
+          buf.append(LS);
         }
         else {
-          strbuf.append(line.substring(line.indexOf(COMMENT_PREFIX) + 2));
-          strbuf.append(endLineDelim);
+          buf.append(line.substring(line.indexOf(COMMENT_PREFIX) + COMMENT_PREFIX_LENGTH));
+          buf.append(LS);
         }
       }
-      // last line doesn't need line delimiter
-      final IRegion reg = doc.getLineInformation(i);
-      line = doc.get(reg.getOffset(), reg.getLength());
-      if (doComment) {
-        strbuf.append(COMMENT_PREFIX);
-        strbuf.append(line);
-      }
-      else {
-        strbuf.append(line.substring(line.indexOf(COMMENT_PREFIX) + 2));
-      }
       // replace the text with the modified version
-      doc.replace(startLine.getOffset(), ts.getLength(), strbuf.toString());
+      doc.replace(sloffset, ts.getLength(), buf.toString());
 
       // reselect text... not exactly as JavaEditor... whole text here
-      jEditor.selectAndReveal(startLine.getOffset(), strbuf.length());
+      jEditor.selectAndReveal(sloffset, buf.length());
       return null;
 
     } catch (final BadLocationException e) {
-      AbstractActivator.logBug(e);
+      AbstractActivator.logBug(e, sloffset, tslen);
     }
     return null;
   }

@@ -20,18 +20,18 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 import sf.eclipse.javacc.base.AbstractActivator;
-import sf.eclipse.javacc.editors.UnusedDocumentProvider;
+import sf.eclipse.javacc.editors.DocumentSetupParticipant;
 import sf.eclipse.javacc.handlers.Format;
 
 /**
  * A (not anymore so rudimentary) JavaCC code scanner for coloring tokens.<br>
- * Must be coherent with {@link UnusedDocumentProvider}.
+ * Must be coherent with {@link DocumentSetupParticipant}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  * @author Bill Fenlason 2012
  */
-public class CodeScanner extends RuleBasedScanner {
+public class CodeColorScanner extends RuleBasedScanner {
 
   // MMa 04/2009 : added different coloring objects, renamed some, added some JavaCC / JJTree keywords,
   // ........... : removed some, and added indentations and color preferences changes management
@@ -45,6 +45,8 @@ public class CodeScanner extends RuleBasedScanner {
   // BF  06/2012 : rewrite to use HashMap, delay color disposal, many color preferences
   // MMa 10/2012 : suppressed the hiding field fDocument ; renamed
   // MMa 11/2014 : some renamings
+  // MMa 02/2016 : some renamings ; suppressed assignment to fDocument ; renamed from CodeScanner ;
+  //                fixed FSM intialize/save/restore (for spell check thread which does not restart at 0)
 
   /** The color preference names */
   protected static final String[]       sColorPrefNames  = {
@@ -153,11 +155,11 @@ public class CodeScanner extends RuleBasedScanner {
 
                                                            /** {@inheritDoc} */
                                                            @Override
-                                                           public void propertyChange(final PropertyChangeEvent event) {
-                                                             final String p = event.getProperty();
+                                                           public void propertyChange(final PropertyChangeEvent aEvent) {
+                                                             final String p = aEvent.getProperty();
 
-                                                             if (!event.getOldValue()
-                                                                       .equals(event.getNewValue())) {
+                                                             if (!aEvent.getOldValue()
+                                                                        .equals(aEvent.getNewValue())) {
 
                                                                if (jColorMap.containsKey(p)) {
                                                                  jOldColors.add(jColorMap.get(p));
@@ -188,15 +190,19 @@ public class CodeScanner extends RuleBasedScanner {
                                                          };
 
   /** The JavaCC code rule */
-  private final JavaCCCodeRule          jJavaCCCodeRule;
+  public final JavaCCCodeColorRule      jJavaCCCodeRule;
 
-  /** The last document range start */
-  private int                           jLastRangeOffset = -1;
+  /** The last range offset */
+  protected int                         jLastRangeOffset = -1;
+
+  /** A debug string */
+  // TODO à passer en commentaires
+  String                                dbgStr           = "";                                    //$NON-NLS-1$
 
   /**
    * Instantiates a new JavaCC code scanner.
    */
-  public CodeScanner() {
+  public CodeColorScanner() {
     super();
     sStore.addPropertyChangeListener(jPrefListener);
 
@@ -207,7 +213,7 @@ public class CodeScanner extends RuleBasedScanner {
       jAtrMap.put(p, new Integer(sStore.getInt(p)));
     }
 
-    jJavaCCCodeRule = new JavaCCCodeRule(jColorMap, jAtrMap);
+    jJavaCCCodeRule = new JavaCCCodeColorRule(jColorMap, jAtrMap);
     setRules(new IRule[] {
       jJavaCCCodeRule });
 
@@ -218,35 +224,66 @@ public class CodeScanner extends RuleBasedScanner {
   /**
    * Update the rules after a preference change.
    * 
-   * @param preferenceName - the preference name
+   * @param aPreferenceName - the preference name
    */
-  void updateRules(final String preferenceName) {
-    jJavaCCCodeRule.updateRules(preferenceName);
+  void updateRules(final String aPreferenceName) {
+    jJavaCCCodeRule.updateRules(aPreferenceName);
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   * <p>
+   * (Copied from {@link RuleBasedScanner#setRange(IDocument, int, int)} and added initialization).
+   */
   @Override
-  public void setRange(final IDocument document, final int offset, final int length) {
-    super.setRange(document, offset, length);
-    fDocument = document;
-
-    if (jLastRangeOffset < 0 || jLastRangeOffset >= offset) {
+  public void setRange(final IDocument aDoc, final int aOffset, final int aLength) {
+    super.setRange(aDoc, aOffset, aLength);
+    //    synchronized (Thread.currentThread()) {
+    dbgLog(aOffset, aLength, "bef"); //$NON-NLS-1$
+    if (jLastRangeOffset == -1) {
       jJavaCCCodeRule.initialize();
+      dbgLog(aOffset, aLength, "ini"); //$NON-NLS-1$
     }
-    jLastRangeOffset = offset;
+    else if (aOffset <= jLastRangeOffset) {
+      jJavaCCCodeRule.restore(aOffset);
+      dbgLog(aOffset, aLength, "res"); //$NON-NLS-1$
+    }
+    else {
+      jJavaCCCodeRule.save(aOffset);
+      dbgLog(aOffset, aLength, "sav"); //$NON-NLS-1$
+    }
+    jLastRangeOffset = aOffset;
+    //    }
+  }
+
+  /**
+   * Adds a line to a (Eclipse) watch debug variable. TODO à passer en commentaires
+   * 
+   * @param aOffset - the offset
+   * @param aLength - the length
+   * @param str - a prefix string
+   */
+  private void dbgLog(final int aOffset, final int aLength, final String str) {
+    dbgStr = str
+             + " : " + aOffset + ", " + (aOffset + aLength) + ", " + jLastRangeOffset //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+             + ", " + Thread.currentThread().toString().substring(Thread.currentThread().toString().indexOf('[')) //$NON-NLS-1$
+             + ", " + jJavaCCCodeRule.toString().substring(jJavaCCCodeRule.toString().indexOf('@')) //$NON-NLS-1$
+             + ", " + jJavaCCCodeRule.jStateStack + "\r\n" + dbgStr; //$NON-NLS-1$ //$NON-NLS-2$ 
   }
 
   /**
    * Returns the next token using the specified rule.
+   * <p>
+   * (Same as {@link #nextToken(IRule[])} but for a single rule).
    * 
-   * @param rule - the rule
+   * @param aRule - the rule
    * @return the next token
    */
-  public IToken nextToken(final IRule rule) {
+  public IToken nextToken(final IRule aRule) {
     fTokenOffset = fOffset;
     fColumn = UNDEFINED;
 
-    final IToken token = (rule.evaluate(this));
+    final IToken token = (aRule.evaluate(this));
     if (!token.isUndefined()) {
       return token;
     }
@@ -258,17 +295,19 @@ public class CodeScanner extends RuleBasedScanner {
 
   /**
    * Returns the next token using the specified rules array.
+   * <p>
+   * (Copied from {@link RuleBasedScanner#nextToken()}).
    * 
-   * @param rules - the rules array
+   * @param aRules - the rules array
    * @return the next token
    */
-  public IToken nextToken(final IRule[] rules) {
+  public IToken nextToken(final IRule[] aRules) {
     fTokenOffset = fOffset;
     fColumn = UNDEFINED;
 
-    if (rules != null) {
-      for (int i = 0; i < rules.length; i++) {
-        final IToken token = (rules[i].evaluate(this));
+    if (aRules != null) {
+      for (int i = 0; i < aRules.length; i++) {
+        final IToken token = (aRules[i].evaluate(this));
         if (!token.isUndefined()) {
           return token;
         }
@@ -278,15 +317,6 @@ public class CodeScanner extends RuleBasedScanner {
       return Token.EOF;
     }
     return fDefaultReturnToken;
-  }
-
-  /**
-   * Gets the document.
-   * 
-   * @return the Document
-   */
-  public IDocument getDocument() {
-    return fDocument;
   }
 
   /**
@@ -341,7 +371,7 @@ public class CodeScanner extends RuleBasedScanner {
    */
   public static String getSpecIndentString() {
     if (sSpecIndentString == null) {
-      CodeScanner.setSpecIndentString();
+      CodeColorScanner.setSpecIndentString();
     }
     return sSpecIndentString;
   }
@@ -366,7 +396,7 @@ public class CodeScanner extends RuleBasedScanner {
    */
   public static String getIndentString() {
     if (sIndentString == null) {
-      CodeScanner.setIndentString();
+      CodeColorScanner.setIndentString();
     }
     return sIndentString;
   }

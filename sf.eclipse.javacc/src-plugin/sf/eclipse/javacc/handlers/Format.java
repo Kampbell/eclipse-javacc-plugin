@@ -1,5 +1,6 @@
 package sf.eclipse.javacc.handlers;
 
+import static sf.eclipse.javacc.base.IConstants.LS;
 import static sf.eclipse.javacc.parser.JavaCCParserConstants.*;
 
 import java.io.StringReader;
@@ -20,14 +21,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import sf.eclipse.javacc.base.AbstractActivator;
 import sf.eclipse.javacc.editors.JJEditor;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
 import sf.eclipse.javacc.parser.Token;
-import sf.eclipse.javacc.scanners.CodeScanner;
+import sf.eclipse.javacc.scanners.CodeColorScanner;
 
 /**
  * Format handler.<br>
@@ -35,11 +35,17 @@ import sf.eclipse.javacc.scanners.CodeScanner;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014-2015
+ * @author Marc Mazas 2012-2013-2014-2015-2016
  */
 public class Format extends AbstractHandler {
 
   // MMa 10/2012 : created from the corresponding now deprecated action
+  // MMa 01-02/2016 : fixed problems :
+  //   loss of some comments or part of comments (special tokens),
+  //   escaped non ASCII characters in tokens printed as non escaped,
+  //   loss or addition of newlines, platform line delimiters,
+
+  // TODO see if it would not be better to use JTB's JavaCCPrinter
 
   /** The parser */
   private JavaCCParser jParser;
@@ -68,53 +74,54 @@ public class Format extends AbstractHandler {
       return null;
     }
     ITextSelection ts = (ITextSelection) selection;
+    final int tsoffset = ts.getOffset();
     int tssl = ts.getStartLine();
     int tsel = ts.getEndLine();
     int tslen = ts.getLength();
     if (tssl < 0 || tsel < 0) {
       return null;
     }
-    // save line position
-    final int ln = tssl;
-    // if No selection, treat full text
-    if (tslen == 0) {
-      //      ts = new TextSelection(doc, 0, doc.getLength());
-      //      tssl = ts.getStartLine();
-      //      tsel = ts.getEndLine();
-      //      tslen = ts.getLength();
-      tssl = 0;
-      tsel = doc.getNumberOfLines() - 1;
-      tslen = doc.getLength();
-    }
     int sloffset = 0;
+    boolean isFullText = false;
     try {
-      // extend selection (in case partial lines have been selected)
-      final IRegion endLine = doc.getLineInformation(tsel);
-      final IRegion startLine = doc.getLineInformation(tssl);
-      ts = new TextSelection(doc, startLine.getOffset(), endLine.getOffset() + endLine.getLength()
-                                                         - startLine.getOffset());
-      tssl = ts.getStartLine();
-      tsel = ts.getEndLine();
-      tslen = ts.getLength();
-
-      // Format the selection full text
-      // The tricky part is to replace only part of the full text
-      // we need to process the editor full text using the JavaCC grammar
-      // and we have to replace only part of it
-      final String endLineDelim = doc.getLegalLineDelimiters()[0];
-      final StringBuffer strbuf = new StringBuffer(2 * tslen);
-      final String docText = doc.get();
-      if (formatSelection(docText, endLineDelim, tssl + 1, tsel + 1, strbuf) == true) {
-        // Replace the text with the modified version
-        sloffset = startLine.getOffset();
-        doc.replace(sloffset, tslen, strbuf.toString());
+      if (tslen == 0) {
+        // if no selection, treat full text
+        isFullText = true;
+        tssl = 0;
+        tsel = doc.getNumberOfLines() - 1;
+        tslen = doc.getLength();
       }
-      // Reselect text... not exactly as JavaEditor... whole text here
-      // editor.selectAndReveal(startLine.getOffset(), strbuf.length());
-      // reposition
-      ((AbstractTextEditor) editor).selectAndReveal(doc.getLineInformation(ln).getOffset(), 0);
+      else {
+        // compute the new selection
+        // take full lines
+        final IRegion startLine = doc.getLineInformation(tssl);
+        sloffset = startLine.getOffset();
+        final IRegion endLine = doc.getLineInformation(tsel);
+        final String eldelim = doc.getLineDelimiter(ts.getEndLine());
+        final int eldelimlen = eldelim == null ? 0 : eldelim.length();
+        final int eloffset = endLine.getOffset();
+        final int ellen = endLine.getLength();
+        int extlen = eloffset + ellen + eldelimlen - sloffset;
+        if (extlen > doc.getLength()) {
+          extlen = doc.getLength();
+        }
+        // create the new selection
+        ts = new TextSelection(doc, sloffset, extlen);
+        tssl = ts.getStartLine();
+        tsel = ts.getEndLine();
+        tslen = ts.getLength();
+      }
+      //  process the editor full text using the JavaCC grammar and replace only part of it
+      final StringBuilder buf = new StringBuilder(2 * tslen);
+      final String docText = doc.get();
+      if (formatSelection(docText, tssl + 1, tsel + 1, buf) == true) {
+        // replace the text with the modified version
+        doc.replace(sloffset, tslen, buf.toString());
+        // reposition
+        jEditor.selectAndReveal(isFullText ? tsoffset : sloffset, 0);
+      }
     } catch (final BadLocationException e) {
-      AbstractActivator.logBug(e, sloffset, tslen);
+      AbstractActivator.logBug(e, tsoffset, tslen, sloffset);
     }
     return null;
   }
@@ -137,36 +144,39 @@ public class Format extends AbstractHandler {
   //  }
 
   /** Empty string */
-  public static final String EMPTY = "";  //$NON-NLS-1$
+  public static final String EMPTY = "";    //$NON-NLS-1$
   /** Space string */
-  public static final String SPACE = " "; //$NON-NLS-1$
+  public static final String SPACE = " ";   //$NON-NLS-1$
   /** Tab string */
-  public static final String TAB   = "\t"; //$NON-NLS-1$
+  public static final String TAB   = "\t";  //$NON-NLS-1$
+  /** Carriage return + line feed string */
+  public static final String CRLF  = "\r\n"; //$NON-NLS-1$
   /** Carriage return string */
-  public static final String CR    = "\r"; //$NON-NLS-1$
+  public static final String CR    = "\r";  //$NON-NLS-1$
   /** Line feed string */
-  public static final String LF    = "\n"; //$NON-NLS-1$
+  public static final String LF    = "\n";  //$NON-NLS-1$
   /** Form feed string */
-  public static final String FF    = "\f"; //$NON-NLS-1$
+  public static final String FF    = "\f";  //$NON-NLS-1$
   /** Number sign string */
-  public static final String NB    = "#"; //$NON-NLS-1$
+  public static final String NB    = "#";   //$NON-NLS-1$
 
   /**
    * Formats the selected text.
    * <p>
    * It reformats the indentation and spacing : it uses spaces to distinct constructs, and it tries to keep
-   * comments and newlines (except around braces and parenthesis) as they are.
+   * comments and newlines (except around braces and parenthesis) where they are.
+   * <p>
+   * OK, this method is a bit long and complex ... want for a better algorithm :)
    * 
    * @param aTxt - the text to format
-   * @param aEndLineDelim - the end of line delimiter string
    * @param aFirstLine - the line number of the first character of the selected text
    * @param aLastLine - the line number of the last character of the selected text
-   * @param aSb - the StringBuffer to receive the formatted text
+   * @param aSb - the StringBuilder to receive the formatted text
    * @return true if successful, false otherwise
    */
-  private boolean formatSelection(final String aTxt, final String aEndLineDelim, final int aFirstLine,
-                                  final int aLastLine, final StringBuffer aSb) {
-    // Parse the full text, retain only the chain of Tokens
+  private boolean formatSelection(final String aTxt, final int aFirstLine, final int aLastLine,
+                                  final StringBuilder aSb) {
+    // Parse the full text, retain only the chain of Tokens (with their special tokens)
     final StringReader in = new StringReader(aTxt);
     if (jParser == null) {
       jParser = new JavaCCParser(in);
@@ -177,7 +187,7 @@ public class Format extends AbstractHandler {
     final JJNode node = jParser.parse(in);
     in.close();
     if (node.getFirstToken().next == null) {
-      // Warn Nothing shall be done if parsing failed
+      // warn nothing shall be done if parsing failed
       final IWorkbench workbench = PlatformUI.getWorkbench();
       final Shell shell = workbench.getDisplay().getActiveShell();
       final MessageDialog dialog = new MessageDialog(shell, AbstractActivator.getMsg("Format.Title"), //$NON-NLS-1$
@@ -188,7 +198,7 @@ public class Format extends AbstractHandler {
       return false;
     }
     /*
-     * TODO : we are or we are not within java code in the following cases :
+     * we are or we are not within java code in the following cases : (TODO to be completed)
      * within options : no
      * between parser_begin and parser_end : yes
      * within javacode : yes
@@ -222,16 +232,16 @@ public class Format extends AbstractHandler {
     String nextImage = EMPTY;
     /** The special token image */
     String specImage;
-    /** Number of (next token's) special tokens up to the end of line already processed */
-    int nbSpecialToken = 0;
+    /** Number of (next token's) special tokens up to the end of line already output */
+    int nbSpecTokAlrOut = 0;
     /** The current line indentation */
     final StringBuffer currLineIndent = new StringBuffer(64);
     /** The next line indentation */
     final StringBuffer nextLineIndent = new StringBuffer(64);
     /** Debug newlines */
     final boolean debugNL = false;
-    /** Debug indentation */
-    final boolean debugInd = false;
+    //    /** Debug indentation */
+    //    final boolean debugInd = false;
     /** Flag telling if at least one newline is needed after the current token */
     boolean needOneNewline = false;
     /** Flag telling if two newlines are needed after the current token */
@@ -246,15 +256,21 @@ public class Format extends AbstractHandler {
     boolean newLinePostponed = false;
     /** Flag memorizing the need for a newline in case it is postponed */
     boolean prevNeedOneNewline = false;
+    //    /** Debug output token and special tokens */
+    //    final boolean debugOutput = false;
     /**
-     * Flag memorizing the need to not output the first newlines & special tokens at the beginning of the
-     * selection if the selection does not start at the first line of the document
+     * Flag telling to output the current token and its special tokens because the token is inside of the
+     * selected text
      */
-    boolean careFirstLine = (aFirstLine > 1);
-    /** Flag telling to not output anything because of outside the selected text */
-    boolean skipOutput;
-    /** Buffer length at the last line */
-    int lastSbLength = 0;
+    boolean outputToken = true;
+    /**
+     * Flag telling to output the special tokens of the next token which are inside the selected text
+     */
+    boolean outputNextTkSpecTk = true;
+    /**
+     * Flag limiting when to output the special tokens of the next token which are inside the selected text
+     */
+    boolean firstTimeAfterSelection = true;
     /** Flag telling if a space is needed after the current token */
     boolean needSpace = false;
     /** Flag telling if no space is needed for some special cases */
@@ -281,12 +297,16 @@ public class Format extends AbstractHandler {
     boolean lastBraLBnotOthers = false;
     /** Current braces indentation level (changed at each '{' and '}') */
     int bracesIndentLevel = 0;
+
+    String[] ss = null;
+
     // main loop on all tokens
     while (currToken != null && currToken.kind != EOF) {
       currImage = currToken.image;
-      /*
-       * see where we are
-       */
+
+      /* -------------------- *
+       * A - see where we are *
+       * -------------------- */
       // flag for last sections
       if (!isAfterParserEnd && currKind == _PARSER_END) {
         isAfterParserEnd = true;
@@ -348,9 +368,12 @@ public class Format extends AbstractHandler {
         }
       }
 
-      /*
-       * compute the need for newline(s) and indentation
-       */
+      /* *************************************************** *
+       * B - compute the need for newline(s) and indentation *
+       * *************************************************** */
+      /* --------------------- *
+       * B1 - the general case *
+       * --------------------- */
       // for some keywords, need for later one or two newlines and no space
       if (currKind == _PARSER_BEGIN || currKind == _LOOKAHEAD) {
         willNeedOneNewline = true;
@@ -364,9 +387,9 @@ public class Format extends AbstractHandler {
       // usually there is no need for newlines and change indentation
       needOneNewline = false;
       needTwoNewlines = false;
-      /*
-       * compute the exceptions for which there is a need for two newlines
-       */
+      /* ---------------------------------------------------------------------- *
+       * B2 - compute the exceptions for which there is a need for two newlines *
+       * ---------------------------------------------------------------------- */
       // before a class or method or member declaration after a ';' or a '}'
       if ((currKind == SEMICOLON || currKind == RBRACE)
           && (nextKind == CLASS || nextKind == PUBLIC || nextKind == PRIVATE || nextKind == PROTECTED
@@ -374,34 +397,35 @@ public class Format extends AbstractHandler {
         needOneNewline = true;
         needTwoNewlines = true;
       }
-      /*
-       * compute some exceptions for which there is a need for one newline and change indentation
-       */
+      /* --------------------------------------------------------------------------------------------- *
+       * B3 - compute some exceptions for which there is a need for one newline and change indentation *
+       * --------------------------------------------------------------------------------------------- */
       // after a '{' and not in lookahead constraints and not followed by a '}',
+      // or after a '{' before the PARSER_END line,
       // need for a newline and increment indentation
       if (currKind == LBRACE && parLevelInLAC < 0) {
-        if (nextKind != RBRACE) {
+        if (nextKind != RBRACE || !isAfterParserEnd) {
           needOneNewline = true;
-          nextLineIndent.append(CodeScanner.getIndentString());
+          nextLineIndent.append(CodeColorScanner.getIndentString());
           // currLineIndent will be set at the end of the loop
         }
       }
       // after a '}' and not in lookahead constraints, output a newline,
-      // and if not following by a '{', decrement indentation,
-      // and if not followed by a '{' and with no indentation, need for an extra newline
+      // and if not following by a '{' or  before the PARSER_END line, decrement indentation,
+      // and if not followed by a EOF or a'{' and with no indentation, need for an extra newline
       if (currKind == RBRACE && parLevelInLAC < 0) {
         needOneNewline = true;
-        if (lastKind != LBRACE) {
+        if (lastKind != LBRACE || !isAfterParserEnd) {
           decrementIndent(nextLineIndent);
           // currLineIndent will be set at the end of the loop
         }
-        if (nextKind != LBRACE && nextLineIndent.length() == 0) {
+        if (nextKind != EOF && nextKind != LBRACE && nextLineIndent.length() == 0) {
           needTwoNewlines = true;
         }
       }
-      /*
-       * compute some exceptions for which there is a need for one newline
-       */
+      /* ---------------------------------------------------------------------- *
+       * B4 - compute some exceptions for which there is a need for one newline *
+       * ---------------------------------------------------------------------- */
       // if not in lookahead constraints and
       // after a ';' not in a for loop, or
       // before a '{', only if not after a '}' or
@@ -411,9 +435,9 @@ public class Format extends AbstractHandler {
                                                                                                       && currKind != SEMICOLON && currKind != LBRACE))) {
         needOneNewline = true;
       }
-      /*
-       * compute other exceptions specific to the last sections
-       */
+      /* ----------------------------------------------------------- *
+       * B5 - compute other exceptions specific to the last sections *
+       * ----------------------------------------------------------- */
       if (isAfterParserEnd) {
         // after a '>' ending a lexical state list
         if (currKind == GT && nextKind >= _TOKEN && nextKind <= _SKIP) {
@@ -465,7 +489,7 @@ public class Format extends AbstractHandler {
             else if (nt.kind == LPAREN || nt.kind == BIT_OR) {
               needOneNewline = true;
               lastParLPnotRPnorBO = false;
-              nextLineIndent.append(CodeScanner.getIndentString());
+              nextLineIndent.append(CodeColorScanner.getIndentString());
               // currLineIndent will be set at the end of the loop
               break;
             }
@@ -559,7 +583,7 @@ public class Format extends AbstractHandler {
                 || (nt.kind == LPAREN && nbParen > 1)) {
               needOneNewline = true;
               lastBraLBnotOthers = false;
-              nextLineIndent.append(CodeScanner.getIndentString());
+              nextLineIndent.append(CodeColorScanner.getIndentString());
               // currLineIndent will be set at the end of the loop
               break;
             }
@@ -618,7 +642,7 @@ public class Format extends AbstractHandler {
         }
         // increment indentation for a '<', and decrement indentation for a '>' in a regular expression
         if (currKind == LT && parLevelInJN < 0 && bracesIndentLevel <= 1) {
-          nextLineIndent.append(CodeScanner.getIndentString());
+          nextLineIndent.append(CodeColorScanner.getIndentString());
           // currLineIndent will be set at the end of the loop
         }
         else if (currKind == GT && parLevelInJN < 0 && bracesIndentLevel <= 1) {
@@ -626,13 +650,17 @@ public class Format extends AbstractHandler {
           // currLineIndent will be set at the end of the loop
         }
       } // end if (isAfterParserEnd)
-      /*
-       * compute the (following) space : usually there must be one
-       */
+
+      /* ************************************************************* *
+       * C - compute the (following) space : usually there must be one *
+       * ************************************************************* */
+      /* --------------------- *
+       * C1 - the general case *
+       * --------------------- */
       needSpace = true;
-      /*
-       * compute the exceptions to the (following) space due to the current or next token
-       */
+      /* ------------------------------------------------------------------------------------- *
+       * C2 - compute the exceptions to the (following) space due to the current or next token *
+       * ------------------------------------------------------------------------------------- */
       // before a newline
       // in a '{}' pair
       // after some operators or punctuation '(', '[' (unless in last sections), '.', '!', '~',
@@ -673,114 +701,196 @@ public class Format extends AbstractHandler {
       ) {
         needSpace = false;
       }
-      /*
-       * now output everything, but only for tokens and special tokens in the selected text, and take care of
-       * first newlines of the selection (but need to compute flags in all cases)
-       */
-      // set output flag
+
+      /* ************************************************************************************** *
+       * D - now output everything, but only for tokens and special tokens in the selected text *
+       * ************************************************************************************** */
+      // set output flags
       if (currToken.beginLine >= aFirstLine && currToken.endLine <= aLastLine) {
-        if (careFirstLine) {
-          skipOutput = true;
+        // inside
+        outputToken = true;
+        outputNextTkSpecTk = true;
+      }
+      // see if special tokens should be included in the selected text, whereas the token should not
+      else if (currToken.endLine > aLastLine && firstTimeAfterSelection) {
+        firstTimeAfterSelection = false;
+        outputToken = false;
+        specToken = currToken.specialToken;
+        int stbl = -1;
+        if (specToken != null) {
+          // rewind to the first
+          while (specToken.specialToken != null) {
+            specToken = specToken.specialToken;
+          }
+          stbl = specToken.beginLine;
         }
-        else {
-          skipOutput = false;
-        }
+        outputNextTkSpecTk = stbl <= aLastLine;
       }
       else {
-        skipOutput = true;
+        // outside
+        outputToken = false;
+        outputNextTkSpecTk = false;
       }
-      // for a previous ')' not in lookahead constraints, if memorized,
-      // output the one or two newlines
+      //      if (debugOutput) {
+      //        boolean affiche = false;
+      //        affiche = (currToken.beginLine >= (aFirstLine - 1)) && (currToken.endLine <= (aLastLine + 2));
+      //        if (affiche) {
+      //          aSb.append("\t/* out : cti = " + currImage + ", afl = " + aFirstLine + ", all = " + aLastLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      //          aSb.append(", ctbl = " + currToken.beginLine + ", ctel = " + currToken.endLine); //$NON-NLS-1$ //$NON-NLS-2$
+      //          specToken = currToken.specialToken;
+      //          int nbst = 0;
+      //          int stbl = -1;
+      //          int stel = -1;
+      //          if (specToken != null) {
+      //            nbst++;
+      //            stel = specToken.endLine;
+      //            // rewind to the first
+      //            while (specToken.specialToken != null) {
+      //              specToken = specToken.specialToken;
+      //              nbst++;
+      //            }
+      //            stbl = specToken.beginLine;
+      //          }
+      //          aSb.append(", nbst = " + nbst + ", stbl = " + stbl + ", stel = " + stel); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      //          aSb.append(", nbSTAO = " + nbSpecTokAlrOut); //$NON-NLS-1$ 
+      //          aSb.append(", ot = " + outputToken + ", ost = " + outputNextTkSpecTk + " */" + LS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+      //        }
+      //      }
+
+      // for a previous ')' not in lookahead constraints, if memorized, output the one or two newlines
       if (lastKind == RPAREN) {
         if (willNeedOneNewline && parLevelInLAC < 0) {
-          if (!skipOutput) {
-            aSb.append(aEndLineDelim);
+          if (outputToken && currToken.beginLine > aFirstLine) {
+            if (debugNL) {
+              aSb.append("\t\t/* rp, W n 1 n l, A */"); //$NON-NLS-1$
+            }
+            aSb.append(LS);
           }
           willNeedOneNewline = false;
           newlineJustWritten = true;
         }
         if (willNeedTwoNewlines && parLevelInLAC < 0) {
-          if (debugNL) {
-            aSb.append("\t\t/* rp,  W n 2 n l A */"); //$NON-NLS-1$
-          }
-          if (!skipOutput) {
-            aSb.append(aEndLineDelim);
+          if (outputToken || outputNextTkSpecTk) {
+            if (debugNL) {
+              aSb.append("\t\t/* rp, W n 2 n l, B */"); //$NON-NLS-1$
+            }
+            aSb.append(LS);
           }
           willNeedTwoNewlines = false;
           newlineJustWritten = true;
         }
       }
-      // process the (previous) special token(s) (only those not already processed)
+
+      // process the special token(s) (only those not already processed with the previous token)
       specToken = currToken.specialToken;
-      if (specToken != null) {
+      if ((outputToken || outputNextTkSpecTk) && specToken != null) {
         // rewind to the first
         while (specToken.specialToken != null) {
           specToken = specToken.specialToken;
         }
-        boolean afterNewline = newlineJustWritten;
-        // examine each
+        // process them
+        boolean skipNL = true;
         while (specToken != null) {
-          if (nbSpecialToken > 0) {
+          if (outputNextTkSpecTk && nbSpecTokAlrOut > 0) {
             // skip those already processed
-            nbSpecialToken--;
+            nbSpecTokAlrOut--;
+            specToken = specToken.next;
+            continue;
           }
-          else {
-            // output others only if comments in the selection
-            specKind = specToken.kind;
-            specImage = specToken.image;
-            if ((specKind == SINGLE_LINE_COMMENT || specKind == MULTI_LINE_COMMENT || specKind == FORMAL_COMMENT)
-                && (specToken.beginLine >= aFirstLine)) {
-              if (!afterNewline) {
-                // output one a space before each comment
-                if (!skipOutput) {
-                  aSb.append(SPACE);
+          // output others only if in the selected text 
+          if (specToken.endLine < aFirstLine) {
+            specToken = specToken.next;
+            continue;
+          }
+          if (specToken.beginLine > aLastLine) {
+            break;
+          }
+          specKind = specToken.kind;
+          specImage = specToken.image;
+          if (specKind == SINGLE_LINE_COMMENT) {
+            skipNL = false;
+            if (newlineJustWritten) {
+              // output indentation after a new line
+              aSb.append(currLineIndent);
+            }
+            else {
+              // otherwise output one space
+              aSb.append(SPACE);
+            }
+            // output the comment
+            aSb.append(specImage);
+            // manage newlines
+            newlineJustWritten = true;
+            skipNL = true;
+          }
+          else if (specKind == MULTI_LINE_COMMENT || specKind == FORMAL_COMMENT) {
+            skipNL = false;
+            if (newlineJustWritten) {
+              // output indentation after a new line
+              aSb.append(currLineIndent);
+            }
+            else {
+              // otherwise output one space
+              aSb.append(SPACE);
+            }
+            if (specToken.beginLine >= aFirstLine && specToken.endLine <= aLastLine) {
+              // inside
+              aSb.append(specImage);
+            }
+            else if (specToken.beginLine < aFirstLine && specToken.endLine >= aFirstLine) {
+              // around first line
+              ss = specImage.split("\\r\\n|\\r|\\n"); //$NON-NLS-1$
+              int i;
+              for (i = aFirstLine - specToken.beginLine; i < specToken.endLine - specToken.beginLine; i++) {
+                if (debugNL) {
+                  aSb.append("\t\t/* a f l Tk, " + i + ", C */"); //$NON-NLS-1$ //$NON-NLS-2$
                 }
+                aSb.append(ss[i]).append(LS);
               }
-              else {
-                if (!skipOutput) {
-                  aSb.append(currLineIndent);
+              aSb.append(ss[i]);
+            }
+            else if (specToken.beginLine <= aLastLine && specToken.endLine > aLastLine) {
+              // around last line
+              ss = specImage.split("\\r\\n|\\r|\\n"); //$NON-NLS-1$
+              int i;
+              for (i = 0; i <= aLastLine - specToken.beginLine; i++) {
+                if (debugNL) {
+                  aSb.append("\t\t/* a l l Tk, " + i + ", D */"); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-              }
-              // output the comment
-              if (!skipOutput) {
-                aSb.append(specToken.toString());
-              }
-              // manage newlines
-              if (specKind == SINGLE_LINE_COMMENT) {
-                afterNewline = true;
-                newlineJustWritten = true;
-              }
-              else {
-                afterNewline = false;
+                aSb.append(ss[i]).append(LS);
               }
             }
-            else if ((CR.equals(specImage) || LF.equals(specImage) || FF.equals(specImage)) && !afterNewline) {
-              if (!skipOutput) {
-                aSb.append(aEndLineDelim);
+            newlineJustWritten = false;
+          }
+          else if (CRLF.equals(specImage) || CR.equals(specImage) || LF.equals(specImage)) {
+            // newline but not for the first bunch
+            if (!skipNL) {
+              if (debugNL) {
+                aSb.append("\t\t/* crlf Tk, " + skipNL + ", E */"); //$NON-NLS-1$ //$NON-NLS-2$
               }
-              afterNewline = true;
+              aSb.append(LS);
               newlineJustWritten = true;
             }
           }
+          else if (FF.equals(specImage)) {
+            aSb.append(FF);
+          }
           specToken = specToken.next;
-        }
-      } // end if (specToken != null)
-      // reset flags after the special processing of the first line of the selected text
-      if (currToken.beginLine >= aFirstLine && currToken.endLine <= aLastLine && careFirstLine) {
-        careFirstLine = false;
-        skipOutput = false;
-      }
+        } // end  while (specToken != null)
+      } // end if ((outputToken || outputNextTkSpecTk) && specToken != null)
+
       // for a previous ';', if memorized, output the newline
       if (lastKind == SEMICOLON && willNeedOneNewline) {
-        if (debugNL) {
-          aSb.append("\t\t/* sc, W n 1 n l A */"); //$NON-NLS-1$
-        }
-        if (!skipOutput) {
-          aSb.append(aEndLineDelim);
+        if (outputToken) {
+          if (debugNL) {
+            aSb.append("\t\t/* sc Tk, W n 1 n l, F */"); //$NON-NLS-1$
+          }
+          aSb.append(LS);
         }
         willNeedOneNewline = false;
         newlineJustWritten = true;
       }
+
       // update (if necessary) and output indentation if a newline has been written
       if (newlineJustWritten) {
         //        if (debugInd) {
@@ -791,37 +901,41 @@ public class Format extends AbstractHandler {
         //        }
         if (currKind == LBRACE || currKind == LPAREN || currKind == LBRACKET || currKind == LT
             || currKind == GT) {
-          if (!skipOutput) {
+          if (outputToken) {
             aSb.append(currLineIndent);
           }
         }
         else if (currKind == BIT_OR) {
-          if (!skipOutput) {
-            final int len = currLineIndent.length() - CodeScanner.getIndentString().length();
+          if (outputToken) {
+            final int len = currLineIndent.length() - CodeColorScanner.getIndentString().length();
             if (len > 0) {
               aSb.append(currLineIndent.substring(0, len));
             }
           }
         }
         else {
-          if (debugInd) {
-            final int len = aSb.length() - aEndLineDelim.length();
-            if (len >= 0 && aSb.substring(len).equals(aEndLineDelim)) {
-              aSb.setLength(len);
-            }
-            aSb.append("\t\t/* nenl, ").append(currLineIndent.length()); //$NON-NLS-1$
-            aSb.append(", ").append(nextLineIndent.length()); //$NON-NLS-1$
-            aSb.append(" */").append(aEndLineDelim); //$NON-NLS-1$
-          }
-          if (!skipOutput) {
+          //          if (debugInd) {
+          //            // TODO voir que le délimiteur de ligne peut être CR ou LF uniquemeent
+          //            final int len = aSb.length() - LS.length();
+          //            if (len >= 0 && aSb.substring(len).equals(LS)) {
+          //              aSb.setLength(len);
+          //            }
+          //            aSb.append("\t\t/* nenl, ").append(currLineIndent.length()); //$NON-NLS-1$
+          //            aSb.append(", ").append(nextLineIndent.length()); //$NON-NLS-1$
+          //            aSb.append(" */").append(LS); //$NON-NLS-1$
+          //          }
+          if (outputToken) {
             aSb.append(nextLineIndent);
           }
         }
-      }
+      } // end  if (newlineJustWritten)
+
       // output the token
-      if (!skipOutput) {
-        aSb.append(currToken.toString());
+      if (outputToken) {
+        aSb.append(addEscapes(currImage));
+        newlineJustWritten = false;
       }
+
       // output the space
       if (needSpace) {
         if (needNoSpace && currKind == RPAREN && parLevelInLAC <= 0) {
@@ -829,22 +943,24 @@ public class Format extends AbstractHandler {
         }
         else if (newlineJustWritten && currKind == BIT_OR) {
           // case of an unindented '|' : re-indent
-          if (!skipOutput) {
-            aSb.append(CodeScanner.getSpecIndentString());
+          if (outputToken) {
+            aSb.append(CodeColorScanner.getSpecIndentString());
           }
         }
         else {
           // other normal cases
-          if (!skipOutput) {
+          if (outputToken) {
             aSb.append(SPACE);
           }
         }
-      }
+      } // end if (needSpace)
+
       // reset flag
       newlineJustWritten = false;
-      // process the special token(s) following on the same line
-      if (nextToken != null) {
-        nbSpecialToken = 0;
+
+      // process the special tokens from the next token but in the selected text
+      if (outputNextTkSpecTk /*&& outputToken*/&& nextToken != null) {
+        nbSpecTokAlrOut = 0;
         specToken = nextToken.specialToken;
         if (specToken != null) {
           // rewind to the first
@@ -853,29 +969,25 @@ public class Format extends AbstractHandler {
           }
           // process them
           while (specToken != null) {
-            nbSpecialToken++;
-            specImage = specToken.image;
-            // process only those on the same line
-            if (CR.equals(specImage) || LF.equals(specImage) || FF.equals(specImage)) {
+            // process only those on the same line as the current token
+            if (specToken.beginLine != currToken.endLine) {
               break;
             }
-            // output only comments
+            nbSpecTokAlrOut++;
+            if (specToken.beginLine < aFirstLine) {
+              specToken = specToken.next;
+              continue;
+            }
+            specImage = specToken.image;
             specKind = specToken.kind;
-            if (specKind == SINGLE_LINE_COMMENT || specKind == MULTI_LINE_COMMENT
-                || specKind == FORMAL_COMMENT) {
+            if (specKind == SINGLE_LINE_COMMENT) {
               // prepend a space if none has just been output
               if (!needSpace || currKind == RPAREN) {
-                if (!skipOutput) {
-                  aSb.append(SPACE);
-                }
+                aSb.append(SPACE);
               }
-              // output the special token
-              if (!skipOutput) {
-                aSb.append(specToken.toString());
-              }
-            }
-            if (specKind == SINGLE_LINE_COMMENT) {
-              // skip one newline need for a single line comment which already includes one
+              // output the comment
+              aSb.append(specImage);
+              // skip one newline need for a single line comment because it is terminated by one
               if (willNeedTwoNewlines) {
                 willNeedTwoNewlines = false;
               }
@@ -889,32 +1001,81 @@ public class Format extends AbstractHandler {
                 needOneNewline = false;
               }
               newlineJustWritten = true;
-              // end of line reached
-              break;
+            }
+            else if (specKind == MULTI_LINE_COMMENT || specKind == FORMAL_COMMENT) {
+              // prepend a space if none has just been output
+              if (!needSpace || currKind == RPAREN) {
+                aSb.append(SPACE);
+              }
+              // output the comment, taking care of the selection's boundaries
+              if (specToken.beginLine >= aFirstLine && specToken.endLine <= aLastLine) {
+                // inside
+                aSb.append(specImage);
+              }
+              else if (specToken.beginLine < aFirstLine && specToken.endLine >= aFirstLine) {
+                // around first line
+                ss = specImage.split("\\r\\n|\\r|\\n"); //$NON-NLS-1$
+                int i;
+                for (i = aFirstLine - specToken.beginLine; i < specToken.endLine - specToken.beginLine - 1; i++) {
+                  if (debugNL) {
+                    aSb.append("\t\t/* a f l spTk, " + i + ", G */"); //$NON-NLS-1$ //$NON-NLS-2$
+                  }
+                  aSb.append(ss[i]).append(LS);
+                }
+                aSb.append(ss[i]);
+              }
+              else if (specToken.beginLine <= aLastLine && specToken.endLine > aLastLine) {
+                // around last line
+                ss = specImage.split("\\r\\n|\\r|\\n"); //$NON-NLS-1$
+                int i;
+                for (i = 0; i <= aLastLine - specToken.beginLine; i++) {
+                  if (debugNL) {
+                    aSb.append("\t\t/* a l l spTk, " + i + ", H */"); //$NON-NLS-1$ //$NON-NLS-2$
+                  }
+                  aSb.append(ss[i]).append(LS);
+                }
+              }
+              newlineJustWritten = false;
+            }
+            else if (CRLF.equals(specImage) || CR.equals(specImage) || LF.equals(specImage)) {
+              if (!needOneNewline && !willNeedOneNewline) {
+                if (debugNL) {
+                  aSb.append("\t\t/* a crlf spTk, I */"); //$NON-NLS-1$ 
+                }
+                aSb.append(LS);
+              }
+            }
+            else if (TAB.equals(specImage) || FF.equals(specImage)) {
+              // tabs or form feeds : take them as they are, but not the spaces
+              aSb.append(specImage);
             }
             specToken = specToken.next;
-          }
-        }
-      }
-      // memorize buffer length
-      if (!skipOutput) {
-        lastSbLength = aSb.length();
-      }
-      // output the one or two newlines after
+          } // end while (specToken != null)
+        } // end if (specToken != null)
+      } // end if (outputNextTkSpecTk && nextToken != null)
+
+      // output the one or two newlines 
       if (needTwoNewlines) {
-        if (!skipOutput) {
-          aSb.append(aEndLineDelim);
+        if (outputToken && !(outputNextTkSpecTk && currToken.endLine == aLastLine)) {
+          if (debugNL) {
+            aSb.append("\t\t/* n 2 n l, J, " + nbSpecTokAlrOut + " */"); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          aSb.append(LS);
         }
         needTwoNewlines = false;
         newlineJustWritten = true;
       }
       if (needOneNewline) {
-        if (!skipOutput) {
-          aSb.append(aEndLineDelim);
+        if (outputToken) {
+          if (debugNL) {
+            aSb.append("\t\t/* n 1 n l, K */"); //$NON-NLS-1$
+          }
+          aSb.append(LS);
         }
         needOneNewline = false;
         newlineJustWritten = true;
       }
+
       // update some flags and variables
       if (currKind == RPAREN && parLevelInLAC == 0) {
         parLevelInLAC = -1;
@@ -929,14 +1090,14 @@ public class Format extends AbstractHandler {
       final int clen = currLineIndent.length();
       final int nlen = nextLineIndent.length();
       if (clen < nlen) {
-        currLineIndent.append(CodeScanner.getIndentString());
+        currLineIndent.append(CodeColorScanner.getIndentString());
       }
       else if (nlen < clen) {
         currLineIndent.setLength(nlen);
       }
+
     } // end while (currToken != null && currToken.kind != EOF)
-    // remove trailing newlines
-    aSb.setLength(lastSbLength);
+    // remove the last new lines
     return true;
   }
 
@@ -946,10 +1107,61 @@ public class Format extends AbstractHandler {
    * @param aSb - the indentation StringBuffer
    */
   private static void decrementIndent(final StringBuffer aSb) {
-    final int len = aSb.length() - CodeScanner.getIndentString().length();
+    final int len = aSb.length() - CodeColorScanner.getIndentString().length();
     if (len >= 0) {
       aSb.setLength(len);
     }
+  }
+
+  /**
+   * Replaces unprintable characters by their escaped (or unicode escaped) equivalents in the given string
+   * 
+   * @param str - the input string
+   * @return the escaped string
+   */
+  protected static final String addEscapes(final String str) {
+    final StringBuffer retval = new StringBuffer();
+    char ch;
+    for (int i = 0; i < str.length(); i++) {
+      switch (str.charAt(i)) {
+        case 0:
+          continue;
+          //        case '\b':
+          //          retval.append("\\b"); //$NON-NLS-1$
+          //          continue;
+          //        case '\t':
+          //          retval.append("\\t"); //$NON-NLS-1$
+          //          continue;
+        case '\n':
+          retval.append("\n"); //$NON-NLS-1$
+          continue;
+          //        case '\f':
+          //          retval.append("\\f"); //$NON-NLS-1$
+          //          continue;
+        case '\r':
+          retval.append("\r"); //$NON-NLS-1$
+          continue;
+          //        case '\"':
+          //          retval.append("\\\""); //$NON-NLS-1$
+          //          continue;
+          //        case '\'':
+          //          retval.append("\\\'"); //$NON-NLS-1$
+          //          continue;
+          //        case '\\':
+          //          retval.append("\\\\"); //$NON-NLS-1$
+          //          continue;
+        default:
+          if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
+            final String s = "0000" + Integer.toString(ch, 16); //$NON-NLS-1$
+            retval.append("\\u" + s.substring(s.length() - 4, s.length())); //$NON-NLS-1$
+          }
+          else {
+            retval.append(ch);
+          }
+          continue;
+      }
+    }
+    return retval.toString();
   }
 
 }

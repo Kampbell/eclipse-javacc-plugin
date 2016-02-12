@@ -7,7 +7,6 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -29,8 +28,8 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.HippieProposalProcessor;
 
 import sf.eclipse.javacc.base.AbstractActivator;
-import sf.eclipse.javacc.scanners.CodeScanner;
-import sf.eclipse.javacc.scanners.CommentScanner;
+import sf.eclipse.javacc.scanners.CodeColorScanner;
+import sf.eclipse.javacc.scanners.CommentColorScanner;
 
 /**
  * Viewer configuration for JavaCC code.<br>
@@ -38,7 +37,7 @@ import sf.eclipse.javacc.scanners.CommentScanner;
  * {@link SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  * @author Bill Fenlason 2012
  */
 @SuppressWarnings("restriction")
@@ -55,21 +54,22 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
   // MMa 10/2012 : renamed ; removed PresentationReconciler member
   // MMa 11/2014 : modified some modifiers ; renamed
   // MMa 12/2014 : added completion processor for default content type
+  // MMa 02/2016 : removed default content type partition
 
   /** The editor */
-  private final JJEditor jEditor;
+  private final JJEditor      jEditor;
 
-  /** The JavaCC code scanner */
-  private CodeScanner    jCodeScanner;
+  /** The JavaCC code color scanner */
+  public CodeColorScanner     jCodeScanner;
 
-  /** The line comment scanner */
-  private CommentScanner jLineCmtScanner;
+  /** The line comment color scanner */
+  private CommentColorScanner jLineCmtScanner;
 
-  /** The block comment scanner */
-  private CommentScanner jBlockCmtScanner;
+  /** The block comment color scanner */
+  private CommentColorScanner jBlockCmtScanner;
 
   /** The Javadoc scanner */
-  private CommentScanner jJavadocCmtScanner;
+  private CommentColorScanner jJavadocCmtScanner;
 
   /**
    * Constructor.
@@ -142,7 +142,7 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
     ca.setContentAssistProcessor(new HippieProposalProcessor(), LINE_CMT_CONTENT_TYPE);
     ca.setContentAssistProcessor(new HippieProposalProcessor(), BLOCK_CMT_CONTENT_TYPE);
     ca.setContentAssistProcessor(new HippieProposalProcessor(), JAVADOC_CONTENT_TYPE);
-    ca.setContentAssistProcessor(new CompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+    //    ca.setContentAssistProcessor(new CompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
     ContentAssistPreference.configure(ca, AbstractActivator.getDefault().getPreferenceStore());
     ca.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
     ca.setInformationControlCreator(new IInformationControlCreator() {
@@ -170,40 +170,39 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
   /**
    * Creates and returns a {@link PresentationReconciler} set with the JJ partitioning and different
-   * {@link CodeScanner} for the different content types.
+   * {@link CodeColorScanner} and {@link CommentColorScanner} for the different content types.
    * <p>
    * {@inheritDoc}
    */
   @Override
   public IPresentationReconciler getPresentationReconciler(final ISourceViewer aSourceViewer) {
-    PresentationReconciler jReconciler;
-    jReconciler = new PresentationReconciler();
-    jReconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(aSourceViewer));
+    final PresentationReconciler presRec = new PresentationReconciler();
+    presRec.setDocumentPartitioning(getConfiguredDocumentPartitioning(aSourceViewer));
 
-    jCodeScanner = new CodeScanner();
+    jCodeScanner = new CodeColorScanner();
     final DefaultDamagerRepairer dr1 = new DefaultDamagerRepairer(jCodeScanner);
-    jReconciler.setDamager(dr1, CODE_CONTENT_TYPE);
-    jReconciler.setRepairer(dr1, CODE_CONTENT_TYPE);
+    presRec.setDamager(dr1, CODE_CONTENT_TYPE);
+    presRec.setRepairer(dr1, CODE_CONTENT_TYPE);
 
-    jLineCmtScanner = new CommentScanner(LINE_CMT_CONTENT_TYPE);
+    jLineCmtScanner = new CommentColorScanner(LINE_CMT_CONTENT_TYPE);
     final DefaultDamagerRepairer dr2 = new DefaultDamagerRepairer(jLineCmtScanner);
-    jReconciler.setDamager(dr2, LINE_CMT_CONTENT_TYPE);
-    jReconciler.setRepairer(dr2, LINE_CMT_CONTENT_TYPE);
+    presRec.setDamager(dr2, LINE_CMT_CONTENT_TYPE);
+    presRec.setRepairer(dr2, LINE_CMT_CONTENT_TYPE);
 
-    jBlockCmtScanner = new CommentScanner(BLOCK_CMT_CONTENT_TYPE);
+    jBlockCmtScanner = new CommentColorScanner(BLOCK_CMT_CONTENT_TYPE);
     final DefaultDamagerRepairer dr3 = new DefaultDamagerRepairer(jBlockCmtScanner);
-    jReconciler.setDamager(dr3, BLOCK_CMT_CONTENT_TYPE);
-    jReconciler.setRepairer(dr3, BLOCK_CMT_CONTENT_TYPE);
+    presRec.setDamager(dr3, BLOCK_CMT_CONTENT_TYPE);
+    presRec.setRepairer(dr3, BLOCK_CMT_CONTENT_TYPE);
 
-    jJavadocCmtScanner = new CommentScanner(JAVADOC_CONTENT_TYPE);
+    jJavadocCmtScanner = new CommentColorScanner(JAVADOC_CONTENT_TYPE);
     final DefaultDamagerRepairer dr4 = new DefaultDamagerRepairer(jJavadocCmtScanner);
-    jReconciler.setDamager(dr4, JAVADOC_CONTENT_TYPE);
-    jReconciler.setRepairer(dr4, JAVADOC_CONTENT_TYPE);
+    presRec.setDamager(dr4, JAVADOC_CONTENT_TYPE);
+    presRec.setRepairer(dr4, JAVADOC_CONTENT_TYPE);
 
-    // Must provide damage/repair for the default content type, or remove the content type if none
-    jReconciler.setDamager(null, IDocument.DEFAULT_CONTENT_TYPE);
-    jReconciler.setRepairer(null, IDocument.DEFAULT_CONTENT_TYPE);
-    return jReconciler;
+    //    // Must provide damage/repair for the default content type, or remove the content type if none
+    //    presRec.setDamager(null, IDocument.DEFAULT_CONTENT_TYPE);
+    //    presRec.setRepairer(null, IDocument.DEFAULT_CONTENT_TYPE);
+    return presRec;
   }
 
   /**
@@ -214,9 +213,6 @@ class JSourceViewerConfiguration extends TextSourceViewerConfiguration {
   @Override
   public IReconciler getReconciler(final ISourceViewer aSourceViewer) {
     Assert.isNotNull(jEditor);
-    //    if (jEditor == null) {
-    //      return null;
-    //    }
     final ReconcilingStrategy strategy = jEditor.getReconcilingStrategy();
     strategy.setSourceViewer(aSourceViewer);
     return new MonoReconciler(strategy, false);

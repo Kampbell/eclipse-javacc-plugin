@@ -24,21 +24,22 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 import sf.eclipse.javacc.base.AbstractActivator;
-import sf.eclipse.javacc.editors.UnusedDocumentProvider;
+import sf.eclipse.javacc.editors.DocumentSetupParticipant;
 
 /**
  * A scanner for the comment and javadoc partitions, returning the text attribute (color).<br>
- * Must be coherent with {@link UnusedDocumentProvider}.
+ * Must be coherent with {@link DocumentSetupParticipant}.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  */
-public class CommentScanner extends RuleBasedScanner {
+public class CommentColorScanner extends RuleBasedScanner {
 
   // BF  05/2012 : code copied and moved from CodeScanner
   // BF  05/2012 : major rewrite
   // MMa 10/2012 : renamed
   // MMa 11/2014 : some renamings
+  // MMa 02/2016 : some renamings ; removed useless field jReturnToken ; renamed from CommentScanner
 
   /** The preference store */
   protected final IPreferenceStore        jStore        = AbstractActivator.getDefault().getPreferenceStore();
@@ -48,10 +49,10 @@ public class CommentScanner extends RuleBasedScanner {
 
                                                           /** {@inheritDoc} */
                                                           @Override
-                                                          public void propertyChange(final PropertyChangeEvent event) {
-                                                            final String p = event.getProperty();
-                                                            if (!event.getOldValue()
-                                                                      .equals(event.getNewValue())) {
+                                                          public void propertyChange(final PropertyChangeEvent aEvent) {
+                                                            final String p = aEvent.getProperty();
+                                                            if (!aEvent.getOldValue()
+                                                                       .equals(aEvent.getNewValue())) {
 
                                                               if ((p.equals(P_COMMENT_LINE) && jContentType == LINE_CMT_CONTENT_TYPE)
                                                                   || (p.equals(P_COMMENT_BLOCK) && jContentType == BLOCK_CMT_CONTENT_TYPE)
@@ -92,19 +93,16 @@ public class CommentScanner extends RuleBasedScanner {
   /** The partition content type */
   protected final String                  jContentType;
 
-  /** The return token */
-  protected IToken                        jReturnToken;
-
   /** The default return token */
   protected static IToken                 sDefaultToken = new Token(new TextAttribute(null, null, 0));
 
   /**
    * Constructor with specified content type to set default return token
    * 
-   * @param contentType - the content type
+   * @param aContentType - the content type
    */
-  public CommentScanner(final String contentType) {
-    jContentType = (contentType == null) ? "" : contentType; //$NON-NLS-1$
+  public CommentColorScanner(final String aContentType) {
+    jContentType = (aContentType == null) ? "" : aContentType; //$NON-NLS-1$
 
     jStore.addPropertyChangeListener(jPrefListener);
 
@@ -116,7 +114,7 @@ public class CommentScanner extends RuleBasedScanner {
    */
   void init() {
     disposeUnusedColors();
-
+    IToken returnToken;
     if (jColorCommentBackground == null) {
       jColorCommentBackground = new Color(Display.getCurrent(),
                                           PreferenceConverter.getColor(jStore, P_COMMENT_BACKGROUND));
@@ -125,20 +123,20 @@ public class CommentScanner extends RuleBasedScanner {
       if (jColorComment == null) {
         jColorComment = new Color(Display.getCurrent(), PreferenceConverter.getColor(jStore, P_COMMENT_LINE));
       }
-      jReturnToken = new Token(new TextAttribute(jColorComment, jColorCommentBackground,
-                                                 jStore.getInt(P_COMMENT_LINE_ATR)));
+      returnToken = new Token(new TextAttribute(jColorComment, jColorCommentBackground,
+                                                jStore.getInt(P_COMMENT_LINE_ATR)));
       final IRule[] rules = {
-        new EndOfLineRule("//", jReturnToken) }; //$NON-NLS-1$    
+        new EndOfLineRule("//", returnToken) }; //$NON-NLS-1$    
       setRules(rules);
     }
     else if (jContentType == BLOCK_CMT_CONTENT_TYPE) {
       if (jColorComment == null) {
         jColorComment = new Color(Display.getCurrent(), PreferenceConverter.getColor(jStore, P_COMMENT_BLOCK));
       }
-      jReturnToken = new Token(new TextAttribute(jColorComment, jColorCommentBackground,
-                                                 jStore.getInt(P_COMMENT_BLOCK_ATR)));
+      returnToken = new Token(new TextAttribute(jColorComment, jColorCommentBackground,
+                                                jStore.getInt(P_COMMENT_BLOCK_ATR)));
       final IRule[] rules = {
-        new MultiLineRule("/*", "*/", jReturnToken, (char) 0, true) }; //$NON-NLS-1$ //$NON-NLS-2$
+        new MultiLineRule("/*", "*/", returnToken, (char) 0, true) }; //$NON-NLS-1$ //$NON-NLS-2$
       setRules(rules);
     }
     else if (jContentType == JAVADOC_CONTENT_TYPE) {
@@ -146,23 +144,23 @@ public class CommentScanner extends RuleBasedScanner {
         jColorComment = new Color(Display.getCurrent(), PreferenceConverter.getColor(jStore,
                                                                                      P_COMMENT_JAVADOC));
       }
-      jReturnToken = new Token(new TextAttribute(jColorComment, jColorCommentBackground,
-                                                 jStore.getInt(P_COMMENT_JAVADOC_ATR)));
+      returnToken = new Token(new TextAttribute(jColorComment, jColorCommentBackground,
+                                                jStore.getInt(P_COMMENT_JAVADOC_ATR)));
       final IRule[] rules = {
-        new MultiLineRule("/**", "*/", jReturnToken, (char) 0, true) }; //$NON-NLS-1$ //$NON-NLS-2$
+        new MultiLineRule("/**", "*/", returnToken, (char) 0, true) }; //$NON-NLS-1$ //$NON-NLS-2$
       setRules(rules);
     }
     else {
-      jReturnToken = sDefaultToken;
+      returnToken = sDefaultToken;
       setRules(null);
     }
-    setDefaultReturnToken(jReturnToken);
+    setDefaultReturnToken(returnToken);
   }
 
   /** {@inheritDoc} */
   @Override
-  public void setRange(final IDocument document, final int offset, final int length) {
-    super.setRange(document, offset, length);
+  public void setRange(final IDocument aDoc, final int aOffset, final int aLength) {
+    super.setRange(aDoc, aOffset, aLength);
   }
 
   /**
