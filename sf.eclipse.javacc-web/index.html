@@ -19,12 +19,14 @@ h3 { font-size:10pt; }
 <h1><font color="red">JavaCC Eclipse Plug-in</font> and <font color="red">Headless Plug-in</font><br>
 for <font color="green">Eclipse 3.7+</font>
  with <font color="green">JDK 1.7+</font> and <font color="green">JavaCC 5.0+</font> and
-  <font color="green">JTB 1.4.10</font></h1>
+  <font color="green">JTB 1.4.11</font></h1>
 
-<h2>Last update: nov 13th, 2015 - version <font color="red">1.5.32</font></h2>
+<h2>Last update: apr xxth, 2016 - version <font color="red">1.5.33</font></h2>
 
 The JavaCC plug-in is designed to help development of JavaCC / JTB applications within the Eclipse IDE;
- the headless plug-in is designed to allow headless builds.<br>
+ the headless plug-in is designed to allow headless builds.<br>Although you can use JavaCC for C++ generation,
+ the plugin will not provide you the same level for some features (syntax coloring, formating, ...) as for Java
+ generation.<br>
 License: <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> /
  <a href="http://www.cecill.info/">Cecill</a><br>
 
@@ -46,12 +48,13 @@ You can also look at the following <a href="https://eclipse-tutorial.dev.java.ne
 tutorial on Team development with Eclipse and CVS</a>.<br><br>
 
 The plug-in needs <font color="red">Java 1.7+</font> and <font color="red">Eclipse 3.7+</font> to run.<br>
-It has been tested with Eclipse Classic 3.7.2 (Indigo), 4.2.2 (Juno), 4.3.2 (Kepler), 4.4.0 (Luna).<br>
-It has some compatibility issues with Eclipse 3.6- and 4.1.2.<br>
+It has been tested with Eclipse Classic 3.7.2 (Indigo), 4.2.2 (Juno), 4.3.2 (Kepler), 4.4.2 (Luna), 4.5.& (Mars).<br>
+It has some compatibility issues with Eclipse 3.6-x and 4.1.2.<br>
 It is shipped with <a href="https://javacc.dev.java.net/">JavaCC 5.0</a> and with
- <a href="jtb_doc.html">JTB 1.4.9</a>.<br>
-Also are shipped  JavaCC 4.2, JavaCC 6.0 and JTB 1.4.7 for the ones who need different versions (JTB 1.4.8 had
- a regression issue).<br><br>
+ <a href="jtb_doc.html">JTB 1.4.11</a>.<br>
+Also is shipped JavaCC 6.0 for the ones who need this newer version.<br>
+You can use any other version for JavaCC or JTB by downloading it and changing your projects preferences.<br>
+It will use the JRE which is accessible though a forked process, so it must be properly installed and configured.<br><br>
 
 See (the old) <a href="readme_developer.txt">readme_developer.txt</a>&nbsp; if you want a quick introduction
 on how to modify the sources.
@@ -85,6 +88,33 @@ on how to modify the sources.
        (console is on System.out but nothing is printed on it)</li>
 </ul>
 <h2>Changes history (dd/mm/yy)</h2>
+<b>18/11/2015 - xx/04/2016 - 1.5.33</b><br>
+ put the hyperlinks on JTB output back in place;<br>
+ fixed missing JTB (1.4.10) jar;<br>
+ fixed loss of last blank line when commenting;<br>
+ moved the JavaCC Compile button to the tools bar (in order to not change the arrows location between the
+   Java and the JavaCC editors);<br>
+ formating does not transform anymore tokens string characters in "\uxxxx" notation (into their representation)
+   but keeps them;<br>
+ formating a Java code selection does not loose anymore the comments, and handles correctly the lines and the
+   platform end of line characters;<br>
+ syntax coloring handles correctly the case of a comment after the options keyword and the case of 2 single
+   line comments on 2 contiguous lines with code at the beginning of the second line;<br>
+ syntax coloring does not show the problem when there are spelling errors;<br>
+ matching characters pair does not anymore take in account the characters in the comments;<br>
+ modified automatic indentation for '<' and '{';<br>
+ added classes, methods, ..., of PARSER_BEGIN section in the Call Hierarchy View (callers & callees);<br>
+ fixed and homogeneized the callers and callees contents in the Call Hierarchy View followin a double click
+   in the editor and a click on the context menu command;<br>
+ fixed configuration information for the jjdoc command;<br>
+ added a automatically format code on save option;<br>
+ fixed indentation problems in regular expressions (around '|' and '>') and in JJTee nodes conditions;<br>
+ removed the potential remaining ending '>' in token labels when using completion proposal inside;<br>
+ added value variables (for names and versions default values) and dynamic variables (for plugin and jars paths);<br>
+ added a space before the ending '>>' in regular expressions < RE1 : < RE2 > >;<br>
+ fixed first children in CHV callees when a bnf production has a node identifier;<br>
+ removed the potential remaining ending '()' in bnf productions when using completion proposal inside;<p>
+
 <b>13/11/2015 - 1.5.32</b><br>
  added spaces between < > and token when inserting through completion proposal;<br>
  after formating the cursors stays on the line it was, no more goes to end of file;<br>
@@ -105,7 +135,7 @@ on how to modify the sources.
  configured now to use a JavaSE 1.7 and no more a 1.6 (as 1.6 became obsolete);<br>
  updated with JTB 1.4.9;<p>
 
-<b>08/11/2012-30/12/2014 - 1.5.28</b><br>
+<b>08/11/2012 - 30/12/2014 - 1.5.28</b><br>
  updated with JTB 1.4.8;<br>
  added the "JVM Options" option and the "Keep deleted files in history" option (default set
   to false) in the Global Options Tab of the project preferences;<br>
@@ -271,6 +301,7 @@ on how to modify the sources.
  added JTB, Ctrl+click to open declaration, Wizard<p>
 
 <h2>Quick Start</h2>
+(Very old snapshots)<p>
 1) Create a new Java project and a package "foo".<br>
 <br>
 2) Select package "foo" and create a new JavaCC file. Just accept all default settings

@@ -21,7 +21,7 @@ How to set up the admin & security requirements for the JavaCC Eclipse Plugin up
 How to create the JavaCC Eclipse Plugin update site zip file
 ------------------------------------------------------------
 (for project admins) - Marc Mazas - Nov 22th 2009 / Feb 17th 2010 / Feb 25th 2010 / Mar 31th 2010 /
- Jun 29th 2012, Sept 26th 2012, Dec 30th 2014
+ Jun 29th 2012, Sept 26th 2012, Dec 30th 2014, Apr 2016
 
 
 - Build JTB Project, check that "Release_Notes.txt" and "jtb_doc.html" are up to date
@@ -34,7 +34,7 @@ For the normal plug-in:
   
 - Build project "sf.eclipse.javacc":
   * copy "jtb-x.y.z.jar" under the jars folder
-  * update JTB_JAR_NAME in "IConstants"
+  * update JavaCC & JTB jar names and versions in plugin.properties and plugin_fr.properties (no more in "IConstants")
   * review "plugin.xml" (change / add JavaCC / JTB jar names in "build.properties" tab, update the plugin
     version in overview tab)
   * update "readme.txt"
