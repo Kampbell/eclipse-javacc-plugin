@@ -1,5 +1,32 @@
 History (dd/mm/yy)
 
+18/11/2015 - xx/04/2016 - 1.5.33
+- put the hyperlinks on JTB output back in place;
+- fixed missing JTB (1.4.10) jar;
+- fixed loss of last blank line when commenting;
+- moved the JavaCC Compile button to the tools bar (in order to not change the arrows location between the
+   Java and the JavaCC editors);
+- formating does not transform anymore tokens string characters in "\uxxxx" notation (into their representation)
+   but keeps them;
+- formating a Java code selection does not loose anymore the comments, and handles correctly the lines and the
+   platform end of line characters;
+- syntax coloring handles correctly the case of a comment after the options keyword and the case of 2 single
+   line comments on 2 contiguous lines with code at the beginning of the second line;
+- syntax coloring does not show the problem when there are spelling errors;
+- matching characters pair does not anymore take in account the characters in the comments;
+- modified automatic indentation for '<' and '{';
+- added classes, methods, ..., of PARSER_BEGIN section in the Call Hierarchy View (callers & callees);
+- fixed and homogeneized the callers and callees contents in the Call Hierarchy View followin a double click
+   in the editor and a click on the context menu command;
+- fixed configuration information for the jjdoc command;
+- added a automatically format code on save option;
+- fixed indentation problems in regular expressions (around '|' and '>') and in JJTee nodes conditions;
+- removed the potential remaining ending '>' in token labels when using completion proposal inside;
+- added value variables (for names and versions default values) and dynamic variables (for plugin and jars paths);
+- added a space before the ending '>>' in regular expressions < RE1 : < RE2 > >;
+- fixed first children in CHV callees when a bnf production has a node identifier;
+- removed the potential remaining ending '()' in bnf productions when using completion proposal inside;
+
 13/11/2015 - 1.5.32
 - added spaces between < > and token when inserting through completion proposal;
 - after formating the cursors stays on the line it was, no more goes to end of file;

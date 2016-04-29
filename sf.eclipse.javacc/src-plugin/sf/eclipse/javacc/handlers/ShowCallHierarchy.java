@@ -25,7 +25,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * <extension point="org.eclipse.ui.handlers">.<br>
  * 
  * @since 1.5.28 (from when menus and handlers have replaced actions, ...)
- * @author Marc Mazas 2012-2013-2014-2015
+ * @author Marc Mazas 2012-2013-2014-2015-2016
  */
 public class ShowCallHierarchy extends AbstractHandler {
 
@@ -65,27 +65,30 @@ public class ShowCallHierarchy extends AbstractHandler {
     ITextSelection sel = (ITextSelection) jEditor.getSelectionProvider().getSelection();
     if (sel.getLength() <= 0) {
       sel = jEditor.selectWord(sel);
+      jEditor.getSelectionProvider().setSelection(sel);
     }
-    if (!sel.isEmpty()) {
-      final String text = sel.getText();
-      // search matching node in AST
-      // the offset is prepended to the text to distinguish between multiples occurrences
-      // note that unlike in JDT the cursor is kept on the clicked identifier
-      //      final int start = sel.getOffset() + 1;
-      final int start = sel.getStartLine() + 1;
-      final JJNode node = jEditor.getElements().getIdentOrNodeDesc(start + text);
-      // to behave like JDT uncomment this two lines
-      //      node = editor.getElements().getNode(text);
-      //      editor.setSelection(node);
-      //      if (node != null) {
-      // pass the JJNode to the CallHierarchyView
-      chv.setSelection(node, jEditor);
-      //      }
-    }
-    else {
-      //  pass a null node for empty selection to the Call Hierarchy View
-      chv.setSelection(null, jEditor);
-    }
+    //    if (!sel.isEmpty()) {
+    //      final String text = sel.getText();
+    // search matching node in AST
+    // the offset is prepended to the text to distinguish between multiples occurrences
+    // note that unlike in JDT the cursor is kept on the clicked identifier
+    //      final int start = sel.getOffset() + 1;
+    //      final int start = sel.getStartLine() + 1;
+    //      final JJNode node = jEditor.getElements().getIdentOrNodeDesc(start + text);
+    // to behave like JDT uncomment this two lines
+    //      node = editor.getElements().getNode(text);
+    //      editor.setSelection(node);
+    //      if (node != null) {
+    // pass the JJNode to the CallHierarchyView
+    //      chv.setSelection(node, jEditor);
+    //      }
+    //    }
+    //    else {
+    //  pass a null node for empty selection to the Call Hierarchy View
+    //      chv.setSelection(null, jEditor);
+    //    }
+    final JJNode node = jEditor.getChvRootFromSelection(!chv.isCallerMode());
+    chv.setSelection(node, jEditor);
     return null;
   }
 

@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle_name
 Bundle-SymbolicName: sf.eclipse.javacc;singleton:=true
-Bundle-Version: 1.5.32
+Bundle-Version: 1.5.33
 Bundle-ClassPath: plugin.jar
 Bundle-Activator: sf.eclipse.javacc.head.Activator
-Bundle-Vendor: %Bundle_Vendor_name
+Bundle-Vendor: %Bundle_provider
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.300",
  org.eclipse.core.resources;bundle-version="3.7.101",

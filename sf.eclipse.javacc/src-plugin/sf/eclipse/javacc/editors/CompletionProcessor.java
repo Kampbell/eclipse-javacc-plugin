@@ -30,7 +30,7 @@ import sf.eclipse.javacc.base.AbstractActivator;
  * The content assist processor for completions JavaCC and inner Java code (not in Java & Javadoc comments).
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  */
 class CompletionProcessor implements IContentAssistProcessor {
 
@@ -41,6 +41,8 @@ class CompletionProcessor implements IContentAssistProcessor {
   // MMa 11/2014 : added some final modifiers, added OUTPUT_LANGUAGE option
   // MMa 12/2014 : improved top level proposals
   // MMa 11/2015 : added spaces to tokens on insertion through completion proposal
+  // MMa 03/2016 : improved completion proposal for token labels (remove extra '>' left)
+  // MMa 04/2016 : improved completion proposal for bnf productions (remove following '()' if present)
 
   // Note keywords could be centralized with options
   // see "http://www.realsolve.co.uk/site/tech/jface-text.php"
@@ -100,7 +102,7 @@ class CompletionProcessor implements IContentAssistProcessor {
     int[] caCurPos = null;
 
     if (text.length() == 0) {
-      // empty text : only top level keywords
+      // empty document : only top level keywords
       caProps = sJjCATopKwProps;
       caCurPos = sJjCATopKwCurPos;
       props = new ArrayList<String>(10);
@@ -112,7 +114,7 @@ class CompletionProcessor implements IContentAssistProcessor {
       }
     }
     else {
-      // non empty text
+      // non empty document
       start = aDocOffset - 1;
       char ch = text.charAt(start);
       // move back until non whitespace or punctuation
@@ -129,12 +131,23 @@ class CompletionProcessor implements IContentAssistProcessor {
       final String prefix = text.substring(start, aDocOffset).toUpperCase();
       boolean isTokenPrefix = text.length() <= start ? false : text.charAt(start) == '<';
       final boolean isAnglePrefix = "<".equals(prefix); //$NON-NLS-1$
-      // special case when typed '<' has been transformed automatically to '< '
+      // special case when a typed '<' has been transformed automatically to '< '
       if (start >= 2 && text.charAt(start - 2) == '<' && text.charAt(start - 1) == ' ') {
         start = start - 2;
         isTokenPrefix = true;
       }
       length = aDocOffset - start;
+      if (isTokenPrefix || isAnglePrefix) {
+        // see if the cursor is followed by the closing '>'
+        int p = aDocOffset;
+        ch = text.charAt(p);
+        while (Character.isWhitespace(ch)) {
+          ch = text.charAt(++p);
+        }
+        if (ch == '>') {
+          length = p - start + 1;
+        }
+      }
       try {
         line = currentDocument.getLineOfOffset(aDocOffset);
         int len = 0;
@@ -231,6 +244,18 @@ class CompletionProcessor implements IContentAssistProcessor {
           }
           break;
         case JJTBNF_PROD_EXP_BLOCK:
+          // see if the cursor is followed by '()' and if so extend the to be replaced text
+          int p = start + length;
+          ch = text.charAt(p);
+          while (Character.isWhitespace(ch)) {
+            ch = text.charAt(++p);
+          }
+          if (ch == '(') {
+            ch = text.charAt(++p);
+            if (ch == ')') {
+              length = p - start + 1;
+            }
+          }
           for (final String str : jElementsSet) {
             final int id = jElements.getCompProps(str).getId();
             addBNFProductionOrMethod(prefix, isTokenPrefix, props, curPos, str, id);
@@ -379,21 +404,22 @@ class CompletionProcessor implements IContentAssistProcessor {
   /**
    * Adds a method to the proposals.
    * 
-   * @param prefix - the prefix
-   * @param isTokenPrefix - the flag is a token prefix
-   * @param props - the proposals
-   * @param curPos - the cursor position
-   * @param str - the element
-   * @param id - the node id
+   * @param aPrefix - the prefix
+   * @param aIsTokenPrefix - the flag is a token prefix
+   * @param aProps - the proposals
+   * @param aCurPos - the cursor position
+   * @param aStr - the element
+   * @param aId - the node id
    */
-  private static void addMethod(final String prefix, final boolean isTokenPrefix, final List<String> props,
-                                final List<Integer> curPos, final String str, final int id) {
-    if (!isTokenPrefix) {
+  private static void addMethod(final String aPrefix, final boolean aIsTokenPrefix,
+                                final List<String> aProps, final List<Integer> aCurPos, final String aStr,
+                                final int aId) {
+    if (!aIsTokenPrefix) {
       // nodes and methods
-      if (id == JJTMETHODDECL) {
-        if (str.toUpperCase().startsWith(prefix)) {
-          props.add(str + "() "); //$NON-NLS-1$
-          curPos.add(new Integer(str.length() + 3));
+      if (aId == JJTMETHODDECL) {
+        if (aStr.toUpperCase().startsWith(aPrefix)) {
+          aProps.add(aStr + "() "); //$NON-NLS-1$
+          aCurPos.add(new Integer(aStr.length() + 3));
         }
       }
     }
@@ -402,22 +428,22 @@ class CompletionProcessor implements IContentAssistProcessor {
   /**
    * Adds a bnf production or method to the proposals.
    * 
-   * @param prefix - the prefix
-   * @param isTokenPrefix - the flag is a token prefix
-   * @param props - the proposals
-   * @param curPos - the cursor position
-   * @param str - the element
-   * @param id - the node id
+   * @param aPrefix - the prefix
+   * @param aIsTokenPrefix - the flag is a token prefix
+   * @param aProps - the proposals
+   * @param aCurPos - the cursor position
+   * @param aStr - the element
+   * @param aId - the node id
    */
-  private static void addBNFProductionOrMethod(final String prefix, final boolean isTokenPrefix,
-                                               final List<String> props, final List<Integer> curPos,
-                                               final String str, final int id) {
-    if (!isTokenPrefix) {
+  private static void addBNFProductionOrMethod(final String aPrefix, final boolean aIsTokenPrefix,
+                                               final List<String> aProps, final List<Integer> aCurPos,
+                                               final String aStr, final int aId) {
+    if (!aIsTokenPrefix) {
       // nodes and methods
-      if (id == JJTBNF_PROD || id == JJTMETHODDECL) {
-        if (str.toUpperCase().startsWith(prefix)) {
-          props.add(str + "() "); //$NON-NLS-1$
-          curPos.add(new Integer(str.length() + 3));
+      if (aId == JJTBNF_PROD || aId == JJTMETHODDECL) {
+        if (aStr.toUpperCase().startsWith(aPrefix)) {
+          aProps.add(aStr + "() "); //$NON-NLS-1$
+          aCurPos.add(new Integer(aStr.length() + 3));
         }
       }
     }
@@ -426,100 +452,101 @@ class CompletionProcessor implements IContentAssistProcessor {
   /**
    * Adds common java identifiers (true, false, boolean, return, String, Token) to the proposals.
    * 
-   * @param props - the proposals
-   * @param curPos - the cursor position
-   * @param prefix - the prefix
+   * @param aProps - the proposals
+   * @param aCurPos - the cursor position
+   * @param aPrefix - the prefix
    */
-  private static void addCommonJavaIdentifiers(final List<String> props, final List<Integer> curPos,
-                                               final String prefix) {
-    addTrueFalse(props, curPos, prefix);
+  private static void addCommonJavaIdentifiers(final List<String> aProps, final List<Integer> aCurPos,
+                                               final String aPrefix) {
+    addTrueFalse(aProps, aCurPos, aPrefix);
     /* keywords */
-    if ("BOOLEAN".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("boolean "); //$NON-NLS-1$
-      curPos.add(new Integer("boolean ".length())); //$NON-NLS-1$
+    if ("BOOLEAN".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("boolean "); //$NON-NLS-1$
+      aCurPos.add(new Integer("boolean ".length())); //$NON-NLS-1$
     }
-    if ("FINAL".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("final "); //$NON-NLS-1$
-      curPos.add(new Integer("final ".length())); //$NON-NLS-1$
+    if ("FINAL".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("final "); //$NON-NLS-1$
+      aCurPos.add(new Integer("final ".length())); //$NON-NLS-1$
     }
-    if ("PRIVATE".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("private "); //$NON-NLS-1$
-      curPos.add(new Integer("private ".length())); //$NON-NLS-1$
+    if ("PRIVATE".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("private "); //$NON-NLS-1$
+      aCurPos.add(new Integer("private ".length())); //$NON-NLS-1$
     }
-    if ("PROTECTED".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("protected "); //$NON-NLS-1$
-      curPos.add(new Integer("protected ".length())); //$NON-NLS-1$
+    if ("PROTECTED".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("protected "); //$NON-NLS-1$
+      aCurPos.add(new Integer("protected ".length())); //$NON-NLS-1$
     }
-    if ("PUBLIC".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("public "); //$NON-NLS-1$
-      curPos.add(new Integer("public ".length())); //$NON-NLS-1$
+    if ("PUBLIC".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("public "); //$NON-NLS-1$
+      aCurPos.add(new Integer("public ".length())); //$NON-NLS-1$
     }
-    if ("RETURN".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("return "); //$NON-NLS-1$
-      curPos.add(new Integer("return ".length())); //$NON-NLS-1$
+    if ("RETURN".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("return "); //$NON-NLS-1$
+      aCurPos.add(new Integer("return ".length())); //$NON-NLS-1$
     }
-    if ("STATIC".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("static "); //$NON-NLS-1$
-      curPos.add(new Integer("static ".length())); //$NON-NLS-1$
+    if ("STATIC".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("static "); //$NON-NLS-1$
+      aCurPos.add(new Integer("static ".length())); //$NON-NLS-1$
     }
-    if ("THIS".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("this"); //$NON-NLS-1$
-      curPos.add(new Integer("this".length())); //$NON-NLS-1$
+    if ("THIS".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("this"); //$NON-NLS-1$
+      aCurPos.add(new Integer("this".length())); //$NON-NLS-1$
     }
     /* classes and fields */
-    if ("ARRAYLIST".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("ArrayList<> "); //$NON-NLS-1$
-      curPos.add(new Integer("ArrayList<> ".length() - 2)); //$NON-NLS-1$
+    if ("ARRAYLIST".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("ArrayList<> "); //$NON-NLS-1$
+      aCurPos.add(new Integer("ArrayList<> ".length() - 2)); //$NON-NLS-1$
     }
-    if ("HASHMAP".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("HashMap<,> "); //$NON-NLS-1$
-      curPos.add(new Integer("HashMap<,> ".length() - 3)); //$NON-NLS-1$
+    if ("HASHMAP".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("HashMap<,> "); //$NON-NLS-1$
+      aCurPos.add(new Integer("HashMap<,> ".length() - 3)); //$NON-NLS-1$
     }
-    if ("HASHTABLE".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("Hashtable<,> "); //$NON-NLS-1$
-      curPos.add(new Integer("Hashtable<,> ".length() - 3)); //$NON-NLS-1$
+    if ("HASHTABLE".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("Hashtable<,> "); //$NON-NLS-1$
+      aCurPos.add(new Integer("Hashtable<,> ".length() - 3)); //$NON-NLS-1$
     }
-    if ("IMAGE".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("image"); //$NON-NLS-1$
-      curPos.add(new Integer("image".length())); //$NON-NLS-1$
+    if ("IMAGE".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("image"); //$NON-NLS-1$
+      aCurPos.add(new Integer("image".length())); //$NON-NLS-1$
     }
-    if ("INTEGER".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("Integer "); //$NON-NLS-1$
-      curPos.add(new Integer("Integer ".length())); //$NON-NLS-1$
+    if ("INTEGER".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("Integer "); //$NON-NLS-1$
+      aCurPos.add(new Integer("Integer ".length())); //$NON-NLS-1$
     }
-    if ("LIST".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("List<> "); //$NON-NLS-1$
-      curPos.add(new Integer("List<> ".length() - 2)); //$NON-NLS-1$
+    if ("LIST".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("List<> "); //$NON-NLS-1$
+      aCurPos.add(new Integer("List<> ".length() - 2)); //$NON-NLS-1$
     }
-    if ("MAP".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("Map<,> "); //$NON-NLS-1$
-      curPos.add(new Integer("Map<,> ".length() - 3)); //$NON-NLS-1$
+    if ("MAP".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("Map<,> "); //$NON-NLS-1$
+      aCurPos.add(new Integer("Map<,> ".length() - 3)); //$NON-NLS-1$
     }
-    if ("STRING".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("String "); //$NON-NLS-1$
-      curPos.add(new Integer("String ".length())); //$NON-NLS-1$
+    if ("STRING".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("String "); //$NON-NLS-1$
+      aCurPos.add(new Integer("String ".length())); //$NON-NLS-1$
     }
-    if ("TOKEN".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("Token "); //$NON-NLS-1$
-      curPos.add(new Integer("Token ".length())); //$NON-NLS-1$
+    if ("TOKEN".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("Token "); //$NON-NLS-1$
+      aCurPos.add(new Integer("Token ".length())); //$NON-NLS-1$
     }
   }
 
   /**
    * Adds true and false and return to the proposals.
    * 
-   * @param props - the proposals
-   * @param curPos - the cursor position
-   * @param prefix - the prefix
+   * @param aProps - the proposals
+   * @param aCurPos - the cursor position
+   * @param aPrefix - the prefix
    */
-  private static void addTrueFalse(final List<String> props, final List<Integer> curPos, final String prefix) {
-    if ("TRUE".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("true"); //$NON-NLS-1$
-      curPos.add(new Integer("true".length())); //$NON-NLS-1$
+  private static void addTrueFalse(final List<String> aProps, final List<Integer> aCurPos,
+                                   final String aPrefix) {
+    if ("TRUE".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("true"); //$NON-NLS-1$
+      aCurPos.add(new Integer("true".length())); //$NON-NLS-1$
     }
-    if ("FALSE".startsWith(prefix)) { //$NON-NLS-1$
-      props.add("false"); //$NON-NLS-1$
-      curPos.add(new Integer("false".length())); //$NON-NLS-1$
+    if ("FALSE".startsWith(aPrefix)) { //$NON-NLS-1$
+      aProps.add("false"); //$NON-NLS-1$
+      aCurPos.add(new Integer("false".length())); //$NON-NLS-1$
     }
   }
 

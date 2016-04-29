@@ -29,7 +29,7 @@ import sf.eclipse.javacc.base.Nature;
  * The Tab for the JavaCC global options.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  */
 class GlobalOptions extends Composite {
 
@@ -39,6 +39,7 @@ class GlobalOptions extends Composite {
   // MMa 08/2011 : renamed
   // MMa 10/2012 : added JVM options option and keep deleted files in history option
   // MMa 01/2015 : fixed jars directory ; added default jars fields
+  // MMa 03/2016 : added auto reformat on save
 
   /** The JavaCC jar file */
   protected Text               jJavaCCjarFile;
@@ -58,6 +59,8 @@ class GlobalOptions extends Composite {
   protected BooleanFieldEditor jMarkGenFilesAsDerived;
   /** The keep deleted files in local history flag */
   protected BooleanFieldEditor jKeepDelFilesInHistory;
+  /** The format before save flag */
+  protected BooleanFieldEditor jFormatOnSave;
   /** The Resource to work on */
   protected IResource          jResource;
 
@@ -262,6 +265,10 @@ class GlobalOptions extends Composite {
                            .concat(DEF_KEEP_DEL_FILES_IN_HIST).concat(")"); //$NON-NLS-1$
     jKeepDelFilesInHistory = new BooleanFieldEditor(KEEP_DEL_FILES_IN_HIST, str, checkGroup);
 
+    str = AbstractActivator.getMsg(AbstractActivator.getMsg("OptGlob.Format_on_save")).concat(def) //$NON-NLS-1$
+                           .concat(DEF_FORMAT_ON_SAVE).concat(")"); //$NON-NLS-1$
+    jFormatOnSave = new BooleanFieldEditor(FORMAT_ON_SAVE, str, checkGroup);
+
     // read and set values
     if (aResource != null) {
       final IEclipsePreferences prefs = new ProjectScope(aResource.getProject()).getNode(PLUGIN_QN);
@@ -278,6 +285,7 @@ class GlobalOptions extends Composite {
                                                                 DEF_MARK_GEN_FILES_DERIVED)));
         jKeepDelFilesInHistory.setBooleanValue(isTrue(prefs.get(KEEP_DEL_FILES_IN_HIST,
                                                                 DEF_KEEP_DEL_FILES_IN_HIST)));
+        jFormatOnSave.setBooleanValue(isTrue(prefs.get(FORMAT_ON_SAVE, DEF_FORMAT_ON_SAVE)));
       } catch (final CoreException e) {
         AbstractActivator.logBug(e);
       }
@@ -297,6 +305,7 @@ class GlobalOptions extends Composite {
     jSuppressWarnings.setBooleanValue(isTrue(DEF_SUPPRESS_WARNINGS));
     jMarkGenFilesAsDerived.setBooleanValue(isTrue(DEF_MARK_GEN_FILES_DERIVED));
     jKeepDelFilesInHistory.setBooleanValue(isTrue(DEF_KEEP_DEL_FILES_IN_HIST));
+    jFormatOnSave.setBooleanValue(isTrue(DEF_FORMAT_ON_SAVE));
     //    fCheckSpelling.setBooleanValue(true);
   }
 
@@ -325,6 +334,7 @@ class GlobalOptions extends Composite {
       prefs.put(SUPPRESS_WARNINGS, String.valueOf(jSuppressWarnings.getBooleanValue()));
       prefs.put(MARK_GEN_FILES_DERIVED, String.valueOf(jMarkGenFilesAsDerived.getBooleanValue()));
       prefs.put(KEEP_DEL_FILES_IN_HIST, String.valueOf(jKeepDelFilesInHistory.getBooleanValue()));
+      prefs.put(FORMAT_ON_SAVE, String.valueOf(jFormatOnSave.getBooleanValue()));
 
       // set the nature
       Nature.setNature(jNature.getBooleanValue(), jResource.getProject());

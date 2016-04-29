@@ -44,11 +44,14 @@ public class Format extends AbstractHandler {
   //   loss of some comments or part of comments (special tokens),
   //   escaped non ASCII characters in tokens printed as non escaped,
   //   loss or addition of newlines, platform line delimiters,
+  // MMa 03/2016 : restructured to static methods to be called by JJEditor for auto format on save
+  //   fixed some indentation problems in regular expressions (around '|' and '>') and node conditions
+  // MMa 04/2016 : added space between '>>' in regular expessions < RE1 : < RE2 > >
 
   // TODO see if it would not be better to use JTB's JavaCCPrinter
 
   /** The parser */
-  private JavaCCParser jParser;
+  private final JavaCCParser jParser = new JavaCCParser(new StringReader("")); //$NON-NLS-1$
 
   /** {@inheritDoc} */
   @Override
@@ -68,10 +71,21 @@ public class Format extends AbstractHandler {
     }
     // our editor
     final JJEditor jEditor = (JJEditor) editor;
-    final IDocument doc = jEditor.getDocument();
-    final ISelection selection = jEditor.getSelectionProvider().getSelection();
+    doFormat(jEditor, jParser);
+    return null;
+  }
+
+  /**
+   * Formats the selection or the whole document.
+   * 
+   * @param aJJEditor - the JJ editor
+   * @param aParser - a non null parser
+   */
+  public static void doFormat(final JJEditor aJJEditor, final JavaCCParser aParser) {
+    final IDocument doc = aJJEditor.getDocument();
+    final ISelection selection = aJJEditor.getSelectionProvider().getSelection();
     if (!(selection instanceof ITextSelection)) {
-      return null;
+      return;
     }
     ITextSelection ts = (ITextSelection) selection;
     final int tsoffset = ts.getOffset();
@@ -79,7 +93,7 @@ public class Format extends AbstractHandler {
     int tsel = ts.getEndLine();
     int tslen = ts.getLength();
     if (tssl < 0 || tsel < 0) {
-      return null;
+      return;
     }
     int sloffset = 0;
     boolean isFullText = false;
@@ -114,34 +128,16 @@ public class Format extends AbstractHandler {
       //  process the editor full text using the JavaCC grammar and replace only part of it
       final StringBuilder buf = new StringBuilder(2 * tslen);
       final String docText = doc.get();
-      if (formatSelection(docText, tssl + 1, tsel + 1, buf) == true) {
+      if (formatSelection(aParser, docText, tssl + 1, tsel + 1, buf) == true) {
         // replace the text with the modified version
         doc.replace(sloffset, tslen, buf.toString());
         // reposition
-        jEditor.selectAndReveal(isFullText ? tsoffset : sloffset, 0);
+        aJJEditor.selectAndReveal(isFullText ? tsoffset : sloffset, 0);
       }
     } catch (final BadLocationException e) {
       AbstractActivator.logBug(e, tsoffset, tslen, sloffset);
     }
-    return null;
   }
-
-  //  /**
-  //   * Formats the stacktrace in lines.
-  //   * 
-  //   * @param aEx - the exception
-  //   * @param aEol - the end of line string
-  //   * @return the formatted stacktrace
-  //   */
-  //  static String fmtStackTrace(final Exception aEx, final String aEol) {
-  //    final StringBuffer sb = new StringBuffer(2048);
-  //    final StackTraceElement[] st = aEx.getStackTrace();
-  //    final int len = st.length;
-  //    for (int i = 0; i < len; i++) {
-  //      sb.append(st[i].toString()).append(aEol);
-  //    }
-  //    return sb.toString();
-  //  }
 
   /** Empty string */
   public static final String EMPTY = "";    //$NON-NLS-1$
@@ -168,23 +164,19 @@ public class Format extends AbstractHandler {
    * <p>
    * OK, this method is a bit long and complex ... want for a better algorithm :)
    * 
+   * @param aParser - a non null parser
    * @param aTxt - the text to format
    * @param aFirstLine - the line number of the first character of the selected text
    * @param aLastLine - the line number of the last character of the selected text
    * @param aSb - the StringBuilder to receive the formatted text
    * @return true if successful, false otherwise
    */
-  private boolean formatSelection(final String aTxt, final int aFirstLine, final int aLastLine,
-                                  final StringBuilder aSb) {
+  private static boolean formatSelection(final JavaCCParser aParser, final String aTxt, final int aFirstLine,
+                                         final int aLastLine, final StringBuilder aSb) {
     // Parse the full text, retain only the chain of Tokens (with their special tokens)
     final StringReader in = new StringReader(aTxt);
-    if (jParser == null) {
-      jParser = new JavaCCParser(in);
-    }
-    else {
-      jParser.ReInit(in);
-    }
-    final JJNode node = jParser.parse(in);
+    aParser.ReInit(in);
+    final JJNode node = aParser.parse(in);
     in.close();
     if (node.getFirstToken().next == null) {
       // warn nothing shall be done if parsing failed
@@ -501,7 +493,7 @@ public class Format extends AbstractHandler {
         // and at most at the first braces level,
         // if not at the last enclosing level, or if at the last enclosing level with an inner '|',
         // need for a newline and decrement indentation,
-        // and if followed by a '>', a '*', a '?' or a '+', postpone the need for a newline
+        // and if followed by a '>', a '*', a '?', a '+' or a ':', postpone the need for a newline
         if (currKind == RPAREN && parLevelInLAC < 0 && parLevelInJN < 0 && bracesIndentLevel <= 1) {
           if (nextKind == TRY) {
             needOneNewline = true;
@@ -515,7 +507,8 @@ public class Format extends AbstractHandler {
           if (NB.equals(nextImage)) {
             needOneNewline = false;
           }
-          else if (nextKind == GT || nextKind == STAR || nextKind == HOOK || nextKind == PLUS) {
+          else if (nextKind == GT || nextKind == STAR || nextKind == HOOK || nextKind == PLUS
+                   || nextKind == COLON) {
             newLinePostponed = true;
             prevNeedOneNewline = needOneNewline;
             needOneNewline = false;
@@ -691,7 +684,6 @@ public class Format extends AbstractHandler {
           || currKind == _PARSER_BEGIN
           || currKind == _PARSER_END
           || currKind == _LOOKAHEAD
-          || (currKind == GT && nextKind == GT)
           || (currKind == LT && nextKind == LT)
           || (currKind == COLON && nextKind == LBRACE)
           || ((NB.equals(currImage) || nextKind == XOR || (lastKind == LPAREN && currKind == GT)) && isAfterParserEnd)
@@ -899,18 +891,15 @@ public class Format extends AbstractHandler {
         //            sb.setLength(len);
         //          }
         //        }
-        if (currKind == LBRACE || currKind == LPAREN || currKind == LBRACKET || currKind == LT
-            || currKind == GT) {
+        if (currKind == LBRACE || currKind == LPAREN || currKind == LBRACKET || currKind == LT) {
           if (outputToken) {
             aSb.append(currLineIndent);
           }
         }
-        else if (currKind == BIT_OR) {
+        else if (currKind == BIT_OR || currKind == GT) {
           if (outputToken) {
-            final int len = currLineIndent.length() - CodeColorScanner.getIndentString().length();
-            if (len > 0) {
-              aSb.append(currLineIndent.substring(0, len));
-            }
+            decrementIndent(currLineIndent);
+            aSb.append(currLineIndent);
           }
         }
         else {
@@ -1043,6 +1032,7 @@ public class Format extends AbstractHandler {
                   aSb.append("\t\t/* a crlf spTk, I */"); //$NON-NLS-1$ 
                 }
                 aSb.append(LS);
+                newlineJustWritten = true;
               }
             }
             else if (TAB.equals(specImage) || FF.equals(specImage)) {

@@ -2,7 +2,7 @@
 <feature
       id="sf.eclipse.javacc.headless.feature"
       label="JavaCC Eclipse Headless Plug-in (Sourceforge)"
-      version="1.5.32"
+      version="1.5.33"
       provider-name="Remi Koutcherawy, Marc Mazas"
       plugin="sf.eclipse.javacc.headless">
 
@@ -416,7 +416,7 @@ Version 2.0 dated 2005-05-21.
       <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface" version="3.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.7.0" match="greaterOrEqual"/>
-      <import plugin="sf.eclipse.javacc" version="1.5.32" match="greaterOrEqual"/>
+      <import plugin="sf.eclipse.javacc" version="1.5.33" match="greaterOrEqual"/>
    </requires>
 
    <plugin

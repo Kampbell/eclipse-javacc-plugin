@@ -13,7 +13,7 @@ import sf.eclipse.javacc.editors.Elements;
  * The JJNode is a SimpleNode to which have been added all the methods not starting with "jjt".
  * 
  * @author Remi Koutcherawy 2003-2009 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  * @author Bill Fenlason 2012
  */
 public class JJNode implements Node {
@@ -30,9 +30,9 @@ public class JJNode implements Node {
   //               fixed outline names and tree ; adapted to modifications in grammar nodes ;
   //               adapted to the new token offset availability
   // MMa 11/2014 : added nameToken field
-  // MMa 02/2015 : fixed nameToken for  "<" "#" < IDENTIFIER > ":" complex_regular_expression_choices ">
-
-  // TODO add methods and classes in Call Hierarchy callers and callees
+  // MMa 02/2016 : fixed nameToken for  "<" "#" < IDENTIFIER > ":" complex_regular_expression_choices ">
+  //               added classes and methods and ... in Call Hierarchy View callers and callees
+  // MMa 04/2016 : fixed first children in CHV callees when a bnf production has a node identifier
 
   /** The node's parent */
   protected Node                parent;
@@ -589,7 +589,8 @@ public class JJNode implements Node {
   }
 
   /**
-   * Adds the node to the stack if it is not a block, or its children if is a block, recursively.
+   * Adds the node to the stack if it is not a block, or its children if is a block, recursively.<br>
+   * TODO voir à ajouter les références aux classes/méthodes/... dans les blocks
    * 
    * @param aStack - the stack
    * @param aChild - a node
@@ -605,101 +606,114 @@ public class JJNode implements Node {
         }
       }
     }
-    else {
-      aStack.offer(ch);
-    }
+    aStack.offer(ch);
   }
 
   /**
    * Builds the array of callers for this node.
    */
   public void buildCallers() {
-    // Clear callers
+    // clear callers
     callers = new JJNode[0];
-    // Get up to the root
+    String sel = name;
+    // for java code, build first elements directly from the parents
+    if (id == JJTMETHODDECL //
+        || id == JJTCONSTRDECL //
+        || id == JJTCLAORINTDECL //
+        || id == JJTCONSTRDECL //
+        || id == JJTENUMDECL //
+        || id == JJTANNOTTYPEDECL //
+    ) {
+      // record the parent
+      addCaller((JJNode) parent);
+    }
+
+    // get up to the root
     JJNode root = this;
     while (root.parent != null) {
       root = (JJNode) root.parent;
     }
-    // Search the whole tree from the root
+    // search the whole tree from the root
     final Queue<JJNode> stack = new LinkedList<JJNode>();
     stack.offer(root);
     // take the display name for node descriptors and private label identifiers for later comparison
-    String sel = name;
-    final int thId = this.getId();
-    if (thId == JJTNODE_DESC_BNF_DECL || thId == JJTNODE_DESC_IN_EXP || thId == JJTNODE_DESC_IN_METH
-        || thId == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
+    if (id == JJTNODE_DESC_BNF_DECL //
+        || id == JJTNODE_DESC_IN_EXP //
+        || id == JJTNODE_DESC_IN_METH || id == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
+    ) {
       sel = displayName;
     }
-    // Examine each element of the stack
+    // examine each element of the stack
     while (!stack.isEmpty()) {
       final JJNode nd = stack.remove();
       final int ndId = nd.getId();
       final String ndName = nd.name;
       if (sel.equals(ndName)) {
-        if (ndId == JJTIDENT_REG_EXPR_LABEL || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL
+        if (ndId == JJTIDENT_REG_EXPR_LABEL //
+            || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
             || ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT //
             || ndId == JJTIDENT_IN_REG_EXPR // 
-            || ndId == JJTIDENT_IN_EXP_UNIT || ndId == JJTNODE_DESC_IN_EXP) {
-          final JJNode ndGrandParent = (JJNode) ((JJNode) nd.parent).parent;
+            || ndId == JJTIDENT_IN_EXP_UNIT //
+            || ndId == JJTNODE_DESC_IN_EXP //
+        ) {
+          final JJNode ndGrandParent = (JJNode) (((JJNode) nd.parent)).parent;
           if (ndGrandParent.id == JJTBNF_PROD) {
-            // Found a caller (the grand parent), record it
-            addCaller(ndGrandParent, false);
-            // For JJTIDENT_IN_COMP_REG_EXPR_UNIT, see if it is defined in a regular expression label
+            // found a caller (the grand parent), record it
+            addCaller(ndGrandParent);
+            // for JJTIDENT_IN_COMP_REG_EXPR_UNIT, see if it is defined in a regular expression label
             if (ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT) {
               final JJNode brother = (JJNode) ((JJNode) nd.parent).children[0];
               final int brId = brother.id;
               if (brId == JJTIDENT_REG_EXPR_LABEL || brId == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
-                addCaller(brother, false);
+                addCaller(brother);
               }
             }
           }
           else if (ndGrandParent.id == JJTREG_EXPR_PROD_BLOCK) {
             // Found a caller (the grand grand parent, the JJTREGEXPR_KIND), record it
-            addCaller((JJNode) ndGrandParent.parent, false);
-            // For JJTIDENT_IN_COMP_REG_EXPR_UNIT, see if it is defined in a regular expression label
+            addCaller((JJNode) ndGrandParent.parent);
+            // for JJTIDENT_IN_COMP_REG_EXPR_UNIT, see if it is defined in a regular expression label
             if (ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT) {
               final JJNode brother = (JJNode) ((JJNode) nd.parent).children[0];
               final int brId = brother.id;
               if (brId == JJTIDENT_REG_EXPR_LABEL || brId == JJTIDENT_REG_EXPR_PRIVATE_LABEL) {
-                addCaller(brother, false);
+                addCaller(brother);
               }
             }
           }
         }
-        else if (ndId == JJTJAVAIDENTINMETHODDECL || ndId == JJTJAVAIDENTINCONSTRDECL //
-                 || (ndId == JJTBNF_PROD && thId != JJTBNF_PROD && thId != JJTIDENT_BNF_DECL)//
+        else if ((ndId == JJTBNF_PROD && id != JJTIDENT_IN_EXP_UNIT && id != JJTBNF_PROD && id != JJTIDENT_BNF_DECL)//
                  || ndId == JJTNODE_DESC_BNF_DECL //
-                 || ndId == JJTNODE_DESC_IN_METH) {
-          // Found a caller (the node), record it
-          addCaller(nd, false);
+                 || ndId == JJTNODE_DESC_IN_METH //
+        ) {
+          // found a caller (the node), record it
+          addCaller(nd);
         }
-      }
-      // If it has children, push them if they are not a block or push their children if they are a block
+      } // end if (sel.equals(ndName))
+      // if it has children, push them if they are not blocks or push their children if they are blocks
       if (nd.children != null) {
         for (final Node child : nd.children) {
           addNonBlockChild(stack, child);
         }
       }
     } // end while
-  }
+  } // end buildCallers()
 
   /**
-   * Adds a given node at the beginning or the end of the array of callers of this node only if it does not
-   * exist yet in the array.<br>
+   * Adds a given node at the end of the array of callers of this node only if it does not exist yet in the
+   * array.<br>
    * 
    * @param aNode - the node to add
-   * @param toTop - true if at the beginning, false if at the end
    */
-  public void addCaller(final JJNode aNode, final boolean toTop) {
+  public void addCaller(final JJNode aNode) {
     for (final JJNode caller : callers) {
       if (caller == aNode) {
         return;
       }
     }
     final JJNode newCallers[] = new JJNode[callers.length + 1];
-    System.arraycopy(callers, 0, newCallers, (toTop ? 1 : 0), callers.length);
-    newCallers[toTop ? 0 : callers.length] = aNode;
+    System.arraycopy(callers, 0, newCallers, 0, callers.length);
+    newCallers[callers.length] = aNode;
     callers = newCallers;
   }
 
@@ -711,9 +725,9 @@ public class JJNode implements Node {
   }
 
   /**
-   * Clears the array of callers for this node.
+   * Resets the array of callers for this node with the fake "out of hierarchy selection" node.
    */
-  public void clearCallers() {
+  public void resetCallersToOohsJJNode() {
     callers = new JJNode[1];
     callers[0] = oohsJJNode;
   }
@@ -724,59 +738,66 @@ public class JJNode implements Node {
    * @param aElements - the JJ elements
    */
   public void buildCallees(final Elements aElements) {
-    // Clear callees
+    // clear callees
     callees = new JJNode[0];
     // Get the node to which this node belongs
     String declName = name;
-    if (this.getId() == JJTNODE_DESC_BNF_DECL) {
+    if (id == JJTCONSTRDECL) {
+      // TODO see if in Java 7/8 we can have something
+      return;
+    }
+    if (id == JJTNODE_DESC_BNF_DECL) {
       declName = declName.substring(1) + DASH_SEP + declName;
     }
     final JJNode declNode = aElements.getNonIdentNorNodeDesc(declName);
     if (declNode == null) {
       return;
     }
-    // Search callees within the declaration node tree
+    // search callees within the declaration node tree
     final Queue<JJNode> stack = new LinkedList<JJNode>();
-    // If it has children, push them if they are not a block or push their children if they are a block
+    // if it has children, push them if they are not a block or push their children if they are a block
     if (declNode.children != null) {
       for (final Node child : declNode.children) {
         addNonBlockChild(stack, child);
       }
     }
-    // Examine each element of the stack
+    // examine each element of the stack
     while (!stack.isEmpty()) {
       final JJNode nd = stack.remove();
-      // Take all JJTree identifier and node descriptor nodes
+      // take all JJTree identifier and node descriptor nodes and declarations
       final int ndId = nd.getId();
       if (ndId == JJTIDENT_BNF_DECL //
-          || ndId == JJTIDENT_REG_EXPR_LABEL || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
+          || ndId == JJTIDENT_REG_EXPR_LABEL //
+          || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
           || ndId == JJTIDENT_IN_EXP_UNIT //
           || ndId == JJTIDENT_IN_REG_EXPR //
           || ndId == JJTIDENT_IN_COMP_REG_EXPR_UNIT //
-          || ndId == JJTNODE_DESC_BNF_DECL //
+          //          || ndId == JJTNODE_DESC_BNF_DECL //
           || ndId == JJTNODE_DESC_IN_EXP //
           || ndId == JJTNODE_DESC_IN_METH //
+          || ndId == JJTPARSER_BEGIN //
+          || ndId == JJTCLAORINTDECL //
+          || ndId == JJTMETHODDECL //
+          || ndId == JJTCONSTRDECL //
+          || ndId == JJTENUMDECL //
+          || ndId == JJTANNOTTYPEDECL //
       ) {
-        // Get its parent
+        // get its parent
         final JJNode ndParent = (JJNode) nd.jjtGetParent();
         // Skip the node if it is the first child of its parent for some cases
         if ((ndParent.children[0] == nd) //
             && (ndId == JJTIDENT_BNF_DECL //
-                || ndId == JJTIDENT_REG_EXPR_LABEL || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL)) {
+                || ndId == JJTIDENT_REG_EXPR_LABEL //
+            || ndId == JJTIDENT_REG_EXPR_PRIVATE_LABEL //
+            )) {
           continue;
         }
-        // Found a callee, record it
+        // found a callee, record it
         addCallee(nd);
-        // If it has children, push them if they are not a block or push their children if they are a block
-        if (nd.children != null) {
-          for (final Node child : nd.children) {
-            addNonBlockChild(stack, child);
-          }
-        }
       }
     }
     return;
-  }
+  } // end buildCallees()
 
   /**
    * Adds a given node at the end of the array of callees of this node.
@@ -798,10 +819,9 @@ public class JJNode implements Node {
   }
 
   /**
-   * Clears the array of callees for this node.
+   * Resets the array of callees for this node with the fake "out of hierarchy selection" node.
    */
-  public void clearCallees() {
-    //    callees = new JJNode[0];
+  public void resetCalleesToOohsJJNode() {
     callees = new JJNode[1];
     callees[0] = oohsJJNode;
   }

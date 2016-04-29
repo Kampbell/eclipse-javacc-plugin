@@ -195,9 +195,8 @@ public class CodeColorScanner extends RuleBasedScanner {
   /** The last range offset */
   protected int                         jLastRangeOffset = -1;
 
-  /** A debug string */
-  // TODO à passer en commentaires
-  String                                dbgStr           = "";                                    //$NON-NLS-1$
+  //  /** A debug string */
+  //  String                                dbgStr           = "";                                    //$NON-NLS-1$
 
   /**
    * Instantiates a new JavaCC code scanner.
@@ -239,37 +238,37 @@ public class CodeColorScanner extends RuleBasedScanner {
   public void setRange(final IDocument aDoc, final int aOffset, final int aLength) {
     super.setRange(aDoc, aOffset, aLength);
     //    synchronized (Thread.currentThread()) {
-    dbgLog(aOffset, aLength, "bef"); //$NON-NLS-1$
+    //    dbgLog(aOffset, aLength, "bef"); //$NON-NLS-1$
     if (jLastRangeOffset == -1) {
       jJavaCCCodeRule.initialize();
-      dbgLog(aOffset, aLength, "ini"); //$NON-NLS-1$
+      //      dbgLog(aOffset, aLength, "ini"); //$NON-NLS-1$
     }
     else if (aOffset <= jLastRangeOffset) {
       jJavaCCCodeRule.restore(aOffset);
-      dbgLog(aOffset, aLength, "res"); //$NON-NLS-1$
+      //      dbgLog(aOffset, aLength, "res"); //$NON-NLS-1$
     }
     else {
       jJavaCCCodeRule.save(aOffset);
-      dbgLog(aOffset, aLength, "sav"); //$NON-NLS-1$
+      //      dbgLog(aOffset, aLength, "sav"); //$NON-NLS-1$
     }
     jLastRangeOffset = aOffset;
     //    }
   }
 
-  /**
-   * Adds a line to a (Eclipse) watch debug variable. TODO à passer en commentaires
-   * 
-   * @param aOffset - the offset
-   * @param aLength - the length
-   * @param str - a prefix string
-   */
-  private void dbgLog(final int aOffset, final int aLength, final String str) {
-    dbgStr = str
-             + " : " + aOffset + ", " + (aOffset + aLength) + ", " + jLastRangeOffset //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-             + ", " + Thread.currentThread().toString().substring(Thread.currentThread().toString().indexOf('[')) //$NON-NLS-1$
-             + ", " + jJavaCCCodeRule.toString().substring(jJavaCCCodeRule.toString().indexOf('@')) //$NON-NLS-1$
-             + ", " + jJavaCCCodeRule.jStateStack + "\r\n" + dbgStr; //$NON-NLS-1$ //$NON-NLS-2$ 
-  }
+  //  /**
+  //   * Adds a line to a (Eclipse) watch debug variable.
+  //   * 
+  //   * @param aOffset - the offset
+  //   * @param aLength - the length
+  //   * @param str - a prefix string
+  //   */
+  //  private void dbgLog(final int aOffset, final int aLength, final String str) {
+  //    dbgStr = str
+  //             + " : " + aOffset + ", " + (aOffset + aLength) + ", " + jLastRangeOffset //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  //             + ", " + Thread.currentThread().toString().substring(Thread.currentThread().toString().indexOf('[')) //$NON-NLS-1$
+  //             + ", " + jJavaCCCodeRule.toString().substring(jJavaCCCodeRule.toString().indexOf('@')) //$NON-NLS-1$
+  //             + ", " + jJavaCCCodeRule.jStateStack + "\r\n" + dbgStr; //$NON-NLS-1$ //$NON-NLS-2$ 
+  //  }
 
   /**
    * Returns the next token using the specified rule.

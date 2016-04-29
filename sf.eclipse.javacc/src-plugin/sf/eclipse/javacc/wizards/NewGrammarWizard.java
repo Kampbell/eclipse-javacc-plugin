@@ -242,8 +242,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
       AbstractActivator.logInfo(AbstractActivator.getMsg("WizPage.Initializing_preferences")); //$NON-NLS-1$ 
       // use the jar(s) in the plugin
       final String dir = Compiler.getJarsDir();
-      final String javaCCJarFile = dir + JAVACC_JAR_NAME;
-      final String jtbJarFile = dir + JTB_JAR_NAME;
+      final String javaCCJarFile = dir + DEF_JAVACC_JAR_NAME;
+      final String jtbJarFile = dir + DEF_JTB_JAR_NAME;
       prefs.put(RUNTIME_JJJAR, javaCCJarFile);
       prefs.put(RUNTIME_JTBJAR, jtbJarFile);
       prefs.put(CLEAR_CONSOLE, "false"); //$NON-NLS-1$

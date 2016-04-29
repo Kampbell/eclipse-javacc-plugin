@@ -17,7 +17,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * LabelProvider for Content Outline and Call Hierarchy.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-206
  */
 class NodeLabelProvider extends LabelProvider {
 
@@ -27,6 +27,7 @@ class NodeLabelProvider extends LabelProvider {
   // MMa 10/2012 : used static import  ; adapted to modifications in grammar nodes and new nodes
   // MMa 11/2012 : moved to new package
   // MMa 11/2014 : fixed image for JJTIDENT_IN_EXP_UNIT ; changed package
+  // MMa 02/2016 : added constructor image
 
   /** The images HashMap */
   protected final Map<ImageDescriptor, Image> imgMap = new HashMap<ImageDescriptor, Image>(16);
@@ -42,6 +43,8 @@ class NodeLabelProvider extends LabelProvider {
   protected ImageDescriptor                   jDesc_expr;
   /** The class image descriptor */
   protected ImageDescriptor                   jDesc_class;
+  /** The constructor image descriptor */
+  protected ImageDescriptor                   jDesc_constructor;
   /** The method image descriptor */
   protected ImageDescriptor                   jDesc_method;
   /** The javacode image descriptor */
@@ -64,6 +67,7 @@ class NodeLabelProvider extends LabelProvider {
     jDesc_rule = AbstractActivator.getImageDescriptor("jj_rule.gif"); //$NON-NLS-1$
     jDesc_expr = AbstractActivator.getImageDescriptor("jj_expr.gif"); //$NON-NLS-1$
     jDesc_class = AbstractActivator.getImageDescriptor("jj_class.gif"); //$NON-NLS-1$
+    jDesc_constructor = AbstractActivator.getImageDescriptor("jj_constructor.gif"); //$NON-NLS-1$
     jDesc_method = AbstractActivator.getImageDescriptor("jj_method.gif"); //$NON-NLS-1$
     jDesc_javacode = AbstractActivator.getImageDescriptor("jj_javacode.gif"); //$NON-NLS-1$
     jDesc_tmdecl = AbstractActivator.getImageDescriptor("jj_tmd.gif"); //$NON-NLS-1$
@@ -94,9 +98,12 @@ class NodeLabelProvider extends LabelProvider {
         desc = jDesc_node_desc;
         break;
       case JJTMETHODDECL:
-      case JJTCONSTRDECL:
       case JJTJAVAIDENTINMETHODDECL:
         desc = jDesc_method;
+        break;
+      case JJTCONSTRDECL:
+      case JJTJAVAIDENTINCONSTRDECL:
+        desc = jDesc_constructor;
         break;
       case JJTBNF_PROD:
       case JJTIDENT_IN_EXP_UNIT:

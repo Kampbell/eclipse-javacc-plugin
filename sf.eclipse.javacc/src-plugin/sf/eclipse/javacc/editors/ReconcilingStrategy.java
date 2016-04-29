@@ -226,7 +226,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy, IReconcilingSt
     }
     else {
       // saw null model in case of drag and drop in the editor area
-      AbstractActivator.logErr("null AnnotationModel, unable to checkSpelling() in ReconcilingStrategy ;" //$NON-NLS-1$
+      AbstractActivator.logErr("Null AnnotationModel, unable to checkSpelling() in ReconcilingStrategy ;" //$NON-NLS-1$
                                + " please report this message with the actions which led to it"); //$NON-NLS-1$
     }
   }

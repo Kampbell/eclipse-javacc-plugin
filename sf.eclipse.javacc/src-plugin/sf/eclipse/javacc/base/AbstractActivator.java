@@ -1,9 +1,6 @@
 package sf.eclipse.javacc.base;
 
-import static sf.eclipse.javacc.base.IConstants.ICONS_FOLDER;
-import static sf.eclipse.javacc.base.IConstants.LS;
-import static sf.eclipse.javacc.base.IConstants.PLUGIN_NAME;
-import static sf.eclipse.javacc.base.IConstants.PLUGIN_QN;
+import static sf.eclipse.javacc.base.IConstants.*;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -69,7 +66,7 @@ public abstract class AbstractActivator extends AbstractUIPlugin {
     } catch (final MissingResourceException e) {
       logErr(e.getMessage());
     }
-    sJJVersion = Platform.getBundle(PLUGIN_QN).getHeaders().get("Bundle-Version"); //$NON-NLS-1$
+    sJJVersion = PIB.getHeaders().get("Bundle-Version"); //$NON-NLS-1$
     sBugMsg = getMsg("Bug.Msg"); //$NON-NLS-1$
   }
 

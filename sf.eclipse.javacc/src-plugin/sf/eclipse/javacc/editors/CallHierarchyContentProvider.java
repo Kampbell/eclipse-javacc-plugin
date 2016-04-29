@@ -35,12 +35,16 @@ class CallHierarchyContentProvider implements ITreeContentProvider {
 
   /** {@inheritDoc} */
   @Override
-  public final Object[] getChildren(final Object aObj) {
-    final JJNode node = (JJNode) aObj;
-    if (mode == CallHierarchyView.CALLERS) {
-      return node.getCallers();
-    }
-    return node.getCallees();
+  public void dispose() {
+    // nothing done here
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public final void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
+                                 @SuppressWarnings("unused") final Object aOldInput,
+                                 @SuppressWarnings("unused") final Object aNewInput) {
+    // nothing done here
   }
 
   /** {@inheritDoc} */
@@ -57,6 +61,16 @@ class CallHierarchyContentProvider implements ITreeContentProvider {
 
   /** {@inheritDoc} */
   @Override
+  public final Object[] getChildren(final Object aObj) {
+    final JJNode node = (JJNode) aObj;
+    if (mode == CallHierarchyView.CALLERS) {
+      return node.getCallers();
+    }
+    return node.getCallees();
+  }
+
+  /** {@inheritDoc} */
+  @Override
   public final boolean hasChildren(final Object aObj) {
     final JJNode node = (JJNode) aObj;
     if (mode == CallHierarchyView.CALLERS) {
@@ -65,17 +79,4 @@ class CallHierarchyContentProvider implements ITreeContentProvider {
     return node.getCallees().length != 0;
   }
 
-  /** {@inheritDoc} */
-  @Override
-  public void dispose() {
-    // nothing done here
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public final void inputChanged(@SuppressWarnings("unused") final Viewer aViewer,
-                                 @SuppressWarnings("unused") final Object aOldInput,
-                                 @SuppressWarnings("unused") final Object aNewInput) {
-    // nothing done here
-  }
 }

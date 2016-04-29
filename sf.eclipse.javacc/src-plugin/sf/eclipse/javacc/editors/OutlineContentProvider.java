@@ -28,6 +28,13 @@ class OutlineContentProvider implements ITreeContentProvider {
   /** The last AST root node passed as input (to enable detect changes) */
   private JJNode jAstRoot;
 
+  /**
+   * @return the last AST root node passed as input
+   */
+  final JJNode getAstRoot() {
+    return jAstRoot;
+  }
+
   /** {@inheritDoc} */
   @Override
   public void dispose() {
@@ -43,9 +50,14 @@ class OutlineContentProvider implements ITreeContentProvider {
 
   /** {@inheritDoc} */
   @Override
+  public final Object[] getElements(@SuppressWarnings("unused") final Object aObj) {
+    return getChildren(jAstRoot);
+  }
+
+  /** {@inheritDoc} */
+  @Override
   public Object getParent(final Object aObj) {
-    final Node parent = aObj == null ? null : ((JJNode) aObj).jjtGetParent();
-    return parent;
+    return aObj == null ? null : ((JJNode) aObj).jjtGetParent();
   }
 
   /** {@inheritDoc} */
@@ -146,19 +158,6 @@ class OutlineContentProvider implements ITreeContentProvider {
   @Override
   public final boolean hasChildren(final Object aObj) {
     return getChildren(aObj) == null ? false : getChildren(aObj).length != 0;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public final Object[] getElements(@SuppressWarnings("unused") final Object aObj) {
-    return getChildren(getAstRoot());
-  }
-
-  /**
-   * @return the last AST root node passed as input
-   */
-  public final JJNode getAstRoot() {
-    return jAstRoot;
   }
 
 }

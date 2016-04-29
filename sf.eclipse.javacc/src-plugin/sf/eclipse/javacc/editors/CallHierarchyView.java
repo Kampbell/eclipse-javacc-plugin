@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -47,7 +48,7 @@ import sf.eclipse.javacc.parser.JJNode;
  * The chosen synchronization mode is stored under the project of the current JJEdited file.
  * 
  * @author Remi Koutcherawy 2003-2010 CeCILL license http://www.cecill.info/index.en.html
- * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015
+ * @author Marc Mazas 2009-2010-2011-2012-2013-2014-2015-2016
  */
 public class CallHierarchyView extends ViewPart implements ISelectionChangedListener {
 
@@ -61,6 +62,7 @@ public class CallHierarchyView extends ViewPart implements ISelectionChangedList
   // MMa 10/2014 : removed reference to JTBEDITOR_ID no more defined
   // MMa 11/2014 : fixed synchronization with JJEditor ; added dispose() ; added some final modifiers ;
   //               fixed behavior with drag and dropped files ; fixed reopening a closed editor
+  // MMa 02/2016 : added isCallerMode() ; some renamings
 
   /** Callers mode */
   protected static final int             CALLERS        = 0;
@@ -180,7 +182,7 @@ public class CallHierarchyView extends ViewPart implements ISelectionChangedList
           if (editor == null) {
             if (jFile == null) {
               // could be after a drag and drop
-              AbstractActivator.logErr("null file"); //$NON-NLS-1$
+              AbstractActivator.logErr("Null file"); //$NON-NLS-1$
               return;
             }
             // open the editor on the file we got when this CallHierary was opened
@@ -232,7 +234,9 @@ public class CallHierarchyView extends ViewPart implements ISelectionChangedList
   }
 
   /**
-   * Called from {@link CallHierarchyView#setSelection(JJNode, JJEditor)}.
+   * Called from {@link CallHierarchyView#setSelection(JJNode, JJEditor)}.<br>
+   * The {@link TreeViewer#setInput(Object)} will trigger
+   * {@link CallHierarchyContentProvider#inputChanged(Viewer, Object, Object)}.
    * 
    * @param aJJNode - the node to reveal
    */
@@ -242,12 +246,12 @@ public class CallHierarchyView extends ViewPart implements ISelectionChangedList
     final JJNode root = new JJNode(0);
     if (aJJNode == null) {
       // show an "empty" view
-      root.clearCallers();
-      root.clearCallees();
+      root.resetCallersToOohsJJNode();
+      root.resetCalleesToOohsJJNode();
     }
     else {
       // add the node to the root as a caller and a callee
-      root.addCaller(aJJNode, true);
+      root.addCaller(aJJNode);
       root.addCallee(aJJNode);
       aJJNode.buildCallees(jEditor.getElements());
       aJJNode.buildCallers();
@@ -438,6 +442,13 @@ public class CallHierarchyView extends ViewPart implements ISelectionChangedList
       }
     }
 
+  }
+
+  /**
+   * @return true if the Call Hierarchy View is in callers mode, false if in callees mode
+   */
+  public boolean isCallerMode() {
+    return jCHCP.mode == CallHierarchyView.CALLERS;
   }
 
 }

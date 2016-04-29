@@ -11,8 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
@@ -54,6 +58,9 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import sf.eclipse.javacc.base.AbstractActivator;
+import sf.eclipse.javacc.handlers.Format;
+import sf.eclipse.javacc.handlers.GotoRule;
+import sf.eclipse.javacc.handlers.ShowCallHierarchy;
 import sf.eclipse.javacc.parser.JJNode;
 import sf.eclipse.javacc.parser.JavaCCParser;
 import sf.eclipse.javacc.parser.Node;
@@ -90,6 +97,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   //                display when called from the OutlinePage or the CallHierarchyView ;
   //               modified some modifiers ; some renamings ; added reset of OutlinePage revealing flag
   // MMa 02/2016 : fixed folding single line comments ; changed character pair matcher to default one
+  // MMa 03/2016 : added auto format on save
 
   //  /** The source viewer configuration */
   //  private SourceViewerConfiguration                 jSourceViewerConf;
@@ -301,6 +309,42 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   }
 
   /**
+   * Overriden to add auto reformatting on save if configured.
+   * <p>
+   * {@inheritDoc}
+   */
+  @Override
+  public void doSave(final IProgressMonitor aProgressMonitor) {
+    if (getFormatBeforeSave()) {
+      Assert.isNotNull(jParser);
+      Format.doFormat(this, jParser);
+    }
+    super.doSave(aProgressMonitor);
+  }
+
+  /**
+   * Retrieves the "keep deleted files from history" flag (from the preferences).
+   * 
+   * @return the flag
+   */
+  boolean getFormatBeforeSave() {
+    final IEditorInput editorInput = getEditorInput();
+    // case project file
+    if (editorInput instanceof IFileEditorInput) {
+      final IFile file = ((IFileEditorInput) editorInput).getFile();
+      final IEclipsePreferences prefs = new ProjectScope(file.getProject()).getNode(PLUGIN_QN);
+      String flag = ""; //$NON-NLS-1$
+      try {
+        flag = prefs.get(FORMAT_ON_SAVE, DEF_FORMAT_ON_SAVE);
+      } catch (final Exception e) {
+        AbstractActivator.logBug(e);
+      }
+      return "true".equals(flag); //$NON-NLS-1$
+    }
+    return false;
+  }
+
+  /**
    * Relay as {@link AbstractTextEditor#getSourceViewer()} is protected.
    * 
    * @return the source viewer
@@ -357,7 +401,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
     }
     // if synchronized, update it
     if (jOutlinePage.isSyncWithEditor()) {
-      jOutlinePage.setNodes(jAstRoot, getOpchvNodeFromSelection());
+      jOutlinePage.setNodes(jAstRoot, getOpchvNodeFromSelection(true));
     }
   }
 
@@ -379,22 +423,49 @@ public class JJEditor extends TextEditor implements IPrefConstants {
       final IEditorInput editorInput = getEditorInput();
       if ((editorInput instanceof IFileEditorInput && chv.isSyncWithEditor(((IFileEditorInput) editorInput).getFile()))
           || (editorInput instanceof FileStoreEditorInput)) {
-        final JJNode jjNode = getOpchvNodeFromSelection();
+        final JJNode jjNode = getChvRootFromSelection(!chv.isCallerMode());
         chv.setSelection(jjNode, this);
       }
     }
   }
 
   /**
-   * @return the top node from the OP / CHV list of nodes
+   * @param aTop - true for the highest node, false for the lowest
+   * @return the node which will be the root node in the Call Hierarchy View
    */
-  private JJNode getOpchvNodeFromSelection() {
+  public JJNode getChvRootFromSelection(final boolean aTop) {
+    JJNode jjNode = getIdentOrNodeDesc();
+    if (jjNode == null) {
+      jjNode = getOpchvNodeFromSelection(aTop);
+    }
+    return jjNode;
+  }
+
+  /**
+   * @return the node from the identifier or node descriptor nodes map
+   */
+  private JJNode getIdentOrNodeDesc() {
+    int line = 0;
+    final ISelection selection = getSelectionProvider().getSelection();
+    if (selection instanceof ITextSelection) {
+      line = ((ITextSelection) selection).getStartLine() + 1;
+      final String text = ((ITextSelection) selection).getText();
+      return jElements.getIdentOrNodeDesc(line + text);
+    }
+    return null;
+  }
+
+  /**
+   * @param aTop - true for the highest node, false for the lowest
+   * @return the highest or lowest node from the OP / CHV list of nodes
+   */
+  private JJNode getOpchvNodeFromSelection(final boolean aTop) {
     int line = 0;
     final ISelection selection = getSelectionProvider().getSelection();
     if (selection instanceof ITextSelection) {
       line = ((ITextSelection) selection).getStartLine();
     }
-    return jElements.getOpchvTopNodeFromLine(line);
+    return jElements.getOpChvNodeFromLine(aTop, line);
   }
 
   /**
@@ -405,7 +476,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
     final ProjectionAnnotationModel model = pv.getProjectionAnnotationModel();
     if (model == null) {
       // saw null model in case of drag and drop in the editor area
-      AbstractActivator.logErr("null AnnotationModel, unable to updateFoldingStructure() in JJEditor ;" //$NON-NLS-1$
+      AbstractActivator.logErr("Null AnnotationModel, unable to updateFoldingStructure() in JJEditor ;" //$NON-NLS-1$
                                + " please report this message with the actions which led to it"); //$NON-NLS-1$
       return;
     }
@@ -643,7 +714,9 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   /**
    * Extends the selection to a whole word (including the '#' for private label identifiers and JJTree node
    * descriptors).<br>
-   * Note : quite similar than {@link #selectWord(IDocument, IRegion)}, but cast is not possible.
+   * Called by {@link GotoRule#execute(org.eclipse.core.commands.ExecutionEvent)} and
+   * {@link ShowCallHierarchy#execute(org.eclipse.core.commands.ExecutionEvent)} ; quite similar than
+   * {@link #selectWord(IDocument, IRegion)}, but cast is not possible.
    * 
    * @param aSelection - the selection
    * @return the extended selection
@@ -684,7 +757,8 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   /**
    * Extends Selection to a whole Word (not including the '#' for private label identifiers and JJTree node
    * descriptors).<br>
-   * Note : quite similar than {@link #selectWord(ITextSelection)}, but cast is not possible.
+   * Called by {@link HyperlinkDetector#HyperlinkDetector(JJEditor)} ; quite similar than
+   * {@link #selectWord(ITextSelection)}, but cast is not possible.
    * 
    * @param aDoc - the document
    * @param aSelection - the selected text
@@ -753,7 +827,7 @@ public class JJEditor extends TextEditor implements IPrefConstants {
   /**
    * Updates the Outline Page on a selection change.
    */
-  public void selectionChanged() {
+  void selectionChanged() {
     if (getSelectionProvider() == null) {
       return;
     }

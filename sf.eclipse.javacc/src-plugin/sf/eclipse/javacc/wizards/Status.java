@@ -131,7 +131,6 @@ class Status implements IStatus {
   /** {@inheritDoc} */
   @Override
   public String getPlugin() {
-    //    return JavaUI.ID_PLUGIN;
     return PLUGIN_QN;
   }
 

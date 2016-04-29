@@ -568,12 +568,12 @@ public class Compiler {
       final URL installURL = AbstractActivator.getDefault().getBundle().getEntry(JARS_DIR);
       final URL resolvedURL = FileLocator.resolve(installURL);
       dir = FileLocator.toFileURL(resolvedURL).getFile();
-      // returned String is like "/C:/workspace/sf.eclipse.javacc/jtb132.jar"
+      // returned String is like "/C:/workspace/sf.eclipse.javacc/jars/"
       if (dir.startsWith("/") && dir.startsWith(":", 2)) { //$NON-NLS-1$ //$NON-NLS-2$
         dir = dir.substring(1);
       }
     } catch (final IOException e) {
-      AbstractActivator.logBug(e, "unable to find the jars directory"); //$NON-NLS-1$
+      AbstractActivator.logBug(e, "Unable to find the jars directory"); //$NON-NLS-1$
     }
     return dir;
   }
@@ -623,7 +623,7 @@ public class Compiler {
         jarfile2 = jarfile2.substring(1);
       }
     } catch (final CoreException e) {
-      AbstractActivator.logBug(e, "couldn't resolve jar file", jarfile); //$NON-NLS-1$ 
+      AbstractActivator.logBug(e, "Couldn't resolve jar file", jarfile); //$NON-NLS-1$ 
       // jarfile2 will keep it's previous value, which will fail in launch()
     }
     return jarfile2;
@@ -641,10 +641,10 @@ public class Compiler {
       return null;
     }
     if (aExtension.equals("jj") || aExtension.equals("jjt")) { //$NON-NLS-1$ //$NON-NLS-2$
-      return jarsdir + JAVACC_JAR_NAME;
+      return jarsdir + DEF_JAVACC_JAR_NAME;
     }
     else if (aExtension.equals("jtb")) { //$NON-NLS-1$
-      return jarsdir + JTB_JAR_NAME;
+      return jarsdir + DEF_JTB_JAR_NAME;
     }
     // should not occur
     return null;

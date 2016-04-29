@@ -1,7 +1,20 @@
+A faire pour javacc
+- voir la trace qui manque dans le debug_lookahead ou debug_parser (sur exception je crois avoir déjà vu)
+
+Quelques remarques pour le plugin
+- pourquoi l'outline se repositionne en bas : il semble que l'on  n'ait pas le contrôle dessus ;
+   il faudrait dans OutlinePage.setNodes(JJNode, JJNode) sélectionner des noeuds en dessous puis en dessus puis le noeud final
+- pourquoi dans l'outline lorsque l'on clique sur un feuille de l'arbre on revient à la racine : c'est parce que la feuille ne fait pas partie de la jOpChvList : 
+   voir en faisant comme corrigé maintenant dans CHV
+- pour avoir la local history pour les fichiers jj/jjt/jtb, il faut passer par les menus Compare With / History ou Replace With / History et dans la vue History
+   sélectionner le mode Local Revisions
+
 A faire pour le plugin
+- marquer (surbrillance) les occurrences des mots comme dans l'éditeur Java
+- voir le formatage d'une expression avec des | dans un lookahead()
+- mettre du formatage et des hyperliens dans les hovers
 - voir à prendre le JRE du projet pour le lancement des jars
 - dans console, en mode debug_parser, mettre des hyperliens ou autres sur les productions ou les lignes ?
-- voir formatage Case1.jjt sur noeud avec condition
 - completion proposal : ajouter nouvelles options
 - voir le dictionnaire spelling
 - voir la question des dépendances "inutilisées" org.eclipse.core.expressions et org.eclipse.swt
@@ -20,6 +33,29 @@ A faire pour le plugin
 - voir évolutions du langage Java 1.7 et 1.8 et impacts sur coloration syntaxique, formatteur, call hierarchy
 - s'interfacer avec une vue JJDoc ?
 
+
+Fait pour le plugin en 1.5.33
+- remis en place les hyperliens d'une compilation JTB
+- corrigé l'absence du jar JTB 1.4.10
+- corrigé la perte de la dernière ligne "blanche" lors de la mise en commentaire
+- mis le bouton Compiler en fin de barre d'outils pour ne pas déplacer les flèches 
+- le formatage ne transforme plus les caractères en notation \uxxxx des tokens par leur représentation mais les garde
+- le formatage de sélection de code java ne perd plus les commentaires, et gère correctement les lignes et les caractères de fin de ligne de la plate-forme
+- la coloration syntaxique gère correctement le cas du mot clé 'options' suivi d'un commentaire 
+   et le cas de 2 lignes de commentaires simples sur 2 lignes contigües mais avec du code entre
+- la coloration syntaxique ne présente plus le problème lors d'erreurs d'orthographe
+- le matching character ne prendre plus en compte les commentaires
+- revu l'indentation automatique des < et {
+- rajouté les classes, méthodes, ... de la section PARSER_BEGIN/END dans la CHV callers et callees
+- corrigé et homogénéïsé l'affichage des callers et callees de la CHV depuis le double-click dans l'éditeur et la commande d'affichage de la hiérarchie d'appel
+- corrigé la configuration pour le lancement de la jjdoc
+- ajouté l'option du formatage automatique à la sauvegarde
+- corrigé des problèmes d'indentation dans les expressions régulières (autour de '|' et '>') et dans les conditions des noeuds JJTree
+- suppimé dans la completion proposal le > à droite qui a pu rester pour les token labels
+- ajouté des variables de substitution pour les jars et le plugin
+- ajouté un espace entre les '>>' finaux d'une regex < RE1 : < RE2 > >
+- corrigé dans la CHV callees la duplication dans la première feuille d'une bnf production avec son descripteur de noeud
+- supprimé les () après la completion proposal des productions
 
 Fait pour le plugin en 1.5.32
 - ajouté des espaces sur les Token lors de l'insertion par la completion proposal

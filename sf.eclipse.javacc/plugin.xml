@@ -6,6 +6,7 @@
 <!-- MMa 11/2014 : added navigatorContent extension, updated handlers, menus, commands, definition
                     extensions for deleting derived files, folding, placing menus and tool bars -->
 <!-- MMa 01/2015 : enhanced compile commands -->
+<!-- MMa 04/2016 : added value and dynamic variables -->
 <plugin>
 <!-- Builders Extension -->
 <!-- This defines the class used to build from a JavaCC file -->
@@ -48,6 +49,92 @@
             class="sf.eclipse.javacc.preferences.PreferencesInitializer">
       </initializer>
    </extension>
+<!-- Value Variables Extension -->
+<!-- This defines some value variables that can be used to set paths -->
+ <extension point="org.eclipse.core.variables.valueVariables">
+  <variable
+        description="The plugin version"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.plugin_version"
+        readOnly="true">
+  </variable>
+  <variable
+        description="The plugin location (the absolute file system path)"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.plugin_loc"
+        readOnly="true">
+  </variable>
+  <variable
+        description="The plugin path relative to the location of the base installation for the running platform (eclipse_home) (if possible)"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.plugin_path"
+        readOnly="false">
+  </variable>
+  <variable
+        description="The plugin default JavaCC jar name"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.def_javacc_jar_name"
+        readOnly="true">
+  </variable>
+  <variable
+        description="The plugin default JavaCC jar version"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.def_javacc_jar_version"
+        readOnly="true">
+  </variable>
+  <variable
+        description="The plugin default JTB jar name"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.def_jtb_jar_name"
+        readOnly="true">
+  </variable>
+  <variable
+        description="The plugin default JTB jar version"
+        initializerClass="sf.eclipse.javacc.base.ValueVariableInitializer"
+        name="javacc.def_jtb_jar_version"
+        readOnly="true">
+  </variable>
+  <variable
+        description="A user specified JavaCC jar name"
+        initialValue="at_user_disposal"
+        name="javacc.user_javacc_jar_name"
+        readOnly="false">
+  </variable>
+  <variable
+        description="A user specified JTB jar name"
+        initialValue="at_user_disposal"
+        name="javacc.user_jtb_jar_name"
+        readOnly="false">
+  </variable>
+ </extension>
+<!-- Dynamic Variables Extension -->
+<!-- This defines some dynamic variables that can be used to set paths -->
+ <extension point="org.eclipse.core.variables.dynamicVariables">
+  <variable
+        description="The plugin default JavaCC jar (full) path"
+        name="javacc.def_javacc_jar_path"
+        resolver="sf.eclipse.javacc.base.DynamicVariableResolver"
+        supportsArgument="false">
+  </variable>
+  <variable
+        description="The plugin default JTB jar (full) path"
+        name="javacc.def_jtb_jar_path"
+        resolver="sf.eclipse.javacc.base.DynamicVariableResolver"
+        supportsArgument="false">
+  </variable>
+  <variable
+        description="A project's (to be given as argument) RUNTIME_JJJAR preference (JavaCC jar full path) (may be empty)"
+        name="javacc.proj_javacc_jar_path"
+        resolver="sf.eclipse.javacc.base.DynamicVariableResolver"
+        supportsArgument="true">
+  </variable>
+  <variable
+        description="A project's (to be given as argument) RUNTIME_JTBJAR preference (JTB jar full path) (may be empty)"
+        name="javacc.proj_jtb_jar_path"
+        resolver="sf.eclipse.javacc.base.DynamicVariableResolver"
+        supportsArgument="true">
+  </variable>
+ </extension>
 <!-- JavaElementFilters Extension (for the Package Explorer view) -->
 <!-- This defines the class used to find the generated files -->
    <extension

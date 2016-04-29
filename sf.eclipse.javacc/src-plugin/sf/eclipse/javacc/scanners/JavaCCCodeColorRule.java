@@ -169,25 +169,25 @@ public class JavaCCCodeColorRule implements IRule {
    */
   @SuppressWarnings("unchecked")
   public void save(final int aOffset) {
-    log(aOffset, "Sa1"); //$NON-NLS-1$
+    //    log(aOffset, "Sa1"); //$NON-NLS-1$
     Assert.isNotNull(jStateStack);
     final Integer off = Integer.valueOf(aOffset);
     // truncate the stack if saving before the last key
     final Integer ck = jStateStackSaveMap.ceilingKey(off);
     if (ck != null) {
       final int cki = ck.intValue();
-      log(aOffset, "SaC " + cki); //$NON-NLS-1$
+      //      log(aOffset, "SaC " + cki); //$NON-NLS-1$
       for (final Integer k : jStateStackSaveMap.descendingKeySet()) {
         if (cki > k.intValue()) {
           break;
         }
         jStateStackSaveMap.remove(k);
-        log(aOffset, "SaK " + k); //$NON-NLS-1$
+        //        log(aOffset, "SaK " + k); //$NON-NLS-1$
       }
     }
     // we really need to clone ...
     jStateStackSaveMap.put(off, (Stack<Context>) jStateStack.clone());
-    log(aOffset, "Sa2"); //$NON-NLS-1$
+    //    log(aOffset, "Sa2"); //$NON-NLS-1$
   }
 
   /**
@@ -198,40 +198,39 @@ public class JavaCCCodeColorRule implements IRule {
    */
   public void restore(final int aOffset) {
     // retreive the greatest key less than or equal to the offset
-    log(aOffset, "Re1"); //$NON-NLS-1$
+    //    log(aOffset, "Re1"); //$NON-NLS-1$
     final Integer fk = jStateStackSaveMap.floorKey(Integer.valueOf(aOffset));
     // check it exists
     if (fk != null) {
       // truncate the stack if restoring before the last key
       final int fki = fk.intValue();
-      log(aOffset, "ReF " + fki); //$NON-NLS-1$
+      //      log(aOffset, "ReF " + fki); //$NON-NLS-1$
       for (final Integer k : jStateStackSaveMap.descendingKeySet()) {
         if (fki >= k.intValue()) {
           break;
         }
         jStateStackSaveMap.remove(k);
-        log(aOffset, "ReK " + k); //$NON-NLS-1$
+        //        log(aOffset, "ReK " + k); //$NON-NLS-1$
       }
       // restore the stack to this key
       jStateStack = jStateStackSaveMap.get(fk);
     }
-    log(aOffset, "Re2"); //$NON-NLS-1$
+    //    log(aOffset, "Re2"); //$NON-NLS-1$
   }
 
-  /**
-   * Adds a line to a (Eclipse) watch debug variable in {@link CodeColorScanner}. TODO à passer en
-   * commentaires
-   * 
-   * @param aOffset - the offset
-   * @param str - a prefix string
-   */
-  private void log(final int aOffset, final String str) {
-    jScanner.dbgStr = str
-                      + " : " + aOffset //$NON-NLS-1$ 
-                      + ", " + Thread.currentThread().toString().substring(Thread.currentThread().toString().indexOf('[')) //$NON-NLS-1$
-                      + ", " + this.toString().substring(this.toString().indexOf('@')) //$NON-NLS-1$
-                      + ", " + jStateStack + "\r\n" + jScanner.dbgStr; //$NON-NLS-1$ //$NON-NLS-2$ 
-  }
+  //  /**
+  //   * Adds a line to a (Eclipse) watch debug variable in {@link CodeColorScanner}.
+  //   * 
+  //   * @param aOffset - the offset
+  //   * @param str - a prefix string
+  //   */
+  //  private void log(final int aOffset, final String str) {
+  //    jScanner.dbgStr = str
+  //                      + " : " + aOffset //$NON-NLS-1$ 
+  //                      + ", " + Thread.currentThread().toString().substring(Thread.currentThread().toString().indexOf('[')) //$NON-NLS-1$
+  //                      + ", " + this.toString().substring(this.toString().indexOf('@')) //$NON-NLS-1$
+  //                      + ", " + jStateStack + "\r\n" + jScanner.dbgStr; //$NON-NLS-1$ //$NON-NLS-2$ 
+  //  }
 
   /**
    * Updates the rules after a preference change.
